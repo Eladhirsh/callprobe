@@ -57,6 +57,12 @@ def load_suite(directory: str | Path) -> Suite:
                     f"task {task.id} expects {task.expect.tool}, "
                     f"absent from bundle {task.bundle}"
                 )
+        known = {d.name for d in distractors}
+        for name in task.exclude_distractors:
+            if name not in known:
+                raise ValueError(
+                    f"task {task.id} excludes {name}, which is not a distractor"
+                )
         task.depth = sum(1 for m in task.messages if m.get("role") == "user")
         tasks.append(task)
 

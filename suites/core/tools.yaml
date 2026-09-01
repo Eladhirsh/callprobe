@@ -79,7 +79,7 @@ bundles:
     - name: escalate_to_human
       description: >
         Hand the conversation to a human agent. Use only when the customer
-        explicitly asks for a person or the request is outside these tools.
+        explicitly asks to speak to a person.
       parameters:
         type: object
         properties:
@@ -106,6 +106,7 @@ bundles:
             pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
           end_date:
             type: string
+            description: Inclusive end date, YYYY-MM-DD.
             pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
           duration_minutes:
             type: integer

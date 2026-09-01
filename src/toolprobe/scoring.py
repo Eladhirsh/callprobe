@@ -128,7 +128,9 @@ def score(
         return result
 
     # Abstention tasks: the correct behavior is to call nothing.
-    result.response_text = visible_text(completion.content)[:300]
+    result.truncated = completion.finish_reason == "length"
+    text = visible_text(completion.content) or visible_text(completion.reasoning)
+    result.response_text = text[:300]
 
     if task.expect.type == "no_call":
         clean = not completion.calls
@@ -145,7 +147,12 @@ def score(
 
     call = pick_call(completion.calls, task.expect.tool)
     if call is None:
-        result.failures.append("no tool call produced")
+        if result.truncated:
+            result.failures.append(
+                "truncated on the token limit before any call, raise --max-tokens"
+            )
+        else:
+            result.failures.append("no tool call produced")
         return result
 
     result.called = call.name

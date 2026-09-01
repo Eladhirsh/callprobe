@@ -25,6 +25,9 @@ class Completion:
     completion_tokens: int = 0
     latency_ms: float = 0.0
     error: str | None = None
+    finish_reason: str = ""
+    # Some servers put chain of thought in its own field rather than content.
+    reasoning: str = ""
     raw: dict[str, Any] = field(default_factory=dict)
 
 
@@ -83,7 +86,10 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
     """Turn a chat completion body into calls, tolerating provider quirks."""
     usage = body.get("usage") or {}
     choices = body.get("choices") or [{}]
-    message = (choices[0] or {}).get("message") or {}
+    choice = choices[0] or {}
+    message = choice.get("message") or {}
+    finish_reason = choice.get("finish_reason") or ""
+    reasoning = message.get("reasoning") or message.get("reasoning_content") or ""
 
     calls: list[Call] = []
     for entry in message.get("tool_calls") or []:
@@ -125,5 +131,7 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
         prompt_tokens=int(usage.get("prompt_tokens") or 0),
         completion_tokens=int(usage.get("completion_tokens") or 0),
         latency_ms=latency_ms,
+        finish_reason=finish_reason,
+        reasoning=reasoning,
         raw=body,
     )

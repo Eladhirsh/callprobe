@@ -43,6 +43,10 @@ class Task(BaseModel):
     messages: list[dict[str, Any]]
     expect: Expectation
     tags: list[str] = Field(default_factory=list)
+    # Distractors that must never be padded in, because they would make the
+    # expected answer wrong. An abstention task stops being one the moment
+    # padding hands the model a tool that legitimately applies.
+    exclude_distractors: list[str] = Field(default_factory=list)
     # Number of prior turns in `messages`. Filled in by the loader.
     depth: int = 0
 
@@ -108,8 +112,11 @@ class TaskResult(BaseModel):
     completion_tokens: int = 0
     latency_ms: float = 0.0
     error: str | None = None
-    # What the model said instead of calling a tool.
+    # What the model said instead of calling a tool. Kept on failures so a
+    # parsing bug is distinguishable from a model that declined to act.
     response_text: str = ""
+    # True when the server stopped on the token limit before finishing.
+    truncated: bool = False
 
     @property
     def total_tokens(self) -> int:

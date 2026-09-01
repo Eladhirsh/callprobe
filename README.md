@@ -67,6 +67,39 @@ so you get a number with an error bar instead of a number.
 **Cost per success.** Tokens and seconds divided by *correct* calls. Raw
 latency flatters models that fail quickly.
 
+## Why your tool-calling numbers are probably wrong
+
+Three ways a tool-calling evaluation lies to you. All three were found by
+running this harness against one 8B model for one evening, and all three
+produce a number that looks plausible and is not.
+
+**Truncation scored as incapability.** Reasoning models spend tokens
+thinking before they emit a call. If the budget runs out mid-thought, the
+response contains no tool call, and a harness that does not check
+`finish_reason` records that as a model that cannot call tools. Measured on
+qwen3:8b over the same twelve tasks: 66.7% success at a 512 token budget,
+91.7% at 4096. Nothing about the model changed. Worse, the bias is
+strongest on the hardest tasks, because hard tasks think longer, so the
+measurement degrades exactly where it matters. `toolprobe` reports a
+`truncated` count and names truncation as its own failure.
+
+**Padding that invalidates the task.** Adding irrelevant tools is how you
+measure degradation with tool count. But if one of those tools genuinely
+answers the question, an abstention task quietly stops being an abstention
+task. Our first sweep marked the model wrong for calling
+`search_knowledge_base` on a policy question. The model was right and the
+padding was the bug. Tasks can now declare `exclude_distractors`.
+
+**Underspecified argument semantics.** "Next week" has no fixed start day.
+An `end_date` with no stated inclusivity has two correct answers. Every
+ambiguity you leave in a prompt or a tool description becomes a scoring
+error you will misattribute to the model. Roughly half of the argument
+failures in the first sweep were this, not the model.
+
+The general lesson is that at small suite sizes the benchmark measures its
+author. That is why the failure digest prints what actually happened rather
+than only a rate: the failures you should read first are usually your own.
+
 ## Bring your own tools
 
 A suite is three YAML files. Drop your real tool schemas into `tools.yaml`,
@@ -130,8 +163,13 @@ will see it here first.
 
 ## Status
 
-Early. The seed suite is 12 tasks, which is enough to try the tool and not
-enough to publish numbers from. Target is roughly 30 per category.
+Early. The suite is 34 hand-written tasks, enough to see real differences
+between models and not yet enough to publish a leaderboard from. Target is
+roughly 30 per category.
+
+Task expectations are validated by the test suite: every asserted argument
+key must exist in the tool's schema, and every asserted value must be legal
+for it. A typo in an expectation would otherwise fail every model silently.
 
 Contributions most wanted, in order:
 

@@ -74,6 +74,7 @@ def summarize(run: Run) -> dict:
             "successes": successes,
         },
         "errors": sum(1 for r in results if r.error),
+        "truncated": sum(1 for r in results if r.truncated),
     }
 
 
@@ -88,7 +89,8 @@ def render_text(run: Run) -> str:
         + (f"  ({s['quantization']})" if s["quantization"] else ""),
         f"endpoint         {s['endpoint']}",
         f"tasks scored     {s['n']}"
-        + (f"   errors: {s['errors']}" if s["errors"] else ""),
+        + (f"   errors: {s['errors']}" if s["errors"] else "")
+        + (f"   truncated: {s['truncated']}" if s["truncated"] else ""),
         "",
         "                 selection   schema     args      success",
         "  overall        "

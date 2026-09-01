@@ -26,8 +26,8 @@ def build_toolset(
     tools = list(bundle.tools)
     if pad and suite.distractors:
         rng = random.Random(f"{task.id}:{pad}:{seed}")
-        names = {t.name for t in tools}
-        pool = [d for d in suite.distractors if d.name not in names]
+        blocked = {t.name for t in tools} | set(task.exclude_distractors)
+        pool = [d for d in suite.distractors if d.name not in blocked]
         rng.shuffle(pool)
         tools.extend(pool[:pad])
     rng = random.Random(f"order:{task.id}:{pad}:{seed}")
@@ -71,3 +71,9 @@ def run_suite(
                     on_result(result)
     run.finished_at = datetime.now(timezone.utc).isoformat()
     return run
+
+
+def interrupted_run(config: RunConfig, results: list[TaskResult]) -> Run:
+    """Build a Run from partial results so Ctrl-C still reports something."""
+    now = datetime.now(timezone.utc).isoformat()
+    return Run(config=config, started_at=now, finished_at=now, results=list(results))

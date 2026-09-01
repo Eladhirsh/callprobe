@@ -53,6 +53,9 @@ tasks:
     expect:
       type: no_call
     tags: [knowledge]
+    # Without this, padding hands the model a tool that genuinely answers
+    # the question and the task silently stops testing abstention.
+    exclude_distractors: [search_knowledge_base]
 
   - id: abstain-missing-identifier
     category: abstain
@@ -185,3 +188,332 @@ tasks:
       args: {calendar_id: cal_main, duration_minutes: 30}
     tags: [ordering]
     # book_meeting requires a slot known to be free, so calling it first is wrong.
+  # =====================================================================
+  # Batch two. Every expectation here is one a careful human would defend.
+  # Where a reading was ambiguous, the prompt or the tool description was
+  # tightened rather than the check widened.
+  # =====================================================================
+
+  # --- abstain ------------------------------------------------------------
+  - id: abstain-status-no-identifier
+    category: abstain
+    bundle: support
+    messages:
+      - role: user
+        content: Has my package gone out yet?
+    expect:
+      type: no_call
+    tags: [underspecified]
+
+  - id: abstain-no-such-capability
+    category: abstain
+    bundle: support
+    messages:
+      - role: user
+        content: Please cancel order ORD-620114 before it ships.
+    expect:
+      type: no_call
+    tags: [missing-capability]
+    # Nothing here cancels an order. Refunding one is not the same action.
+
+  - id: abstain-change-email-on-file
+    category: abstain
+    bundle: support
+    messages:
+      - role: user
+        content: Can you update the email address on my account to elad@example.com?
+    expect:
+      type: no_call
+    tags: [missing-capability]
+
+  - id: abstain-shipping-quote
+    category: abstain
+    bundle: support
+    messages:
+      - role: user
+        content: How much would it cost to ship a 2kg box to 10024?
+    expect:
+      type: no_call
+    tags: [missing-capability]
+    exclude_distractors: [get_shipping_rates]
+    # get_shipping_rates answers this exactly, so padding must not add it.
+
+  - id: abstain-availability-no-calendar
+    category: abstain
+    bundle: scheduling
+    messages:
+      - role: user
+        content: Am I free for an hour on Tuesday afternoon?
+    expect:
+      type: no_call
+    tags: [underspecified]
+    # find_availability requires a calendar_id and none was given.
+
+  - id: abstain-reschedule-unsupported
+    category: abstain
+    bundle: scheduling
+    messages:
+      - role: user
+        content: Move my 3pm on Thursday to 4pm instead.
+    expect:
+      type: no_call
+    tags: [missing-capability, underspecified]
+
+  - id: abstain-cancel-without-id
+    category: abstain
+    bundle: scheduling
+    messages:
+      - role: user
+        content: Cancel my standup tomorrow morning please.
+    expect:
+      type: no_call
+    tags: [underspecified]
+
+  - id: abstain-gratitude-midconversation
+    category: abstain
+    bundle: support
+    messages:
+      - role: user
+        content: Where is ORD-118820?
+      - role: assistant
+        content: It shipped Tuesday and is due Friday.
+      - role: user
+        content: Perfect, thank you.
+    expect:
+      type: no_call
+    tags: [easy, depth]
+
+  # --- args ---------------------------------------------------------------
+  - id: args-full-refund-omits-amount
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          ORD-450917 turned up three weeks after the delivery date. Refund the
+          whole thing.
+    expect:
+      type: call
+      tool: issue_refund
+      args: {order_id: ORD-450917, reason: late}
+      arg_checks:
+        - {path: amount_cents, op: absent, note: omit to refund in full}
+    tags: [omission]
+
+  - id: args-dollars-to-cents
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          One item on ORD-771230 was a duplicate charge of $12.99. I changed my
+          mind about that one, refund just that amount.
+    expect:
+      type: call
+      tool: issue_refund
+      args: {order_id: ORD-771230, reason: changed_mind}
+      arg_checks:
+        - {path: amount_cents, op: eq, value: 1299}
+    tags: [units]
+
+  - id: args-country-name-to-iso
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          Redirect ORD-310884 to 14 Bedford Square, London, WC1B 3JA,
+          United Kingdom.
+    expect:
+      type: call
+      tool: update_shipping_address
+      args: {order_id: ORD-310884}
+      arg_checks:
+        - {path: address.country, op: eq, value: GB}
+        - {path: address.postal_code, op: eq, value: WC1B 3JA}
+        - {path: address.city, op: eq, value: London}
+    tags: [normalization]
+    # GB is the ISO code. UK is a common and wrong answer.
+
+  - id: args-filtered-search
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          Show me the three most recent orders on noa@example.com that have
+          already shipped.
+    expect:
+      type: call
+      tool: search_orders
+      args: {email: noa@example.com, status: shipped, limit: 3}
+    tags: [enum, optional-args]
+
+  - id: args-duration-in-words
+    category: args
+    bundle: scheduling
+    messages:
+      - role: system
+        content: Today is 2026-09-07.
+      - role: user
+        content: >
+          Find me an hour and a half on cal_design between the 9th and the
+          11th of this month.
+    expect:
+      type: call
+      tool: find_availability
+      args:
+        calendar_id: cal_design
+        duration_minutes: 90
+        start_date: "2026-09-09"
+        end_date: "2026-09-11"
+    tags: [units]
+
+  - id: args-explicit-datetime
+    category: args
+    bundle: scheduling
+    messages:
+      - role: system
+        content: >
+          Today is 2026-09-07. The user is in America/New_York, which is at
+          UTC-04:00 on this date.
+      - role: user
+        content: >
+          Book 45 minutes on cal_main this Wednesday at 2pm with
+          omer@example.com and tal@example.com. Title it Design review.
+    expect:
+      type: call
+      tool: book_meeting
+      args: {calendar_id: cal_main, duration_minutes: 45, title: Design review}
+      arg_checks:
+        - {path: start_time, op: matches, value: "2026-09-09T14:00(:00)?-04:00"}
+        - {path: attendees.0, op: exists}
+        - {path: attendees.1, op: exists}
+    tags: [dates, arrays]
+
+  - id: args-boolean-from-instruction
+    category: args
+    bundle: scheduling
+    messages:
+      - role: user
+        content: Cancel meeting mtg_4471, and do not send anyone a notification.
+    expect:
+      type: call
+      tool: cancel_meeting
+      args: {meeting_id: mtg_4471, notify_attendees: false}
+    tags: [booleans]
+
+  - id: args-escalation-urgency
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          This is the fourth time I have asked and my wedding is Saturday.
+          I want to speak to a person right now.
+    expect:
+      type: call
+      tool: escalate_to_human
+      arg_checks:
+        - {path: summary, op: exists}
+        - {path: urgency, op: eq, value: high}
+    tags: [enum, inference]
+
+  # --- select -------------------------------------------------------------
+  - id: select-address-change
+    category: select
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          ORD-905512 has not shipped yet and I moved last weekend. I need it
+          going somewhere else.
+    expect:
+      type: call
+      tool: update_shipping_address
+      args: {order_id: ORD-905512}
+    tags: [near-miss]
+
+  - id: select-cancel-with-id
+    category: select
+    bundle: scheduling
+    messages:
+      - role: user
+        content: Drop meeting mtg_2210 from the calendar.
+    expect:
+      type: call
+      tool: cancel_meeting
+      args: {meeting_id: mtg_2210}
+    tags: [easy]
+
+  - id: select-availability-not-booking
+    category: select
+    bundle: scheduling
+    messages:
+      - role: system
+        content: Today is 2026-09-07.
+      - role: user
+        content: >
+          What thirty minute slots are open on cal_ops between the 14th and
+          the 18th? Do not book anything yet.
+    expect:
+      type: call
+      tool: find_availability
+      args:
+        calendar_id: cal_ops
+        duration_minutes: 30
+        start_date: "2026-09-14"
+        end_date: "2026-09-18"
+    tags: [ordering]
+
+  # --- depth --------------------------------------------------------------
+  - id: depth-corrected-identifier
+    category: depth
+    bundle: support
+    messages:
+      - role: user
+        content: Can you check on ORD-111111 for me?
+      - role: assistant
+        content: Sure, one moment.
+      - role: user
+        content: Sorry, wrong number. It is ORD-222222.
+    expect:
+      type: call
+      tool: get_order_status
+      args: {order_id: ORD-222222}
+    tags: [correction]
+
+  - id: depth-reason-stated-earlier
+    category: depth
+    bundle: support
+    messages:
+      - role: user
+        content: The blender on ORD-664200 arrived with a cracked jug.
+      - role: assistant
+        content: I am sorry about that. Would you like a replacement or a refund?
+      - role: user
+        content: A refund for the whole order, please.
+    expect:
+      type: call
+      tool: issue_refund
+      args: {order_id: ORD-664200, reason: damaged}
+      arg_checks:
+        - {path: amount_cents, op: absent}
+    tags: [coreference, omission]
+
+  # --- sequence -----------------------------------------------------------
+  - id: sequence-address-before-status
+    category: sequence
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          First change the delivery address on ORD-505050 to 9 Alon Street,
+          Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.
+    expect:
+      type: call
+      tool: update_shipping_address
+      args: {order_id: ORD-505050}
+      arg_checks:
+        - {path: address.country, op: eq, value: IL}
+    tags: [ordering]

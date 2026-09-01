@@ -17,7 +17,7 @@ from .client import ChatClient
 from .loader import load_suite
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text
-from .runner import run_suite
+from .runner import interrupted_run, run_suite
 
 DEFAULT_SUITE = Path(__file__).resolve().parents[2] / "suites" / "core"
 
@@ -42,6 +42,7 @@ def _run(args: argparse.Namespace) -> int:
     state = {"done": 0}
 
     def progress(result) -> None:
+        state.setdefault("partial", []).append(result)
         state["done"] += 1
         if not args.quiet:
             mark = "." if result.success else "x"
@@ -52,6 +53,9 @@ def _run(args: argparse.Namespace) -> int:
 
     try:
         run = run_suite(suite, client, config, on_result=progress)
+    except KeyboardInterrupt:
+        sys.stderr.write("\n\ninterrupted, reporting on what finished\n\n")
+        run = interrupted_run(config, state.get("partial", []))
     finally:
         client.close()
     if not args.quiet:
@@ -91,7 +95,7 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.add_argument("--pad", default="0,8,16")
     run_cmd.add_argument("--repeats", type=int, default=1)
     run_cmd.add_argument("--temperature", type=float, default=0.0)
-    run_cmd.add_argument("--max-tokens", type=int, default=512)
+    run_cmd.add_argument("--max-tokens", type=int, default=2048)
     run_cmd.add_argument("--quant", default=None, help="label only, e.g. q4_K_M")
     run_cmd.add_argument("--notes", default=None)
     run_cmd.add_argument("--out", default=None, help="write raw results as JSON")
