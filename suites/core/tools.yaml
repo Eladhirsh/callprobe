@@ -1,0 +1,143 @@
+bundles:
+  support:
+    - name: get_order_status
+      description: Look up the current status and delivery estimate for one order.
+      parameters:
+        type: object
+        properties:
+          order_id:
+            type: string
+            description: Order identifier, format ORD-000000.
+            pattern: "^ORD-[0-9]{6}$"
+        required: [order_id]
+        additionalProperties: false
+
+    - name: search_orders
+      description: >
+        Find orders for a customer when the order id is not known. Returns a
+        list of matching orders, newest first.
+      parameters:
+        type: object
+        properties:
+          email:
+            type: string
+            description: Customer email address.
+          status:
+            type: string
+            enum: [any, pending, shipped, delivered, cancelled]
+            default: any
+          limit:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+        required: [email]
+        additionalProperties: false
+
+    - name: issue_refund
+      description: >
+        Refund an order in whole or in part. Only use after confirming the
+        order exists and the customer asked for money back.
+      parameters:
+        type: object
+        properties:
+          order_id:
+            type: string
+            pattern: "^ORD-[0-9]{6}$"
+          amount_cents:
+            type: integer
+            minimum: 1
+            description: Amount to refund in cents. Omit to refund in full.
+          reason:
+            type: string
+            enum: [damaged, late, wrong_item, changed_mind, other]
+        required: [order_id, reason]
+        additionalProperties: false
+
+    - name: update_shipping_address
+      description: Change the delivery address on an order that has not shipped.
+      parameters:
+        type: object
+        properties:
+          order_id:
+            type: string
+            pattern: "^ORD-[0-9]{6}$"
+          address:
+            type: object
+            properties:
+              line1: {type: string}
+              line2: {type: string}
+              city: {type: string}
+              region: {type: string}
+              postal_code: {type: string}
+              country: {type: string, description: ISO 3166-1 alpha-2 code.}
+            required: [line1, city, postal_code, country]
+            additionalProperties: false
+        required: [order_id, address]
+        additionalProperties: false
+
+    - name: escalate_to_human
+      description: >
+        Hand the conversation to a human agent. Use only when the customer
+        explicitly asks for a person or the request is outside these tools.
+      parameters:
+        type: object
+        properties:
+          summary:
+            type: string
+            description: One or two sentences of context for the human agent.
+          urgency:
+            type: string
+            enum: [low, normal, high]
+            default: normal
+        required: [summary]
+        additionalProperties: false
+
+  scheduling:
+    - name: find_availability
+      description: Find open slots on a calendar within a date range.
+      parameters:
+        type: object
+        properties:
+          calendar_id: {type: string}
+          start_date:
+            type: string
+            description: Inclusive start date, YYYY-MM-DD.
+            pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          end_date:
+            type: string
+            pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          duration_minutes:
+            type: integer
+            minimum: 15
+            maximum: 480
+        required: [calendar_id, start_date, end_date, duration_minutes]
+        additionalProperties: false
+
+    - name: book_meeting
+      description: Book a meeting in a slot that is already known to be free.
+      parameters:
+        type: object
+        properties:
+          calendar_id: {type: string}
+          start_time:
+            type: string
+            description: ISO 8601 timestamp with timezone offset.
+          duration_minutes: {type: integer, minimum: 15}
+          attendees:
+            type: array
+            items: {type: string}
+            minItems: 1
+          title: {type: string}
+        required: [calendar_id, start_time, duration_minutes, attendees, title]
+        additionalProperties: false
+
+    - name: cancel_meeting
+      description: Cancel a meeting by its identifier.
+      parameters:
+        type: object
+        properties:
+          meeting_id: {type: string}
+          notify_attendees: {type: boolean, default: true}
+        required: [meeting_id]
+        additionalProperties: false

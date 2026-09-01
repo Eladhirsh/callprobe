@@ -1,0 +1,187 @@
+name: core
+# Twelve seed tasks. Each category exists because it fails for a different
+# reason. Grow each to roughly 30 before publishing any numbers.
+tasks:
+  # --- select: the obvious case, and the near-miss case -------------------
+  - id: select-status-direct
+    category: select
+    bundle: support
+    messages:
+      - role: user
+        content: Where is my order ORD-448120?
+    expect:
+      type: call
+      tool: get_order_status
+      args: {order_id: ORD-448120}
+    tags: [easy]
+
+  - id: select-search-not-status
+    category: select
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          I placed something last week and I can't find the confirmation.
+          My email is dana@example.com. Has it shipped?
+    expect:
+      type: call
+      tool: search_orders
+      args: {email: dana@example.com}
+    tags: [near-miss]
+    # The trap: get_order_status is the tempting answer but there is no id.
+
+  - id: select-escalate-explicit
+    category: select
+    bundle: support
+    messages:
+      - role: user
+        content: I want to talk to a real person about this, now.
+    expect:
+      type: call
+      tool: escalate_to_human
+      arg_checks:
+        - {path: summary, op: exists}
+    tags: [easy]
+
+  # --- abstain: no tool applies. Small models fail hardest here. ----------
+  - id: abstain-policy-question
+    category: abstain
+    bundle: support
+    messages:
+      - role: user
+        content: What is your return policy for opened electronics?
+    expect:
+      type: no_call
+    tags: [knowledge]
+
+  - id: abstain-missing-identifier
+    category: abstain
+    bundle: support
+    messages:
+      - role: user
+        content: Can you refund my order? It arrived broken.
+    expect:
+      type: no_call
+    tags: [underspecified]
+    # Correct behavior is to ask which order, not to invent an order id.
+
+  - id: abstain-chitchat
+    category: abstain
+    bundle: scheduling
+    messages:
+      - role: user
+        content: Thanks, that's all I needed. Have a good weekend.
+    expect:
+      type: no_call
+    tags: [easy]
+
+  # --- args: right tool, wrong values. The dangerous failure. -------------
+  - id: args-partial-refund
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          Order ORD-991003 came to $84.50 and one of the two mugs was cracked.
+          Refund me for just the broken one, they were the same price.
+    expect:
+      type: call
+      tool: issue_refund
+      args: {order_id: ORD-991003, reason: damaged}
+      arg_checks:
+        - {path: amount_cents, op: eq, value: 4225, note: half of 8450}
+    tags: [arithmetic]
+
+  - id: args-enum-mapping
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          I ordered a blue jacket on ORD-100200 and received a red one.
+          Please refund it.
+    expect:
+      type: call
+      tool: issue_refund
+      args: {order_id: ORD-100200, reason: wrong_item}
+    tags: [enum]
+
+  - id: args-nested-address
+    category: args
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          Please send ORD-772341 to my new place instead: 55 Riverside Drive,
+          apartment 12B, New York NY 10024, United States.
+    expect:
+      type: call
+      tool: update_shipping_address
+      args: {order_id: ORD-772341}
+      arg_checks:
+        - {path: address.postal_code, op: eq, value: "10024"}
+        - {path: address.country, op: eq, value: US}
+        - {path: address.city, op: eq, value: New York}
+        - {path: address.line1, op: contains, value: Riverside}
+    tags: [nested, normalization]
+
+  - id: args-relative-dates
+    category: args
+    bundle: scheduling
+    messages:
+      - role: system
+        content: Today is Monday, 2026-09-07. The user's timezone is America/New_York.
+      - role: user
+        content: Find me a free hour on my calendar cal_main sometime next week.
+    expect:
+      type: call
+      tool: find_availability
+      args: {calendar_id: cal_main, duration_minutes: 60}
+      arg_checks:
+        - {path: start_date, op: matches, value: "2026-09-1[2345]"}
+        - {path: end_date, op: matches, value: "2026-09-(1[89]|20)"}
+    tags: [dates]
+
+  # --- depth: accuracy on turn one says nothing about turn nine ----------
+  - id: depth-late-reference
+    category: depth
+    bundle: support
+    messages:
+      - role: user
+        content: Hi, I have a question about a delivery.
+      - role: assistant
+        content: Of course. Do you have the order number?
+      - role: user
+        content: It's ORD-330045.
+      - role: assistant
+        content: Thanks. What would you like to know about it?
+      - role: user
+        content: Actually first, is the tracking showing anything yet?
+      - role: assistant
+        content: Let me check that for you.
+      - role: user
+        content: Wait, before that, just confirm the status of that order.
+    expect:
+      type: call
+      tool: get_order_status
+      args: {order_id: ORD-330045}
+    tags: [coreference]
+
+  # --- sequence: the first call in a chain, not the last ------------------
+  - id: sequence-availability-first
+    category: sequence
+    bundle: scheduling
+    messages:
+      - role: system
+        content: Today is 2026-09-07.
+      - role: user
+        content: >
+          Book a 30 minute sync with priya@example.com on calendar cal_main
+          on the first free slot this Thursday. Call it Weekly sync.
+    expect:
+      type: call
+      tool: find_availability
+      also_acceptable: []
+      args: {calendar_id: cal_main, duration_minutes: 30}
+    tags: [ordering]
+    # book_meeting requires a slot known to be free, so calling it first is wrong.
