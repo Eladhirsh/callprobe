@@ -1,0 +1,43 @@
+model            qwen3:8b
+endpoint         http://localhost:11434/v1
+tasks scored     408   errors: 1   truncated: 1
+
+                 selection   schema     args      success
+  overall         92.9%   93.4%   88.7%   88.5%
+
+  tool count sweep
+    +0   distractors   success  89.2%   selection  95.1%   sd  1.4
+    +8   distractors   success  90.2%   selection  94.1%   sd  1.4
+    +16  distractors   success  86.3%   selection  89.2%   sd  5.0
+    +24  distractors   success  88.2%   selection  93.1%   sd  2.4
+
+  by category
+    abstain     88.6%  (n=132)
+    args        87.5%  (n=144)
+    depth       97.2%  (n=36)
+    select      86.1%  (n=72)
+    sequence    87.5%  (n=24)
+
+  cost per success   1563 tokens   19.11 s
+
+failures worth reading:
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called issue_refund when no tool applied
+  [args-country-name-to-iso pad=0] address.country eq 'GB', got 'UK'
+  [depth-reason-stated-earlier pad=0] amount_cents should not be present
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called get_order_status when no tool applied
+  [select-address-change pad=0] no tool call produced
+      said: The order has not shipped yet, so we can update the shipping address. Please provide your new address details so I can make the change.
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called issue_refund when no tool applied
+  [args-country-name-to-iso pad=0] address.country eq 'GB', got 'UK'
+  [select-address-change pad=0] no tool call produced
+      said: The order hasn't shipped yet, so I can update the shipping address. Could you please provide your new address details (street address, city, postal code, and co
+  [args-relative-dates pad=8] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=8] called issue_refund when no tool applied
+  [select-address-change pad=8] no tool call produced
+      said: I need your new shipping address details to update the delivery location for your order. Please provide your new address information so I can make the change.
+  [sequence-address-before-status pad=8] produced 2 calls; address.country eq 'IL', got 'Israel'
+
+wrote results/qwen3-8b.json
