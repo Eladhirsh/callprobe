@@ -196,3 +196,26 @@ def test_expected_args_satisfy_the_schema(suite):
 def test_every_category_has_tasks(suite):
     categories = {t.category for t in suite.tasks}
     assert categories == {"select", "abstain", "args", "depth", "sequence"}
+
+
+def test_stringified_arguments_fail_strict_but_pass_lenient(suite):
+    """llama3.1 returns every value as a string. Right answer, unusable call."""
+    result = run(suite, "args-partial-refund", body_with_call(
+        "issue_refund",
+        {"order_id": "ORD-991003", "reason": "damaged", "amount_cents": "4225"},
+    ))
+    assert not result.success
+    assert not result.schema_ok
+    assert result.success_lenient
+    assert result.type_coerced
+
+
+def test_wrong_value_is_not_rescued_by_coercion(suite):
+    # Coercion fixes types, never values.
+    result = run(suite, "args-partial-refund", body_with_call(
+        "issue_refund",
+        {"order_id": "ORD-991003", "reason": "damaged", "amount_cents": "8450"},
+    ))
+    assert not result.success
+    assert not result.success_lenient
+
