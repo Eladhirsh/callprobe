@@ -74,6 +74,12 @@ def summarize(run: Run) -> dict:
             "successes": successes,
         },
         "errors": sum(1 for r in results if r.error),
+        "lenient": {
+            "schema": _rate(results, "schema_ok_lenient"),
+            "args": _rate(results, "args_ok_lenient"),
+            "success": _rate(results, "success_lenient"),
+        },
+        "typing_only": sum(1 for r in results if r.success_lenient and not r.success),
         "truncated": sum(1 for r in results if r.truncated),
     }
 
@@ -97,6 +103,11 @@ def render_text(run: Run) -> str:
         + "  ".join(
             _pct(s["overall"][k]) for k in ("selection", "schema", "args", "success")
         ),
+        "  type-lenient   "
+        + "  ".join(
+            [_pct(s["overall"]["selection"])]
+            + [_pct(s["lenient"][k]) for k in ("schema", "args", "success")]
+        ),
         "",
         "  tool count sweep",
     ]
@@ -111,6 +122,12 @@ def render_text(run: Run) -> str:
     for name, row in s["by_category"].items():
         lines.append(f"    {name:<10} {_pct(row['success'])}  (n={row['n']})")
     lines.append("")
+    if s["typing_only"]:
+        share = s["typing_only"] / s["n"]
+        lines.append(
+            f"  {s['typing_only']} of {s['n']} calls ({share * 100:.1f}%) were correct but wrongly typed"
+        )
+        lines.append("")
     cost = s["cost"]
     if cost["successes"]:
         lines.append(

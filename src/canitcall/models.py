@@ -104,6 +104,11 @@ class TaskResult(BaseModel):
     args_ok: bool
     success: bool
 
+    schema_ok_lenient: bool = False
+    args_ok_lenient: bool = False
+    success_lenient: bool = False
+    type_coerced: bool = False
+
     called: str | None = None
     expected: str | None = None
     failures: list[str] = Field(default_factory=list)

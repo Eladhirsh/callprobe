@@ -1,15 +1,15 @@
-# toolprobe
+# canitcall
 
 Test whether a model can actually call **your** tools.
 
 Every local model claims tool calling support. Existing leaderboards test
-somebody else's function schemas. `toolprobe` points at any
+somebody else's function schemas. `canitcall` points at any
 OpenAI-compatible endpoint, runs your own tool definitions against it, and
 tells you where it breaks.
 
 ```bash
-pip install toolprobe
-toolprobe run --model qwen3:8b --endpoint http://localhost:11434/v1
+pip install canitcall
+canitcall run --model qwen3:8b --endpoint http://localhost:11434/v1
 ```
 
 ```
@@ -80,7 +80,7 @@ response contains no tool call, and a harness that does not check
 qwen3:8b over the same twelve tasks: 66.7% success at a 512 token budget,
 91.7% at 4096. Nothing about the model changed. Worse, the bias is
 strongest on the hardest tasks, because hard tasks think longer, so the
-measurement degrades exactly where it matters. `toolprobe` reports a
+measurement degrades exactly where it matters. `canitcall` reports a
 `truncated` count and names truncation as its own failure.
 
 **Padding that invalidates the task.** Adding irrelevant tools is how you
@@ -140,13 +140,13 @@ For a task where calling nothing is correct:
 
 ```bash
 # a single model
-toolprobe run --model llama3.1:8b --pad 0,8,16 --repeats 3 --out results/llama31-q4.json
+canitcall run --model llama3.1:8b --pad 0,8,16 --repeats 3 --out results/llama31-q4.json
 
 # any OpenAI-compatible endpoint
-toolprobe run --model gpt-4.1-mini --endpoint https://api.openai.com/v1 --api-key $OPENAI_API_KEY
+canitcall run --model gpt-4.1-mini --endpoint https://api.openai.com/v1 --api-key $OPENAI_API_KEY
 
 # build the comparison table
-toolprobe leaderboard results/*.json > LEADERBOARD.md
+canitcall leaderboard results/*.json > LEADERBOARD.md
 ```
 
 Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted

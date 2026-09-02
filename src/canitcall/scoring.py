@@ -19,6 +19,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 
+from .coerce import coerce_arguments
 from .models import ArgCheck, Bundle, Call, Task, TaskResult
 from .client import Completion
 
@@ -97,6 +98,30 @@ def pick_call(calls: list[Call], expected: str | None) -> Call | None:
     return calls[0]
 
 
+def _judge(arguments, tool, task):
+    failures = []
+    errors = sorted(
+        Draft202012Validator(tool.parameters).iter_errors(arguments),
+        key=lambda e: list(e.path),
+    )
+    for error in errors[:3]:
+        location = ".".join(str(p) for p in error.path) or "(root)"
+        failures.append(f"schema: {location}: {error.message}")
+    args_ok = True
+    for key, expected_value in task.expect.args.items():
+        actual = resolve(arguments, key)
+        if actual != expected_value:
+            args_ok = False
+            shown = "missing" if actual is MISSING else repr(actual)
+            failures.append(f"{key} expected {expected_value!r}, got {shown}")
+    for check in task.expect.arg_checks:
+        ok, message = apply_check(arguments, check)
+        if not ok:
+            args_ok = False
+            failures.append(message)
+    return (not errors, args_ok, failures)
+
+
 def score(
     task: Task,
     bundle: Bundle,
@@ -173,28 +198,24 @@ def score(
         result.failures.append(f"{call.name} is not a tool in this bundle")
         return result
 
-    errors = sorted(
-        Draft202012Validator(tool.parameters).iter_errors(call.arguments),
-        key=lambda e: list(e.path),
-    )
-    result.schema_ok = not errors
-    for error in errors[:3]:
-        location = ".".join(str(p) for p in error.path) or "(root)"
-        result.failures.append(f"schema: {location}: {error.message}")
-
-    args_ok = True
-    for key, expected_value in task.expect.args.items():
-        actual = resolve(call.arguments, key)
-        if actual != expected_value:
-            args_ok = False
-            shown = "missing" if actual is MISSING else repr(actual)
-            result.failures.append(f"{key} expected {expected_value!r}, got {shown}")
-    for check in task.expect.arg_checks:
-        ok, message = apply_check(call.arguments, check)
-        if not ok:
-            args_ok = False
-            result.failures.append(message)
+    schema_ok, args_ok, failures = _judge(call.arguments, tool, task)
+    result.schema_ok = schema_ok
     result.args_ok = args_ok
+    result.failures.extend(failures)
+    result.success = result.selection_ok and schema_ok and args_ok
 
-    result.success = result.selection_ok and result.schema_ok and result.args_ok
+    if result.success:
+        result.schema_ok_lenient = True
+        result.args_ok_lenient = True
+        result.success_lenient = True
+        return result
+
+    coerced, changed = coerce_arguments(call.arguments, tool.parameters)
+    result.type_coerced = changed
+    lenient_schema, lenient_args, _ = _judge(coerced, tool, task)
+    result.schema_ok_lenient = lenient_schema
+    result.args_ok_lenient = lenient_args
+    result.success_lenient = result.selection_ok and lenient_schema and lenient_args
+    if result.success_lenient and changed:
+        result.failures.append("passes once string values are cast to their schema types")
     return result
