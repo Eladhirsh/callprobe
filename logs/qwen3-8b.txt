@@ -1,14 +1,15 @@
 model            qwen3:8b
 endpoint         http://localhost:11434/v1
-tasks scored     408   errors: 1   truncated: 1
+tasks scored     408   errors: 1
 
                  selection   schema     args      success
-  overall         92.9%   93.4%   88.7%   88.5%
+  overall         93.1%   93.6%   89.0%   88.7%
+  type-lenient    93.1%   65.0%   60.3%   60.0%
 
   tool count sweep
     +0   distractors   success  89.2%   selection  95.1%   sd  1.4
     +8   distractors   success  90.2%   selection  94.1%   sd  1.4
-    +16  distractors   success  86.3%   selection  89.2%   sd  5.0
+    +16  distractors   success  87.3%   selection  90.2%   sd  5.5
     +24  distractors   success  88.2%   selection  93.1%   sd  2.4
 
   by category
@@ -16,9 +17,9 @@ tasks scored     408   errors: 1   truncated: 1
     args        87.5%  (n=144)
     depth       97.2%  (n=36)
     select      86.1%  (n=72)
-    sequence    87.5%  (n=24)
+    sequence    91.7%  (n=24)
 
-  cost per success   1563 tokens   19.11 s
+  cost per success   1553 tokens   15.33 s
 
 failures worth reading:
   [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'

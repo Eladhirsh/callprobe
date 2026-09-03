@@ -1,17 +1,18 @@
-sweeping 2 models | pads 0,8,16,24 | repeats 3
+sweeping 1 models | pads 0,8,16,24 | repeats 3
 
 === qwen3:8b ===
 model            qwen3:8b
 endpoint         http://localhost:11434/v1
-tasks scored     408   errors: 1   truncated: 1
+tasks scored     408   errors: 1
 
                  selection   schema     args      success
-  overall         92.9%   93.4%   88.7%   88.5%
+  overall         93.1%   93.6%   89.0%   88.7%
+  type-lenient    93.1%   65.0%   60.3%   60.0%
 
   tool count sweep
     +0   distractors   success  89.2%   selection  95.1%   sd  1.4
     +8   distractors   success  90.2%   selection  94.1%   sd  1.4
-    +16  distractors   success  86.3%   selection  89.2%   sd  5.0
+    +16  distractors   success  87.3%   selection  90.2%   sd  5.5
     +24  distractors   success  88.2%   selection  93.1%   sd  2.4
 
   by category
@@ -19,9 +20,9 @@ tasks scored     408   errors: 1   truncated: 1
     args        87.5%  (n=144)
     depth       97.2%  (n=36)
     select      86.1%  (n=72)
-    sequence    87.5%  (n=24)
+    sequence    91.7%  (n=24)
 
-  cost per success   1563 tokens   19.11 s
+  cost per success   1553 tokens   15.33 s
 
 failures worth reading:
   [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
@@ -45,51 +46,9 @@ failures worth reading:
 
 wrote results/qwen3-8b.json
 
-=== llama3.1:8b ===
-model            llama3.1:8b
-endpoint         http://localhost:11434/v1
-tasks scored     408
-
-                 selection   schema     args      success
-  overall         66.9%   33.6%   36.8%   32.1%
-
-  tool count sweep
-    +0   distractors   success  32.4%   selection  69.6%   sd  2.4
-    +8   distractors   success  29.4%   selection  66.7%   sd  2.4
-    +16  distractors   success  32.4%   selection  65.7%   sd  2.4
-    +24  distractors   success  34.3%   selection  65.7%   sd  1.4
-
-  by category
-    abstain      9.8%  (n=132)
-    args        29.9%  (n=144)
-    depth       66.7%  (n=36)
-    select      54.2%  (n=72)
-    sequence    50.0%  (n=24)
-
-  cost per success   3441 tokens   35.85 s
-
-failures worth reading:
-  [select-search-not-status pad=0] schema: limit: '10' is not of type 'integer'
-  [abstain-policy-question pad=0] called issue_refund when no tool applied
-  [abstain-missing-identifier pad=0] called issue_refund when no tool applied
-  [args-partial-refund pad=0] schema: amount_cents: '4250' is not of type 'integer'; amount_cents eq 4225, got '4250'
-  [args-relative-dates pad=0] schema: duration_minutes: '60' is not of type 'integer'; duration_minutes expected 60, got '60'
-  [sequence-availability-first pad=0] called book_meeting, expected find_availability; schema: attendees: '["priya@example.com"]' is not of type 'array'
-  [abstain-status-no-identifier pad=0] called get_order_status when no tool applied
-  [abstain-no-such-capability pad=0] called update_shipping_address when no tool applied
-  [abstain-change-email-on-file pad=0] called update_shipping_address when no tool applied
-  [abstain-shipping-quote pad=0] called search_orders when no tool applied
-  [abstain-availability-no-calendar pad=0] called find_availability when no tool applied
-  [abstain-reschedule-unsupported pad=0] called book_meeting when no tool applied
-  [abstain-cancel-without-id pad=0] called cancel_meeting when no tool applied
-  [args-full-refund-omits-amount pad=0] schema: amount_cents: '0' is not of type 'integer'; amount_cents should not be present
-  [args-dollars-to-cents pad=0] schema: amount_cents: '1299' is not of type 'integer'; amount_cents eq 1299, got '1299'
-
-wrote results/llama3.1-8b.json
-
 === leaderboard ===
 | model | quant | success | selection | schema | args | success @ +16 tools | tokens per success |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | llama3.1:8b | - | 32.1% | 66.9% | 33.6% | 36.8% | 32.4% | 3441 |
 | qwen3:8b | q4_K_M | 89.8% | 95.4% | 95.4% | 89.8% | 83.3% | 1534 |
-| qwen3:8b | - | 88.5% | 92.9% | 93.4% | 88.7% | 86.3% | 1563 |
+| qwen3:8b | - | 88.7% | 93.1% | 93.6% | 89.0% | 87.3% | 1553 |
