@@ -1,4 +1,4 @@
-| model | quant | success | selection | schema | args | success @ +16 tools | tokens per success |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| llama3.1:8b | - | 32.1% | 66.9% | 33.6% | 36.8% | 32.4% | 3441 |
-| qwen3:8b | - | 88.7% | 93.1% | 93.6% | 89.0% | 87.3% | 1553 |
+| model | success | type-lenient | selection | schema | args | abstain | success @ +24 tools | tokens per success |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| llama3.1:8b | 32.1% | 48.0% | 66.9% | 33.6% | 36.8% | 9.8% | 34.3% | 3441 |
+| qwen3:8b | 88.7% | 60.0% | 93.1% | 93.6% | 89.0% | 88.6% | 88.2% | 1553 |

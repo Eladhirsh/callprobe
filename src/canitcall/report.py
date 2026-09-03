@@ -142,20 +142,21 @@ def render_text(run: Run) -> str:
 def render_markdown(runs: list[Run]) -> str:
     """Leaderboard table across models. This is the artifact people link to."""
     header = (
-        "| model | quant | success | selection | schema | args | "
-        "success @ +16 tools | tokens per success |\n"
-        "| --- | --- | --- | --- | --- | --- | --- | --- |"
+        "| model | success | type-lenient | selection | schema | args | "
+        "abstain | success @ +24 tools | tokens per success |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"
     )
     rows = []
     for run in runs:
         s = summarize(run)
-        padded = s["by_pad"].get(16) or s["by_pad"].get(max(s["by_pad"], default=0))
+        padded = s["by_pad"].get(24) or s["by_pad"].get(max(s["by_pad"], default=0))
         tps = s["cost"]["tokens_per_success"]
         rows.append(
-            "| {model} | {quant} | {success} | {selection} | {schema} | {args} | "
-            "{padded} | {tps} |".format(
+            "| {model} | {success} | {lenient} | {selection} | {schema} | {args} | "
+            "{abstain} | {padded} | {tps} |".format(
                 model=s["model"],
-                quant=s["quantization"] or "-",
+                lenient=_pct(s["lenient"]["success"]).strip(),
+                abstain=_pct((s["by_category"].get("abstain") or {}).get("success", 0.0)).strip(),
                 success=_pct(s["overall"]["success"]).strip(),
                 selection=_pct(s["overall"]["selection"]).strip(),
                 schema=_pct(s["overall"]["schema"]).strip(),

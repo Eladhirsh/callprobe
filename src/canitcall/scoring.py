@@ -122,7 +122,7 @@ def _judge(arguments, tool, task):
     return (not errors, args_ok, failures)
 
 
-def score(
+def _score_inner(
     task: Task,
     bundle: Bundle,
     completion: Completion,
@@ -218,4 +218,18 @@ def score(
     result.success_lenient = result.selection_ok and lenient_schema and lenient_args
     if result.success_lenient and changed:
         result.failures.append("passes once string values are cast to their schema types")
+    return result
+
+
+def score(*args, **kwargs):
+    """Lenient can only ever rescue a strict failure, never create one.
+
+    The early returns above (correct abstention, no call produced,
+    truncation) never reach the coercion step, so mirror strict onto
+    lenient wherever lenient was not computed.
+    """
+    result = _score_inner(*args, **kwargs)
+    result.schema_ok_lenient = result.schema_ok_lenient or result.schema_ok
+    result.args_ok_lenient = result.args_ok_lenient or result.args_ok
+    result.success_lenient = result.success_lenient or result.success
     return result
