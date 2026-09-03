@@ -1,3 +1,99 @@
 sweeping 2 models | pads 0,8,16,24 | repeats 3
 
 === llama3.1:8b ===
+model            llama3.1:8b
+endpoint         http://localhost:11434/v1
+tasks scored     408
+
+                 selection   schema     args      success
+  overall         66.9%   33.6%   36.8%   32.1%
+  type-lenient    66.9%   58.8%   53.9%   51.2%
+
+  tool count sweep
+    +0   distractors   success  32.4%   selection  69.6%   sd  2.4
+    +8   distractors   success  29.4%   selection  66.7%   sd  2.4
+    +16  distractors   success  32.4%   selection  65.7%   sd  2.4
+    +24  distractors   success  34.3%   selection  65.7%   sd  1.4
+
+  by category
+    abstain      9.8%  (n=132)
+    args        29.9%  (n=144)
+    depth       66.7%  (n=36)
+    select      54.2%  (n=72)
+    sequence    50.0%  (n=24)
+
+  78 of 408 calls (19.1%) were correct but wrongly typed
+
+  cost per success   3441 tokens   12.19 s
+
+failures worth reading:
+  [select-search-not-status pad=0] schema: limit: '10' is not of type 'integer'; passes once string values are cast to their schema types
+  [abstain-policy-question pad=0] called issue_refund when no tool applied
+  [abstain-missing-identifier pad=0] called issue_refund when no tool applied
+  [args-partial-refund pad=0] schema: amount_cents: '4250' is not of type 'integer'; amount_cents eq 4225, got '4250'
+  [args-relative-dates pad=0] schema: duration_minutes: '60' is not of type 'integer'; duration_minutes expected 60, got '60'
+  [sequence-availability-first pad=0] called book_meeting, expected find_availability; schema: attendees: '["priya@example.com"]' is not of type 'array'
+  [abstain-status-no-identifier pad=0] called get_order_status when no tool applied
+  [abstain-no-such-capability pad=0] called update_shipping_address when no tool applied
+  [abstain-change-email-on-file pad=0] called update_shipping_address when no tool applied
+  [abstain-shipping-quote pad=0] called search_orders when no tool applied
+  [abstain-availability-no-calendar pad=0] called find_availability when no tool applied
+  [abstain-reschedule-unsupported pad=0] called book_meeting when no tool applied
+  [abstain-cancel-without-id pad=0] called cancel_meeting when no tool applied
+  [args-full-refund-omits-amount pad=0] schema: amount_cents: '0' is not of type 'integer'; amount_cents should not be present
+  [args-dollars-to-cents pad=0] schema: amount_cents: '1299' is not of type 'integer'; amount_cents eq 1299, got '1299'
+
+wrote results/llama3.1-8b.json
+
+=== qwen3:8b ===
+model            qwen3:8b
+endpoint         http://localhost:11434/v1
+tasks scored     408   truncated: 1
+
+                 selection   schema     args      success
+  overall         93.1%   93.6%   89.0%   88.7%
+  type-lenient    93.1%   93.6%   89.0%   88.7%
+
+  tool count sweep
+    +0   distractors   success  89.2%   selection  95.1%   sd  1.4
+    +8   distractors   success  90.2%   selection  94.1%   sd  1.4
+    +16  distractors   success  87.3%   selection  90.2%   sd  5.5
+    +24  distractors   success  88.2%   selection  93.1%   sd  2.4
+
+  by category
+    abstain     88.6%  (n=132)
+    args        87.5%  (n=144)
+    depth       97.2%  (n=36)
+    select      86.1%  (n=72)
+    sequence    91.7%  (n=24)
+
+  cost per success   1568 tokens   14.57 s
+
+failures worth reading:
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called issue_refund when no tool applied
+  [args-country-name-to-iso pad=0] address.country eq 'GB', got 'UK'
+  [depth-reason-stated-earlier pad=0] amount_cents should not be present
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called get_order_status when no tool applied
+  [select-address-change pad=0] no tool call produced
+      said: The order has not shipped yet, so we can update the shipping address. Please provide your new address details so I can make the change.
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called issue_refund when no tool applied
+  [args-country-name-to-iso pad=0] address.country eq 'GB', got 'UK'
+  [select-address-change pad=0] no tool call produced
+      said: The order hasn't shipped yet, so I can update the shipping address. Could you please provide your new address details (street address, city, postal code, and co
+  [args-relative-dates pad=8] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=8] called issue_refund when no tool applied
+  [select-address-change pad=8] no tool call produced
+      said: I need your new shipping address details to update the delivery location for your order. Please provide your new address information so I can make the change.
+  [sequence-address-before-status pad=8] produced 2 calls; address.country eq 'IL', got 'Israel'
+
+wrote results/qwen3-8b.json
+
+=== leaderboard ===
+| model | success | type-lenient | selection | schema | args | abstain | success @ +24 tools | tokens per success |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| llama3.1:8b | 32.1% | 51.2% | 66.9% | 33.6% | 36.8% | 9.8% | 34.3% | 3441 |
+| qwen3:8b | 89.8% | 0.0% | 95.4% | 95.4% | 89.8% | 81.5% | 83.3% | 1534 |
+| qwen3:8b | 88.7% | 88.7% | 93.1% | 93.6% | 89.0% | 88.6% | 88.2% | 1568 |
