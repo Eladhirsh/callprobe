@@ -1,8 +1,8 @@
 """Command line interface.
 
-    canitcall run --model qwen3:8b --endpoint http://localhost:11434/v1
-    canitcall run --model llama3.1:8b --pad 0,8,16 --repeats 3 --quant q4_K_M
-    canitcall leaderboard results/*.json > LEADERBOARD.md
+    callprobe run --model qwen3:8b --endpoint http://localhost:11434/v1
+    callprobe run --model llama3.1:8b --pad 0,8,16 --repeats 3 --quant q4_K_M
+    callprobe leaderboard results/*.json > LEADERBOARD.md
 """
 
 from __future__ import annotations
@@ -84,7 +84,7 @@ def _leaderboard(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="canitcall")
+    parser = argparse.ArgumentParser(prog="callprobe")
     sub = parser.add_subparsers(dest="command", required=True)
 
     run_cmd = sub.add_parser("run", help="score a model against a suite")

@@ -28,7 +28,7 @@ for model in "${MODELS[@]}"; do
     echo "  could not pull ${model}, skipping"
     continue
   fi
-  canitcall run \
+  callprobe run \
     --model "$model" \
     --pad "$PADS" \
     --repeats "$REPEATS" \
@@ -39,4 +39,4 @@ done
 
 echo
 echo "=== leaderboard ==="
-canitcall leaderboard results/*.json | tee LEADERBOARD.md
+callprobe leaderboard results/*.json | tee LEADERBOARD.md

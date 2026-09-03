@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "canitcall"
+name = "callprobe"
 version = "0.3.0"
 description = "Test whether a model can actually call your tools."
 readme = "README.md"
@@ -20,10 +20,10 @@ dependencies = [
 dev = ["pytest>=8.0"]
 
 [project.scripts]
-canitcall = "canitcall.cli:main"
+callprobe = "callprobe.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/canitcall"]
+packages = ["src/callprobe"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

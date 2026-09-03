@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from canitcall.client import parse_completion
-from canitcall.loader import load_suite
-from canitcall.runner import build_toolset
-from canitcall.scoring import score
+from callprobe.client import parse_completion
+from callprobe.loader import load_suite
+from callprobe.runner import build_toolset
+from callprobe.scoring import score
 
 SUITE = Path(__file__).resolve().parents[1] / "suites" / "core"
 
