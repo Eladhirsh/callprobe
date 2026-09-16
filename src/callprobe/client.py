@@ -8,6 +8,7 @@ or a hosted provider.
 from __future__ import annotations
 
 import json
+import random
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -15,6 +16,8 @@ from typing import Any
 import httpx
 
 from .models import Call
+
+DEFAULT_RETRIES = 3
 
 
 @dataclass
@@ -31,21 +34,38 @@ class Completion:
     raw: dict[str, Any] = field(default_factory=dict)
 
 
+def _is_retryable(status_code: int) -> bool:
+    return status_code == 429 or status_code >= 500
+
+
 class ChatClient:
     def __init__(
         self,
         endpoint: str,
         api_key: str | None = None,
         timeout: float = 120.0,
+        retries: int = DEFAULT_RETRIES,
+        transport: httpx.BaseTransport | None = None,
     ) -> None:
         self.endpoint = endpoint.rstrip("/")
         headers = {"Content-Type": "application/json"}
         if api_key:
             headers["Authorization"] = f"Bearer {api_key}"
-        self._client = httpx.Client(timeout=timeout, headers=headers)
+        self._client = httpx.Client(timeout=timeout, headers=headers, transport=transport)
+        self.retries = retries
 
     def close(self) -> None:
         self._client.close()
+
+    def _backoff(self, attempt: int, retry_after: str | None) -> float:
+        """Exponential backoff with full jitter, honoring Retry-After."""
+        if retry_after is not None:
+            try:
+                return max(0.0, float(retry_after))
+            except ValueError:
+                pass
+        ceiling = min(20.0, 0.5 * (2**attempt))
+        return random.uniform(0, ceiling)
 
     def complete(
         self,
@@ -66,20 +86,38 @@ class ChatClient:
             payload["tool_choice"] = "auto"
 
         started = time.perf_counter()
-        try:
-            response = self._client.post(
-                f"{self.endpoint}/chat/completions", json=payload
-            )
-            elapsed = (time.perf_counter() - started) * 1000
-            response.raise_for_status()
-            body = response.json()
-        except Exception as exc:  # noqa: BLE001 - reported, not raised
-            return Completion(
-                latency_ms=(time.perf_counter() - started) * 1000,
-                error=f"{type(exc).__name__}: {exc}",
-            )
+        attempts = self.retries + 1
+        for attempt in range(attempts):
+            last_attempt = attempt + 1 == attempts
+            try:
+                response = self._client.post(
+                    f"{self.endpoint}/chat/completions", json=payload
+                )
+            except httpx.TransportError as exc:
+                if last_attempt:
+                    return Completion(
+                        latency_ms=(time.perf_counter() - started) * 1000,
+                        error=f"{type(exc).__name__}: {exc}",
+                    )
+                time.sleep(self._backoff(attempt, None))
+                continue
 
-        return parse_completion(body, elapsed)
+            if _is_retryable(response.status_code) and not last_attempt:
+                time.sleep(self._backoff(attempt, response.headers.get("Retry-After")))
+                continue
+
+            try:
+                response.raise_for_status()
+                body = response.json()
+            except Exception as exc:  # noqa: BLE001 - reported, not raised
+                return Completion(
+                    latency_ms=(time.perf_counter() - started) * 1000,
+                    error=f"{type(exc).__name__}: {exc}",
+                )
+
+            return parse_completion(body, (time.perf_counter() - started) * 1000)
+
+        raise AssertionError("unreachable: loop always returns or retries")
 
 
 def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:

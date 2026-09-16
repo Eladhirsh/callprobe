@@ -51,7 +51,9 @@ def _run(args: argparse.Namespace) -> int:
         quantization=args.quant,
         notes=args.notes,
     )
-    client = ChatClient(args.endpoint, api_key=args.api_key or os.getenv("API_KEY"))
+    client = ChatClient(
+        args.endpoint, api_key=args.api_key or os.getenv("API_KEY"), retries=args.retries
+    )
 
     total = len(suite.tasks) * len(pads) * args.repeats
     state = {"done": 0}
@@ -119,6 +121,9 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.add_argument("--model", required=True)
     run_cmd.add_argument("--endpoint", default="http://localhost:11434/v1")
     run_cmd.add_argument("--api-key", default=None)
+    run_cmd.add_argument(
+        "--retries", type=int, default=3, help="retries on 429, 5xx, and connection errors"
+    )
     run_cmd.add_argument(
         "--suite", default=DEFAULT_SUITE, help="suite directory, defaults to the packaged core suite"
     )

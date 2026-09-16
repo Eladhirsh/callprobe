@@ -21,16 +21,20 @@ def _rate(results: list[TaskResult], field: str) -> float:
 
 def summarize(run: Run) -> dict:
     results = run.results
+    # A request error (timeout, 429, 5xx after retries) is a fact about the
+    # endpoint, not the model. It must not lower a success rate.
+    scored = [r for r in results if not r.error]
+    errors = len(results) - len(scored)
+
     by_pad: dict[int, list[TaskResult]] = defaultdict(list)
     by_category: dict[str, list[TaskResult]] = defaultdict(list)
-    by_depth_bucket: dict[str, list[TaskResult]] = defaultdict(list)
-    for r in results:
+    for r in scored:
         by_pad[r.pad].append(r)
         by_category[r.category].append(r)
 
-    successes = sum(1 for r in results if r.success)
-    tokens = sum(r.total_tokens for r in results)
-    wall_ms = sum(r.latency_ms for r in results)
+    successes = sum(1 for r in scored if r.success)
+    tokens = sum(r.total_tokens for r in scored)
+    wall_ms = sum(r.latency_ms for r in scored)
 
     # Variance across repeats: per pad level, the spread of run-level pass rates.
     spread: dict[int, float] = {}
@@ -45,12 +49,13 @@ def summarize(run: Run) -> dict:
         "model": run.config.model,
         "quantization": run.config.quantization,
         "endpoint": run.config.endpoint,
-        "n": len(results),
+        "n": len(scored),
+        "total_requests": len(results),
         "overall": {
-            "selection": _rate(results, "selection_ok"),
-            "schema": _rate(results, "schema_ok"),
-            "args": _rate(results, "args_ok"),
-            "success": _rate(results, "success"),
+            "selection": _rate(scored, "selection_ok"),
+            "schema": _rate(scored, "schema_ok"),
+            "args": _rate(scored, "args_ok"),
+            "success": _rate(scored, "success"),
         },
         "by_pad": {
             pad: {
@@ -73,14 +78,15 @@ def summarize(run: Run) -> dict:
             "total_tokens": tokens,
             "successes": successes,
         },
-        "errors": sum(1 for r in results if r.error),
+        "errors": errors,
+        "error_rate": (errors / len(results)) if results else 0.0,
         "lenient": {
-            "schema": _rate(results, "schema_ok_lenient"),
-            "args": _rate(results, "args_ok_lenient"),
-            "success": _rate(results, "success_lenient"),
+            "schema": _rate(scored, "schema_ok_lenient"),
+            "args": _rate(scored, "args_ok_lenient"),
+            "success": _rate(scored, "success_lenient"),
         },
-        "typing_only": sum(1 for r in results if r.success_lenient and not r.success),
-        "truncated": sum(1 for r in results if r.truncated),
+        "typing_only": sum(1 for r in scored if r.success_lenient and not r.success),
+        "truncated": sum(1 for r in scored if r.truncated),
     }
 
 
@@ -97,6 +103,13 @@ def render_text(run: Run) -> str:
         f"tasks scored     {s['n']}"
         + (f"   errors: {s['errors']}" if s["errors"] else "")
         + (f"   truncated: {s['truncated']}" if s["truncated"] else ""),
+    ]
+    if s["error_rate"] > 0.02:
+        lines.append(
+            f"  WARNING: {s['errors']} of {s['total_requests']} requests errored "
+            f"({s['error_rate'] * 100:.1f}%) and are excluded from every rate below"
+        )
+    lines += [
         "",
         "                 selection   schema     args      success",
         "  overall        "
@@ -173,7 +186,7 @@ def failure_digest(run: Run, limit: int = 15) -> str:
     lines = ["failures worth reading:"]
     shown = 0
     for r in run.results:
-        if r.success or not r.failures:
+        if r.success or not r.failures or r.error:
             continue
         lines.append(f"  [{r.task_id} pad={r.pad}] " + "; ".join(r.failures[:2]))
         if r.called is None and r.response_text:

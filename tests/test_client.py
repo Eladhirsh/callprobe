@@ -1,0 +1,91 @@
+import httpx
+import pytest
+
+from callprobe.client import ChatClient
+
+OK_BODY = {
+    "choices": [{"message": {"content": "hi"}}],
+    "usage": {"prompt_tokens": 1, "completion_tokens": 1},
+}
+
+
+def _client(handler, retries=3):
+    transport = httpx.MockTransport(handler)
+    client = ChatClient("http://fake/v1", transport=transport, retries=retries)
+    client._backoff = lambda attempt, retry_after: 0.0  # skip real sleeps in tests
+    return client
+
+
+def test_retries_on_500_then_succeeds():
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        if calls["n"] < 3:
+            return httpx.Response(500, json={"error": "boom"})
+        return httpx.Response(200, json=OK_BODY)
+
+    client = _client(handler)
+    completion = client.complete("m", [], [])
+    assert calls["n"] == 3
+    assert completion.error is None
+    assert completion.content == "hi"
+
+
+def test_retries_on_429_then_gives_up():
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        return httpx.Response(429, json={"error": "slow down"})
+
+    client = _client(handler, retries=2)
+    completion = client.complete("m", [], [])
+    assert calls["n"] == 3  # 1 initial attempt + 2 retries
+    assert completion.error is not None
+
+
+def test_does_not_retry_other_4xx():
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        return httpx.Response(400, json={"error": "bad request"})
+
+    client = _client(handler, retries=3)
+    completion = client.complete("m", [], [])
+    assert calls["n"] == 1
+    assert completion.error is not None
+
+
+def test_retries_on_connection_error():
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        if calls["n"] < 2:
+            raise httpx.ConnectError("refused", request=request)
+        return httpx.Response(200, json=OK_BODY)
+
+    client = _client(handler)
+    completion = client.complete("m", [], [])
+    assert calls["n"] == 2
+    assert completion.error is None
+
+
+def test_honors_retry_after_header():
+    seen = {}
+
+    def handler(request):
+        seen["n"] = seen.get("n", 0) + 1
+        if seen["n"] == 1:
+            return httpx.Response(429, headers={"Retry-After": "0"}, json={})
+        return httpx.Response(200, json=OK_BODY)
+
+    transport = httpx.MockTransport(handler)
+    client = ChatClient("http://fake/v1", transport=transport, retries=1)
+    waits = []
+    client._backoff = lambda attempt, retry_after: waits.append(retry_after) or 0.0
+    completion = client.complete("m", [], [])
+    assert completion.error is None
+    assert waits == ["0"]
