@@ -8,7 +8,7 @@ from callprobe.loader import load_suite
 from callprobe.runner import build_toolset
 from callprobe.scoring import score
 
-SUITE = Path(__file__).resolve().parents[1] / "suites" / "core"
+SUITE = Path(__file__).resolve().parents[1] / "src" / "callprobe" / "suites" / "core"
 
 
 @pytest.fixture(scope="module")

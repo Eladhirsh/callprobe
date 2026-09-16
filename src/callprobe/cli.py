@@ -2,12 +2,13 @@
 
     callprobe run --model qwen3:8b --endpoint http://localhost:11434/v1
     callprobe run --model llama3.1:8b --pad 0,8,16 --repeats 3 --quant q4_K_M
-    callprobe leaderboard results/*.json > LEADERBOARD.md
+    callprobe leaderboard results/qwen3-8b.json results/llama31-8b.json
 """
 
 from __future__ import annotations
 
 import argparse
+import importlib.resources
 import json
 import os
 import sys
@@ -19,16 +20,25 @@ from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text
 from .runner import interrupted_run, run_suite
 
-DEFAULT_SUITE = Path(__file__).resolve().parents[2] / "suites" / "core"
+# Sentinel meaning "use the suite packaged inside callprobe itself", resolved
+# lazily so a git checkout and a pip install both find suites/core.
+DEFAULT_SUITE = None
 
 
 def _run(args: argparse.Namespace) -> int:
-    suite = load_suite(args.suite)
+    if args.suite is None:
+        suite_path = importlib.resources.files("callprobe") / "suites" / "core"
+        suite_label = "callprobe/suites/core (packaged)"
+    else:
+        suite_path = args.suite
+        suite_label = args.suite
+    suite = load_suite(suite_path)
+
     pads = [int(p) for p in args.pad.split(",") if p.strip()]
     config = RunConfig(
         model=args.model,
         endpoint=args.endpoint,
-        suite=str(args.suite),
+        suite=suite_label,
         pads=pads,
         repeats=args.repeats,
         temperature=args.temperature,
@@ -91,7 +101,9 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.add_argument("--model", required=True)
     run_cmd.add_argument("--endpoint", default="http://localhost:11434/v1")
     run_cmd.add_argument("--api-key", default=None)
-    run_cmd.add_argument("--suite", default=str(DEFAULT_SUITE))
+    run_cmd.add_argument(
+        "--suite", default=DEFAULT_SUITE, help="suite directory, defaults to the packaged core suite"
+    )
     run_cmd.add_argument("--pad", default="0,8,16")
     run_cmd.add_argument("--repeats", type=int, default=1)
     run_cmd.add_argument("--temperature", type=float, default=0.0)

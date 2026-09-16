@@ -11,21 +11,27 @@ A suite directory looks like:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import yaml
 
 from .models import Bundle, Suite, Task, Tool
 
+# A suite root can be a real Path (a git checkout or --suite argument) or an
+# importlib.resources Traversable (the suite packaged inside the wheel).
+# Both support is_dir(), the / operator, and open(), so we duck type it.
+SuiteRoot = Any
 
-def _read(path: Path) -> dict:
-    if not path.exists():
+
+def _read(path: SuiteRoot) -> dict:
+    if not path.is_file():
         return {}
     with path.open("r", encoding="utf-8") as handle:
         return yaml.safe_load(handle) or {}
 
 
-def load_suite(directory: str | Path) -> Suite:
-    root = Path(directory)
+def load_suite(directory: str | SuiteRoot) -> Suite:
+    root = Path(directory) if isinstance(directory, str) else directory
     if not root.is_dir():
         raise FileNotFoundError(f"suite directory not found: {root}")
 
