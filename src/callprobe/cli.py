@@ -14,6 +14,7 @@ import os
 import sys
 from pathlib import Path
 
+from . import __version__
 from .client import ChatClient
 from .loader import load_suite
 from .models import Run, RunConfig
@@ -51,9 +52,8 @@ def _run(args: argparse.Namespace) -> int:
         quantization=args.quant,
         notes=args.notes,
     )
-    client = ChatClient(
-        args.endpoint, api_key=args.api_key or os.getenv("API_KEY"), retries=args.retries
-    )
+    api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
+    client = ChatClient(args.endpoint, api_key=api_key, retries=args.retries)
 
     total = len(suite.tasks) * len(pads) * args.repeats
     state = {"done": 0}
@@ -115,6 +115,9 @@ def _leaderboard(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="callprobe")
+    parser.add_argument(
+        "--version", action="version", version=f"callprobe {__version__}"
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     run_cmd = sub.add_parser("run", help="score a model against a suite")
