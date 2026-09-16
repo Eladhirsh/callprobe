@@ -517,3 +517,292 @@ tasks:
       arg_checks:
         - {path: address.country, op: eq, value: IL}
     tags: [ordering]
+
+  # =====================================================================
+  # Batch three. Grows depth and sequence, which were thin (3 and 2 task
+  # templates). Most of the new tasks live in a new files bundle so depth
+  # and sequence are not just support and scheduling in different words.
+  # Existing tasks above are untouched.
+  # =====================================================================
+
+  # --- depth: files bundle -------------------------------------------------
+  - id: depth-file-share-after-detour
+    category: depth
+    bundle: files
+    messages:
+      - role: user
+        content: I've got file_881020 open, it's the shared Q3 numbers.
+      - role: assistant
+        content: Sure, what would you like to do with it?
+      - role: user
+        content: Actually, remind me, what folder is that file even in?
+      - role: assistant
+        content: Let me pull that up for you.
+      - role: user
+        content: >
+          Never mind, forget the folder question. Just share the file with
+          dor@example.com so she can edit it.
+    expect:
+      type: call
+      tool: share_file
+      args: {file_id: file_881020, email: dor@example.com, role: editor}
+    tags: [coreference, distraction]
+    # The mid-conversation detour must not make the model lose file_881020.
+
+  - id: depth-file-corrected-id
+    category: depth
+    bundle: files
+    messages:
+      - role: user
+        content: Can you delete file_100001? It's a duplicate upload.
+      - role: assistant
+        content: Sure, one moment.
+      - role: user
+        content: Sorry, wrong id, I meant file_100002.
+    expect:
+      type: call
+      tool: delete_file
+      args: {file_id: file_100002}
+    tags: [correction]
+
+  - id: depth-file-permanent-carried-forward
+    category: depth
+    bundle: files
+    messages:
+      - role: user
+        content: >
+          file_552210 has last year's numbers in it by mistake, and I don't
+          want it sitting in the trash where someone could restore it.
+      - role: assistant
+        content: Understood. Would you like me to remove it now?
+      - role: user
+        content: Yes, get rid of it.
+    expect:
+      type: call
+      tool: delete_file
+      args: {file_id: file_552210, permanent: true}
+    tags: [omission, inference]
+    # "not sitting in the trash" stated two turns earlier has to survive
+    # into the permanent flag when the actual delete instruction lands.
+
+  - id: depth-file-move-after-distraction
+    category: depth
+    bundle: files
+    messages:
+      - role: user
+        content: I need to clean up file_330071, it's cluttering my main folder.
+      - role: assistant
+        content: What would you like to do with it?
+      - role: user
+        content: Hold on, first, does file_330071 have any editors on it right now?
+      - role: assistant
+        content: Let me check that.
+      - role: user
+        content: Actually skip that, just move it into folder_archive_2026.
+    expect:
+      type: call
+      tool: move_file
+      args: {file_id: file_330071, destination_folder_id: folder_archive_2026}
+    tags: [distraction]
+
+  # --- depth: scheduling bundle ---------------------------------------------
+  - id: depth-meeting-id-corrected
+    category: depth
+    bundle: scheduling
+    messages:
+      - role: user
+        content: Cancel meeting mtg_7734.
+      - role: assistant
+        content: Sure, one moment.
+      - role: user
+        content: Wait, that's the wrong one. I meant mtg_7735.
+    expect:
+      type: call
+      tool: cancel_meeting
+      args: {meeting_id: mtg_7735}
+    tags: [correction]
+
+  - id: depth-notify-preference-earlier
+    category: depth
+    bundle: scheduling
+    messages:
+      - role: user
+        content: >
+          Whatever I cancel today, please don't notify anyone, most of the
+          team is on vacation and it'll just clutter their inbox.
+      - role: assistant
+        content: Noted. What would you like to cancel?
+      - role: user
+        content: Cancel mtg_9012.
+    expect:
+      type: call
+      tool: cancel_meeting
+      args: {meeting_id: mtg_9012, notify_attendees: false}
+    tags: [omission, inference]
+
+  # --- depth: support bundle -------------------------------------------------
+  - id: depth-refund-amount-after-clarification
+    category: depth
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          One of the two lamps on ORD-340221 showed up broken, they were $30
+          each so a $60 order.
+      - role: assistant
+        content: >
+          I'm sorry to hear that. Do you want a refund for just the broken
+          lamp, or the whole order?
+      - role: user
+        content: Just the broken one.
+    expect:
+      type: call
+      tool: issue_refund
+      args: {order_id: ORD-340221, reason: damaged}
+      arg_checks:
+        - {path: amount_cents, op: eq, value: 3000, note: one lamp of two at $30 each}
+    tags: [arithmetic, coreference]
+
+  - id: depth-escalation-after-repeated-question
+    category: depth
+    bundle: support
+    messages:
+      - role: user
+        content: Where is ORD-660011?
+      - role: assistant
+        content: It's still processing and hasn't shipped yet.
+      - role: user
+        content: That's what you told me three days ago. I want to speak to someone.
+    expect:
+      type: call
+      tool: escalate_to_human
+      arg_checks:
+        - {path: summary, op: exists}
+    tags: [coreference]
+
+  # --- sequence: files bundle ----------------------------------------------
+  - id: sequence-search-before-move
+    category: sequence
+    bundle: files
+    messages:
+      - role: user
+        content: >
+          Move the quarterly report into folder_archive_2026, I don't have
+          the file id handy.
+    expect:
+      type: call
+      tool: search_files
+      arg_checks:
+        - {path: query, op: exists}
+    tags: [ordering]
+    # move_file needs a file_id, which is not known yet, so search comes first.
+
+  - id: sequence-list-before-delete
+    category: sequence
+    bundle: files
+    messages:
+      - role: user
+        content: >
+          Go through folder_temp_uploads and get rid of everything in it, I
+          don't remember what's in there.
+    expect:
+      type: call
+      tool: list_files
+      args: {folder_id: folder_temp_uploads}
+    tags: [ordering]
+    # delete_file takes one file id at a time, so the folder has to be
+    # listed before anything in it can be deleted.
+
+  - id: sequence-search-before-share
+    category: sequence
+    bundle: files
+    messages:
+      - role: user
+        content: >
+          Share the file named onboarding_checklist with maya@example.com as
+          a viewer, I don't know its id.
+    expect:
+      type: call
+      tool: search_files
+      arg_checks:
+        - {path: query, op: contains, value: onboarding}
+    tags: [ordering]
+
+  - id: sequence-list-before-share-all
+    category: sequence
+    bundle: files
+    messages:
+      - role: user
+        content: >
+          Everything in folder_bids_2026 needs to go to legal@example.com as
+          a viewer, I don't have individual file ids.
+    expect:
+      type: call
+      tool: list_files
+      args: {folder_id: folder_bids_2026}
+    tags: [ordering]
+
+  # --- sequence: scheduling bundle -------------------------------------------
+  - id: sequence-availability-before-checkin
+    category: sequence
+    bundle: scheduling
+    messages:
+      - role: system
+        content: Today is 2026-09-07.
+      - role: user
+        content: >
+          Set up a 20 minute check-in with dana@example.com sometime
+          tomorrow afternoon on cal_main, whatever's open.
+    expect:
+      type: call
+      tool: find_availability
+      args: {calendar_id: cal_main, duration_minutes: 20}
+    tags: [ordering]
+
+  - id: sequence-cancel-before-rebook
+    category: sequence
+    bundle: scheduling
+    messages:
+      - role: user
+        content: >
+          Cancel meeting mtg_1200, and then set up a new 30 minute slot on
+          cal_main whenever's free for priya@example.com and
+          omer@example.com.
+    expect:
+      type: call
+      tool: cancel_meeting
+      args: {meeting_id: mtg_1200}
+    tags: [ordering]
+    # Booking the replacement needs a free slot first anyway, but the
+    # user's own ordering already makes cancellation the correct first call.
+
+  # --- sequence: support bundle -----------------------------------------------
+  - id: sequence-search-before-refund
+    category: sequence
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          I don't have my order number, but refund the shampoo order for
+          noa@example.com, it leaked everywhere.
+    expect:
+      type: call
+      tool: search_orders
+      args: {email: noa@example.com}
+    tags: [ordering]
+
+  - id: sequence-status-before-conditional-escalation
+    category: sequence
+    bundle: support
+    messages:
+      - role: user
+        content: >
+          Check on ORD-770044 for me, and if it's still not moving after two
+          weeks like last time, get me a person.
+    expect:
+      type: call
+      tool: get_order_status
+      args: {order_id: ORD-770044}
+    tags: [ordering]
+    # Escalation is conditional on what the status check shows, so it
+    # cannot be the first call.

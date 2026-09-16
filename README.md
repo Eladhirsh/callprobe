@@ -245,12 +245,14 @@ any reasoning trace stripped, when it produced no call at all.
 
 ## Status
 
-The suite is 34 hand-written tasks: 6 select, 11 abstain, 12 args, 3 depth,
-2 sequence. Two models have full sweeps (see Results above and
-`LEADERBOARD.md`) — enough to see a real, large gap between models, not yet
-enough to call any single number final. `depth` and `sequence` are thin (2–3
-task templates each) and shouldn't be over-read; growing every category
-toward 30 is the current priority.
+The suite (version 2) is 50 hand-written tasks: 6 select, 11 abstain, 12
+args, 11 depth, 10 sequence, spread across three tool bundles (a support
+desk, a calendar, and a file manager). The two full sweeps in the Results
+table above and in `LEADERBOARD.md` predate this growth and were run
+against suite version 1 (34 tasks, no file bundle), so treat those numbers
+as provisional until they are rerun against version 2.
+`callprobe leaderboard` will refuse to mix results from the two suite
+versions in one table unless you pass `--allow-mixed`.
 
 Task expectations are validated by the test suite: every asserted argument
 key must exist in the tool's schema, and every asserted value must be legal

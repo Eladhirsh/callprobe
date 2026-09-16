@@ -142,3 +142,82 @@ bundles:
           notify_attendees: {type: boolean, default: true}
         required: [meeting_id]
         additionalProperties: false
+
+  files:
+    - name: list_files
+      description: List files in a folder, optionally filtered by type.
+      parameters:
+        type: object
+        properties:
+          folder_id: {type: string}
+          file_type:
+            type: string
+            enum: [any, document, spreadsheet, image, pdf]
+            default: any
+          limit: {type: integer, minimum: 1, maximum: 100, default: 20}
+        required: [folder_id]
+        additionalProperties: false
+
+    - name: search_files
+      description: >
+        Find files by name or content when the folder or file id is not
+        known. Searches across every folder.
+      parameters:
+        type: object
+        properties:
+          query: {type: string}
+          modified_after:
+            type: string
+            description: Only files changed on or after this date, YYYY-MM-DD.
+            pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          limit: {type: integer, minimum: 1, maximum: 100, default: 20}
+        required: [query]
+        additionalProperties: false
+
+    - name: move_file
+      description: Move a file into a different folder.
+      parameters:
+        type: object
+        properties:
+          file_id: {type: string}
+          destination_folder_id: {type: string}
+        required: [file_id, destination_folder_id]
+        additionalProperties: false
+
+    - name: rename_file
+      description: Rename a file, keeping it in its current folder.
+      parameters:
+        type: object
+        properties:
+          file_id: {type: string}
+          new_name: {type: string}
+        required: [file_id, new_name]
+        additionalProperties: false
+
+    - name: share_file
+      description: >
+        Grant a collaborator access to a file. Use only after confirming
+        which file and what level of access.
+      parameters:
+        type: object
+        properties:
+          file_id: {type: string}
+          email: {type: string}
+          role:
+            type: string
+            enum: [viewer, commenter, editor]
+            default: viewer
+        required: [file_id, email]
+        additionalProperties: false
+
+    - name: delete_file
+      description: >
+        Delete a file. It goes to trash and is recoverable unless permanent
+        is set.
+      parameters:
+        type: object
+        properties:
+          file_id: {type: string}
+          permanent: {type: boolean, default: false}
+        required: [file_id]
+        additionalProperties: false

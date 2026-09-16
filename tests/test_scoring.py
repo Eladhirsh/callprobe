@@ -61,7 +61,7 @@ def test_suite_loads(suite):
 
 def test_suite_has_version_and_hash(suite):
     assert suite.name == "core"
-    assert suite.version == 1
+    assert suite.version == 2
     assert len(suite.hash) == 16  # truncated sha256 hex digest
     assert suite.hash == load_suite(SUITE).hash  # deterministic
 
