@@ -16,6 +16,7 @@ from pathlib import Path
 
 from . import __version__
 from .client import ChatClient, probe_server_version
+from .compare import render_compare
 from .init import generate_suite_files
 from .loader import load_suite
 from .models import Run, RunConfig
@@ -158,6 +159,19 @@ def _init(args: argparse.Namespace) -> int:
     return 0
 
 
+def _compare(args: argparse.Namespace) -> int:
+    a = Run(**json.loads(Path(args.a).read_text(encoding="utf-8")))
+    b = Run(**json.loads(Path(args.b).read_text(encoding="utf-8")))
+    if a.config.suite_hash != b.config.suite_hash:
+        sys.stderr.write(
+            f"warning: suite hashes differ (a={a.config.suite_hash}, "
+            f"b={b.config.suite_hash}); some of this delta may be the suite "
+            "changing, not the model\n"
+        )
+    print(render_compare(a, b))
+    return 0
+
+
 def _leaderboard(args: argparse.Namespace) -> int:
     runs = []
     for path in args.results:
@@ -230,6 +244,13 @@ def main(argv: list[str] | None = None) -> int:
         "--suite", default=DEFAULT_SUITE, help="suite directory, defaults to the packaged core suite"
     )
     validate_cmd.set_defaults(func=_validate)
+
+    compare_cmd = sub.add_parser(
+        "compare", help="diff two runs: per-category deltas and which tasks flipped"
+    )
+    compare_cmd.add_argument("a")
+    compare_cmd.add_argument("b")
+    compare_cmd.set_defaults(func=_compare)
 
     board = sub.add_parser("leaderboard", help="build a markdown table from runs")
     board.add_argument("results", nargs="+")
