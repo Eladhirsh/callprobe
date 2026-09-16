@@ -154,6 +154,13 @@ def render_text(run: Run) -> str:
 
 def render_markdown(runs: list[Run]) -> str:
     """Leaderboard table across models. This is the artifact people link to."""
+    lines = []
+    versions = {(r.config.suite_name, r.config.suite_version) for r in runs}
+    if len(versions) == 1:
+        name, version = next(iter(versions))
+        if name and version:
+            lines.append(f"suite: {name} v{version}")
+            lines.append("")
     header = (
         "| model | success | type-lenient | selection | schema | args | "
         "abstain | success @ +24 tools | tokens per success |\n"
@@ -178,7 +185,7 @@ def render_markdown(runs: list[Run]) -> str:
                 tps=f"{tps:.0f}" if tps != float("inf") else "-",
             )
         )
-    return "\n".join([header, *rows])
+    return "\n".join([*lines, header, *rows])
 
 
 def failure_digest(run: Run, limit: int = 15) -> str:

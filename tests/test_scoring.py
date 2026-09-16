@@ -59,6 +59,13 @@ def test_suite_loads(suite):
     assert len(suite.distractors) >= 12
 
 
+def test_suite_has_version_and_hash(suite):
+    assert suite.name == "core"
+    assert suite.version == 1
+    assert len(suite.hash) == 16  # truncated sha256 hex digest
+    assert suite.hash == load_suite(SUITE).hash  # deterministic
+
+
 def test_correct_call_passes(suite):
     result = run(suite, "select-status-direct", body_with_call(
         "get_order_status", {"order_id": "ORD-448120"}))

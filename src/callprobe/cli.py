@@ -116,6 +116,18 @@ def _leaderboard(args: argparse.Namespace) -> int:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
         runs.append(Run(**data))
     runs.sort(key=lambda r: r.config.model)
+
+    keys = {(r.config.suite_version, r.config.suite_hash) for r in runs}
+    if len(keys) > 1 and not args.allow_mixed:
+        sys.stderr.write("these runs come from different suite versions or content:\n")
+        for r in runs:
+            sys.stderr.write(
+                f"  {r.config.model}: version={r.config.suite_version} "
+                f"hash={r.config.suite_hash}\n"
+            )
+        sys.stderr.write("pass --allow-mixed to build the table anyway\n")
+        return 1
+
     print(render_markdown(runs))
     return 0
 
@@ -157,6 +169,11 @@ def main(argv: list[str] | None = None) -> int:
 
     board = sub.add_parser("leaderboard", help="build a markdown table from runs")
     board.add_argument("results", nargs="+")
+    board.add_argument(
+        "--allow-mixed",
+        action="store_true",
+        help="build the table even if runs come from different suite versions or content",
+    )
     board.set_defaults(func=_leaderboard)
 
     args = parser.parse_args(argv)

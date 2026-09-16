@@ -3,9 +3,10 @@
 A suite directory looks like:
 
     suites/core/
-        tools.yaml        # named bundles of tools
-        distractors.yaml  # plausible but irrelevant tools used for padding
-        tasks.yaml        # the tasks themselves
+        suite.yaml         # name and version, optional
+        tools.yaml         # named bundles of tools
+        distractors.yaml   # plausible but irrelevant tools used for padding
+        tasks.yaml         # the tasks themselves
 """
 
 from __future__ import annotations
@@ -55,6 +56,8 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
     if not root.is_dir():
         raise FileNotFoundError(f"suite directory not found: {root}")
 
+    raw_suite = _read(root / "suite.yaml")
+
     raw_tools = _read(root / "tools.yaml")
     bundles: dict[str, Bundle] = {}
     for name, tools in (raw_tools.get("bundles") or {}).items():
@@ -93,7 +96,8 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
         tasks.append(task)
 
     return Suite(
-        name=raw_tasks.get("name") or root.name,
+        name=raw_suite.get("name") or raw_tasks.get("name") or root.name,
+        version=raw_suite.get("version") or 1,
         hash=_suite_hash(root),
         bundles=bundles,
         distractors=distractors,

@@ -1,9 +1,9 @@
 from callprobe.models import Run, RunConfig, TaskResult
-from callprobe.report import failure_digest, summarize
+from callprobe.report import failure_digest, render_markdown, summarize
 
 
-def _config():
-    return RunConfig(
+def _config(**kwargs):
+    base = dict(
         model="stub",
         endpoint="http://fake",
         suite="stub",
@@ -12,6 +12,8 @@ def _config():
         temperature=0.0,
         max_tokens=512,
     )
+    base.update(kwargs)
+    return RunConfig(**base)
 
 
 def _result(**kwargs):
@@ -78,3 +80,14 @@ def test_failure_digest_skips_errored_results():
     run = Run(config=_config(), started_at="now", results=results)
     digest = failure_digest(run)
     assert "none" in digest
+
+
+def test_markdown_shows_suite_version_when_runs_agree():
+    config = _config(suite_name="core", suite_version=1)
+    run = Run(config=config, started_at="now", results=[_result()])
+    assert "suite: core v1" in render_markdown([run])
+
+
+def test_markdown_omits_suite_line_when_unknown():
+    run = Run(config=_config(), started_at="now", results=[_result()])
+    assert "suite:" not in render_markdown([run])
