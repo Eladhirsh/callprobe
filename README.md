@@ -8,10 +8,7 @@ OpenAI-compatible endpoint, runs your own tool definitions against it, and
 tells you where it breaks.
 
 ```bash
-git clone https://github.com/Eladhirsh/callprobe.git
-cd callprobe
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+pipx install callprobe
 
 callprobe run --model qwen3:8b --endpoint http://localhost:11434/v1
 ```
@@ -251,6 +248,17 @@ Contributions most wanted, in order:
    tool schemas you use
 2. Runs against models not yet in the leaderboard
 3. Adapters for endpoints that deviate from the OpenAI shape
+
+## Development
+
+```bash
+git clone https://github.com/Eladhirsh/callprobe.git
+cd callprobe
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+
+pytest
+```
 
 ## License
 
