@@ -10,6 +10,7 @@ A suite directory looks like:
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -19,8 +20,12 @@ from .models import Bundle, Suite, Task, Tool
 
 # A suite root can be a real Path (a git checkout or --suite argument) or an
 # importlib.resources Traversable (the suite packaged inside the wheel).
-# Both support is_dir(), the / operator, and open(), so we duck type it.
+# Both support is_dir(), the / operator, open(), and read_bytes(), so we
+# duck type it.
 SuiteRoot = Any
+
+# Files whose contents determine whether two suites can be compared.
+SUITE_FILES = ("tools.yaml", "distractors.yaml", "tasks.yaml")
 
 
 def _read(path: SuiteRoot) -> dict:
@@ -28,6 +33,21 @@ def _read(path: SuiteRoot) -> dict:
         return {}
     with path.open("r", encoding="utf-8") as handle:
         return yaml.safe_load(handle) or {}
+
+
+def _suite_hash(root: SuiteRoot) -> str:
+    """A stable hash over the files that define a suite's content.
+
+    Used to catch mixing results from suites that have silently diverged
+    even when their version numbers agree.
+    """
+    digest = hashlib.sha256()
+    for name in SUITE_FILES:
+        path = root / name
+        content = path.read_bytes() if path.is_file() else b""
+        digest.update(len(content).to_bytes(8, "big"))
+        digest.update(content)
+    return digest.hexdigest()[:16]
 
 
 def load_suite(directory: str | SuiteRoot) -> Suite:
@@ -74,6 +94,7 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
 
     return Suite(
         name=raw_tasks.get("name") or root.name,
+        hash=_suite_hash(root),
         bundles=bundles,
         distractors=distractors,
         tasks=tasks,

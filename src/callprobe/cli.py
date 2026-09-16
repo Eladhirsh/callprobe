@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
-from .client import ChatClient
+from .client import ChatClient, probe_server_version
 from .loader import load_suite
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text
@@ -41,6 +41,7 @@ def _run(args: argparse.Namespace) -> int:
     suite, suite_label = _resolve_suite(args.suite)
 
     pads = [int(p) for p in args.pad.split(",") if p.strip()]
+    server_name, server_version = probe_server_version(args.endpoint)
     config = RunConfig(
         model=args.model,
         endpoint=args.endpoint,
@@ -51,6 +52,12 @@ def _run(args: argparse.Namespace) -> int:
         max_tokens=args.max_tokens,
         quantization=args.quant,
         notes=args.notes,
+        callprobe_version=__version__,
+        suite_name=suite.name,
+        suite_version=suite.version,
+        suite_hash=suite.hash,
+        server_name=server_name,
+        server_version=server_version,
     )
     api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     client = ChatClient(args.endpoint, api_key=api_key, retries=args.retries)

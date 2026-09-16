@@ -12,12 +12,30 @@ import random
 import time
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlsplit, urlunsplit
 
 import httpx
 
 from .models import Call
 
 DEFAULT_RETRIES = 3
+
+
+def probe_server_version(endpoint: str, timeout: float = 2.0) -> tuple[str | None, str | None]:
+    """Best-effort server identification, for provenance in RunConfig.
+
+    Only Ollama's /api/version is checked. Any other server, or no
+    response, leaves both fields null rather than guessing.
+    """
+    parts = urlsplit(endpoint)
+    root = urlunsplit((parts.scheme, parts.netloc, "", "", ""))
+    try:
+        response = httpx.get(f"{root}/api/version", timeout=timeout)
+        response.raise_for_status()
+        version = response.json().get("version")
+    except Exception:  # noqa: BLE001 - purely informational
+        return None, None
+    return ("ollama", version) if version else (None, None)
 
 
 @dataclass

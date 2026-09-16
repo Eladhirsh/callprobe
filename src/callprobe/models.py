@@ -80,6 +80,8 @@ class Bundle(BaseModel):
 
 class Suite(BaseModel):
     name: str
+    version: int = 1
+    hash: str = ""
     bundles: dict[str, Bundle]
     distractors: list[Tool] = Field(default_factory=list)
     tasks: list[Task] = Field(default_factory=list)
@@ -138,6 +140,14 @@ class RunConfig(BaseModel):
     max_tokens: int
     quantization: str | None = None
     notes: str | None = None
+    # Provenance, so a result file carries everything that could move its
+    # numbers. All optional with defaults so older result files still load.
+    callprobe_version: str | None = None
+    suite_name: str | None = None
+    suite_version: int | None = None
+    suite_hash: str | None = None
+    server_name: str | None = None
+    server_version: str | None = None
 
 
 class Run(BaseModel):
