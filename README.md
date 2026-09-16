@@ -104,7 +104,21 @@ real and should not be allowed to hide. Tasks can declare
 
 **Variance.** Tool calling is not deterministic even at temperature 0.
 `--repeats` runs each task more than once and reports a standard deviation,
-so you get a number with an error bar instead of a number.
+so you get a number with an error bar instead of a number. At temperature 0
+the repeats mostly aren't re-rolling the model's reasoning, they're
+re-rolling the shuffled order tools appear in, so the standard deviation you
+see per tool-count level is mostly a position-sensitivity measurement, not
+noise.
+
+Every success rate also gets a 95% bootstrap confidence interval, shown in
+the text report and as a column in the leaderboard table. The resampling
+unit is the task id, not the individual result: repeats of the same task
+are correlated with each other rather than independent trials, so
+resampling individual results would understate the real uncertainty. A
+category with only a couple of task templates will show a wide interval,
+sometimes a degenerate one, and that is the interval telling you honestly
+that there isn't enough data yet, which is also why growing the thin
+categories matters more than chasing a tighter number on the current ones.
 
 **Cost per success.** Tokens and seconds divided by *correct* calls. Raw
 latency flatters models that fail quickly, and rewards models that fail

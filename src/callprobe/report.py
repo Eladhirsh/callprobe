@@ -10,6 +10,7 @@ from __future__ import annotations
 import statistics
 from collections import defaultdict
 
+from .bootstrap import bootstrap_ci
 from .models import Run, TaskResult
 
 
@@ -56,6 +57,7 @@ def summarize(run: Run) -> dict:
             "schema": _rate(scored, "schema_ok"),
             "args": _rate(scored, "args_ok"),
             "success": _rate(scored, "success"),
+            "success_ci": bootstrap_ci(scored, "success"),
         },
         "by_pad": {
             pad: {
@@ -67,7 +69,11 @@ def summarize(run: Run) -> dict:
             for pad, group in sorted(by_pad.items())
         },
         "by_category": {
-            name: {"success": _rate(group, "success"), "n": len(group)}
+            name: {
+                "success": _rate(group, "success"),
+                "n": len(group),
+                "ci": bootstrap_ci(group, "success"),
+            }
             for name, group in sorted(by_category.items())
         },
         "cost": {
@@ -94,6 +100,11 @@ def _pct(value: float) -> str:
     return f"{value * 100:5.1f}%"
 
 
+def _ci(bounds: tuple[float, float]) -> str:
+    lo, hi = bounds
+    return f"{lo * 100:.1f}-{hi * 100:.1f}%"
+
+
 def render_text(run: Run) -> str:
     s = summarize(run)
     lines = [
@@ -115,7 +126,8 @@ def render_text(run: Run) -> str:
         "  overall        "
         + "  ".join(
             _pct(s["overall"][k]) for k in ("selection", "schema", "args", "success")
-        ),
+        )
+        + f"   (95% CI {_ci(s['overall']['success_ci'])})",
         "  type-lenient   "
         + "  ".join(
             [_pct(s["overall"]["selection"])]
@@ -133,7 +145,10 @@ def render_text(run: Run) -> str:
     lines.append("")
     lines.append("  by category")
     for name, row in s["by_category"].items():
-        lines.append(f"    {name:<10} {_pct(row['success'])}  (n={row['n']})")
+        lines.append(
+            f"    {name:<10} {_pct(row['success'])}  (n={row['n']}, "
+            f"95% CI {_ci(row['ci'])})"
+        )
     lines.append("")
     if s["typing_only"]:
         share = s["typing_only"] / s["n"]
@@ -162,9 +177,9 @@ def render_markdown(runs: list[Run]) -> str:
             lines.append(f"suite: {name} v{version}")
             lines.append("")
     header = (
-        "| model | success | type-lenient | selection | schema | args | "
+        "| model | success | 95% CI | type-lenient | selection | schema | args | "
         "abstain | success @ +24 tools | tokens per success |\n"
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
     )
     rows = []
     for run in runs:
@@ -172,12 +187,13 @@ def render_markdown(runs: list[Run]) -> str:
         padded = s["by_pad"].get(24) or s["by_pad"].get(max(s["by_pad"], default=0))
         tps = s["cost"]["tokens_per_success"]
         rows.append(
-            "| {model} | {success} | {lenient} | {selection} | {schema} | {args} | "
+            "| {model} | {success} | {ci} | {lenient} | {selection} | {schema} | {args} | "
             "{abstain} | {padded} | {tps} |".format(
                 model=s["model"],
                 lenient=_pct(s["lenient"]["success"]).strip(),
                 abstain=_pct((s["by_category"].get("abstain") or {}).get("success", 0.0)).strip(),
                 success=_pct(s["overall"]["success"]).strip(),
+                ci=_ci(s["overall"]["success_ci"]),
                 selection=_pct(s["overall"]["selection"]).strip(),
                 schema=_pct(s["overall"]["schema"]).strip(),
                 args=_pct(s["overall"]["args"]).strip(),
