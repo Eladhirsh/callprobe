@@ -16,6 +16,7 @@ from pathlib import Path
 
 from . import __version__
 from .client import ChatClient, probe_server_version
+from .init import generate_suite_files
 from .loader import load_suite
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text
@@ -110,6 +111,30 @@ def _validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _init(args: argparse.Namespace) -> int:
+    try:
+        data = json.loads(Path(args.from_file).read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        sys.stderr.write(f"error: {args.from_file} not found\n")
+        return 1
+
+    out = Path(args.out)
+    try:
+        files = generate_suite_files(data, out.name)
+    except ValueError as exc:
+        sys.stderr.write(f"error: {exc}\n")
+        return 1
+
+    out.mkdir(parents=True, exist_ok=True)
+    for filename, content in files.items():
+        (out / filename).write_text(content, encoding="utf-8")
+
+    print(f"wrote {len(files)} files to {out}/")
+    print("uncomment and fill in the example tasks in tasks.yaml, then run:")
+    print(f"  callprobe validate --suite {out}")
+    return 0
+
+
 def _leaderboard(args: argparse.Namespace) -> int:
     runs = []
     for path in args.results:
@@ -158,6 +183,15 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.add_argument("--out", default=None, help="write raw results as JSON")
     run_cmd.add_argument("--quiet", action="store_true")
     run_cmd.set_defaults(func=_run)
+
+    init_cmd = sub.add_parser(
+        "init", help="scaffold a suite from an OpenAI-format tools.json"
+    )
+    init_cmd.add_argument(
+        "--from", dest="from_file", required=True, help="path to a tools.json"
+    )
+    init_cmd.add_argument("--out", default="suite", help="directory to write the suite to")
+    init_cmd.set_defaults(func=_init)
 
     validate_cmd = sub.add_parser(
         "validate", help="check task expectations against tool schemas, no model needed"
