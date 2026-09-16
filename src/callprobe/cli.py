@@ -21,7 +21,7 @@ from .init import generate_suite_files
 from .loader import load_suite
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text, summarize
-from .runner import interrupted_run, run_suite
+from .runner import run_suite
 from .validate import validate_suite
 
 # Sentinel meaning "use the suite packaged inside callprobe itself", resolved
@@ -79,11 +79,24 @@ def _run(args: argparse.Namespace) -> int:
     api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     client = ChatClient(args.endpoint, api_key=api_key, retries=args.retries)
 
+    resume_run = None
+    if args.resume:
+        resume_path = Path(args.resume)
+        if resume_path.exists():
+            resume_run = Run(**json.loads(resume_path.read_text(encoding="utf-8")))
+            if (
+                resume_run.config.suite_hash
+                and suite.hash
+                and resume_run.config.suite_hash != suite.hash
+            ):
+                sys.stderr.write(
+                    "warning: --resume file's suite hash does not match this suite\n"
+                )
+
     total = len(suite.tasks) * len(pads) * args.repeats
     state = {"done": 0}
 
     def progress(result) -> None:
-        state.setdefault("partial", []).append(result)
         state["done"] += 1
         if not args.quiet:
             mark = "." if result.success else "x"
@@ -92,11 +105,22 @@ def _run(args: argparse.Namespace) -> int:
                 sys.stderr.write(f" {state['done']}/{total}\n")
             sys.stderr.flush()
 
+    def write_partial(partial_run: Run) -> None:
+        if args.out:
+            out = Path(args.out)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(partial_run.model_dump_json(indent=2), encoding="utf-8")
+
     try:
-        run = run_suite(suite, client, config, on_result=progress)
-    except KeyboardInterrupt:
-        sys.stderr.write("\n\ninterrupted, reporting on what finished\n\n")
-        run = interrupted_run(config, state.get("partial", []))
+        run = run_suite(
+            suite,
+            client,
+            config,
+            on_result=progress,
+            on_progress=write_partial if args.out else None,
+            concurrency=args.concurrency,
+            resume=resume_run,
+        )
     finally:
         client.close()
     if not args.quiet:
@@ -225,6 +249,14 @@ def main(argv: list[str] | None = None) -> int:
         type=float,
         default=None,
         help="exit 1 if overall success is below this fraction, e.g. 0.7",
+    )
+    run_cmd.add_argument(
+        "--concurrency", type=int, default=1, help="parallel requests via a thread pool"
+    )
+    run_cmd.add_argument(
+        "--resume",
+        default=None,
+        help="skip (task, pad, repeat) combinations already in this results file",
     )
     run_cmd.set_defaults(func=_run)
 

@@ -234,6 +234,21 @@ Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted
 providers. `--quant` is a free-text label so quantizations of the same
 model stay distinguishable in the leaderboard.
 
+`--concurrency N` runs requests through a thread pool instead of one at a
+time. The output file's result order stays the same either way. With
+`--out`, results are written to disk after every completed request, and
+`--resume PATH` skips any (task, pad, repeat) combination already in that
+file, so a run that died partway (or was stopped with Ctrl-C, which still
+produces a report from whatever finished) can pick back up without paying
+for work already done:
+
+```bash
+callprobe run --model llama3.1:8b --concurrency 4 --out results/run.json
+# if it dies partway through, or you stop it:
+callprobe run --model llama3.1:8b --concurrency 4 \
+  --resume results/run.json --out results/run.json
+```
+
 ## CI mode
 
 `--format json` prints the summary (the same numbers as the text report)
