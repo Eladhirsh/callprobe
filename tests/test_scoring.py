@@ -160,36 +160,14 @@ def test_padding_adds_distractors_without_removing_real_tools(suite):
     assert len(payload) == len(suite.bundles["support"].tools) + 8
 
 
-def test_expected_args_reference_real_schema_keys(suite):
-    """A typo in an expectation silently fails every model. Catch it here."""
-    problems = []
-    for task in suite.tasks:
-        if task.expect.type != "call":
-            continue
-        tool = suite.bundles[task.bundle].by_name(task.expect.tool)
-        properties = (tool.parameters or {}).get("properties", {})
-        for key in task.expect.args:
-            if key.split(".")[0] not in properties:
-                problems.append(f"{task.id}: args key {key}")
-        for check in task.expect.arg_checks:
-            if check.path.split(".")[0] not in properties:
-                problems.append(f"{task.id}: check path {check.path}")
-    assert not problems, problems
+def test_suite_validates(suite):
+    """A typo in an expectation silently fails every model. Catch it here.
 
+    Also checks that asserted values are themselves legal for the schema.
+    """
+    from callprobe.validate import validate_suite
 
-def test_expected_args_satisfy_the_schema(suite):
-    """The values we assert must themselves be legal for the tool."""
-    from jsonschema import Draft202012Validator
-
-    problems = []
-    for task in suite.tasks:
-        if task.expect.type != "call" or not task.expect.args:
-            continue
-        tool = suite.bundles[task.bundle].by_name(task.expect.tool)
-        schema = dict(tool.parameters or {})
-        schema.pop("required", None)  # partial expectations are fine
-        errors = list(Draft202012Validator(schema).iter_errors(task.expect.args))
-        problems += [f"{task.id}: {e.message}" for e in errors]
+    problems = validate_suite(suite)
     assert not problems, problems
 
 

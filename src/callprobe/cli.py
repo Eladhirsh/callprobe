@@ -19,20 +19,25 @@ from .loader import load_suite
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text
 from .runner import interrupted_run, run_suite
+from .validate import validate_suite
 
 # Sentinel meaning "use the suite packaged inside callprobe itself", resolved
 # lazily so a git checkout and a pip install both find suites/core.
 DEFAULT_SUITE = None
 
 
-def _run(args: argparse.Namespace) -> int:
-    if args.suite is None:
+def _resolve_suite(suite_arg: str | None):
+    if suite_arg is None:
         suite_path = importlib.resources.files("callprobe") / "suites" / "core"
         suite_label = "callprobe/suites/core (packaged)"
     else:
-        suite_path = args.suite
-        suite_label = args.suite
-    suite = load_suite(suite_path)
+        suite_path = suite_arg
+        suite_label = suite_arg
+    return load_suite(suite_path), suite_label
+
+
+def _run(args: argparse.Namespace) -> int:
+    suite, suite_label = _resolve_suite(args.suite)
 
     pads = [int(p) for p in args.pad.split(",") if p.strip()]
     config = RunConfig(
@@ -83,6 +88,19 @@ def _run(args: argparse.Namespace) -> int:
     return 0
 
 
+def _validate(args: argparse.Namespace) -> int:
+    suite, suite_label = _resolve_suite(args.suite)
+    problems = validate_suite(suite)
+    print(f"suite: {suite_label}  ({len(suite.tasks)} tasks)")
+    for problem in problems:
+        print(f"  {problem}")
+    if problems:
+        print(f"\n{len(problems)} problem(s)")
+        return 1
+    print("no problems found")
+    return 0
+
+
 def _leaderboard(args: argparse.Namespace) -> int:
     runs = []
     for path in args.results:
@@ -113,6 +131,14 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.add_argument("--out", default=None, help="write raw results as JSON")
     run_cmd.add_argument("--quiet", action="store_true")
     run_cmd.set_defaults(func=_run)
+
+    validate_cmd = sub.add_parser(
+        "validate", help="check task expectations against tool schemas, no model needed"
+    )
+    validate_cmd.add_argument(
+        "--suite", default=DEFAULT_SUITE, help="suite directory, defaults to the packaged core suite"
+    )
+    validate_cmd.set_defaults(func=_validate)
 
     board = sub.add_parser("leaderboard", help="build a markdown table from runs")
     board.add_argument("results", nargs="+")
