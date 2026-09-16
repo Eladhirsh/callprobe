@@ -1,0 +1,61 @@
+name: 'callprobe'
+description: 'Score a model on your own tool-calling suite and fail CI below a threshold.'
+inputs:
+  model:
+    description: 'Model name or tag to test'
+    required: true
+  endpoint:
+    description: 'OpenAI-compatible chat completions endpoint'
+    required: false
+    default: 'http://localhost:11434/v1'
+  suite:
+    description: 'Path to a suite directory. Defaults to the packaged core suite.'
+    required: false
+    default: ''
+  api-key:
+    description: 'API key for the endpoint, if it needs one'
+    required: false
+    default: ''
+  fail-under:
+    description: 'Exit with a failure if overall success falls below this fraction, e.g. 0.7'
+    required: false
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install callprobe
+      shell: bash
+      run: pip install callprobe
+
+    - name: Run callprobe
+      shell: bash
+      run: |
+        set -o pipefail
+        args=(run --model "${{ inputs.model }}" --endpoint "${{ inputs.endpoint }}" \
+          --format json --out callprobe-results.json)
+        if [ -n "${{ inputs.suite }}" ]; then
+          args+=(--suite "${{ inputs.suite }}")
+        fi
+        if [ -n "${{ inputs.api-key }}" ]; then
+          args+=(--api-key "${{ inputs.api-key }}")
+        fi
+        if [ -n "${{ inputs.fail-under }}" ]; then
+          args+=(--fail-under "${{ inputs.fail-under }}")
+        fi
+        callprobe "${args[@]}" | tee callprobe-summary.json
+
+    - name: Write step summary
+      if: always()
+      shell: bash
+      run: |
+        {
+          echo "## callprobe: ${{ inputs.model }}"
+          echo '```json'
+          cat callprobe-summary.json
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"

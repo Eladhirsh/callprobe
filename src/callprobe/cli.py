@@ -19,7 +19,7 @@ from .client import ChatClient, probe_server_version
 from .init import generate_suite_files
 from .loader import load_suite
 from .models import Run, RunConfig
-from .report import failure_digest, render_markdown, render_text
+from .report import failure_digest, render_markdown, render_text, summarize
 from .runner import interrupted_run, run_suite
 from .validate import validate_suite
 
@@ -36,6 +36,21 @@ def _resolve_suite(suite_arg: str | None):
         suite_path = suite_arg
         suite_label = suite_arg
     return load_suite(suite_path), suite_label
+
+
+def _json_safe(value):
+    """inf shows up as tokens/seconds per success with no successes.
+
+    json.dumps emits it as a bare Infinity token, which is not valid JSON
+    per the spec and trips up strict parsers like jq. Map it to null.
+    """
+    if isinstance(value, float) and (value != value or value in (float("inf"), float("-inf"))):
+        return None
+    if isinstance(value, dict):
+        return {k: _json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(v) for v in value]
+    return value
 
 
 def _run(args: argparse.Namespace) -> int:
@@ -86,15 +101,23 @@ def _run(args: argparse.Namespace) -> int:
     if not args.quiet:
         sys.stderr.write("\n\n")
 
-    print(render_text(run))
-    print()
-    print(failure_digest(run))
+    summary = summarize(run)
+    if args.format == "json":
+        print(json.dumps(_json_safe(summary), indent=2))
+    else:
+        print(render_text(run))
+        print()
+        print(failure_digest(run))
 
     if args.out:
         out = Path(args.out)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(run.model_dump_json(indent=2), encoding="utf-8")
-        print(f"\nwrote {out}")
+        if args.format != "json":
+            print(f"\nwrote {out}")
+
+    if args.fail_under is not None and summary["overall"]["success"] < args.fail_under:
+        return 1
     return 0
 
 
@@ -182,6 +205,13 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.add_argument("--notes", default=None)
     run_cmd.add_argument("--out", default=None, help="write raw results as JSON")
     run_cmd.add_argument("--quiet", action="store_true")
+    run_cmd.add_argument("--format", choices=["text", "json"], default="text")
+    run_cmd.add_argument(
+        "--fail-under",
+        type=float,
+        default=None,
+        help="exit 1 if overall success is below this fraction, e.g. 0.7",
+    )
     run_cmd.set_defaults(func=_run)
 
     init_cmd = sub.add_parser(

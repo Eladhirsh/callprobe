@@ -234,6 +234,30 @@ Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted
 providers. `--quant` is a free-text label so quantizations of the same
 model stay distinguishable in the leaderboard.
 
+## CI mode
+
+`--format json` prints the summary (the same numbers as the text report)
+as machine-readable JSON instead, and `--fail-under FLOAT` exits 1 when
+overall success falls below that fraction:
+
+```bash
+callprobe run --model llama3.1:8b --format json --fail-under 0.7
+```
+
+`action.yml` at the repo root wraps this as a composite GitHub Action:
+
+```yaml
+- uses: Eladhirsh/callprobe@v0.4.0
+  with:
+    model: llama3.1:8b
+    endpoint: http://localhost:11434/v1
+    fail-under: '0.7'
+```
+
+It installs callprobe, runs it, and writes the JSON summary to the job's
+step summary. `suite` and `api-key` inputs are optional; leave `suite`
+unset to use the packaged core suite.
+
 ## The failure digest
 
 Every run ends with the specific failures, not just the rates. These are
