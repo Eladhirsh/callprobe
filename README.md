@@ -9,6 +9,7 @@ tells you where it breaks.
 
 ```bash
 pipx install callprobe
+callprobe --version
 
 callprobe run --model qwen3:8b --endpoint http://localhost:11434/v1
 ```
@@ -42,6 +43,8 @@ That is a real run: 34 tasks, 4 tool-count levels, 3 repeats, 408 requests
 against qwen3:8b. Full results for every model tested are in
 [`LEADERBOARD.md`](LEADERBOARD.md) and the raw per-task JSON in `results/`.
 
+<!-- TODO: terminal recording of a run here -->
+
 ## Results so far
 
 | model | success | type-lenient | abstain | tokens/success |
@@ -49,25 +52,27 @@ against qwen3:8b. Full results for every model tested are in
 | qwen3:8b | 88.7% | 88.7% | 88.6% | 1568 |
 | llama3.1:8b | 32.1% | 51.2% | 9.8% | 3441 |
 
+<!-- TODO: chart image here, e.g. the tool-count curve across models -->
+
 Two findings worth reading past the ranking:
 
 **Abstention is the gap that costs money.** Asked eleven questions with no
 correct tool to call, qwen3:8b declined correctly 88.6% of the time.
-llama3.1:8b declined correctly 9.8% of the time — asked about a return
+llama3.1:8b declined correctly 9.8% of the time. Asked about a return
 policy, it called `issue_refund`; asked to change an email address, it
 called `update_shipping_address`. Nine times in ten it acted when it should
 have asked a question. That is the failure mode that reaches production,
 and almost no existing benchmark measures it.
 
 **Type coercion masks a real capability.** 19.1% of llama3.1:8b's calls
-were computed correctly and serialized wrong — `"1299"` instead of `1299`,
+were computed correctly and serialized wrong: `"1299"` instead of `1299`,
 an array delivered as a JSON-encoded string. Score those leniently (cast
 strings to the type the schema declares, never touch the value) and success
 jumps from 32.1% to 51.2%. Roughly half of what looks like a reasoning
 failure is a formatting bug in the serving layer, not the model being
 unable to do the task. `callprobe` reports both numbers so you can tell
-which one you're looking at — see `type-lenient` in the output above and
-the full row in the table.
+which one you're looking at (see `type-lenient` in the output above and
+the full row in the table).
 
 ## Why three scores instead of one
 
@@ -84,7 +89,7 @@ people currently run. That is the failure that reaches production.
 
 Alongside strict scoring, every result also gets a **lenient** pass: string
 values are cast to the type the schema declares (`"10"` → `10`), then
-rescored. Lenient can only rescue a strict failure, never create one — the
+rescored. Lenient can only rescue a strict failure, never create one. The
 gap between the two numbers tells you how much of a model's failure is
 serialization rather than reasoning.
 
@@ -92,7 +97,7 @@ serialization rather than reasoning.
 
 **Abstention.** Roughly a third of the suite is tasks where the correct
 behavior is to call nothing and ask a question. Models vary enormously here
-— see Results above — and almost nobody tests it.
+(see Results above), and almost nobody tests it.
 
 **Tool count.** Accuracy with 5 tools tells you little about accuracy with
 25. `--pad` adds plausible but irrelevant tools from a distractor pool and
@@ -126,6 +131,25 @@ cheaply over models that succeed expensively. In the table above,
 llama3.1:8b is faster per request but costs more than twice as much per
 usable call.
 
+## callprobe vs. the Berkeley Function Calling Leaderboard
+
+[BFCL](https://gorilla.cs.berkeley.edu/leaderboard.html) is the standard
+reference for tool-calling benchmarks, and it does two things `callprobe`
+does not try to: scale (thousands of examples across many languages and
+call styles) and model coverage (a maintained public leaderboard with
+broad submissions, updated as new models ship). If you want to know how a
+model ranks against the field on a shared, independent benchmark, BFCL is
+the better source.
+
+`callprobe` is a different tool for a different question: not "how does
+this model rank," but "does this model reliably call *my* tools." That
+shows up in what it measures that BFCL does not: your own tool schemas
+instead of a fixed public set, abstention as a first-class category, a
+tool-count curve that shows where a model's accuracy actually falls apart
+as you add tools, cost per success instead of raw latency, and lenient
+type scoring that separates a serialization bug from a reasoning failure.
+Run both. They answer different questions.
+
 ## Why your tool-calling numbers are probably wrong
 
 Four ways a tool-calling evaluation lies to you. All four were caught by
@@ -142,7 +166,7 @@ strongest on the hardest tasks, because hard tasks think longer, so the
 measurement degrades exactly where it matters. `callprobe` reports a
 `truncated` count and names truncation as its own failure.
 
-**Type coercion masks correct reasoning.** Covered above — 19.1% of one
+**Type coercion masks correct reasoning.** Covered above: 19.1% of one
 model's failures were formatting, not reasoning. Reported separately as a
 `type-lenient` score rather than silently folded into either number.
 
@@ -160,7 +184,7 @@ you will misattribute to the model.
 
 The general lesson: at small suite sizes, a tool-calling benchmark measures
 its author as much as the model. That is why the failure digest prints what
-actually happened, not just a rate — the failures worth reading first are
+actually happened, not just a rate. The failures worth reading first are
 usually your own.
 
 ## Bring your own tools
@@ -202,6 +226,27 @@ For a task where calling nothing is correct:
 Add `exclude_distractors: [tool_name]` to a task if padding could hand the
 model a tool that would make the expected answer wrong.
 
+Already have your tools as an OpenAI-format `tools.json`? Scaffold a suite
+from it instead of writing `tools.yaml` by hand:
+
+```bash
+callprobe init --from tools.json --out my-suite
+```
+
+This writes `tools.yaml`, an empty `distractors.yaml`, `suite.yaml`, and a
+`tasks.yaml` with one commented example call task per tool and a `no_call`
+stub, ready to uncomment and fill in.
+
+Once you have tasks, check them before spending a single token on a model:
+
+```bash
+callprobe validate --suite my-suite
+```
+
+It checks that every key and value you asserted in `args` or `arg_checks`
+actually exists and is legal for the tool's schema, prints each problem,
+and exits nonzero if there are any.
+
 ## Usage
 
 ```bash
@@ -213,15 +258,22 @@ callprobe run --model llama3.1:8b --pad 0,8,16,24 --repeats 3 \
 callprobe run --model gpt-4.1-mini --endpoint https://api.openai.com/v1 \
   --api-key $OPENAI_API_KEY
 
-# build the comparison table — name the files explicitly.
+# build the comparison table, name the files explicitly.
 # a glob like results/*.json will pick up old or archived runs
 # and silently corrupt the table.
 callprobe leaderboard results/llama31-8b.json results/qwen3-8b.json \
   > LEADERBOARD.md
 ```
 
-`--max-tokens` defaults to 2048. Reasoning models can need more — see the
-truncation section above.
+`--api-key` falls back to the `API_KEY` environment variable, then
+`OPENAI_API_KEY`, if it's not passed directly. `--retries` (default 3)
+controls how many times a 429, a 5xx, or a connection or timeout error is
+retried with exponential backoff before it's recorded as an error rather
+than a model failure; those retries honor a `Retry-After` header when the
+server sends one.
+
+`--max-tokens` defaults to 2048. Reasoning models can need more (see the
+truncation section above).
 
 For a multi-model overnight sweep, `scripts/overnight.sh` pulls each model,
 runs it, and rebuilds the leaderboard at the end:
@@ -248,6 +300,23 @@ callprobe run --model llama3.1:8b --concurrency 4 --out results/run.json
 callprobe run --model llama3.1:8b --concurrency 4 \
   --resume results/run.json --out results/run.json
 ```
+
+`callprobe leaderboard` refuses to build a table across runs from
+different suite versions or content, since the numbers would not be
+comparable. Pass `--allow-mixed` to build it anyway.
+
+`callprobe compare A.json B.json` diffs two runs: per-category success and
+type-lenient deltas, then which task ids went from passing every time they
+ran to failing at least once, and vice versa. Useful for "did this change
+help" between two runs of the same model, or between two models on the
+same suite:
+
+```bash
+callprobe compare results/before.json results/after.json
+```
+
+It warns if the two runs' suite hashes differ, since part of the delta
+could then be the suite changing rather than the model.
 
 ## CI mode
 
@@ -279,7 +348,7 @@ Every run ends with the specific failures, not just the rates. These are
 worth reading, and they are frequently upstream bugs rather than model
 weaknesses. If a server drops `additionalProperties`, mangles nested
 objects, or returns arguments as a string where the schema says integer,
-you will see it here first — including what the model actually said, with
+you will see it here first, including what the model actually said, with
 any reasoning trace stripped, when it produced no call at all.
 
 ## Status
@@ -293,9 +362,9 @@ as provisional until they are rerun against version 2.
 `callprobe leaderboard` will refuse to mix results from the two suite
 versions in one table unless you pass `--allow-mixed`.
 
-Task expectations are validated by the test suite: every asserted argument
-key must exist in the tool's schema, and every asserted value must be legal
-for it. A typo in an expectation would otherwise fail every model silently.
+Every task in the suite passes `callprobe validate` (see Bring your own
+tools above), and CI runs it on every push, so a typo in an expectation
+can't silently fail every model.
 
 Contributions most wanted, in order:
 
@@ -303,6 +372,9 @@ Contributions most wanted, in order:
    tool schemas you use
 2. Runs against models not yet in the leaderboard
 3. Adapters for endpoints that deviate from the OpenAI shape
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to write a task and
+submit a run.
 
 ## Development
 
