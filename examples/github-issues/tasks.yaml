@@ -1,0 +1,261 @@
+# Authored expectations for examples/github-issues/openapi.json. Copy into
+# a suite made with `callprobe init --from-openapi`.
+#
+# Each case expects exactly one next tool call or none. Nothing is executed, so
+# no case assumes what the API would return. Tools:
+#   issues_get_cf0062ad             GET  /repos/{owner}/{repo}/issues/{issue_number}
+#   issues_list-comments_e6abc434   GET  /repos/{owner}/{repo}/issues/{issue_number}/comments
+#   issues_create-comment_27544d18  POST /repos/{owner}/{repo}/issues/{issue_number}/comments
+# Optional query fields are only checked where the user's request names them.
+tasks:
+  # ---- select: pick the right operation ----
+  - id: get-issue-details
+    category: select
+    bundle: main
+    messages:
+      - role: user
+        content: Show me the details of issue 42 in octo-org/widget.
+    expect:
+      type: call
+      tool: issues_get_cf0062ad
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 42}
+
+  - id: list-comments-of-issue
+    category: select
+    bundle: main
+    messages:
+      - role: user
+        content: "What comments have been left on octo-org/widget issue #42?"
+    expect:
+      type: call
+      tool: issues_list-comments_e6abc434
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 42}
+
+  - id: post-comment-simple
+    category: select
+    bundle: main
+    messages:
+      - role: user
+        content: 'Add a comment to issue 42 in octo-org/widget that says exactly: Thanks, this is fixed in the next release.'
+    expect:
+      type: call
+      tool: issues_create-comment_27544d18
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 42}
+        body: {body: "Thanks, this is fixed in the next release."}
+
+  - id: owner-repo-from-url
+    category: select
+    bundle: main
+    messages:
+      - role: user
+        content: >-
+          Here is the issue link: https://github.com/octo-org/widget/issues/57
+          Please read that issue for me. Just use the link's owner, repo and number.
+    expect:
+      type: call
+      tool: issues_get_cf0062ad
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 57}
+
+  - id: read-discussion-not-post
+    category: select
+    bundle: main
+    messages:
+      - role: user
+        content: I only want to read what people have said so far on octo-org/widget#19. Don't add anything.
+    expect:
+      type: call
+      tool: issues_list-comments_e6abc434
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 19}
+
+
+  # ---- args: values and shapes ----
+  - id: pagination-upper-values
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: List the comments on octo-org/widget issue 42, page 3, with 100 comments per page.
+    expect:
+      type: call
+      tool: issues_list-comments_e6abc434
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 42}
+      arg_checks:
+        - {path: query.page, op: eq, value: 3}
+        - {path: query.per_page, op: eq, value: 100}
+
+  - id: pagination-lowest-values
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: List comments on octo-org/widget issue 42. Give me page 1 with just 1 comment per page.
+    expect:
+      type: call
+      tool: issues_list-comments_e6abc434
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 42}
+      arg_checks:
+        - {path: query.page, op: eq, value: 1}
+        - {path: query.per_page, op: eq, value: 1}
+
+  - id: comments-since-timestamp
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: Show comments on octo-org/widget issue 1205 that were updated after 2025-03-01T00:00:00Z.
+    expect:
+      type: call
+      tool: issues_list-comments_e6abc434
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 1205}
+      arg_checks:
+        - {path: query.since, op: eq, value: "2025-03-01T00:00:00Z"}
+
+  - id: comment-body-multiline
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: |-
+          Post the text between the markers as a comment on octo-org/widget issue 88. Use it exactly as written, without the markers.
+          <<<
+          Steps to reproduce:
+          1. Open the settings page.
+          2. Click "Save".
+
+          Expected: it saves. Actual: it crashes (see #12).
+          >>>
+    expect:
+      type: call
+      tool: issues_create-comment_27544d18
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 88}
+        body:
+          body: |-
+            Steps to reproduce:
+            1. Open the settings page.
+            2. Click "Save".
+
+            Expected: it saves. Actual: it crashes (see #12).
+
+  - id: comment-body-punctuation
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: 'Comment on octo-org/widget issue 101 with this exact text: LGTM! Could you rebase onto "main" & re-run CI? (Thanks -- Sam)'
+    expect:
+      type: call
+      tool: issues_create-comment_27544d18
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 101}
+        body: {body: 'LGTM! Could you rebase onto "main" & re-run CI? (Thanks -- Sam)'}
+
+  # ---- abstain: no tool should be called ----
+  - id: missing-repository
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: Comment on issue 42 saying the fix has been deployed.
+    expect:
+      type: no_call
+
+  - id: missing-issue-number
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: Show me the comments on octo-org/widget for the bug about login timeouts. I don't remember its number.
+    expect:
+      type: no_call
+
+  - id: missing-comment-text
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: >-
+          I want to comment on octo-org/widget issue 42, but I haven't decided what the comment
+          should say yet. I haven't supplied the text, so ask me for it before doing anything.
+    expect:
+      type: no_call
+
+  - id: draft-only-do-not-post
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: >-
+          Draft a friendly two-sentence reply for octo-org/widget issue 42. The reporter said the
+          app crashes when saving, and we shipped a fix in version 2.4.0. Everything you need is
+          in this message: do not fetch any data, do not call any tools, and do not post anything.
+          Just write the draft text here in this chat.
+    expect:
+      type: no_call
+
+  - id: unsupported-delete-or-close
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: >-
+          Close octo-org/widget issue 42 and delete its most recent comment. If your tools cannot
+          close issues or delete comments, just explain that limitation: do not read or modify
+          anything first.
+    expect:
+      type: no_call
+
+  # ---- depth: earlier turns matter ----
+  - id: correction-changes-issue
+    category: depth
+    bundle: main
+    messages:
+      - role: user
+        content: I'm looking at octo-org/widget issue 41.
+      - role: assistant
+        content: Noted. What would you like to do with it?
+      - role: user
+        content: Sorry, I meant 44, not 41. List its comments.
+    expect:
+      type: call
+      tool: issues_list-comments_e6abc434
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 44}
+
+  - id: earlier-turn-supplies-issue
+    category: depth
+    bundle: main
+    messages:
+      - role: user
+        content: Let's work on octo-org/widget issue 73.
+      - role: assistant
+        content: Okay, octo-org/widget issue 73. What next?
+      - role: user
+        content: 'Comment on that issue with exactly: Reproduced on v2.3.1.'
+    expect:
+      type: call
+      tool: issues_create-comment_27544d18
+      args:
+        path: {owner: octo-org, repo: widget, issue_number: 73}
+        body: {body: "Reproduced on v2.3.1."}
+
+  - id: ambiguous-that-one
+    category: depth
+    bundle: main
+    messages:
+      - role: user
+        content: I have two issues open, octo-org/widget#12 and octo-org/gadget#12.
+      - role: assistant
+        content: Understood, those are two different repositories.
+      - role: user
+        content: 'Comment on that one: Fixed in 2.4.0. (I have not chosen which repository yet.)'
+    expect:
+      type: no_call
