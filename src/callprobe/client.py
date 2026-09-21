@@ -154,6 +154,7 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
         if isinstance(raw_args, dict):
             calls.append(
                 Call(
+                    id=entry.get("id"),
                     name=function.get("name", ""),
                     arguments=raw_args,
                     raw_arguments=json.dumps(raw_args),
@@ -167,6 +168,7 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
                 raise ValueError("arguments were not a JSON object")
             calls.append(
                 Call(
+                    id=entry.get("id"),
                     name=function.get("name", ""),
                     arguments=parsed,
                     raw_arguments=raw_args,
@@ -175,6 +177,7 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
         except Exception as exc:  # noqa: BLE001
             calls.append(
                 Call(
+                    id=entry.get("id"),
                     name=function.get("name", ""),
                     raw_arguments=raw_args,
                     parse_error=str(exc),

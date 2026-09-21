@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.5.0
+
+- Scoring version 2 requires exactly one call for call expectations and
+  rejects truncated responses, including apparent abstentions. Lenient
+  coercion cannot rescue either failure.
+- Preserve all structured calls, IDs, raw arguments, parse errors, and
+  finish reasons in result files.
+- Reject incompatible or missing resume files; preserve the original start
+  time, retry request errors, and write checkpoints atomically.
+- Add `compare --fail-on-regression`, YAML `--policy`, and JSON comparison
+  output. Gates require complete matched coverage and compatible suite and
+  scoring provenance. Policies cover critical tasks, overall/category
+  minimums, maximum success drops, and request error limits.
+- Fail `run --fail-under` on request errors and incomplete runs. Reject
+  mixed scoring versions in leaderboards by default.
+- Add GitHub Action baseline/policy and run-configuration inputs; install
+  the selected action revision instead of an unrelated PyPI version.
+- Include two fresh 150-request Qwen 2.5 7B validation runs, an example CI
+  policy, and a report of the six false passes prevented per run. Both
+  runs scored 78.7% with no matched-case regressions.
+
+Older results remain readable for informational comparison. Rerun them
+before resuming or using them as CI baselines with this rubric.
+
 ## 0.4.0
 
 First public release.

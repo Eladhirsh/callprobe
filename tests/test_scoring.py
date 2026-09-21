@@ -204,3 +204,45 @@ def test_wrong_value_is_not_rescued_by_coercion(suite):
     assert not result.success
     assert not result.success_lenient
 
+
+@pytest.mark.parametrize("extra_first", [False, True])
+@pytest.mark.parametrize("amount", [4225, "4225"])
+def test_extra_calls_never_pass_even_with_correct_or_coercible_call(suite, extra_first, amount):
+    body = body_with_call("issue_refund", {
+        "order_id": "ORD-991003", "reason": "damaged", "amount_cents": amount,
+    })
+    calls = body["choices"][0]["message"]["tool_calls"]
+    extra = body_with_call("get_order_status", {"order_id": "ORD-991003"})
+    calls.insert(0 if extra_first else 1, extra["choices"][0]["message"]["tool_calls"][0])
+    result = run(suite, "args-partial-refund", body)
+    assert result.selection_ok
+    assert not result.call_count_ok
+    assert not result.success and not result.success_lenient
+    assert len(result.calls) == 2
+
+
+@pytest.mark.parametrize("task_id,body", [
+    ("abstain-missing-identifier", body_no_call()),
+    ("select-status-direct", body_with_call("get_order_status", {"order_id": "ORD-448120"})),
+])
+def test_truncated_responses_do_not_pass(suite, task_id, body):
+    body["choices"][0]["finish_reason"] = "length"
+    result = run(suite, task_id, body)
+    assert result.truncated
+    assert not result.success and not result.success_lenient
+    assert any("truncated" in failure for failure in result.failures)
+
+
+def test_call_evidence_survives_json_roundtrip(suite):
+    from callprobe.models import TaskResult
+
+    body = body_with_call("get_order_status", {})
+    call = body["choices"][0]["message"]["tool_calls"][0]
+    call["id"] = "call_123"
+    call["function"]["arguments"] = '{"order_id":'
+    body["choices"][0]["finish_reason"] = "tool_calls"
+    result = TaskResult.model_validate_json(run(suite, "select-status-direct", body).model_dump_json())
+    assert result.calls[0].id == "call_123"
+    assert result.calls[0].raw_arguments == '{"order_id":'
+    assert result.calls[0].parse_error
+    assert result.finish_reason == "tool_calls"

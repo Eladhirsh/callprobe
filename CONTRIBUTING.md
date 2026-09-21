@@ -23,7 +23,13 @@ Every task needs `id`, `category`, `bundle`, `messages`, and `expect`.
 whichever keys you list (extra keys are judged by the tool's schema
 instead), and `arg_checks` covers everything else you want to assert
 about a value, at a dotted path like `address.postal_code` or
-`attendees.0`:
+`attendees.0`.
+
+`call` expects exactly one tool call; extra calls fail even when one is
+correct. A truncated response cannot pass either expectation. Full call
+evidence is retained in result JSON. Changes to these scoring semantics
+must increment `SCORING_VERSION` in `scoring.py` and add regression tests,
+so old and new observations are not silently combined.
 
 | op | checks |
 | --- | --- |

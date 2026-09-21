@@ -88,6 +88,7 @@ class Suite(BaseModel):
 
 
 class Call(BaseModel):
+    id: str | None = None
     name: str
     arguments: dict[str, Any] = Field(default_factory=dict)
     raw_arguments: str = ""
@@ -124,6 +125,10 @@ class TaskResult(BaseModel):
     response_text: str = ""
     # True when the server stopped on the token limit before finishing.
     truncated: bool = False
+    # Complete structured call evidence, including malformed raw arguments.
+    calls: list[Call] = Field(default_factory=list)
+    finish_reason: str = ""
+    call_count_ok: bool = True
 
     @property
     def total_tokens(self) -> int:
@@ -148,6 +153,8 @@ class RunConfig(BaseModel):
     suite_hash: str | None = None
     server_name: str | None = None
     server_version: str | None = None
+    scoring_version: int | None = None
+    task_ids: list[str] | None = None
 
 
 class Run(BaseModel):

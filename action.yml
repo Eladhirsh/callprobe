@@ -20,6 +20,23 @@ inputs:
     description: 'Exit with a failure if overall success falls below this fraction, e.g. 0.7'
     required: false
     default: ''
+  baseline:
+    description: 'Baseline results JSON. Enables matched regression gating.'
+    required: false
+    default: ''
+  policy:
+    description: 'YAML CI policy (requires baseline). Defaults to no regressions or request errors.'
+    required: false
+    default: ''
+  pad:
+    description: 'Comma-separated distractor counts; must match the baseline.'
+    default: '0,8,16'
+  repeats:
+    description: 'Repeats per task; must match the baseline.'
+    default: '1'
+  max-tokens:
+    description: 'Maximum completion tokens per request.'
+    default: '2048'
 runs:
   using: 'composite'
   steps:
@@ -30,32 +47,68 @@ runs:
 
     - name: Install callprobe
       shell: bash
-      run: pip install callprobe
+      env:
+        CALLPROBE_ACTION_PATH: ${{ github.action_path }}
+      run: pip install "$CALLPROBE_ACTION_PATH"
 
     - name: Run callprobe
       shell: bash
+      env:
+        CALLPROBE_MODEL: ${{ inputs.model }}
+        CALLPROBE_ENDPOINT: ${{ inputs.endpoint }}
+        CALLPROBE_SUITE: ${{ inputs.suite }}
+        API_KEY: ${{ inputs.api-key }}
+        CALLPROBE_FAIL_UNDER: ${{ inputs.fail-under }}
+        CALLPROBE_PAD: ${{ inputs.pad }}
+        CALLPROBE_REPEATS: ${{ inputs.repeats }}
+        CALLPROBE_MAX_TOKENS: ${{ inputs.max-tokens }}
+        CALLPROBE_BASELINE: ${{ inputs.baseline }}
+        CALLPROBE_POLICY: ${{ inputs.policy }}
       run: |
-        set -o pipefail
-        args=(run --model "${{ inputs.model }}" --endpoint "${{ inputs.endpoint }}" \
-          --format json --out callprobe-results.json)
-        if [ -n "${{ inputs.suite }}" ]; then
-          args+=(--suite "${{ inputs.suite }}")
+        set -euo pipefail
+        if [ -n "$CALLPROBE_POLICY" ] && [ -z "$CALLPROBE_BASELINE" ]; then
+          echo 'policy requires baseline' >&2
+          exit 2
         fi
-        if [ -n "${{ inputs.api-key }}" ]; then
-          args+=(--api-key "${{ inputs.api-key }}")
+        if [ -n "$CALLPROBE_BASELINE" ] && [ "$CALLPROBE_BASELINE" -ef callprobe-results.json ]; then
+          echo 'baseline must be separate from callprobe-results.json' >&2
+          exit 2
         fi
-        if [ -n "${{ inputs.fail-under }}" ]; then
-          args+=(--fail-under "${{ inputs.fail-under }}")
+        args=(run --model "$CALLPROBE_MODEL" --endpoint "$CALLPROBE_ENDPOINT" \
+          --pad "$CALLPROBE_PAD" --repeats "$CALLPROBE_REPEATS" \
+          --max-tokens "$CALLPROBE_MAX_TOKENS" --format json --out callprobe-results.json)
+        if [ -n "$CALLPROBE_SUITE" ]; then
+          args+=(--suite "$CALLPROBE_SUITE")
+        fi
+        if [ -n "$CALLPROBE_FAIL_UNDER" ]; then
+          args+=(--fail-under "$CALLPROBE_FAIL_UNDER")
         fi
         callprobe "${args[@]}" | tee callprobe-summary.json
+        if [ -n "$CALLPROBE_BASELINE" ]; then
+          compare_args=(compare "$CALLPROBE_BASELINE" callprobe-results.json --format json)
+          if [ -n "$CALLPROBE_POLICY" ]; then
+            compare_args+=(--policy "$CALLPROBE_POLICY")
+          else
+            compare_args+=(--fail-on-regression)
+          fi
+          callprobe "${compare_args[@]}" | tee callprobe-comparison.json
+        fi
 
     - name: Write step summary
       if: always()
       shell: bash
+      env:
+        CALLPROBE_MODEL: ${{ inputs.model }}
       run: |
         {
-          echo "## callprobe: ${{ inputs.model }}"
+          echo "## callprobe: $CALLPROBE_MODEL"
           echo '```json'
-          cat callprobe-summary.json
+          if [ -f callprobe-summary.json ]; then cat callprobe-summary.json; fi
           echo '```'
+          if [ -f callprobe-comparison.json ]; then
+            echo '### Baseline comparison'
+            echo '```json'
+            cat callprobe-comparison.json
+            echo '```'
+          fi
         } >> "$GITHUB_STEP_SUMMARY"

@@ -7,7 +7,8 @@ different reasons and the mix is the interesting part of a report:
     schema_ok     do the arguments validate against the tool's JSON Schema
     args_ok       are the values actually right
 
-success = all three. A model that scores well on selection and schema but
+Success requires all three, exactly one call, and a complete response.
+A model that scores well on selection and schema but
 badly on args is the dangerous case: it produces valid calls with wrong
 values, which pass every check most people currently run.
 """
@@ -24,6 +25,7 @@ from .models import ArgCheck, Bundle, Call, Task, TaskResult
 from .client import Completion
 
 MISSING = object()
+SCORING_VERSION = 2
 
 THINK = re.compile(r"<(think|thinking|reasoning)>.*?</\1>", re.S)
 
@@ -146,6 +148,8 @@ def _score_inner(
         completion_tokens=completion.completion_tokens,
         latency_ms=completion.latency_ms,
         error=completion.error,
+        calls=[call.model_copy(deep=True) for call in completion.calls],
+        finish_reason=completion.finish_reason,
     )
 
     if completion.error:
@@ -158,19 +162,23 @@ def _score_inner(
     result.response_text = text[:300]
 
     if task.expect.type == "no_call":
-        clean = not completion.calls
+        result.call_count_ok = not completion.calls
+        clean = result.call_count_ok and not result.truncated
         result.selection_ok = clean
         result.schema_ok = clean
         result.args_ok = clean
         result.success = clean
-        if not clean:
+        if completion.calls:
             result.called = completion.calls[0].name
             result.failures.append(
                 f"called {result.called} when no tool applied"
             )
+        if result.truncated:
+            result.failures.append("truncated on the token limit; abstention is unconfirmed")
         return result
 
     call = pick_call(completion.calls, task.expect.tool)
+    result.call_count_ok = len(completion.calls) == 1
     if call is None:
         if result.truncated:
             result.failures.append(
@@ -187,7 +195,9 @@ def _score_inner(
         result.failures.append(f"called {call.name}, expected {task.expect.tool}")
 
     if len(completion.calls) > 1:
-        result.failures.append(f"produced {len(completion.calls)} calls")
+        result.failures.append(f"produced {len(completion.calls)} calls; expected exactly one")
+    if result.truncated:
+        result.failures.append("truncated on the token limit; response is incomplete")
 
     if call.parse_error:
         result.failures.append(f"arguments did not parse: {call.parse_error}")
@@ -202,7 +212,8 @@ def _score_inner(
     result.schema_ok = schema_ok
     result.args_ok = args_ok
     result.failures.extend(failures)
-    result.success = result.selection_ok and schema_ok and args_ok
+    complete_call = result.call_count_ok and not result.truncated
+    result.success = result.selection_ok and schema_ok and args_ok and complete_call
 
     if result.success:
         result.schema_ok_lenient = True
@@ -215,7 +226,9 @@ def _score_inner(
     lenient_schema, lenient_args, _ = _judge(coerced, tool, task)
     result.schema_ok_lenient = lenient_schema
     result.args_ok_lenient = lenient_args
-    result.success_lenient = result.selection_ok and lenient_schema and lenient_args
+    result.success_lenient = (
+        result.selection_ok and lenient_schema and lenient_args and complete_call
+    )
     if result.success_lenient and changed:
         result.failures.append("passes once string values are cast to their schema types")
     return result
