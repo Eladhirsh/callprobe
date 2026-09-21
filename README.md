@@ -204,6 +204,35 @@ usually your own.
 
 ## Bring your own tools
 
+### Start from an OpenAPI document (since 0.6.0)
+
+Import a local OpenAPI 3.0/3.1 YAML or JSON file:
+
+```bash
+callprobe init --from-openapi openapi.yaml --out my-suite
+# Edit my-suite/tasks.yaml: uncomment drafts and write expected behavior.
+callprobe validate --suite my-suite
+callprobe run --suite my-suite --model qwen2.5:7b --pad 0 --out baseline.json
+```
+
+The importer keeps `path`, `query`, `headers`, `cookies`, and `body` arguments
+separate, resolves local references, and writes an operation map and diagnostics
+to `import-report.json`. Unsupported operations fail the import by default;
+`--skip-unsupported` explicitly omits them. Use `--tag TAG` to select operations.
+Existing suite files are protected unless you pass `--force`.
+
+Generated tasks are commented drafts; they do not invent correct answers from
+the schema. A suite with no active tasks cannot be validated as ready to run.
+Try the [six-test support API walkthrough](examples/openapi/README.md) for a
+complete example with human-authored expectations. The imported API is never
+executed, and no API credentials are needed.
+
+`--from-openapi` is available since 0.6.0. Install it with
+`uv tool install callprobe==0.6.0`, or run `uv tool upgrade callprobe` if
+Callprobe is already installed. Earlier versions only support `--from tools.json`.
+
+### Write a suite directly
+
 A suite is three YAML files. Drop your real tool schemas into `tools.yaml`,
 write tasks against them, and run.
 
@@ -400,7 +429,7 @@ even if the success rate of the remaining results exceeds the threshold.
 `action.yml` at the repo root wraps this as a composite GitHub Action:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.5.0
+- uses: Eladhirsh/callprobe@v0.6.0
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -417,7 +446,7 @@ YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
 For example, after checking out your repository and starting your endpoint:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.5.0
+- uses: Eladhirsh/callprobe@v0.6.0
   with:
     model: your-model
     endpoint: http://localhost:11434/v1
@@ -470,6 +499,10 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to write a task and
 submit a run.
 
 ## Development
+
+With uv installed, use `uv sync --extra dev`, then prefix development commands
+with `uv run` (for example, `uv run callprobe init --help` or `uv run pytest`).
+Alternatively, use a standard Python virtual environment:
 
 ```bash
 git clone https://github.com/Eladhirsh/callprobe.git
