@@ -18,9 +18,54 @@ from datetime import datetime, timezone
 
 from .client import ChatClient
 from .models import Bundle, Run, RunConfig, Suite, Task, TaskResult
-from .scoring import score
+from .scoring import SCORING_VERSION, score
 
 WorkItem = tuple[int, int, Task]
+
+
+def prepare_config(suite: Suite, config: RunConfig) -> RunConfig:
+    """Record the suite and rubric actually used, including the planned coverage."""
+    if not suite.tasks:
+        raise ValueError("suite contains no tasks")
+    if config.repeats < 1 or not config.pads or any(p < 0 for p in config.pads):
+        raise ValueError("repeats must be positive and pads must be nonnegative")
+    if len(set(config.pads)) != len(config.pads):
+        raise ValueError("pads must not contain duplicates")
+    return config.model_copy(update={
+        "suite_name": suite.name,
+        "suite_version": suite.version,
+        "suite_hash": suite.hash,
+        "scoring_version": SCORING_VERSION,
+        "task_ids": [task.id for task in suite.tasks],
+    })
+
+
+def validate_resume(config: RunConfig, resume: Run) -> None:
+    """Never combine cached observations from different experiments.
+
+    Pads and repeats may expand; each cached result retains its original key.
+    Legacy files remain readable but cannot safely resume without provenance.
+    """
+    fields = (
+        "model", "endpoint", "temperature", "max_tokens", "quantization",
+        "suite_hash", "suite_version", "scoring_version", "task_ids",
+        "server_name", "server_version",
+    )
+    mismatches = [name for name in fields
+                  if getattr(config, name) != getattr(resume.config, name)]
+    if not resume.config.suite_hash or resume.config.scoring_version is None:
+        mismatches.append("missing suite/scoring provenance")
+    if mismatches:
+        raise ValueError("incompatible resume: " + ", ".join(mismatches) + "; start a new run")
+    seen = set()
+    for result in resume.results:
+        key = (result.task_id, result.pad, result.repeat)
+        if (key in seen or result.model != config.model
+                or result.task_id not in (config.task_ids or [])
+                or result.pad not in resume.config.pads
+                or not 0 <= result.repeat < resume.config.repeats):
+            raise ValueError("incompatible resume: duplicate or invalid result " + str(key))
+        seen.add(key)
 
 
 def build_toolset(
@@ -72,12 +117,18 @@ def run_suite(
     writes. Ctrl-C returns the run assembled from whatever finished, in
     canonical order, instead of raising.
     """
-    started_at = datetime.now(timezone.utc).isoformat()
+    config = prepare_config(suite, config)
+    if concurrency < 1:
+        raise ValueError("concurrency must be positive")
+    if resume is not None:
+        validate_resume(config, resume)
+    started_at = resume.started_at if resume else datetime.now(timezone.utc).isoformat()
     items = _work_items(suite, config)
 
     resumed: dict[tuple[str, int, int], TaskResult] = {}
     if resume is not None:
-        resumed = {(r.task_id, r.pad, r.repeat): r for r in resume.results}
+        # Request errors are not completed observations; retry them on resume.
+        resumed = {(r.task_id, r.pad, r.repeat): r for r in resume.results if not r.error}
 
     results: list[TaskResult | None] = [None] * len(items)
 

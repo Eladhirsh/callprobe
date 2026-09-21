@@ -1,0 +1,268 @@
+{
+  "replayed_results": 300,
+  "runs": [
+    {
+      "summary": {
+        "model": "qwen2.5:7b",
+        "quantization": "Q4_K_M",
+        "endpoint": "http://localhost:11434/v1",
+        "n": 150,
+        "total_requests": 150,
+        "overall": {
+          "selection": 0.9466666666666667,
+          "schema": 0.9333333333333333,
+          "args": 0.8333333333333334,
+          "success": 0.7866666666666666,
+          "success_ci": [
+            0.6866666666666666,
+            0.88
+          ]
+        },
+        "by_pad": {
+          "0": {
+            "success": 0.7866666666666666,
+            "selection": 0.9466666666666667,
+            "stdev": 0.024944382578492914,
+            "n": 150
+          }
+        },
+        "by_category": {
+          "abstain": {
+            "success": 0.8787878787878788,
+            "n": 33,
+            "ci": [
+              0.7272727272727273,
+              1.0
+            ]
+          },
+          "args": {
+            "success": 0.6666666666666666,
+            "n": 36,
+            "ci": [
+              0.3888888888888889,
+              0.8888888888888888
+            ]
+          },
+          "depth": {
+            "success": 0.8181818181818182,
+            "n": 33,
+            "ci": [
+              0.6060606060606061,
+              0.9696969696969697
+            ]
+          },
+          "select": {
+            "success": 0.9444444444444444,
+            "n": 18,
+            "ci": [
+              0.8333333333333334,
+              1.0
+            ]
+          },
+          "sequence": {
+            "success": 0.7,
+            "n": 30,
+            "ci": [
+              0.43333333333333335,
+              0.9333333333333333
+            ]
+          }
+        },
+        "cost": {
+          "tokens_per_success": 749.6864406779661,
+          "seconds_per_success": 2.59568960342385,
+          "total_tokens": 88463,
+          "successes": 118
+        },
+        "errors": 0,
+        "error_rate": 0.0,
+        "lenient": {
+          "schema": 0.9333333333333333,
+          "args": 0.8333333333333334,
+          "success": 0.7866666666666666
+        },
+        "typing_only": 0,
+        "truncated": 0
+      },
+      "false_passes_prevented": [
+        {
+          "task_id": "sequence-address-before-status",
+          "repeat": 0,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-cancel-before-rebook",
+          "repeat": 0,
+          "calls": 3
+        },
+        {
+          "task_id": "sequence-address-before-status",
+          "repeat": 1,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-cancel-before-rebook",
+          "repeat": 1,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-address-before-status",
+          "repeat": 2,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-cancel-before-rebook",
+          "repeat": 2,
+          "calls": 2
+        }
+      ],
+      "failure_causes": {
+        "wrong or missing tool": 4,
+        "wrong argument values": 15,
+        "invalid schema": 3,
+        "extra or unwanted calls": 10
+      },
+      "started_at": "2026-09-21T01:40:07.311845+00:00",
+      "finished_at": "2026-09-21T01:45:13.993775+00:00"
+    },
+    {
+      "summary": {
+        "model": "qwen2.5:7b",
+        "quantization": "Q4_K_M",
+        "endpoint": "http://localhost:11434/v1",
+        "n": 150,
+        "total_requests": 150,
+        "overall": {
+          "selection": 0.9466666666666667,
+          "schema": 0.9333333333333333,
+          "args": 0.8333333333333334,
+          "success": 0.7866666666666666,
+          "success_ci": [
+            0.6866666666666666,
+            0.88
+          ]
+        },
+        "by_pad": {
+          "0": {
+            "success": 0.7866666666666666,
+            "selection": 0.9466666666666667,
+            "stdev": 0.024944382578492914,
+            "n": 150
+          }
+        },
+        "by_category": {
+          "abstain": {
+            "success": 0.8787878787878788,
+            "n": 33,
+            "ci": [
+              0.7272727272727273,
+              1.0
+            ]
+          },
+          "args": {
+            "success": 0.6666666666666666,
+            "n": 36,
+            "ci": [
+              0.3888888888888889,
+              0.8888888888888888
+            ]
+          },
+          "depth": {
+            "success": 0.8181818181818182,
+            "n": 33,
+            "ci": [
+              0.6060606060606061,
+              0.9696969696969697
+            ]
+          },
+          "select": {
+            "success": 0.9444444444444444,
+            "n": 18,
+            "ci": [
+              0.8333333333333334,
+              1.0
+            ]
+          },
+          "sequence": {
+            "success": 0.7,
+            "n": 30,
+            "ci": [
+              0.43333333333333335,
+              0.9333333333333333
+            ]
+          }
+        },
+        "cost": {
+          "tokens_per_success": 749.7881355932203,
+          "seconds_per_success": 2.2918281931778113,
+          "total_tokens": 88475,
+          "successes": 118
+        },
+        "errors": 0,
+        "error_rate": 0.0,
+        "lenient": {
+          "schema": 0.9333333333333333,
+          "args": 0.8333333333333334,
+          "success": 0.7866666666666666
+        },
+        "typing_only": 0,
+        "truncated": 0
+      },
+      "false_passes_prevented": [
+        {
+          "task_id": "sequence-address-before-status",
+          "repeat": 0,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-cancel-before-rebook",
+          "repeat": 0,
+          "calls": 3
+        },
+        {
+          "task_id": "sequence-address-before-status",
+          "repeat": 1,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-cancel-before-rebook",
+          "repeat": 1,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-address-before-status",
+          "repeat": 2,
+          "calls": 2
+        },
+        {
+          "task_id": "sequence-cancel-before-rebook",
+          "repeat": 2,
+          "calls": 2
+        }
+      ],
+      "failure_causes": {
+        "wrong or missing tool": 4,
+        "wrong argument values": 15,
+        "invalid schema": 3,
+        "extra or unwanted calls": 10
+      },
+      "started_at": "2026-09-21T01:45:31.412556+00:00",
+      "finished_at": "2026-09-21T01:50:02.247706+00:00"
+    }
+  ],
+  "strict_gate": {
+    "passed": true,
+    "failures": [],
+    "matched_cases": 150,
+    "success_delta": 0.0,
+    "regressions": []
+  },
+  "example_policy_gate": {
+    "passed": true,
+    "failures": [],
+    "matched_cases": 150,
+    "success_delta": 0.0,
+    "regressions": []
+  },
+  "improvements": []
+}

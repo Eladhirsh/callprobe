@@ -1,0 +1,11 @@
+# Starting point for the bundled core suite, not a statistically calibrated
+# production policy. Choose your own thresholds and critical task IDs.
+# Fixed before the second v0.5.0 validation run; see results/v0.5.0/README.md.
+fail_on_regression: false
+critical_tasks:
+  - abstain-missing-identifier
+min_success: 0.70
+min_category_success:
+  abstain: 0.80
+max_success_drop: 0.05
+max_error_rate: 0.0

@@ -117,3 +117,46 @@ def test_keyboard_interrupt_returns_partial_run_instead_of_raising(suite):
     assert 0 < len(run.results) < len(suite.tasks)
     keys = [(r.task_id, r.pad, r.repeat) for r in run.results]
     assert keys == sorted(keys, key=lambda k: [t.id for t in suite.tasks].index(k[0]))
+
+
+@pytest.mark.parametrize("change", [
+    {"model": "different"}, {"endpoint": "http://other"}, {"temperature": 0.5},
+    {"max_tokens": 128}, {"quantization": "q8"}, {"server_version": "new"},
+])
+def test_resume_rejects_changed_experiment_before_requests(suite, change):
+    first = run_suite(suite, _CountingClient(), _config())
+    client = _CountingClient()
+    with pytest.raises(ValueError, match="incompatible resume"):
+        run_suite(suite, client, _config(**change), resume=first)
+    assert client.calls == 0
+
+
+@pytest.mark.parametrize("field,value", [
+    ("suite_hash", "changed"), ("suite_hash", None),
+    ("scoring_version", None), ("scoring_version", 1), ("task_ids", None),
+])
+def test_resume_rejects_changed_or_unknown_provenance(suite, field, value):
+    first = run_suite(suite, _CountingClient(), _config())
+    setattr(first.config, field, value)
+    client = _CountingClient()
+    with pytest.raises(ValueError, match="incompatible resume"):
+        run_suite(suite, client, _config(), resume=first)
+    assert client.calls == 0
+
+
+def test_resume_retries_errors_and_preserves_start(suite):
+    first = run_suite(suite, _CountingClient(), _config())
+    first.started_at = "original start"
+    first.results[0].error = "timeout"
+    client = _CountingClient()
+    resumed = run_suite(suite, client, _config(), resume=first)
+    assert client.calls == 1
+    assert resumed.results[0].error is None
+    assert resumed.started_at == "original start"
+
+
+def test_resume_rejects_duplicate_results(suite):
+    first = run_suite(suite, _CountingClient(), _config())
+    first.results.append(first.results[0])
+    with pytest.raises(ValueError, match="duplicate"):
+        run_suite(suite, _CountingClient(), _config(), resume=first)

@@ -12,21 +12,45 @@ import importlib.resources
 import json
 import os
 import sys
+import tempfile
 from pathlib import Path
+
+import yaml
 
 from . import __version__
 from .client import ChatClient, probe_server_version
-from .compare import render_compare
+from .compare import category_deltas, flipped_tasks, render_compare
+from .gates import evaluate_gate, load_policy, render_gate
 from .init import generate_suite_files
 from .loader import load_suite
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text, summarize
-from .runner import run_suite
+from .runner import prepare_config, run_suite, validate_resume
 from .validate import validate_suite
 
 # Sentinel meaning "use the suite packaged inside callprobe itself", resolved
 # lazily so a git checkout and a pip install both find suites/core.
 DEFAULT_SUITE = None
+
+
+def _read_run(path: str) -> Run:
+    return Run.model_validate_json(Path(path).read_text(encoding="utf-8"))
+
+
+def _write_run(path: str, run: Run) -> None:
+    """An interrupted write must not destroy a resumable checkpoint."""
+    out = Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=out.parent,
+                                         prefix=f".{out.name}.", delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write(run.model_dump_json(indent=2))
+        temporary.replace(out)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def _resolve_suite(suite_arg: str | None):
@@ -77,21 +101,14 @@ def _run(args: argparse.Namespace) -> int:
         server_version=server_version,
     )
     api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
-    client = ChatClient(args.endpoint, api_key=api_key, retries=args.retries)
+    config = prepare_config(suite, config)
 
     resume_run = None
     if args.resume:
-        resume_path = Path(args.resume)
-        if resume_path.exists():
-            resume_run = Run(**json.loads(resume_path.read_text(encoding="utf-8")))
-            if (
-                resume_run.config.suite_hash
-                and suite.hash
-                and resume_run.config.suite_hash != suite.hash
-            ):
-                sys.stderr.write(
-                    "warning: --resume file's suite hash does not match this suite\n"
-                )
+        resume_run = _read_run(args.resume)
+        validate_resume(config, resume_run)
+
+    client = ChatClient(args.endpoint, api_key=api_key, retries=args.retries)
 
     total = len(suite.tasks) * len(pads) * args.repeats
     state = {"done": 0}
@@ -107,9 +124,7 @@ def _run(args: argparse.Namespace) -> int:
 
     def write_partial(partial_run: Run) -> None:
         if args.out:
-            out = Path(args.out)
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(partial_run.model_dump_json(indent=2), encoding="utf-8")
+            _write_run(args.out, partial_run)
 
     try:
         run = run_suite(
@@ -135,14 +150,16 @@ def _run(args: argparse.Namespace) -> int:
         print(failure_digest(run))
 
     if args.out:
-        out = Path(args.out)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(run.model_dump_json(indent=2), encoding="utf-8")
+        _write_run(args.out, run)
         if args.format != "json":
-            print(f"\nwrote {out}")
+            print(f"\nwrote {args.out}")
 
-    if args.fail_under is not None and summary["overall"]["success"] < args.fail_under:
-        return 1
+    if args.fail_under is not None:
+        if summary["errors"] or len(run.results) != total or not summary["n"]:
+            sys.stderr.write("CI gate failed: run is incomplete or contains request errors\n")
+            return 1
+        if summary["overall"]["success"] < args.fail_under:
+            return 1
     return 0
 
 
@@ -184,16 +201,31 @@ def _init(args: argparse.Namespace) -> int:
 
 
 def _compare(args: argparse.Namespace) -> int:
-    a = Run(**json.loads(Path(args.a).read_text(encoding="utf-8")))
-    b = Run(**json.loads(Path(args.b).read_text(encoding="utf-8")))
+    a, b = _read_run(args.a), _read_run(args.b)
+    gate = None
+    if args.fail_on_regression or args.policy:
+        policy = load_policy(args.policy)
+        if args.fail_on_regression:
+            policy.fail_on_regression = True
+        gate = evaluate_gate(a, b, policy)
     if a.config.suite_hash != b.config.suite_hash:
         sys.stderr.write(
             f"warning: suite hashes differ (a={a.config.suite_hash}, "
             f"b={b.config.suite_hash}); some of this delta may be the suite "
             "changing, not the model\n"
         )
-    print(render_compare(a, b))
-    return 0
+    if a.config.scoring_version != b.config.scoring_version:
+        sys.stderr.write("warning: scoring versions differ; scores are not directly comparable\n")
+    if args.format == "json":
+        regressions, improvements = flipped_tasks(a, b)
+        print(json.dumps({"by_category": category_deltas(a, b),
+                          "regressed_tasks": regressions, "improved_tasks": improvements,
+                          "gate": gate}, indent=2))
+    else:
+        print(render_compare(a, b))
+        if gate is not None:
+            print("\n" + render_gate(gate))
+    return 1 if gate is not None and not gate["passed"] else 0
 
 
 def _leaderboard(args: argparse.Namespace) -> int:
@@ -203,13 +235,13 @@ def _leaderboard(args: argparse.Namespace) -> int:
         runs.append(Run(**data))
     runs.sort(key=lambda r: r.config.model)
 
-    keys = {(r.config.suite_version, r.config.suite_hash) for r in runs}
+    keys = {(r.config.suite_version, r.config.suite_hash, r.config.scoring_version) for r in runs}
     if len(keys) > 1 and not args.allow_mixed:
-        sys.stderr.write("these runs come from different suite versions or content:\n")
+        sys.stderr.write("these runs come from different suites or scoring versions:\n")
         for r in runs:
             sys.stderr.write(
                 f"  {r.config.model}: version={r.config.suite_version} "
-                f"hash={r.config.suite_hash}\n"
+                f"hash={r.config.suite_hash} scoring={r.config.scoring_version}\n"
             )
         sys.stderr.write("pass --allow-mixed to build the table anyway\n")
         return 1
@@ -282,6 +314,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     compare_cmd.add_argument("a")
     compare_cmd.add_argument("b")
+    compare_cmd.add_argument("--fail-on-regression", action="store_true",
+                             help="fail if any matched passing case regresses; requires complete runs")
+    compare_cmd.add_argument("--policy", help="YAML CI policy; enables gating")
+    compare_cmd.add_argument("--format", choices=["text", "json"], default="text")
     compare_cmd.set_defaults(func=_compare)
 
     board = sub.add_parser("leaderboard", help="build a markdown table from runs")
@@ -294,7 +330,16 @@ def main(argv: list[str] | None = None) -> int:
     board.set_defaults(func=_leaderboard)
 
     args = parser.parse_args(argv)
-    return args.func(args)
+    try:
+        if args.command == "run":
+            if args.concurrency < 1 or args.max_tokens < 1 or args.retries < 0:
+                raise ValueError("concurrency/max-tokens must be positive and retries nonnegative")
+            if args.fail_under is not None and not 0 <= args.fail_under <= 1:
+                raise ValueError("fail-under must be between 0 and 1")
+        return args.func(args)
+    except (ValueError, OSError, yaml.YAMLError) as exc:
+        sys.stderr.write(f"error: {exc}\n")
+        return 2
 
 
 if __name__ == "__main__":

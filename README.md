@@ -47,6 +47,10 @@ against qwen3:8b. Full results for every model tested are in
 
 ## Results so far
 
+The table below preserves the original suite-v1 runs. For the v0.5.0
+scoring rules and a matched real-model baseline/repeat, see the
+[release validation report](results/v0.5.0/README.md).
+
 | model | success | type-lenient | abstain | tokens/success |
 | --- | --- | --- | --- | --- |
 | qwen3:8b | 88.7% | 88.7% | 88.6% | 1568 |
@@ -92,6 +96,17 @@ values are cast to the type the schema declares (`"10"` → `10`), then
 rescored. Lenient can only rescue a strict failure, never create one. The
 gap between the two numbers tells you how much of a model's failure is
 serialization rather than reasoning.
+
+A `call` expectation requires **exactly one call**. Returning a correct call
+alongside extra calls fails both strict and lenient scoring. Truncated
+responses also fail, including responses with no calls: reaching the token
+limit is not evidence of deliberate abstention. Selection, schema, and
+argument scores still diagnose the selected call independently.
+
+New run files record `scoring_version: 2`. Older files remain readable,
+but must be rerun before use as CI baselines or resumed checkpoints; the
+scoring changes can affect their success rates. Leaderboards reject mixed
+scoring versions unless `--allow-mixed` is supplied.
 
 ## What it measures that other harnesses do not
 
@@ -301,6 +316,18 @@ callprobe run --model llama3.1:8b --concurrency 4 \
   --resume results/run.json --out results/run.json
 ```
 
+Resume requires matching model, endpoint, temperature, token budget,
+quantization, detected server version, suite content, and scoring version.
+You can add padding levels or repeats. Request errors are retried; completed
+observations are reused. Missing files or incompatible checkpoints fail
+before any model requests. Checkpoints are replaced atomically so a failed
+write leaves the previous checkpoint intact.
+
+Results include every structured tool call (`calls`), its ID, parsed and raw
+arguments, parse errors, and `finish_reason`. This evidence is retained for
+both passing and failing responses. Review result files before sharing:
+tool arguments can contain application data.
+
 `callprobe leaderboard` refuses to build a table across runs from
 different suite versions or content, since the numbers would not be
 comparable. Pass `--allow-mixed` to build it anyway.
@@ -318,6 +345,45 @@ callprobe compare results/before.json results/after.json
 It warns if the two runs' suite hashes differ, since part of the delta
 could then be the suite changing rather than the model.
 
+To enforce a baseline in CI:
+
+```bash
+callprobe compare results/baseline.json results/candidate.json --fail-on-regression
+callprobe compare results/baseline.json results/candidate.json \
+  --policy callprobe-policy.yaml --format json
+```
+
+The default gate rejects any previously passing `(task, pad, repeat)` case
+that now fails and allows no request errors in either run. Both files must
+have matching suite hashes and scoring versions, identical task/pad/repeat
+coverage, and every planned result present. Different models and generation
+settings are allowed: evaluating those changes is the purpose of comparison.
+Incomplete, duplicate, legacy, or incompatible inputs cannot pass the gate.
+
+A policy can set application-specific requirements (all rates are 0–1):
+
+```yaml
+fail_on_regression: false
+critical_tasks: [args-partial-refund, abstain-missing-identifier]
+min_success: 0.80
+min_category_success:
+  abstain: 0.95
+max_success_drop: 0.02
+max_error_rate: 0.01
+```
+
+Critical tasks must pass every candidate case, even if they failed in the
+baseline. Success-drop comparisons use only cases with non-error results in
+both files; candidate minimums use all its non-error results. Error limits
+apply to each run separately. With no matched scored cases the gate fails.
+Policies reject unknown fields, unknown task/category targets, and invalid
+rates. `--fail-on-regression` overrides a policy's `false` setting.
+
+Exit codes are `0` for a passing gate, `1` for policy violations, and `2` for
+invalid inputs. Without a gate flag, `compare` remains an informational
+comparison and supports older files. These gates apply deterministic
+thresholds; they do not claim statistical significance for a change.
+
 ## CI mode
 
 `--format json` prints the summary (the same numbers as the text report)
@@ -328,10 +394,13 @@ overall success falls below that fraction:
 callprobe run --model llama3.1:8b --format json --fail-under 0.7
 ```
 
+When `--fail-under` is set, incomplete runs and request errors also fail CI,
+even if the success rate of the remaining results exceeds the threshold.
+
 `action.yml` at the repo root wraps this as a composite GitHub Action:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.4.0
+- uses: Eladhirsh/callprobe@v0.5.0
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -341,6 +410,27 @@ callprobe run --model llama3.1:8b --format json --fail-under 0.7
 It installs callprobe, runs it, and writes the JSON summary to the job's
 step summary. `suite` and `api-key` inputs are optional; leave `suite`
 unset to use the packaged core suite.
+
+The action installs Callprobe from the selected action revision. Its
+`baseline` input enables regression gating; `policy` optionally supplies a
+YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
+For example, after checking out your repository and starting your endpoint:
+
+```yaml
+- uses: Eladhirsh/callprobe@v0.5.0
+  with:
+    model: your-model
+    endpoint: http://localhost:11434/v1
+    baseline: results/baseline.json
+    policy: callprobe-policy.yaml
+    pad: '0,8,16,24'
+    repeats: '3'
+    max-tokens: '4096'
+```
+
+Baseline inputs require v0.5.0 or newer. Keep the baseline separate from the action's
+`callprobe-results.json` output. The action also writes
+`callprobe-comparison.json` and includes it in the job summary.
 
 ## The failure digest
 
@@ -356,9 +446,12 @@ any reasoning trace stripped, when it produced no call at all.
 The suite (version 2) is 50 hand-written tasks: 6 select, 11 abstain, 12
 args, 11 depth, 10 sequence, spread across three tool bundles (a support
 desk, a calendar, and a file manager). The two full sweeps in the Results
-table above and in `LEADERBOARD.md` predate this growth and were run
-against suite version 1 (34 tasks, no file bundle), so treat those numbers
-as provisional until they are rerun against version 2.
+table above predate this growth and were run against suite version 1
+(34 tasks, no file bundle). `LEADERBOARD.md` contains seven suite-v2 sweeps
+and lists the two suite-v1 runs separately. Those historical sweeps predate
+scoring version 2 and need reruns to establish baselines under the stricter
+call-count and truncation rules. Fresh v0.5.0 baseline and repeat results
+are stored separately in [`results/v0.5.0`](results/v0.5.0/README.md).
 `callprobe leaderboard` will refuse to mix results from the two suite
 versions in one table unless you pass `--allow-mixed`.
 
