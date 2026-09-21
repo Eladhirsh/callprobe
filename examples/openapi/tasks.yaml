@@ -1,0 +1,60 @@
+# Human-authored expectations for support-api.yaml. Copy into your imported suite.
+tasks:
+  - id: status-by-id
+    category: select
+    bundle: main
+    messages:
+      - role: user
+        content: Check the status of order ORD-448120.
+    expect:
+      type: call
+      tool: get_order
+      args:
+        path: {order_id: ORD-448120}
+  - id: search-by-email
+    category: select
+    bundle: main
+    messages:
+      - role: user
+        content: Find the orders belonging to alex@example.com.
+    expect:
+      type: call
+      tool: search_orders
+      args:
+        query: {email: alex@example.com}
+  - id: refund-dollars-to-cents
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: Please refund $12.50 on order ORD-991003 because it arrived damaged.
+    expect:
+      type: call
+      tool: issue_refund
+      args:
+        path: {order_id: ORD-991003}
+        body: {amount_cents: 1250, reason: damaged}
+  - id: refund-needs-identifier
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: I want a refund for the damaged item. I don't have my order ID or email available.
+    expect:
+      type: no_call
+  - id: policy-is-not-a-refund
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: What is your refund policy? I am only asking for information, not requesting a refund.
+    expect:
+      type: no_call
+  - id: unsupported-address-change
+    category: abstain
+    bundle: main
+    messages:
+      - role: user
+        content: Change the delivery address on ORD-448120 to 10 Main Street, Boston.
+    expect:
+      type: no_call

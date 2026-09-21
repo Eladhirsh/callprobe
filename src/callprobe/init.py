@@ -8,6 +8,8 @@ commented example per tool.
 
 from __future__ import annotations
 
+import json
+import re
 from typing import Any
 
 import yaml
@@ -50,25 +52,79 @@ def render_distractors_yaml() -> str:
 
 
 def render_suite_yaml(name: str) -> str:
-    return f"name: {name}\nversion: 1\n"
+    return yaml.safe_dump({"name": name, "version": 1}, sort_keys=False)
+
+
+def _scalar(text: str) -> str:
+    return json.dumps(text)
+
+
+def _comment_lines(text: str, prefix: str) -> list[str]:
+    return [f"{prefix}{line}".rstrip() for line in str(text).splitlines() or [""]]
+
+
+def _shape(schema: Any, depth: int = 0) -> Any:
+    """A types-only placeholder for a schema. Never contains expected values."""
+    if not isinstance(schema, dict):
+        return "<any>"
+    if depth >= 4:
+        return "<...>"
+    for combinator in ("oneOf", "anyOf"):
+        if isinstance(schema.get(combinator), list):
+            return f"<{combinator}: {len(schema[combinator])} alternatives>"
+    if isinstance(schema.get("allOf"), list):
+        return "<allOf: see tool schema>"
+    kind = schema.get("type")
+    kinds = kind if isinstance(kind, list) else [kind]
+    if isinstance(schema.get("properties"), dict) and ("object" in kinds or kind is None):
+        required = set(schema.get("required") or [])
+        shaped = {}
+        for index, (key, child) in enumerate(schema["properties"].items()):
+            if index >= 12:
+                shaped["..."] = "<more properties>"
+                break
+            mark = " (required)" if key in required else ""
+            shaped[key] = _shape(child, depth + 1)
+            if isinstance(shaped[key], str):
+                shaped[key] += mark
+        return shaped
+    if "array" in kinds:
+        return [_shape(schema.get("items"), depth + 1)]
+    if isinstance(schema.get("enum"), list):
+        return "<one of: " + "|".join(json.dumps(v) for v in schema["enum"][:6]) + ">"
+    return "<" + "|".join(str(k) for k in kinds if k) + ">" if any(kinds) else "<any>"
 
 
 def render_tasks_yaml(name: str, tools: list[dict[str, Any]]) -> str:
-    lines = [f"name: {name}", "tasks:"]
+    lines = [
+        f"# Draft tasks for {json.dumps(name)}. Everything below is commented out: nothing here",
+        "# is a tested expectation until you write it. Uncomment and edit at least one",
+        "# draft",
+        "# task; `callprobe validate` fails until at least one task is active. A call task",
+        "# and an abstention task are both recommended, but only one task is required.",
+        yaml.safe_dump({"name": name}, sort_keys=False).rstrip(),
+        "tasks:",
+    ]
     for tool in tools:
-        tool_name = tool["name"]
+        tool_name = " ".join(str(tool["name"]).split()) if re.search(r"\s", str(tool["name"])) else tool["name"]
+        lines += [f"  # Tool `{tool_name}`:"]
+        lines += _comment_lines(tool.get("description") or "", "  #   ")
+        shape = json.dumps(_shape(tool.get("parameters")), ensure_ascii=False)
         lines += [
-            f"  # Example call task for `{tool_name}`. Fill in a realistic user",
-            "  # message and the expected arguments, then uncomment.",
+            "  # Argument shape (types only, NOT expected values):",
+            *_comment_lines(shape, "  #   "),
+            "  # `args` values are compared exactly per top-level key, so give each key's",
+            "  # complete value. For a partial nested expectation use `arg_checks`",
+            "  # (path: body.field) instead of a partial `args` object.",
             f"  # - id: call-{tool_name}",
             "  #   category: select",
             f"  #   bundle: {BUNDLE_NAME}",
             "  #   messages:",
             "  #     - role: user",
-            f'  #       content: "TODO: a message that should trigger {tool_name}"',
+            "  #       content: " + json.dumps(f"TODO: a realistic message that should trigger {tool_name}"),
             "  #   expect:",
             "  #     type: call",
-            f"  #     tool: {tool_name}",
+            f"  #     tool: {_scalar(tool_name)}",
             "  #     args: {}  # TODO: fill in the arguments you expect",
             "",
         ]

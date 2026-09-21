@@ -23,6 +23,7 @@ from .compare import category_deltas, flipped_tasks, render_compare
 from .gates import evaluate_gate, load_policy, render_gate
 from .init import generate_suite_files
 from .loader import load_suite
+from .openapi import generate_openapi_suite, load_openapi_file
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text, summarize
 from .runner import prepare_config, run_suite, validate_resume
@@ -167,6 +168,12 @@ def _validate(args: argparse.Namespace) -> int:
     suite, suite_label = _resolve_suite(args.suite)
     problems = validate_suite(suite)
     print(f"suite: {suite_label}  ({len(suite.tasks)} tasks)")
+    if not suite.tasks:
+        print(
+            "  no active tasks: open tasks.yaml, uncomment and edit at least one task\n"
+            "  (a call task and a no_call abstention task are both recommended), then re-run validate"
+        )
+        return 1
     for problem in problems:
         print(f"  {problem}")
     if problems:
@@ -176,26 +183,65 @@ def _validate(args: argparse.Namespace) -> int:
     return 0
 
 
-def _init(args: argparse.Namespace) -> int:
-    try:
-        data = json.loads(Path(args.from_file).read_text(encoding="utf-8"))
-    except FileNotFoundError:
-        sys.stderr.write(f"error: {args.from_file} not found\n")
-        return 1
+def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
+    """Preflight every target, then write each file via temp + rename."""
+    if out.exists() and not out.is_dir():
+        raise ValueError(f"{out} exists and is not a directory")
+    conflicts = [name for name in files if os.path.lexists(out / name)]
+    if any((out / name).is_dir() for name in conflicts):
+        raise ValueError(f"cannot overwrite directory in {out}: {', '.join(conflicts)}")
+    if conflicts and not force:
+        raise ValueError(
+            f"refusing to overwrite existing file(s) in {out}: {', '.join(conflicts)} "
+            "(pass --force to replace them)"
+        )
+    out.mkdir(parents=True, exist_ok=True)
+    for filename, content in files.items():
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=out,
+                                             prefix=f".{filename}.", delete=False) as handle:
+                temporary = Path(handle.name)
+                handle.write(content)
+            temporary.replace(out / filename)
+            temporary = None
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
 
+
+def _init(args: argparse.Namespace) -> int:
     out = Path(args.out)
+    name = out.resolve().name or "suite"
+    openapi = args.from_openapi is not None
+    source = args.from_openapi if openapi else args.from_file
     try:
-        files = generate_suite_files(data, out.name)
+        if openapi:
+            document = load_openapi_file(source)
+            files, result = generate_openapi_suite(
+                document, name, tags=args.tag, skip_unsupported=args.skip_unsupported
+            )
+        else:
+            files = generate_suite_files(json.loads(Path(source).read_text(encoding="utf-8")), name)
+            result = None
+        _write_files(out, files, args.force)
+    except FileNotFoundError:
+        sys.stderr.write(f"error: {source} not found\n")
+        return 1
     except ValueError as exc:
         sys.stderr.write(f"error: {exc}\n")
         return 1
 
-    out.mkdir(parents=True, exist_ok=True)
-    for filename, content in files.items():
-        (out / filename).write_text(content, encoding="utf-8")
-
     print(f"wrote {len(files)} files to {out}/")
-    print("uncomment and fill in the example tasks in tasks.yaml, then run:")
+    if result is not None:
+        print(f"imported {len(result.tools)} operation(s) as tools")
+        for item in result.skipped:
+            print(f"  skipped {item['method']} {item['path']}: {item['reason']}")
+        for warning in result.warnings:
+            print(f"  warning: {warning}")
+        print("no tasks are active yet: uncomment and edit the drafts in tasks.yaml, then run:")
+    else:
+        print("uncomment and fill in the example tasks in tasks.yaml, then run:")
     print(f"  callprobe validate --suite {out}")
     return 0
 
@@ -293,12 +339,19 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.set_defaults(func=_run)
 
     init_cmd = sub.add_parser(
-        "init", help="scaffold a suite from an OpenAI-format tools.json"
+        "init", help="scaffold a suite from an OpenAI-format tools.json or a local OpenAPI file"
     )
-    init_cmd.add_argument(
-        "--from", dest="from_file", required=True, help="path to a tools.json"
-    )
+    source = init_cmd.add_mutually_exclusive_group(required=True)
+    source.add_argument("--from", dest="from_file", help="path to a tools.json")
+    source.add_argument("--from-openapi", dest="from_openapi",
+                        help="path to a local OpenAPI 3.0/3.1 YAML or JSON file (no network)")
     init_cmd.add_argument("--out", default="suite", help="directory to write the suite to")
+    init_cmd.add_argument("--tag", action="append", default=None,
+                          help="OpenAPI only: import just operations with this tag (repeatable)")
+    init_cmd.add_argument("--skip-unsupported", action="store_true",
+                          help="OpenAPI only: skip operations that cannot be imported instead of failing")
+    init_cmd.add_argument("--force", action="store_true",
+                          help="overwrite existing generated files")
     init_cmd.set_defaults(func=_init)
 
     validate_cmd = sub.add_parser(
@@ -330,6 +383,8 @@ def main(argv: list[str] | None = None) -> int:
     board.set_defaults(func=_leaderboard)
 
     args = parser.parse_args(argv)
+    if args.command == "init" and args.from_openapi is None and (args.tag or args.skip_unsupported):
+        parser.error("--tag and --skip-unsupported require --from-openapi")
     try:
         if args.command == "run":
             if args.concurrency < 1 or args.max_tokens < 1 or args.retries < 0:

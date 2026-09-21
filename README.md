@@ -204,6 +204,35 @@ usually your own.
 
 ## Bring your own tools
 
+### Start from an OpenAPI document (development version)
+
+Import a local OpenAPI 3.0/3.1 YAML or JSON file:
+
+```bash
+callprobe init --from-openapi openapi.yaml --out my-suite
+# Edit my-suite/tasks.yaml: uncomment drafts and write expected behavior.
+callprobe validate --suite my-suite
+callprobe run --suite my-suite --model qwen2.5:7b --pad 0 --out baseline.json
+```
+
+The importer keeps `path`, `query`, `headers`, `cookies`, and `body` arguments
+separate, resolves local references, and writes an operation map and diagnostics
+to `import-report.json`. Unsupported operations fail the import by default;
+`--skip-unsupported` explicitly omits them. Use `--tag TAG` to select operations.
+Existing suite files are protected unless you pass `--force`.
+
+Generated tasks are commented drafts; they do not invent correct answers from
+the schema. A suite with no active tasks cannot be validated as ready to run.
+Try the [six-test support API walkthrough](examples/openapi/README.md) for a
+complete example with human-authored expectations. The imported API is never
+executed, and no API credentials are needed.
+
+This command is under development after v0.5.0; install from this checkout
+using the Development instructions below. The published v0.5.0 CLI supports
+the existing `--from tools.json` importer.
+
+### Write a suite directly
+
 A suite is three YAML files. Drop your real tool schemas into `tools.yaml`,
 write tasks against them, and run.
 
@@ -470,6 +499,10 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to write a task and
 submit a run.
 
 ## Development
+
+With uv installed, use `uv sync --extra dev`, then prefix development commands
+with `uv run` (for example, `uv run callprobe init --help` or `uv run pytest`).
+Alternatively, use a standard Python virtual environment:
 
 ```bash
 git clone https://github.com/Eladhirsh/callprobe.git

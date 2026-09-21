@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Add offline OpenAPI 3.0/3.1 import through `init --from-openapi`, with local
+  references, grouped parameters and JSON request bodies, operation filtering,
+  import diagnostics, and explicit skipping of unsupported operations.
+- Generate editable test drafts and a suite walkthrough; protect existing
+  suite files unless `--force` is supplied.
+- Include a small support API with six human-authored tests for an end-to-end
+  import, validation, model evaluation, and baseline-comparison walkthrough.
+
 ## 0.5.0
 
 - Scoring version 2 requires exactly one call for call expectations and
