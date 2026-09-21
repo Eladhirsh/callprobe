@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0
 
 - Add offline OpenAPI 3.0/3.1 import through `init --from-openapi`, with local
   references, grouped parameters and JSON request bodies, operation filtering,

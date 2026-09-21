@@ -4,7 +4,7 @@ This fictional support API has three operations and six human-authored tests.
 It needs no API server or credentials: Callprobe evaluates the model's proposed
 tool calls and never executes the imported API operations.
 
-From the repository root, with a development install of Callprobe:
+From the repository root, with Callprobe 0.6.0 or newer installed:
 
 ```bash
 callprobe init --from-openapi examples/openapi/support-api.yaml --out my-support-suite

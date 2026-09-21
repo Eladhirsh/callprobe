@@ -204,7 +204,7 @@ usually your own.
 
 ## Bring your own tools
 
-### Start from an OpenAPI document (development version)
+### Start from an OpenAPI document (since 0.6.0)
 
 Import a local OpenAPI 3.0/3.1 YAML or JSON file:
 
@@ -227,9 +227,9 @@ Try the [six-test support API walkthrough](examples/openapi/README.md) for a
 complete example with human-authored expectations. The imported API is never
 executed, and no API credentials are needed.
 
-This command is under development after v0.5.0; install from this checkout
-using the Development instructions below. The published v0.5.0 CLI supports
-the existing `--from tools.json` importer.
+`--from-openapi` is available since 0.6.0. Install it with
+`uv tool install callprobe==0.6.0`, or run `uv tool upgrade callprobe` if
+Callprobe is already installed. Earlier versions only support `--from tools.json`.
 
 ### Write a suite directly
 
@@ -429,7 +429,7 @@ even if the success rate of the remaining results exceeds the threshold.
 `action.yml` at the repo root wraps this as a composite GitHub Action:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.5.0
+- uses: Eladhirsh/callprobe@v0.6.0
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -446,7 +446,7 @@ YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
 For example, after checking out your repository and starting your endpoint:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.5.0
+- uses: Eladhirsh/callprobe@v0.6.0
   with:
     model: your-model
     endpoint: http://localhost:11434/v1
