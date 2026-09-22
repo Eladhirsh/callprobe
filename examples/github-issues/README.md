@@ -82,4 +82,11 @@ operation.
   schema-enforced bounds.
 - 18 authored cases are not representative of real usage, and passing
   them says nothing about API business outcomes.
-- No results have been produced for this example yet.
+
+## Recorded comparison
+
+The [recorded local evaluation](../../results/github-issues/README.md) scored
+Qwen2.5 7B at 5/18 and Qwen3 8B at 11/18. Qwen3 improved eight cases but
+regressed on two, so the strict regression gate failed. Both runs completed
+without request errors or truncation. Inspect the case-level evidence before
+treating the higher aggregate score as a reason to switch models.
