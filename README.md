@@ -227,6 +227,11 @@ Try the [six-test support API walkthrough](examples/openapi/README.md) for a
 complete example with human-authored expectations. The imported API is never
 executed, and no API credentials are needed.
 
+For a real API contract, try the [GitHub issue and comment evaluation](examples/github-issues/README.md):
+18 authored cases against three operations from a pinned copy of GitHub's
+official OpenAPI specification. It covers identifiers, pagination, comment
+text, conversation corrections, and abstention without executing GitHub calls.
+
 `--from-openapi` is available since 0.6.0. Install it with
 `uv tool install callprobe==0.6.0`, or run `uv tool upgrade callprobe` if
 Callprobe is already installed. Earlier versions only support `--from tools.json`.
