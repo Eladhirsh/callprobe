@@ -20,6 +20,7 @@ import yaml
 from . import __version__
 from .client import ChatClient, probe_server_version
 from .compare import category_deltas, flipped_tasks, render_compare
+from .explain import explain_run, render_explain_text
 from .gates import evaluate_gate, load_policy, render_gate
 from .init import generate_suite_files
 from .loader import load_suite
@@ -274,6 +275,17 @@ def _compare(args: argparse.Namespace) -> int:
     return 1 if gate is not None and not gate["passed"] else 0
 
 
+def _explain(args: argparse.Namespace) -> int:
+    run = _read_run(args.results)
+    suite = load_suite(args.suite)
+    report = explain_run(run, suite, task_id=args.task)
+    if args.format == "json":
+        print(json.dumps(report, indent=2))
+    else:
+        print(render_explain_text(report))
+    return 0
+
+
 def _leaderboard(args: argparse.Namespace) -> int:
     runs = []
     for path in args.results:
@@ -372,6 +384,18 @@ def main(argv: list[str] | None = None) -> int:
     compare_cmd.add_argument("--policy", help="YAML CI policy; enables gating")
     compare_cmd.add_argument("--format", choices=["text", "json"], default="text")
     compare_cmd.set_defaults(func=_compare)
+
+    explain_cmd = sub.add_parser(
+        "explain", help="offline failure diagnostics for a saved run, no model calls"
+    )
+    explain_cmd.add_argument("results", help="a results JSON file written by `callprobe run --out`")
+    explain_cmd.add_argument(
+        "--suite", required=True,
+        help="suite directory the run was scored against (must match its recorded suite hash)"
+    )
+    explain_cmd.add_argument("--task", default=None, help="only explain this task id, all pads/repeats")
+    explain_cmd.add_argument("--format", choices=["text", "json"], default="text")
+    explain_cmd.set_defaults(func=_explain)
 
     board = sub.add_parser("leaderboard", help="build a markdown table from runs")
     board.add_argument("results", nargs="+")

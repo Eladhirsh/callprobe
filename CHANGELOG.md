@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.0
+
+- Add offline `explain RESULTS.json --suite DIR` diagnostics with task filtering
+  and text/JSON output. Reports prompts, actual calls, assertions, and recurring
+  failure types from a matching saved run and suite.
+- Suggest unambiguous nested argument shapes only when the complete candidate
+  validates. Suggestions preserve values and never change scores or execute calls.
+- Reject mismatched suites and unknown task IDs; distinguish empty runs and
+  request errors. Schemas that cannot be inspected offline keep their recorded
+  failure reasons without speculative hints.
+
 ## 0.6.0
 
 - Add offline OpenAPI 3.0/3.1 import through `init --from-openapi`, with local
