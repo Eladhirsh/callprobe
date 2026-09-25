@@ -2,17 +2,60 @@
 
 Test whether a model can actually call **your** tools.
 
-Every local model claims tool calling support. Existing leaderboards test
-somebody else's function schemas. `callprobe` points at any
-OpenAI-compatible endpoint, runs your own tool definitions against it, and
-tells you where it breaks.
+`callprobe` tests tool selection, argument schemas, values, and abstention
+against an OpenAI-compatible model endpoint. Bring your own tools or start
+with a bundled example. It evaluates model responses; it does not execute
+the API operations described by your tools.
+
+## Try it
+
+Python 3.10+ is required. Install or replace an older pinned installation:
 
 ```bash
-pipx install callprobe
+uv tool install callprobe@latest
 callprobe --version
-
-callprobe run --model qwen3:8b --endpoint http://localhost:11434/v1
+callprobe examples
+callprobe init --example support --out callprobe-demo
+callprobe validate --suite callprobe-demo
 ```
+
+Validation should report **6 tasks, no problems found**. Setup and validation
+need no model endpoint. If you use pipx instead of uv, install with
+`pipx install callprobe`.
+
+With Ollama running and `qwen2.5:7b` already downloaded, run the six cases:
+
+```bash
+callprobe run --suite callprobe-demo --model qwen2.5:7b \
+  --pad 0 --repeats 1 --max-tokens 4096 --out callprobe-demo/baseline.json
+callprobe explain callprobe-demo/baseline.json --suite callprobe-demo
+```
+
+Use `--endpoint` for another OpenAI-compatible server and `--model` for a
+model it serves. Failed cases are useful findings, not installation errors.
+To retry only tasks that failed:
+
+```bash
+callprobe run --suite callprobe-demo --model qwen2.5:7b \
+  --failed-from callprobe-demo/baseline.json --pad 0 --repeats 1 \
+  --max-tokens 4096 --out callprobe-demo/retry.json
+```
+
+Want to help test? [Report your first-run experience](https://github.com/Eladhirsh/callprobe/issues/new?template=first-run-feedback.yml):
+which endpoint/model you used, whether the walkthrough worked, and one thing
+that confused you. You can also import your own [OpenAPI file](#bring-your-own-tools).
+
+## A concrete regression example
+
+On our saved 18-case GitHub API suite, Qwen3 8B passed 11 cases versus
+Qwen2.5 7B's 5, but regressed on two previously passing cases. The regression
+gate correctly failed despite the higher overall score. These are individual
+local runs, not a general model ranking. [Conditions and raw results](results/github-issues/README.md).
+
+## Historical core benchmark
+
+The output below is an archived suite-v1 run, not the expected output of the
+six-case quickstart or a current model leaderboard.
 
 ```
 model            qwen3:8b
@@ -65,17 +108,15 @@ correct tool to call, qwen3:8b declined correctly 88.6% of the time.
 llama3.1:8b declined correctly 9.8% of the time. Asked about a return
 policy, it called `issue_refund`; asked to change an email address, it
 called `update_shipping_address`. Nine times in ten it acted when it should
-have asked a question. That is the failure mode that reaches production,
-and almost no existing benchmark measures it.
+have asked a question. These cases illustrate why abstention needs explicit tests.
 
 **Type coercion masks a real capability.** 19.1% of llama3.1:8b's calls
 were computed correctly and serialized wrong: `"1299"` instead of `1299`,
 an array delivered as a JSON-encoded string. Score those leniently (cast
 strings to the type the schema declares, never touch the value) and success
-jumps from 32.1% to 51.2%. Roughly half of what looks like a reasoning
-failure is a formatting bug in the serving layer, not the model being
-unable to do the task. `callprobe` reports both numbers so you can tell
-which one you're looking at (see `type-lenient` in the output above and
+jumps from 32.1% to 51.2%. Lenient scoring identifies recoverable type
+mismatches; it does not establish whether the model or serving layer caused
+them. `callprobe` reports both numbers (see `type-lenient` in the output above and
 the full row in the table).
 
 ## Why three scores instead of one
@@ -235,7 +276,7 @@ text, conversation corrections, and abstention without executing GitHub calls.
 `--from-openapi` is available since 0.6.0. Install it with
 `uv tool install callprobe@latest`. Earlier versions only support `--from tools.json`.
 
-### Try a bundled example (unreleased)
+### Try a bundled example (since 0.8.0)
 
 `callprobe examples` and `callprobe init --example NAME` ship the OpenAPI
 documents and human-authored tasks above *inside the installed package*, so
@@ -251,14 +292,8 @@ callprobe run --suite my-support-suite --model qwen2.5:7b --pad 0 --repeats 1 --
 ```
 
 Unlike `--from-openapi`, `--example` writes a suite with its tasks already
-active; there is nothing to uncomment first. This feature is not in a
-released version yet, so `uv tool install callprobe@latest` does not have it
-(currently 0.7.0). To try it now, run this from a local checkout containing
-these changes:
-
-```bash
-uv tool install --force --from . callprobe
-```
+active; there is nothing to uncomment first. Available since 0.8.0; install
+with `uv tool install callprobe@latest`.
 
 ### Write a suite directly
 
@@ -381,7 +416,7 @@ observations are reused. Missing files or incompatible checkpoints fail
 before any model requests. Checkpoints are replaced atomically so a failed
 write leaves the previous checkpoint intact.
 
-### Save run settings (unreleased)
+### Save run settings (since 0.8.0)
 
 Use an explicit YAML configuration to repeat an experiment without copying
 all its flags. For example, save this as `callprobe.yaml` beside your
@@ -420,10 +455,9 @@ fields are not accepted in YAML. Targeting, resume, and CI gate options
 remain explicit CLI flags. Saved results record the effective experiment
 settings, and the existing resume and suite-matching checks still apply.
 
-This feature is not in PyPI 0.7.0. To try these unreleased commands, install
-from a checkout containing the changes with `uv tool install --force --from . callprobe`.
+Available since 0.8.0. Install with `uv tool install callprobe@latest`.
 
-### Targeted debug reruns (unreleased)
+### Targeted debug reruns (since 0.8.0)
 
 `--task ID` (repeatable) runs only those exact task ids instead of the whole
 suite, using the current `--pad`/`--repeats`/model settings:
@@ -537,7 +571,7 @@ even if the success rate of the remaining results exceeds the threshold.
 `action.yml` at the repo root wraps this as a composite GitHub Action:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.7.0
+- uses: Eladhirsh/callprobe@v0.8.0
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -554,7 +588,7 @@ YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
 For example, after checking out your repository and starting your endpoint:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.7.0
+- uses: Eladhirsh/callprobe@v0.8.0
   with:
     model: your-model
     endpoint: http://localhost:11434/v1
