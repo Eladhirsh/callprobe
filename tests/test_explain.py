@@ -758,6 +758,16 @@ def test_unknown_result_ids_are_rejected_and_empty_runs_are_not_passed(github_su
         explain_run(run, github_suite)
 
 
+def test_explain_works_on_a_targeted_debug_run_with_the_original_suite_hash(github_suite):
+    task = _tasks(github_suite)['get-issue-details']
+    config = _config(github_suite, task_ids=[t.id for t in github_suite.tasks],
+                      selected_task_ids=[task.id])
+    run = Run(config=config, started_at='now', results=[_base_result(task, success=True,
+              selection_ok=True, schema_ok=True, args_ok=True)])
+    report = explain_run(run, github_suite)
+    assert report['total_cases'] == 1
+
+
 def test_request_errors_are_not_scored_cases(github_suite):
     task = _tasks(github_suite)['get-issue-details']
     run = Run(config=_config(github_suite), started_at='now',

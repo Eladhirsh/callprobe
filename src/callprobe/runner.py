@@ -24,19 +24,37 @@ WorkItem = tuple[int, int, Task]
 
 
 def prepare_config(suite: Suite, config: RunConfig) -> RunConfig:
-    """Record the suite and rubric actually used, including the planned coverage."""
+    """Record the suite and rubric actually used, including the planned coverage.
+
+    `selected_task_ids`, when set, narrows the run to specific task ids for
+    a targeted debug rerun. It is validated (nonempty, every id known to the
+    suite) and canonicalized to the suite's own task order, regardless of
+    how the caller ordered or repeated ids, so two callers naming the same
+    tasks always produce an identical, resumable selection.
+    """
     if not suite.tasks:
         raise ValueError("suite contains no tasks")
     if config.repeats < 1 or not config.pads or any(p < 0 for p in config.pads):
         raise ValueError("repeats must be positive and pads must be nonnegative")
     if len(set(config.pads)) != len(config.pads):
         raise ValueError("pads must not contain duplicates")
+    task_ids = [task.id for task in suite.tasks]
+    selected = config.selected_task_ids
+    if selected is not None:
+        if not selected:
+            raise ValueError("selected_task_ids must not be empty")
+        unknown = sorted(set(selected) - set(task_ids))
+        if unknown:
+            raise ValueError("unknown task id(s): " + ", ".join(unknown))
+        wanted = set(selected)
+        selected = [tid for tid in task_ids if tid in wanted]
     return config.model_copy(update={
         "suite_name": suite.name,
         "suite_version": suite.version,
         "suite_hash": suite.hash,
         "scoring_version": SCORING_VERSION,
-        "task_ids": [task.id for task in suite.tasks],
+        "task_ids": task_ids,
+        "selected_task_ids": selected,
     })
 
 
@@ -49,7 +67,7 @@ def validate_resume(config: RunConfig, resume: Run) -> None:
     fields = (
         "model", "endpoint", "temperature", "max_tokens", "quantization",
         "suite_hash", "suite_version", "scoring_version", "task_ids",
-        "server_name", "server_version",
+        "selected_task_ids", "server_name", "server_version",
     )
     mismatches = [name for name in fields
                   if getattr(config, name) != getattr(resume.config, name)]
@@ -57,11 +75,13 @@ def validate_resume(config: RunConfig, resume: Run) -> None:
         mismatches.append("missing suite/scoring provenance")
     if mismatches:
         raise ValueError("incompatible resume: " + ", ".join(mismatches) + "; start a new run")
+    valid_ids = set(config.selected_task_ids) if config.selected_task_ids is not None \
+        else set(config.task_ids or [])
     seen = set()
     for result in resume.results:
         key = (result.task_id, result.pad, result.repeat)
         if (key in seen or result.model != config.model
-                or result.task_id not in (config.task_ids or [])
+                or result.task_id not in valid_ids
                 or result.pad not in resume.config.pads
                 or not 0 <= result.repeat < resume.config.repeats):
             raise ValueError("incompatible resume: duplicate or invalid result " + str(key))
@@ -89,13 +109,19 @@ def _work_items(suite: Suite, config: RunConfig) -> list[WorkItem]:
     """Canonical order: pad outer, repeat middle, task inner.
 
     The result list is always assembled in this order regardless of
-    concurrency or resume, so the output file is deterministic.
+    concurrency or resume, so the output file is deterministic. When
+    `selected_task_ids` narrows the run to a debug subset, the suite's own
+    task order is preserved for the tasks that remain.
     """
+    tasks = suite.tasks
+    if config.selected_task_ids is not None:
+        wanted = set(config.selected_task_ids)
+        tasks = [task for task in tasks if task.id in wanted]
     return [
         (pad, repeat, task)
         for pad in config.pads
         for repeat in range(config.repeats)
-        for task in suite.tasks
+        for task in tasks
     ]
 
 

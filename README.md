@@ -235,6 +235,31 @@ text, conversation corrections, and abstention without executing GitHub calls.
 `--from-openapi` is available since 0.6.0. Install it with
 `uv tool install callprobe@latest`. Earlier versions only support `--from tools.json`.
 
+### Try a bundled example (unreleased)
+
+`callprobe examples` and `callprobe init --example NAME` ship the OpenAPI
+documents and human-authored tasks above *inside the installed package*, so
+setup and validation need no checkout of this repository or network access.
+Running the suite requires a model endpoint; the command below assumes
+`qwen2.5:7b` is available in Ollama at `http://localhost:11434/v1`:
+
+```bash
+callprobe examples
+callprobe init --example support --out my-support-suite
+callprobe validate --suite my-support-suite
+callprobe run --suite my-support-suite --model qwen2.5:7b --pad 0 --repeats 1 --out my-support-suite/baseline.json
+```
+
+Unlike `--from-openapi`, `--example` writes a suite with its tasks already
+active; there is nothing to uncomment first. This feature is not in a
+released version yet, so `uv tool install callprobe@latest` does not have it
+(currently 0.7.0). To try it now, run this from a local checkout containing
+these changes:
+
+```bash
+uv tool install --force --from . callprobe
+```
+
 ### Write a suite directly
 
 A suite is three YAML files. Drop your real tool schemas into `tools.yaml`,
@@ -355,6 +380,43 @@ You can add padding levels or repeats. Request errors are retried; completed
 observations are reused. Missing files or incompatible checkpoints fail
 before any model requests. Checkpoints are replaced atomically so a failed
 write leaves the previous checkpoint intact.
+
+### Targeted debug reruns (unreleased)
+
+`--task ID` (repeatable) runs only those exact task ids instead of the whole
+suite, using the current `--pad`/`--repeats`/model settings:
+
+```bash
+callprobe run --model llama3.1:8b --task args-partial-refund --task abstain-chitchat
+```
+
+`--failed-from RESULTS.json` reruns every task id that had a strict failure,
+truncation, or request error anywhere in that saved run (it can be a partial
+or interrupted run), deduplicated, in the suite's own task order. It does
+not reuse or merge the saved observations, only the task ids; only the
+current CLI settings decide how those tasks are re-probed. If nothing in the
+source failed, it prints a no-op message and exits `0` without making any
+endpoint request or touching `--out`. `--task` and `--failed-from` are
+mutually exclusive, and neither can be combined with `--fail-under`:
+targeted runs are for debugging, not CI gating. `--out` is rejected if it
+would alias the `--failed-from` file, including via a symlink or hardlink,
+so the evidence a rerun is diagnosing can never be overwritten. Unknown task
+ids and a `--failed-from` file with an incompatible or missing suite/scoring
+provenance are rejected before any endpoint probing, client creation, or
+output write.
+
+A targeted run's result file records which task ids were selected
+(`selected_task_ids`) alongside the full suite's ids (`task_ids`), and
+`--resume` only reuses a checkpoint from the same selection (or the same
+full-suite run) &mdash; a full run and a `--task`-scoped run of the same
+suite cannot resume each other. `callprobe run --format json`,
+`callprobe run` (text), and `callprobe compare` all label targeted runs
+plainly so a debug rerun is never mistaken for full benchmark coverage;
+`callprobe compare` without a gate flag proceeds with a warning, but
+`--fail-on-regression`/`--policy` and `callprobe leaderboard` (even with
+`--allow-mixed`) both refuse a targeted run outright. `callprobe explain`
+works the same way against a targeted run's results, since it only needs
+the recorded suite hash to match.
 
 Results include every structured tool call (`calls`), its ID, parsed and raw
 arguments, parse errors, and `finish_reason`. This evidence is retained for

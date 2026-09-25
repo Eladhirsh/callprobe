@@ -11,6 +11,7 @@ import argparse
 import importlib.resources
 import json
 import os
+import shlex
 import sys
 import tempfile
 from pathlib import Path
@@ -20,6 +21,7 @@ import yaml
 from . import __version__
 from .client import ChatClient, probe_server_version
 from .compare import category_deltas, flipped_tasks, render_compare
+from .examples import EXAMPLES, generate_example_suite, list_examples
 from .explain import explain_run, render_explain_text
 from .gates import evaluate_gate, load_policy, render_gate
 from .init import generate_suite_files
@@ -28,6 +30,7 @@ from .openapi import generate_openapi_suite, load_openapi_file
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text, summarize
 from .runner import prepare_config, run_suite, validate_resume
+from .scoring import SCORING_VERSION
 from .validate import validate_suite
 
 # Sentinel meaning "use the suite packaged inside callprobe itself", resolved
@@ -80,10 +83,69 @@ def _json_safe(value):
     return value
 
 
+def _same_file_target(a: str, b: str) -> bool:
+    """True if two paths name the same file, including via symlink/hardlink.
+
+    Checked before any endpoint request or output write, so `--out` can
+    never be pointed at the `--failed-from` evidence it was derived from.
+    """
+    path_a, path_b = Path(a), Path(b)
+    try:
+        if path_a.exists() and path_b.exists():
+            return path_a.samefile(path_b)
+    except OSError:
+        pass
+    return path_a.resolve() == path_b.resolve()
+
+
+def _select_failed_task_ids(suite, saved: Run) -> list[str]:
+    """Task ids from a saved (possibly partial or interrupted) run that had
+    any strict failure, truncation, or request error, in canonical suite
+    order. Never merges or reuses the saved observations themselves.
+    """
+    if not saved.config.suite_hash or saved.config.scoring_version is None:
+        raise ValueError("--failed-from: results file has no recorded suite/scoring provenance")
+    if saved.config.suite_hash != suite.hash:
+        raise ValueError("--failed-from: results file's suite hash does not match --suite")
+    if saved.config.scoring_version != SCORING_VERSION:
+        raise ValueError("--failed-from: results file's scoring version does not match this callprobe")
+    known_ids = {task.id for task in suite.tasks}
+    unknown = sorted({r.task_id for r in saved.results} - known_ids)
+    if unknown:
+        raise ValueError(
+            "--failed-from: results file references task id(s) not in --suite: "
+            + ", ".join(unknown)
+        )
+    failed = {r.task_id for r in saved.results if r.error or r.truncated or not r.success}
+    return [task.id for task in suite.tasks if task.id in failed]
+
+
 def _run(args: argparse.Namespace) -> int:
     suite, suite_label = _resolve_suite(args.suite)
 
     pads = [int(p) for p in args.pad.split(",") if p.strip()]
+
+    selected_task_ids: list[str] | None = None
+    if args.task:
+        known_ids = {task.id for task in suite.tasks}
+        unknown = sorted(set(args.task) - known_ids)
+        if unknown:
+            raise ValueError("--task: unknown task id(s): " + ", ".join(unknown))
+        wanted = set(args.task)
+        selected_task_ids = [task.id for task in suite.tasks if task.id in wanted]
+    elif args.failed_from:
+        if args.out and _same_file_target(args.out, args.failed_from):
+            raise ValueError("--out must not alias the --failed-from results file")
+        saved = _read_run(args.failed_from)
+        selected_task_ids = _select_failed_task_ids(suite, saved)
+        if not selected_task_ids:
+            message = f"no failed observations in {args.failed_from}; nothing to rerun"
+            if args.format == "json":
+                print(json.dumps({"noop": True, "message": message}, indent=2))
+            else:
+                print(message)
+            return 0
+
     server_name, server_version = probe_server_version(args.endpoint)
     config = RunConfig(
         model=args.model,
@@ -101,6 +163,7 @@ def _run(args: argparse.Namespace) -> int:
         suite_hash=suite.hash,
         server_name=server_name,
         server_version=server_version,
+        selected_task_ids=selected_task_ids,
     )
     api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     config = prepare_config(suite, config)
@@ -112,7 +175,8 @@ def _run(args: argparse.Namespace) -> int:
 
     client = ChatClient(args.endpoint, api_key=api_key, retries=args.retries)
 
-    total = len(suite.tasks) * len(pads) * args.repeats
+    task_count = len(config.selected_task_ids) if config.selected_task_ids is not None else len(suite.tasks)
+    total = task_count * len(pads) * args.repeats
     state = {"done": 0}
 
     def progress(result) -> None:
@@ -214,10 +278,13 @@ def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
 def _init(args: argparse.Namespace) -> int:
     out = Path(args.out)
     name = out.resolve().name or "suite"
+    example = args.example
     openapi = args.from_openapi is not None
-    source = args.from_openapi if openapi else args.from_file
+    source = example or (args.from_openapi if openapi else args.from_file)
     try:
-        if openapi:
+        if example is not None:
+            files, result = generate_example_suite(example, name)
+        elif openapi:
             document = load_openapi_file(source)
             files, result = generate_openapi_suite(
                 document, name, tags=args.tag, skip_unsupported=args.skip_unsupported
@@ -233,17 +300,27 @@ def _init(args: argparse.Namespace) -> int:
         sys.stderr.write(f"error: {exc}\n")
         return 1
 
-    print(f"wrote {len(files)} files to {out}/")
+    out_display = shlex.quote(str(out))
+    print(f"wrote {len(files)} files to {out_display}/")
     if result is not None:
         print(f"imported {len(result.tools)} operation(s) as tools")
         for item in result.skipped:
             print(f"  skipped {item['method']} {item['path']}: {item['reason']}")
         for warning in result.warnings:
             print(f"  warning: {warning}")
-        print("no tasks are active yet: uncomment and edit the drafts in tasks.yaml, then run:")
+    active = len(load_suite(out).tasks) if example is not None else 0
+    if active:
+        print(f"{active} task(s) are active and ready to run:")
     else:
-        print("uncomment and fill in the example tasks in tasks.yaml, then run:")
-    print(f"  callprobe validate --suite {out}")
+        print("no tasks are active yet: uncomment and edit the drafts in tasks.yaml, then run:")
+    print(f"  callprobe validate --suite {out_display}")
+    return 0
+
+
+def _examples(args: argparse.Namespace) -> int:
+    for name, count, description in list_examples():
+        print(f"{name}  ({count} tasks)  {description}")
+    print("\nuse: callprobe init --example NAME --out DIR")
     return 0
 
 
@@ -255,6 +332,10 @@ def _compare(args: argparse.Namespace) -> int:
         if args.fail_on_regression:
             policy.fail_on_regression = True
         gate = evaluate_gate(a, b, policy)
+    elif a.config.selected_task_ids is not None or b.config.selected_task_ids is not None:
+        sys.stderr.write(
+            "warning: comparing targeted debug run(s), not full benchmark coverage\n"
+        )
     if a.config.suite_hash != b.config.suite_hash:
         sys.stderr.write(
             f"warning: suite hashes differ (a={a.config.suite_hash}, "
@@ -292,6 +373,14 @@ def _leaderboard(args: argparse.Namespace) -> int:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
         runs.append(Run(**data))
     runs.sort(key=lambda r: r.config.model)
+
+    targeted = [r.config.model for r in runs if r.config.selected_task_ids is not None]
+    if targeted:
+        sys.stderr.write(
+            "targeted debug run(s) cannot be included in a leaderboard "
+            "(not a full benchmark), even with --allow-mixed: " + ", ".join(targeted) + "\n"
+        )
+        return 1
 
     keys = {(r.config.suite_version, r.config.suite_hash, r.config.scoring_version) for r in runs}
     if len(keys) > 1 and not args.allow_mixed:
@@ -348,15 +437,33 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="skip (task, pad, repeat) combinations already in this results file",
     )
+    targeting = run_cmd.add_mutually_exclusive_group()
+    targeting.add_argument(
+        "--task",
+        action="append",
+        default=None,
+        help="run only this task id; repeatable for a targeted debug rerun of exact ids",
+    )
+    targeting.add_argument(
+        "--failed-from",
+        dest="failed_from",
+        default=None,
+        help="targeted debug rerun of every task id with a strict failure, "
+             "truncation, or request error in this results file, using the "
+             "current pads/repeats/model settings (not the saved observations)",
+    )
     run_cmd.set_defaults(func=_run)
 
     init_cmd = sub.add_parser(
-        "init", help="scaffold a suite from an OpenAI-format tools.json or a local OpenAPI file"
+        "init", help="scaffold a suite from an OpenAI-format tools.json, a local OpenAPI file, "
+                     "or a bundled example"
     )
     source = init_cmd.add_mutually_exclusive_group(required=True)
     source.add_argument("--from", dest="from_file", help="path to a tools.json")
     source.add_argument("--from-openapi", dest="from_openapi",
                         help="path to a local OpenAPI 3.0/3.1 YAML or JSON file (no network)")
+    source.add_argument("--example", choices=sorted(EXAMPLES),
+                        help="a bundled runnable example with authored tasks, see `callprobe examples`")
     init_cmd.add_argument("--out", default="suite", help="directory to write the suite to")
     init_cmd.add_argument("--tag", action="append", default=None,
                           help="OpenAPI only: import just operations with this tag (repeatable)")
@@ -365,6 +472,11 @@ def main(argv: list[str] | None = None) -> int:
     init_cmd.add_argument("--force", action="store_true",
                           help="overwrite existing generated files")
     init_cmd.set_defaults(func=_init)
+
+    examples_cmd = sub.add_parser(
+        "examples", help="list bundled runnable examples for `callprobe init --example`"
+    )
+    examples_cmd.set_defaults(func=_examples)
 
     validate_cmd = sub.add_parser(
         "validate", help="check task expectations against tool schemas, no model needed"
@@ -409,6 +521,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "init" and args.from_openapi is None and (args.tag or args.skip_unsupported):
         parser.error("--tag and --skip-unsupported require --from-openapi")
+    if args.command == "run" and args.fail_under is not None and (args.task or args.failed_from):
+        parser.error("--fail-under cannot be combined with --task/--failed-from: "
+                      "targeted runs are for debugging, not CI gating")
     try:
         if args.command == "run":
             if args.concurrency < 1 or args.max_tokens < 1 or args.retries < 0:

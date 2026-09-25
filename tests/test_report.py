@@ -1,5 +1,5 @@
 from callprobe.models import Run, RunConfig, TaskResult
-from callprobe.report import failure_digest, render_markdown, summarize
+from callprobe.report import failure_digest, render_markdown, render_text, summarize
 
 
 def _config(**kwargs):
@@ -91,3 +91,68 @@ def test_markdown_shows_suite_version_when_runs_agree():
 def test_markdown_omits_suite_line_when_unknown():
     run = Run(config=_config(), started_at="now", results=[_result()])
     assert "suite:" not in render_markdown([run])
+
+
+def test_summarize_scope_is_full_by_default():
+    config = _config(task_ids=["t1", "t2", "t3"])
+    run = Run(config=config, started_at="now", results=[_result()])
+    scope = summarize(run)["scope"]
+    assert scope == {"targeted": False, "selected_task_count": 3, "total_task_count": 3}
+
+
+def test_summarize_scope_reports_targeted_selection():
+    config = _config(task_ids=["t1", "t2", "t3"], selected_task_ids=["t1"])
+    run = Run(config=config, started_at="now", results=[_result()])
+    scope = summarize(run)["scope"]
+    assert scope == {"targeted": True, "selected_task_count": 1, "total_task_count": 3}
+
+
+def test_render_text_labels_targeted_debug_run():
+    config = _config(task_ids=["t1", "t2", "t3"], selected_task_ids=["t1"])
+    run = Run(config=config, started_at="now", results=[_result()])
+    text = render_text(run)
+    assert "TARGETED DEBUG RUN" in text
+    assert "1 of 3" in text
+
+
+def test_render_text_omits_targeted_label_for_full_run():
+    config = _config(task_ids=["t1", "t2", "t3"])
+    run = Run(config=config, started_at="now", results=[_result()])
+    assert "TARGETED DEBUG RUN" not in render_text(run)
+
+
+def test_render_markdown_labels_targeted_debug_run():
+    config = _config(task_ids=["t1", "t2", "t3"], selected_task_ids=["t1", "t2"])
+    run = Run(config=config, started_at="now", results=[_result()])
+    markdown = render_markdown([run])
+    assert "targeted debug run" in markdown
+    assert "2/3 tasks" in markdown
+
+
+def test_render_markdown_omits_targeted_label_for_full_run():
+    config = _config(task_ids=["t1", "t2", "t3"])
+    run = Run(config=config, started_at="now", results=[_result()])
+    assert "targeted debug run" not in render_markdown([run])
+
+
+def test_legacy_run_json_without_selected_task_ids_field_still_loads():
+    import json
+
+    from callprobe.models import Run as RunModel
+
+    legacy = {
+        "config": {
+            "model": "stub", "endpoint": "http://fake", "suite": "stub",
+            "pads": [0], "repeats": 1, "temperature": 0.0, "max_tokens": 64,
+            "task_ids": ["t1"],
+        },
+        "started_at": "now",
+        "results": [
+            {"task_id": "t1", "category": "select", "model": "stub", "pad": 0,
+             "repeat": 0, "selection_ok": True, "schema_ok": True, "args_ok": True,
+             "success": True},
+        ],
+    }
+    run = RunModel.model_validate_json(json.dumps(legacy))
+    assert run.config.selected_task_ids is None
+    assert summarize(run)["scope"]["targeted"] is False

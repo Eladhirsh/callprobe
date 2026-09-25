@@ -1,0 +1,22 @@
+{
+  "source_url": "https://raw.githubusercontent.com/github/rest-api-description/338cb199baa4f326790b0b1c246d8d4f481a82a0/descriptions/api.github.com/api.github.com.json",
+  "source_revision": "338cb199baa4f326790b0b1c246d8d4f481a82a0",
+  "source_sha256": "4fbdc7d0102276803a07f9880d14ed543ba1afc10a4c9fd7bd3782408d9abaf7",
+  "license": "MIT (see LICENSE.md)",
+  "operations": [
+    "GET /repos/{owner}/{repo}/issues/{issue_number}",
+    "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
+    "POST /repos/{owner}/{repo}/issues/{issue_number}/comments"
+  ],
+  "copied_components": {
+    "parameters": [
+      "issue-number",
+      "owner",
+      "page",
+      "per-page",
+      "repo",
+      "since"
+    ]
+  },
+  "transform_scope": "Selected exactly three operations. Copied summary, description, operationId, parameters and requestBody verbatim, plus the local components they reach through $ref. Replaced responses with one placeholder each (200 for GET, 201 for POST). Dropped tags, servers, security, x-github metadata and every other operation and component. Added a small info block. No schema constraints were added, removed, or shortened."
+}

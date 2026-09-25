@@ -65,6 +65,12 @@ def evaluate_gate(baseline: Run, candidate: Run, policy: GatePolicy) -> dict:
     Accuracy deltas use only keys scored in BOTH runs. Request errors are
     checked separately in each run so they cannot disappear from a CI gate.
     """
+    for label, run in (("baseline", baseline), ("candidate", candidate)):
+        if run.config.selected_task_ids is not None:
+            raise ValueError(
+                f"{label} is a targeted debug run (selected task ids only): "
+                "targeted runs are for debugging; rerun full suite for CI"
+            )
     for name in ("suite_hash", "scoring_version"):
         a, b = getattr(baseline.config, name), getattr(candidate.config, name)
         if a is None or b is None or a == "" or b == "" or a != b:

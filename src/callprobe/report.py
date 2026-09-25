@@ -37,6 +37,16 @@ def summarize(run: Run) -> dict:
     tokens = sum(r.total_tokens for r in scored)
     wall_ms = sum(r.latency_ms for r in scored)
 
+    total_task_count = len(run.config.task_ids or [])
+    selected_task_ids = run.config.selected_task_ids
+    scope = {
+        "targeted": selected_task_ids is not None,
+        "selected_task_count": (
+            len(selected_task_ids) if selected_task_ids is not None else total_task_count
+        ),
+        "total_task_count": total_task_count,
+    }
+
     # Variance across repeats: per pad level, the spread of run-level pass rates.
     spread: dict[int, float] = {}
     for pad, group in by_pad.items():
@@ -86,6 +96,7 @@ def summarize(run: Run) -> dict:
         },
         "errors": errors,
         "error_rate": (errors / len(results)) if results else 0.0,
+        "scope": scope,
         "lenient": {
             "schema": _rate(scored, "schema_ok_lenient"),
             "args": _rate(scored, "args_ok_lenient"),
@@ -115,6 +126,11 @@ def render_text(run: Run) -> str:
         + (f"   errors: {s['errors']}" if s["errors"] else "")
         + (f"   truncated: {s['truncated']}" if s["truncated"] else ""),
     ]
+    if s["scope"]["targeted"]:
+        lines.append(
+            f"  TARGETED DEBUG RUN: {s['scope']['selected_task_count']} of "
+            f"{s['scope']['total_task_count']} suite task(s) selected; not a full benchmark"
+        )
     if s["error_rate"] > 0.02:
         lines.append(
             f"  WARNING: {s['errors']} of {s['total_requests']} requests errored "
@@ -186,10 +202,16 @@ def render_markdown(runs: list[Run]) -> str:
         s = summarize(run)
         padded = s["by_pad"].get(24) or s["by_pad"].get(max(s["by_pad"], default=0))
         tps = s["cost"]["tokens_per_success"]
+        model_label = s["model"]
+        if s["scope"]["targeted"]:
+            model_label += (
+                f" [targeted debug run: {s['scope']['selected_task_count']}/"
+                f"{s['scope']['total_task_count']} tasks]"
+            )
         rows.append(
             "| {model} | {success} | {ci} | {lenient} | {selection} | {schema} | {args} | "
             "{abstain} | {padded} | {tps} |".format(
-                model=s["model"],
+                model=model_label,
                 lenient=_pct(s["lenient"]["success"]).strip(),
                 abstain=_pct((s["by_category"].get("abstain") or {}).get("success", 0.0)).strip(),
                 success=_pct(s["overall"]["success"]).strip(),
