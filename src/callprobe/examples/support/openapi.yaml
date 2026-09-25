@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Small Support API
+  version: 1.0.0
+  description: Fictional API for learning to test tool calling. No server is needed.
+paths:
+  /orders/{order_id}:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    get:
+      operationId: get_order
+      tags: [support]
+      summary: Get the status and details of an order by its exact order ID.
+      responses:
+        '200':
+          description: Order details
+  /orders:
+    get:
+      operationId: search_orders
+      tags: [support]
+      summary: Find orders belonging to a customer using their email address.
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+            description: The customer's full email address.
+      responses:
+        '200':
+          description: Matching orders
+  /orders/{order_id}/refunds:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      operationId: issue_refund
+      tags: [support]
+      summary: Issue a refund for a known order.
+      description: Only issue a refund when the customer explicitly requests it. Amounts are integer US cents.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Refund'
+      responses:
+        '201':
+          description: Refund created
+components:
+  parameters:
+    OrderId:
+      in: path
+      name: order_id
+      required: true
+      schema:
+        type: string
+        pattern: '^ORD-[0-9]{6}$'
+        description: An order ID such as ORD-448120.
+  schemas:
+    Refund:
+      type: object
+      additionalProperties: false
+      required: [amount_cents, reason]
+      properties:
+        amount_cents:
+          type: integer
+          minimum: 1
+          description: Refund amount in US cents, not dollars.
+        reason:
+          type: string
+          enum: [damaged, not_received, other]

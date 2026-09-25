@@ -1,0 +1,38 @@
+name: First-run feedback
+description: Tell us what worked or got in the way when trying Callprobe.
+title: "First run: "
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for trying Callprobe. Small, reproducible examples are especially useful. Remove API keys and private prompts before sharing output.
+  - type: input
+    id: environment
+    attributes:
+      label: Version and environment
+      description: Callprobe version, operating system, model, and serving software/version.
+      placeholder: "callprobe 0.8.0; macOS; qwen2.5:7b; Ollama"
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: How far did you get?
+      options:
+        - Installed and validated the example
+        - Completed a model run and read the results
+        - Tried my own tools or OpenAPI file
+        - Got stuck installing or running
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Commands and what happened
+      description: Include the command, relevant output, and what you expected. A tiny synthetic tool/task example is better than private application data.
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: What should be easier?
+      description: One confusing step, missing capability, or useful result is enough.

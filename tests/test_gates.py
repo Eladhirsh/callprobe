@@ -51,6 +51,30 @@ def test_invalid_comparisons_are_rejected(mutation, match):
         evaluate_gate(a, b, GatePolicy())
 
 
+@pytest.mark.parametrize("side", ["a", "b"])
+def test_targeted_runs_are_refused_by_the_gate(side):
+    a, b = make_run(), make_run()
+    target = a if side == "a" else b
+    target.config.selected_task_ids = ["t1", "t2"]
+    with pytest.raises(ValueError, match="targeted runs are for debugging"):
+        evaluate_gate(a, b, GatePolicy())
+
+
+def test_all_selected_targeted_run_still_refused_by_the_gate():
+    a, b = make_run(), make_run()
+    b.config.selected_task_ids = list(b.config.task_ids)
+    with pytest.raises(ValueError, match="targeted runs are for debugging"):
+        evaluate_gate(a, b, GatePolicy())
+
+
+def test_identical_partial_runs_are_refused_by_the_gate():
+    a, b = make_run(), make_run()
+    a.config.selected_task_ids = ["t1"]
+    b.config.selected_task_ids = ["t1"]
+    with pytest.raises(ValueError, match="targeted runs are for debugging"):
+        evaluate_gate(a, b, GatePolicy())
+
+
 def test_different_complete_coverage_is_rejected():
     a, b = make_run(), make_run()
     b.config.pads = [8]

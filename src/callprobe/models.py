@@ -155,6 +155,10 @@ class RunConfig(BaseModel):
     server_version: str | None = None
     scoring_version: int | None = None
     task_ids: list[str] | None = None
+    # None means the full suite ran. Set only for a targeted debug rerun of
+    # specific task ids (still in canonical suite order); never used to
+    # silently narrow a benchmark run.
+    selected_task_ids: list[str] | None = None
 
 
 class Run(BaseModel):

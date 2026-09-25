@@ -36,3 +36,8 @@ jobs:
         run: |
           /tmp/callprobe-wheel-env/bin/callprobe --version
           /tmp/callprobe-wheel-env/bin/callprobe validate
+          /tmp/callprobe-wheel-env/bin/callprobe examples
+          /tmp/callprobe-wheel-env/bin/callprobe init --example support --out /tmp/callprobe-support-example
+          /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-support-example
+          /tmp/callprobe-wheel-env/bin/callprobe init --example github-issues --out /tmp/callprobe-github-example
+          /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-github-example

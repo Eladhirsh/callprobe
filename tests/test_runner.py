@@ -160,3 +160,92 @@ def test_resume_rejects_duplicate_results(suite):
     first.results.append(first.results[0])
     with pytest.raises(ValueError, match="duplicate"):
         run_suite(suite, _CountingClient(), _config(), resume=first)
+
+
+# --------------------------------------------------------------- targeting
+
+
+def test_selected_task_ids_limits_endpoint_calls_and_coverage(suite):
+    two_ids = [suite.tasks[0].id, suite.tasks[2].id]
+    client = _CountingClient()
+    config = _config(pads=[0, 8], repeats=2, selected_task_ids=list(reversed(two_ids)))
+    run = run_suite(suite, client, config, concurrency=4)
+    assert client.calls == len(two_ids) * 2 * 2  # 2 pads * 2 repeats
+    assert {r.task_id for r in run.results} == set(two_ids)
+    assert len(run.results) == len(two_ids) * 2 * 2
+
+
+def test_selected_task_ids_preserve_canonical_suite_order(suite):
+    ids = [suite.tasks[3].id, suite.tasks[0].id, suite.tasks[1].id]
+    config = _config(pads=[0], repeats=1, selected_task_ids=ids)
+    run = run_suite(suite, _CountingClient(), config)
+    expected_order = [t.id for t in suite.tasks if t.id in set(ids)]
+    assert [r.task_id for r in run.results] == expected_order
+
+
+def test_selected_task_ids_deduplicated_and_canonicalized(suite):
+    task_id = suite.tasks[0].id
+    config = _config(pads=[0], repeats=1, selected_task_ids=[task_id, task_id])
+    run = run_suite(suite, _CountingClient(), config)
+    assert run.config.selected_task_ids == [task_id]
+    assert len(run.results) == 1
+
+
+def test_selected_task_ids_full_suite_still_marked_targeted(suite):
+    all_ids = [t.id for t in suite.tasks]
+    config = _config(pads=[0], repeats=1, selected_task_ids=all_ids)
+    run = run_suite(suite, _CountingClient(), config)
+    assert run.config.selected_task_ids == all_ids
+    assert len(run.results) == len(all_ids)
+
+
+def test_prepare_config_rejects_empty_or_unknown_selection(suite):
+    with pytest.raises(ValueError, match="empty"):
+        run_suite(suite, _CountingClient(), _config(selected_task_ids=[]))
+    with pytest.raises(ValueError, match="unknown"):
+        run_suite(suite, _CountingClient(), _config(selected_task_ids=["nope"]))
+
+
+def test_task_ids_field_always_records_full_suite_even_when_targeted(suite):
+    task_id = suite.tasks[0].id
+    config = _config(pads=[0], repeats=1, selected_task_ids=[task_id])
+    run = run_suite(suite, _CountingClient(), config)
+    assert run.config.task_ids == [t.id for t in suite.tasks]
+
+
+def test_resume_same_selection_is_supported(suite):
+    task_ids = [suite.tasks[0].id, suite.tasks[1].id]
+    client = _CountingClient()
+    first = run_suite(suite, client, _config(pads=[0], repeats=1, selected_task_ids=task_ids))
+    assert client.calls == 2
+
+    # repeated in reverse order: still canonicalizes to the same selection.
+    resumed_client = _CountingClient()
+    second = run_suite(
+        suite, resumed_client,
+        _config(pads=[0], repeats=1, selected_task_ids=list(reversed(task_ids))),
+        resume=first,
+    )
+    assert resumed_client.calls == 0
+    assert len(second.results) == 2
+
+
+def test_resume_rejects_full_vs_selected_scope_mismatch(suite):
+    task_id = suite.tasks[0].id
+    full_run = run_suite(suite, _CountingClient(), _config())
+    with pytest.raises(ValueError, match="incompatible resume"):
+        run_suite(suite, _CountingClient(),
+                  _config(selected_task_ids=[task_id]), resume=full_run)
+
+    targeted_run = run_suite(suite, _CountingClient(), _config(selected_task_ids=[task_id]))
+    with pytest.raises(ValueError, match="incompatible resume"):
+        run_suite(suite, _CountingClient(), _config(), resume=targeted_run)
+
+
+def test_resume_rejects_different_selected_scope(suite):
+    ids_a = [suite.tasks[0].id]
+    ids_b = [suite.tasks[1].id]
+    run_a = run_suite(suite, _CountingClient(), _config(selected_task_ids=ids_a))
+    with pytest.raises(ValueError, match="incompatible resume"):
+        run_suite(suite, _CountingClient(),
+                  _config(selected_task_ids=ids_b), resume=run_a)
