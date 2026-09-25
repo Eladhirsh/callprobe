@@ -29,9 +29,22 @@ from .loader import load_suite
 from .openapi import generate_openapi_suite, load_openapi_file
 from .models import Run, RunConfig
 from .report import failure_digest, render_markdown, render_text, summarize
+from .run_config import load_run_config
 from .runner import prepare_config, run_suite, validate_resume
 from .scoring import SCORING_VERSION
 from .validate import validate_suite
+
+# Hardcoded fallbacks used only when neither a CLI flag nor --config supplies
+# a value, so a plain `callprobe run --model X` behaves exactly as before.
+RUN_DEFAULTS = {
+    "endpoint": "http://localhost:11434/v1",
+    "pad": "0,8,16",
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "retries": 3,
+    "concurrency": 1,
+}
 
 # Sentinel meaning "use the suite packaged inside callprobe itself", resolved
 # lazily so a git checkout and a pip install both find suites/core.
@@ -120,10 +133,73 @@ def _select_failed_task_ids(suite, saved: Run) -> list[str]:
     return [task.id for task in suite.tasks if task.id in failed]
 
 
-def _run(args: argparse.Namespace) -> int:
-    suite, suite_label = _resolve_suite(args.suite)
+def _merged_run_settings(args: argparse.Namespace):
+    """Resolve model/endpoint/suite/pads/... from CLI flags, --config, then
+    hardcoded defaults, in that order. An explicit CLI flag always wins.
 
-    pads = [int(p) for p in args.pad.split(",") if p.strip()]
+    `suite`/`out` paths that come from --config are resolved relative to the
+    config file's own directory; CLI-supplied paths keep their normal
+    cwd-relative meaning. The whole config file is validated up front, so an
+    invalid value fails even if a CLI flag overrides that particular field.
+    """
+    file_config = config_dir = None
+    if args.config is not None:
+        file_config, config_dir = load_run_config(args.config)
+
+    def pick(cli_value, field, default=None):
+        if cli_value is not None:
+            return cli_value
+        if file_config is not None:
+            file_value = getattr(file_config, field)
+            if file_value is not None:
+                return file_value
+        return default
+
+    model = pick(args.model, "model")
+    if not model:
+        raise ValueError("--model is required: pass --model or set model in --config")
+
+    if args.pad is not None:
+        pads = [int(p) for p in args.pad.split(",") if p.strip()]
+    elif file_config is not None and file_config.pads is not None:
+        pads = file_config.pads
+    else:
+        pads = [int(p) for p in RUN_DEFAULTS["pad"].split(",")]
+
+    suite_arg = args.suite
+    if suite_arg is None and file_config is not None and file_config.suite is not None:
+        suite_arg = str(config_dir / file_config.suite)
+
+    out = args.out
+    if out is None and file_config is not None and file_config.out is not None:
+        out = str(config_dir / file_config.out)
+
+    if out and args.config and _same_file_target(out, args.config):
+        raise ValueError("--out must not alias the --config file")
+
+    return {
+        "model": model,
+        "endpoint": pick(args.endpoint, "endpoint", RUN_DEFAULTS["endpoint"]),
+        "suite": suite_arg,
+        "pads": pads,
+        "repeats": pick(args.repeats, "repeats", RUN_DEFAULTS["repeats"]),
+        "temperature": pick(args.temperature, "temperature", RUN_DEFAULTS["temperature"]),
+        "max_tokens": pick(args.max_tokens, "max_tokens", RUN_DEFAULTS["max_tokens"]),
+        "quant": pick(args.quant, "quant"),
+        "notes": pick(args.notes, "notes"),
+        "retries": pick(args.retries, "retries", RUN_DEFAULTS["retries"]),
+        "concurrency": pick(args.concurrency, "concurrency", RUN_DEFAULTS["concurrency"]),
+        "out": out,
+    }
+
+
+def _run(args: argparse.Namespace) -> int:
+    settings = _merged_run_settings(args)
+    if settings["concurrency"] < 1 or settings["max_tokens"] < 1 or settings["retries"] < 0:
+        raise ValueError("concurrency/max-tokens must be positive and retries nonnegative")
+
+    suite, suite_label = _resolve_suite(settings["suite"])
+    pads = settings["pads"]
 
     selected_task_ids: list[str] | None = None
     if args.task:
@@ -134,7 +210,7 @@ def _run(args: argparse.Namespace) -> int:
         wanted = set(args.task)
         selected_task_ids = [task.id for task in suite.tasks if task.id in wanted]
     elif args.failed_from:
-        if args.out and _same_file_target(args.out, args.failed_from):
+        if settings["out"] and _same_file_target(settings["out"], args.failed_from):
             raise ValueError("--out must not alias the --failed-from results file")
         saved = _read_run(args.failed_from)
         selected_task_ids = _select_failed_task_ids(suite, saved)
@@ -146,17 +222,17 @@ def _run(args: argparse.Namespace) -> int:
                 print(message)
             return 0
 
-    server_name, server_version = probe_server_version(args.endpoint)
+    server_name, server_version = probe_server_version(settings["endpoint"])
     config = RunConfig(
-        model=args.model,
-        endpoint=args.endpoint,
+        model=settings["model"],
+        endpoint=settings["endpoint"],
         suite=suite_label,
         pads=pads,
-        repeats=args.repeats,
-        temperature=args.temperature,
-        max_tokens=args.max_tokens,
-        quantization=args.quant,
-        notes=args.notes,
+        repeats=settings["repeats"],
+        temperature=settings["temperature"],
+        max_tokens=settings["max_tokens"],
+        quantization=settings["quant"],
+        notes=settings["notes"],
         callprobe_version=__version__,
         suite_name=suite.name,
         suite_version=suite.version,
@@ -173,10 +249,10 @@ def _run(args: argparse.Namespace) -> int:
         resume_run = _read_run(args.resume)
         validate_resume(config, resume_run)
 
-    client = ChatClient(args.endpoint, api_key=api_key, retries=args.retries)
+    client = ChatClient(settings["endpoint"], api_key=api_key, retries=settings["retries"])
 
     task_count = len(config.selected_task_ids) if config.selected_task_ids is not None else len(suite.tasks)
-    total = task_count * len(pads) * args.repeats
+    total = task_count * len(pads) * settings["repeats"]
     state = {"done": 0}
 
     def progress(result) -> None:
@@ -188,9 +264,11 @@ def _run(args: argparse.Namespace) -> int:
                 sys.stderr.write(f" {state['done']}/{total}\n")
             sys.stderr.flush()
 
+    out = settings["out"]
+
     def write_partial(partial_run: Run) -> None:
-        if args.out:
-            _write_run(args.out, partial_run)
+        if out:
+            _write_run(out, partial_run)
 
     try:
         run = run_suite(
@@ -198,8 +276,8 @@ def _run(args: argparse.Namespace) -> int:
             client,
             config,
             on_result=progress,
-            on_progress=write_partial if args.out else None,
-            concurrency=args.concurrency,
+            on_progress=write_partial if out else None,
+            concurrency=settings["concurrency"],
             resume=resume_run,
         )
     finally:
@@ -215,10 +293,10 @@ def _run(args: argparse.Namespace) -> int:
         print()
         print(failure_digest(run))
 
-    if args.out:
-        _write_run(args.out, run)
+    if out:
+        _write_run(out, run)
         if args.format != "json":
-            print(f"\nwrote {args.out}")
+            print(f"\nwrote {out}")
 
     if args.fail_under is not None:
         if summary["errors"] or len(run.results) != total or not summary["n"]:
@@ -405,19 +483,25 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
 
     run_cmd = sub.add_parser("run", help="score a model against a suite")
-    run_cmd.add_argument("--model", required=True)
-    run_cmd.add_argument("--endpoint", default="http://localhost:11434/v1")
+    run_cmd.add_argument(
+        "--config", default=None,
+        help="YAML file of defaults (model, endpoint, suite, pads, repeats, temperature, "
+             "max_tokens, quant, notes, retries, concurrency, out); explicit flags win, "
+             "never auto-discovered"
+    )
+    run_cmd.add_argument("--model", default=None, help="required, here or in --config")
+    run_cmd.add_argument("--endpoint", default=None)
     run_cmd.add_argument("--api-key", default=None)
     run_cmd.add_argument(
-        "--retries", type=int, default=3, help="retries on 429, 5xx, and connection errors"
+        "--retries", type=int, default=None, help="retries on 429, 5xx, and connection errors"
     )
     run_cmd.add_argument(
         "--suite", default=DEFAULT_SUITE, help="suite directory, defaults to the packaged core suite"
     )
-    run_cmd.add_argument("--pad", default="0,8,16")
-    run_cmd.add_argument("--repeats", type=int, default=1)
-    run_cmd.add_argument("--temperature", type=float, default=0.0)
-    run_cmd.add_argument("--max-tokens", type=int, default=2048)
+    run_cmd.add_argument("--pad", default=None)
+    run_cmd.add_argument("--repeats", type=int, default=None)
+    run_cmd.add_argument("--temperature", type=float, default=None)
+    run_cmd.add_argument("--max-tokens", type=int, default=None)
     run_cmd.add_argument("--quant", default=None, help="label only, e.g. q4_K_M")
     run_cmd.add_argument("--notes", default=None)
     run_cmd.add_argument("--out", default=None, help="write raw results as JSON")
@@ -430,7 +514,7 @@ def main(argv: list[str] | None = None) -> int:
         help="exit 1 if overall success is below this fraction, e.g. 0.7",
     )
     run_cmd.add_argument(
-        "--concurrency", type=int, default=1, help="parallel requests via a thread pool"
+        "--concurrency", type=int, default=None, help="parallel requests via a thread pool"
     )
     run_cmd.add_argument(
         "--resume",
@@ -526,8 +610,6 @@ def main(argv: list[str] | None = None) -> int:
                       "targeted runs are for debugging, not CI gating")
     try:
         if args.command == "run":
-            if args.concurrency < 1 or args.max_tokens < 1 or args.retries < 0:
-                raise ValueError("concurrency/max-tokens must be positive and retries nonnegative")
             if args.fail_under is not None and not 0 <= args.fail_under <= 1:
                 raise ValueError("fail-under must be between 0 and 1")
         return args.func(args)

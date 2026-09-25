@@ -381,6 +381,48 @@ observations are reused. Missing files or incompatible checkpoints fail
 before any model requests. Checkpoints are replaced atomically so a failed
 write leaves the previous checkpoint intact.
 
+### Save run settings (unreleased)
+
+Use an explicit YAML configuration to repeat an experiment without copying
+all its flags. For example, save this as `callprobe.yaml` beside your
+`my-support-suite` directory:
+
+```yaml
+model: qwen2.5:7b
+endpoint: http://localhost:11434/v1
+suite: my-support-suite
+pads: [0]
+repeats: 1
+max_tokens: 4096
+```
+
+```bash
+callprobe run --config callprobe.yaml --out baseline.json
+callprobe run --config callprobe.yaml --model qwen3:8b --out candidate.json
+callprobe compare baseline.json candidate.json --fail-on-regression
+```
+
+The endpoint must be running with the requested model available. Explicit
+CLI flags override file settings, and omitted settings keep the normal CLI
+defaults. There is no automatic configuration discovery. `model` must be
+provided in the file or with `--model`.
+
+Accepted keys are `model`, `endpoint`, `suite`, `pads` (an integer list),
+`repeats`, `temperature`, `max_tokens`, `quant`, `notes`, `retries`,
+`concurrency`, and `out`. Unknown fields, duplicate keys, nulls, wrong
+types, and invalid numeric values are rejected even when a CLI flag would
+override them. `suite` and `out` in YAML resolve relative to the config
+file; paths supplied on the CLI remain relative to your working directory.
+The output cannot overwrite the configuration file.
+
+Keep credentials in `API_KEY`/`OPENAI_API_KEY` or use `--api-key`; credential
+fields are not accepted in YAML. Targeting, resume, and CI gate options
+remain explicit CLI flags. Saved results record the effective experiment
+settings, and the existing resume and suite-matching checks still apply.
+
+This feature is not in PyPI 0.7.0. To try these unreleased commands, install
+from a checkout containing the changes with `uv tool install --force --from . callprobe`.
+
 ### Targeted debug reruns (unreleased)
 
 `--task ID` (repeatable) runs only those exact task ids instead of the whole
