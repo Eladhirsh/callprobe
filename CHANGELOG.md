@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0
 
 - Add offline `explain RESULTS.json --suite DIR` diagnostics with task filtering
   and text/JSON output. Reports prompts, actual calls, assertions, and recurring

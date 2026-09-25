@@ -233,8 +233,7 @@ official OpenAPI specification. It covers identifiers, pagination, comment
 text, conversation corrections, and abstention without executing GitHub calls.
 
 `--from-openapi` is available since 0.6.0. Install it with
-`uv tool install callprobe==0.6.0`, or run `uv tool upgrade callprobe` if
-Callprobe is already installed. Earlier versions only support `--from tools.json`.
+`uv tool install callprobe@latest`. Earlier versions only support `--from tools.json`.
 
 ### Write a suite directly
 
@@ -434,7 +433,7 @@ even if the success rate of the remaining results exceeds the threshold.
 `action.yml` at the repo root wraps this as a composite GitHub Action:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.6.0
+- uses: Eladhirsh/callprobe@v0.7.0
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -451,7 +450,7 @@ YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
 For example, after checking out your repository and starting your endpoint:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.6.0
+- uses: Eladhirsh/callprobe@v0.7.0
   with:
     model: your-model
     endpoint: http://localhost:11434/v1
@@ -475,10 +474,10 @@ objects, or returns arguments as a string where the schema says integer,
 you will see it here first, including what the model actually said, with
 any reasoning trace stripped, when it produced no call at all.
 
-## Explaining a saved run (development version)
+## Explaining a saved run (since 0.7.0)
 
-This command is unreleased. Use a development checkout and the Development
-installation instructions below; the published 0.6.0 CLI does not include it.
+Install or upgrade with `uv tool install callprobe@latest`. This also
+replaces an older version-pinned installation.
 
 `callprobe explain RESULTS.json --suite DIR` turns a results file back into
 a debugging session, offline: no model calls, and it never modifies the
