@@ -475,6 +475,66 @@ objects, or returns arguments as a string where the schema says integer,
 you will see it here first, including what the model actually said, with
 any reasoning trace stripped, when it produced no call at all.
 
+## Explaining a saved run (development version)
+
+This command is unreleased. Use a development checkout and the Development
+installation instructions below; the published 0.6.0 CLI does not include it.
+
+`callprobe explain RESULTS.json --suite DIR` turns a results file back into
+a debugging session, offline: no model calls, and it never modifies the
+results file or the suite. It requires the same suite the run was scored
+against; a missing or mismatched suite hash is a clear, non-zero-exit error
+rather than a diagnosis built on a suite that has since changed.
+
+Using the committed GitHub issues example and its recorded Qwen3 8B run:
+
+If `github-issues-suite` already exists from the walkthrough, reuse it and
+skip the first two commands.
+
+```bash
+callprobe init --from-openapi examples/github-issues/openapi.json --out github-issues-suite
+cp examples/github-issues/tasks.yaml github-issues-suite/tasks.yaml
+callprobe explain results/github-issues/qwen3-8b.json --suite github-issues-suite
+```
+
+Only failing `(task, pad, repeat)` cases are shown; a run with no failures
+prints a short pass report instead. Failures are grouped into recurring
+diagnostic categories, counted per case rather than per failure message
+(`request_error`, `truncated`, `no_call`, `unexpected_call`,
+`multiple_calls`, `wrong_tool`, `malformed_arguments`, `schema`,
+`argument_value`), and then shown one case at a time: the task's user
+prompt(s), what was expected, every call the model actually produced
+(parsed arguments, or the raw text and parse error for one that didn't
+parse), and the failure reasons already recorded at run time. Records from
+before structured call evidence existed say so plainly instead of guessing
+at what was called.
+
+`--task TASK_ID` scopes this to one task across every pad and repeat it
+ran with, and says so plainly if that task passed with no failures.
+`--format json` prints the same report as deterministic, structured JSON
+instead, for scripting:
+
+```bash
+callprobe explain results/github-issues/qwen3-8b.json --suite github-issues-suite \
+  --task get-issue-details --format json
+```
+
+For one common, fixable shape of bug, a correctly chosen tool whose
+arguments were flattened or under-wrapped relative to an OpenAPI-imported
+`path`/`query`/`body` schema, `explain` proposes a corrected argument
+shape, e.g. moving top-level `owner`/`repo`/`issue_number` under `path`, or
+wrapping a flat `body` string as `{"body": {"body": "..."}}`. This is
+always labeled advisory: nothing is executed or re-scored, and expectation
+and value correctness are never guaranteed. The hint only appears when the
+mapping from stray arguments to the tool's missing nested groups is
+unambiguous and the resulting candidate fully validates against the tool's
+complete schema; anything involving `$ref`, `oneOf`/`anyOf`/`allOf`,
+`patternProperties`, or a schema-valued `additionalProperties` is refused
+rather than guessed at. Relocation hints also require the root schema to
+forbid extra properties. Supported schemas get error paths, messages, and
+expected types; unsupported schemas retain the recorded failure reasons
+with an explanation of the diagnostic limitation.
+
 ## Status
 
 The suite (version 2) is 50 hand-written tasks: 6 select, 11 abstain, 12
