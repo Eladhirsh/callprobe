@@ -195,6 +195,65 @@ def _merged_run_settings(args: argparse.Namespace):
     }
 
 
+def _render_dry_run_text(plan: dict) -> str:
+    lines = [
+        "DRY RUN: no endpoint probe, no model requests, no output written.",
+        f"model            {plan['model']}",
+        f"suite            {plan['suite']['label']}  (hash {plan['suite']['hash']})",
+    ]
+    if plan["scope"]["targeted"]:
+        lines.append(
+            f"scope            targeted, {plan['scope']['selected_task_count']} of "
+            f"{plan['scope']['total_task_count']} task(s): "
+            + ", ".join(plan["scope"]["task_ids"])
+        )
+    else:
+        lines.append(f"scope            full suite, {plan['scope']['total_task_count']} task(s)")
+    lines.append("requested pads   " + ", ".join(str(pad) for pad in plan["pads"]))
+    lines.append(f"repeats          {plan['repeats']}")
+    lines.append(f"temperature      {plan['temperature']}")
+    lines.append(f"max_tokens       {plan['max_tokens']}")
+    lines.append(f"concurrency      {plan['concurrency']}")
+    lines.append(f"total requests   {plan['total_requests']}")
+    lines.append(
+        f"max completion tokens (upper bound)   {plan['max_completion_tokens']}"
+    )
+    lines.append("Budget excludes prompt tokens and retries; it is not a billing estimate.")
+    return "\n".join(lines)
+
+
+def _dry_run_plan(suite, suite_label: str, config: RunConfig, concurrency: int) -> dict:
+    """Coverage/cost preview computed without any endpoint access.
+
+    `max_completion_tokens` is `requests * max_tokens`, an upper bound a model
+    could reach if every response used its full completion budget, not an
+    estimate of tokens actually spent.
+    """
+    task_count = (
+        len(config.selected_task_ids) if config.selected_task_ids is not None else len(suite.tasks)
+    )
+    total_requests = task_count * len(config.pads) * config.repeats
+    return {
+        "dry_run": True,
+        "model": config.model,
+        "suite": {"label": suite_label, "hash": suite.hash},
+        "scope": {
+            "targeted": config.selected_task_ids is not None,
+            "task_ids": config.selected_task_ids,
+            "selected_task_count": task_count if config.selected_task_ids is not None else None,
+            "total_task_count": len(suite.tasks),
+        },
+        "pads": config.pads,
+        "repeats": config.repeats,
+        "total_requests": total_requests,
+        "temperature": config.temperature,
+        "max_tokens": config.max_tokens,
+        "concurrency": concurrency,
+        "max_completion_tokens": total_requests * config.max_tokens,
+        "budget_excludes": ["prompt_tokens", "retries"],
+    }
+
+
 def _run(args: argparse.Namespace) -> int:
     settings = _merged_run_settings(args)
     if not math.isfinite(settings["temperature"]):
@@ -244,8 +303,17 @@ def _run(args: argparse.Namespace) -> int:
         suite_hash=suite.hash,
         selected_task_ids=selected_task_ids,
     )
-    api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     config = prepare_config(suite, config)
+
+    if args.dry_run:
+        plan = _dry_run_plan(suite, suite_label, config, settings["concurrency"])
+        if args.format == "json":
+            print(json.dumps(plan, indent=2))
+        else:
+            print(_render_dry_run_text(plan))
+        return 0
+
+    api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     server_name, server_version = probe_server_version(settings["endpoint"])
     config = config.model_copy(update={"server_name": server_name, "server_version": server_version})
 
@@ -573,6 +641,13 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="skip (task, pad, repeat) combinations already in this results file",
     )
+    run_cmd.add_argument(
+        "--dry-run",
+        dest="dry_run",
+        action="store_true",
+        help="print the planned coverage and request/token budget, no endpoint probe, "
+             "no model requests, no output write",
+    )
     targeting = run_cmd.add_mutually_exclusive_group()
     targeting.add_argument(
         "--task",
@@ -668,6 +743,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "run" and args.fail_under is not None and (args.task or args.failed_from):
         parser.error("--fail-under cannot be combined with --task/--failed-from: "
                       "targeted runs are for debugging, not CI gating")
+    if args.command == "run" and args.dry_run and (args.resume or args.fail_under is not None):
+        parser.error("--dry-run cannot be combined with --resume/--fail-under: "
+                      "a dry run does not resume or produce scored results")
     try:
         if args.command == "run":
             if args.fail_under is not None and not 0 <= args.fail_under <= 1:

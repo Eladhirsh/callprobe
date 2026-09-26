@@ -796,3 +796,172 @@ def test_invalid_cli_settings_match_config_file_validation(monkeypatch, flags, m
     monkeypatch.setattr(cli, "ChatClient", forbidden)
     assert cli.main(["run", "--model", "stub", *flags]) == 2
     assert message in capsys.readouterr().err
+
+
+# ------------------------------------------------------------- dry-run
+
+
+def _forbidden_probe(*_args, **_kwargs):
+    raise AssertionError("--dry-run must never probe the endpoint")
+
+
+def _dry_run_cli(monkeypatch, extra_args, capsys):
+    """--dry-run must never touch probe_server_version or ChatClient."""
+    monkeypatch.setattr(cli, "probe_server_version", _forbidden_probe)
+    monkeypatch.setattr(cli, "ChatClient", _UnreachableClient)
+    args = ["run", "--model", "stub", "--suite", str(SUITE), "--dry-run", *extra_args]
+    code = cli.main(args)
+    captured = capsys.readouterr()
+    return code, captured.out, captured.err
+
+
+def test_dry_run_default_full_coverage(monkeypatch, capsys):
+    code, out, _ = _dry_run_cli(monkeypatch, ["--format", "json"], capsys)
+    assert code == 0
+    plan = json.loads(out)
+    assert plan["dry_run"] is True
+    assert plan["model"] == "stub"
+    assert plan["scope"] == {
+        "targeted": False, "task_ids": None,
+        "selected_task_count": None, "total_task_count": len(_SUITE_OBJ.tasks),
+    }
+    assert plan["repeats"] == 1
+    assert plan["pads"] == [0, 8, 16]
+    assert plan["total_requests"] == len(_SUITE_OBJ.tasks) * 3
+    assert plan["temperature"] == 0.0
+    assert plan["max_tokens"] == 2048
+    assert plan["concurrency"] == 1
+
+
+def test_dry_run_text_format_is_readable(monkeypatch, capsys):
+    code, out, _ = _dry_run_cli(monkeypatch, ["--pad", "0"], capsys)
+    assert code == 0
+    assert "DRY RUN" in out
+    assert "model            stub" in out
+    assert "total requests" in out
+
+
+def test_dry_run_config_and_cli_precedence(monkeypatch, tmp_path, capsys):
+    config_path = tmp_path / "run.yaml"
+    config_path.write_text(f"""
+model: qwen2.5:7b
+suite: {SUITE}
+pads: [0, 8]
+repeats: 2
+max_tokens: 1024
+""")
+    monkeypatch.setattr(cli, "probe_server_version", _forbidden_probe)
+    monkeypatch.setattr(cli, "ChatClient", _UnreachableClient)
+    code = cli.main([
+        "run", "--config", str(config_path), "--dry-run", "--format", "json",
+        "--max-tokens", "4096",
+    ])
+    out = capsys.readouterr().out
+    assert code == 0
+    plan = json.loads(out)
+    assert plan["model"] == "qwen2.5:7b"  # from --config
+    assert plan["pads"] == [0, 8]
+    assert plan["repeats"] == 2  # from --config
+    assert plan["max_tokens"] == 4096  # explicit CLI flag wins over --config
+    assert plan["total_requests"] == len(_SUITE_OBJ.tasks) * 2 * 2
+    assert plan["max_completion_tokens"] == plan["total_requests"] * 4096
+
+
+def test_dry_run_targeted_scope_via_task_flag(monkeypatch, capsys):
+    code, out, _ = _dry_run_cli(
+        monkeypatch, ["--task", _SOME_ID, "--task", _ANOTHER_ID, "--format", "json"], capsys
+    )
+    assert code == 0
+    plan = json.loads(out)
+    expected_ids = [t.id for t in _SUITE_OBJ.tasks if t.id in {_SOME_ID, _ANOTHER_ID}]
+    assert plan["scope"] == {
+        "targeted": True, "task_ids": expected_ids,
+        "selected_task_count": 2, "total_task_count": len(_SUITE_OBJ.tasks),
+    }
+    assert plan["total_requests"] == 2 * 3
+
+
+def test_dry_run_failed_from_targets_failing_tasks(monkeypatch, tmp_path, capsys):
+    source = _write_source_run(monkeypatch, tmp_path, capsys)
+    saved = json.loads(source.read_text())
+    failing_ids = {r["task_id"] for r in saved["results"] if not r["success"]}
+    assert failing_ids
+
+    code, out, _ = _dry_run_cli(
+        monkeypatch, ["--failed-from", str(source), "--format", "json"], capsys
+    )
+    assert code == 0
+    plan = json.loads(out)
+    assert plan["scope"]["targeted"] is True
+    assert set(plan["scope"]["task_ids"]) == failing_ids
+
+
+def test_dry_run_failed_from_no_failures_is_still_a_no_op(monkeypatch, tmp_path, capsys):
+    source = tmp_path / "source.json"
+    code, _ = _run_cli(monkeypatch, ["--out", str(source), "--task", _ABSTAIN_ID], capsys)
+    assert code == 0
+
+    code, out, _ = _dry_run_cli(
+        monkeypatch, ["--failed-from", str(source), "--format", "json"], capsys
+    )
+    assert code == 0
+    payload = json.loads(out)
+    assert payload == {
+        "noop": True,
+        "message": f"no failed observations in {source}; nothing to rerun",
+    }
+
+
+def test_dry_run_leaves_existing_out_file_untouched(monkeypatch, tmp_path, capsys):
+    out_path = tmp_path / "results.json"
+    out_path.write_text("preserved")
+    code, _, _ = _dry_run_cli(
+        monkeypatch, ["--out", str(out_path), "--format", "json"], capsys
+    )
+    assert code == 0
+    assert out_path.read_text() == "preserved"
+
+
+@pytest.mark.parametrize("flags", [["--pad", "0,0"], ["--repeats", "0"]])
+def test_dry_run_rejects_invalid_coverage_before_any_probe(monkeypatch, flags, capsys):
+    code, _, err = _dry_run_cli(monkeypatch, flags, capsys)
+    assert code == 2
+    assert "error:" in err
+
+
+@pytest.mark.parametrize("incompatible", [["--resume", "/does/not/exist.json"], ["--fail-under", "0.5"]])
+def test_dry_run_rejects_result_dependent_flags_before_any_io(monkeypatch, incompatible, capsys):
+    monkeypatch.setattr(cli, "probe_server_version", _forbidden_probe)
+    monkeypatch.setattr(cli, "ChatClient", _UnreachableClient)
+
+    def forbidden_read(*_args, **_kwargs):
+        raise AssertionError("--dry-run + result-dependent flags must fail before any I/O")
+
+    monkeypatch.setattr(cli, "_read_run", forbidden_read)
+    with pytest.raises(SystemExit) as excinfo:
+        cli.main(["run", "--model", "stub", "--suite", str(SUITE), "--dry-run", *incompatible])
+    assert excinfo.value.code == 2
+
+
+def test_dry_run_max_completion_tokens_is_an_upper_bound_not_an_estimate(monkeypatch, capsys):
+    code, out, _ = _dry_run_cli(
+        monkeypatch, ["--pad", "0", "--repeats", "3", "--max-tokens", "500", "--format", "json"],
+        capsys,
+    )
+    assert code == 0
+    plan = json.loads(out)
+    expected_requests = len(_SUITE_OBJ.tasks) * 1 * 3
+    assert plan["total_requests"] == expected_requests
+    assert plan["max_completion_tokens"] == expected_requests * 500
+
+
+def test_dry_run_never_exposes_endpoint_or_api_credentials(monkeypatch, capsys):
+    code, text, _ = _dry_run_cli(monkeypatch, [
+        "--endpoint", "https://user:private-password@example.test/v1?key=private-query",
+        "--api-key", "private-api-key", "--format", "json",
+    ], capsys)
+    assert code == 0
+    assert "private-" not in text
+    assert "example.test" not in text
+    plan = json.loads(text)
+    assert plan["budget_excludes"] == ["prompt_tokens", "retries"]
