@@ -68,7 +68,7 @@ so old and new observations are not silently combined.
 Add `exclude_distractors: [tool_name]` when padding could hand the model
 a distractor tool that would make your expected answer wrong, most often
 on `abstain` tasks. See `abstain-policy-question` in
-`suites/core/tasks.yaml` for the pattern: the distractor
+`src/callprobe/suites/core/tasks.yaml` for the pattern: the distractor
 `search_knowledge_base` would genuinely answer the question, so it's
 excluded from padding for that task specifically.
 
@@ -85,8 +85,12 @@ A typo here fails every model silently, so this is not optional.
 
 ## Submitting a run
 
-Runs against models not yet in the leaderboard are welcome. Use the same
-flags the existing runs used, so the numbers are comparable:
+Runs against models not yet in the leaderboard are welcome. Create a fresh
+baseline and candidate from the same suite, using identical pad counts and
+repeats. The archived suite-v1 results are historical evidence, not a
+baseline for the current suite and scorer.
+
+For a new full-suite experiment, one possible configuration is:
 
 ```bash
 callprobe run --model your-model --pad 0,8,16,24 --repeats 3 \
@@ -103,3 +107,20 @@ callprobe leaderboard results/your-model.json results/other-model.json \
 
 Say what endpoint and quantization you ran against in the PR description
 if `--quant` doesn't already capture it.
+
+Before submitting a comparison, run:
+
+```bash
+callprobe compare baseline.json candidate.json --fail-on-regression
+```
+
+A failed gate can be a useful result: include the regressions and the
+conditions under which they occurred. Request errors and missing cases
+must remain visible. Do not rewrite saved calls or remove failing cases to
+improve a score. Targeted debug runs are useful for investigation but are
+not eligible for a full-suite gate or leaderboard.
+
+When submitting a new OpenAPI example, include its source revision and
+license, authored expectations, and a small deterministic test that proves
+the expected arguments satisfy the imported schema. Quote YAML messages
+containing ` #` so issue numbers and similar text are not parsed as comments.
