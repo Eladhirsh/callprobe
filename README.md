@@ -32,8 +32,12 @@ callprobe explain callprobe-demo/baseline.json --suite callprobe-demo
 ```
 
 Use `--endpoint` for another OpenAI-compatible server and `--model` for a
-model it serves. Failed cases are useful findings, not installation errors.
-To retry only tasks that failed:
+model it serves. In a development checkout (unreleased), add `--dry-run` to
+any `callprobe run` invocation to preview the planned coverage and an
+planned request count and completion-token cap with no endpoint access; see
+[Preview a run before spending tokens](#preview-a-run-before-spending-tokens-unreleased).
+Failed cases are useful findings, not installation errors. To retry only
+tasks that failed:
 
 ```bash
 callprobe run --suite callprobe-demo --model qwen2.5:7b \
@@ -475,6 +479,34 @@ remain explicit CLI flags. Saved results record the effective experiment
 settings, and the existing resume and suite-matching checks still apply.
 
 Available since 0.8.0. Install with `uv tool install callprobe@latest`.
+
+### Preview a run before spending tokens (unreleased)
+
+`--dry-run` merges `--config` and CLI flags, resolves `--suite`, and applies
+`--task`/`--failed-from` selection, then prints the resulting coverage and an
+planned request count and completion-token cap &mdash; it never probes the endpoint, never
+calls the model, and never writes `--out`:
+
+```bash
+callprobe run --config callprobe.yaml --model qwen3:8b --dry-run
+```
+
+The plan reports the model, suite label and hash, full vs. targeted scope
+(selected task ids or the full task count), the requested distractor counts,
+repeats, total planned requests (`tasks * pads * repeats`), temperature,
+`max_tokens`, concurrency, and `max_completion_tokens`, the request count
+times `max_tokens` &mdash; an upper bound a model could reach if every
+response used its full budget. This excludes prompt tokens and retries; it
+is not a billing estimate. Actual distractors can be fewer than requested
+when the available pool or task exclusions limit them. `--format json` emits
+the same plan as JSON with `"dry_run": true`. It never prints API keys,
+endpoint credentials, the endpoint URL, prompts, or tool arguments, and it
+reports no benchmark percentages, since no model was called. `--failed-from`
+with no failures still prints its existing no-op message and exits `0`
+without producing a plan. `--dry-run` cannot be combined with `--resume` or
+`--fail-under`, because a dry run neither resumes nor produces scored results; this is
+rejected before any file is read. This flag is not yet available in the
+published 0.8.0 package.
 
 ### Targeted debug reruns (since 0.8.0)
 
