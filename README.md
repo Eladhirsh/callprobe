@@ -167,10 +167,24 @@ responses also fail, including responses with no calls: reaching the token
 limit is not evidence of deliberate abstention. Selection, schema, and
 argument scores still diagnose the selected call independently.
 
-New run files record `scoring_version: 2`. Older files remain readable,
-but must be rerun before use as CI baselines or resumed checkpoints; the
-scoring changes can affect their success rates. Leaderboards reject mixed
-scoring versions unless `--allow-mixed` is supplied.
+**Unreleased development version:** new run files record `scoring_version: 3`.
+Published Callprobe 0.8.0 uses scoring version 2. Version 3 fixes lenient
+integer coercion: `"4225.9"` and `"4225.00000000000001"` stay incorrect
+instead of being truncated or rounded to `4225`. Exact integral strings
+such as `"4225.0"` and `"4.225e3"` still coerce, and large integers retain
+their exact value. Nonfinite numeric strings and integer values requiring
+more than 4300 decimal digits remain strings. Strict scoring is unchanged.
+
+Historical files retain their recorded verdicts and remain readable; the
+offline demo still uses its original version-2 evidence. Complete, compatible
+version-2 runs can still be gated against each other. Gates, resume, and
+`--failed-from` refuse mixed scoring versions. Leaderboards also reject mixed
+versions unless `--allow-mixed` is supplied.
+
+When upgrading to version 3, rerun both baseline and candidate using the same
+suite and comparison settings, writing new files rather than replacing the
+old evidence. Corrected precision can raise or lower lenient scores; changing
+a saved file's version label is not a migration.
 
 ## What it measures that other harnesses do not
 
