@@ -86,3 +86,28 @@ def test_action_keeps_comparison_after_threshold_failure(
     assert completed.returncode == expected, completed.stderr
     assert ("compare" in (tmp_path / "args").read_text().splitlines()) == compared
     assert (tmp_path / "callprobe-comparison.json").exists() == compared
+
+
+@pytest.mark.parametrize("failed_output", ["callprobe-summary.json", "callprobe-comparison.json"])
+def test_action_does_not_hide_report_write_failures(tmp_path, failed_output):
+    script = next(s["run"] for s in yaml.safe_load(ACTION.read_text())["runs"]["steps"]
+                  if s["name"] == "Run callprobe")
+    for name, text in {
+        "callprobe": '#!/bin/bash\necho "$1" >> "$ARGS_FILE"\necho "{}"\n',
+        "tee": '#!/bin/bash\nif [ "$1" = "$FAILED_OUTPUT" ]; then cat >/dev/null; exit 7; fi\nexec /usr/bin/tee "$@"\n',
+    }.items():
+        executable = tmp_path / name
+        executable.write_text(text)
+        executable.chmod(0o755)
+    (tmp_path / "baseline.json").write_text("{}")
+    env = {**os.environ, "PATH": f"{tmp_path}:{os.environ['PATH']}",
+           "ARGS_FILE": str(tmp_path / "args"), "FAILED_OUTPUT": failed_output,
+           "CALLPROBE_MODEL": "stub", "CALLPROBE_ENDPOINT": "http://unused",
+           "CALLPROBE_SUITE": "", "CALLPROBE_FAIL_UNDER": "",
+           "CALLPROBE_PAD": "0", "CALLPROBE_REPEATS": "1",
+           "CALLPROBE_MAX_TOKENS": "2048", "CALLPROBE_BASELINE": "baseline.json",
+           "CALLPROBE_POLICY": ""}
+    completed = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
+    assert completed.returncode == 7, completed.stderr
+    calls = (tmp_path / "args").read_text().splitlines()
+    assert ("compare" in calls) == (failed_output == "callprobe-comparison.json")
