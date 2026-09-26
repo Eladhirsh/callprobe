@@ -134,3 +134,12 @@ def test_invalid_retry_after_uses_finite_backoff(monkeypatch, retry_after):
         assert waits == [0.125]
     finally:
         client.close()
+
+
+@pytest.mark.parametrize("version", [None, 42, {}, ["0.1"], True, "", "  "])
+def test_version_probe_does_not_record_malformed_metadata(monkeypatch, version):
+    from callprobe.client import probe_server_version
+    monkeypatch.setattr("callprobe.client.httpx.get", lambda *args, **kwargs:
+                        httpx.Response(200, json={"version": version},
+                                       request=httpx.Request("GET", "http://fake/api/version")))
+    assert probe_server_version("http://fake/v1") == (None, None)

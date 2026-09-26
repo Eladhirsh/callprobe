@@ -36,7 +36,7 @@ def probe_server_version(endpoint: str, timeout: float = 2.0) -> tuple[str | Non
         version = response.json().get("version")
     except Exception:  # noqa: BLE001 - purely informational
         return None, None
-    return ("ollama", version) if version else (None, None)
+    return ("ollama", version) if isinstance(version, str) and version.strip() else (None, None)
 
 
 @dataclass
