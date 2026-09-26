@@ -39,5 +39,22 @@ jobs:
           /tmp/callprobe-wheel-env/bin/callprobe examples
           /tmp/callprobe-wheel-env/bin/callprobe init --example support --out /tmp/callprobe-support-example
           /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-support-example
+          /tmp/callprobe-wheel-env/bin/callprobe run --suite /tmp/callprobe-support-example \
+            --model offline-placeholder --endpoint http://127.0.0.1:1/v1 --pad 0 \
+            --dry-run --format json > /tmp/callprobe-plan.json
+          /tmp/callprobe-wheel-env/bin/python -c 'import json; p=json.load(open("/tmp/callprobe-plan.json")); assert p["dry_run"] and p["total_requests"] == 6'
           /tmp/callprobe-wheel-env/bin/callprobe init --example github-issues --out /tmp/callprobe-github-example
           /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-github-example
+          /tmp/callprobe-wheel-env/bin/callprobe demo --out /tmp/callprobe-offline-demo
+          /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-offline-demo/github-issues-suite
+          /tmp/callprobe-wheel-env/bin/callprobe explain /tmp/callprobe-offline-demo/candidate.json \
+            --suite /tmp/callprobe-offline-demo/github-issues-suite --task comment-body-punctuation
+          set +e
+          /tmp/callprobe-wheel-env/bin/callprobe compare /tmp/callprobe-offline-demo/baseline.json \
+            /tmp/callprobe-offline-demo/candidate.json --fail-on-regression
+          demo_gate_exit=$?
+          set -e
+          if [ "$demo_gate_exit" -ne 1 ]; then
+            echo "expected the offline demo's --fail-on-regression gate to exit 1 (its two recorded regressions), got $demo_gate_exit"
+            exit 1
+          fi

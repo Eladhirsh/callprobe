@@ -32,8 +32,12 @@ callprobe explain callprobe-demo/baseline.json --suite callprobe-demo
 ```
 
 Use `--endpoint` for another OpenAI-compatible server and `--model` for a
-model it serves. Failed cases are useful findings, not installation errors.
-To retry only tasks that failed:
+model it serves. In a development checkout (unreleased), add `--dry-run` to
+any `callprobe run` invocation to preview the planned coverage and an
+planned request count and completion-token cap with no endpoint access; see
+[Preview a run before spending tokens](#preview-a-run-before-spending-tokens-unreleased).
+Failed cases are useful findings, not installation errors. To retry only
+tasks that failed:
 
 ```bash
 callprobe run --suite callprobe-demo --model qwen2.5:7b \
@@ -45,12 +49,31 @@ Want to help test? [Report your first-run experience](https://github.com/Eladhir
 which endpoint/model you used, whether the walkthrough worked, and one thing
 that confused you. You can also import your own [OpenAPI file](#bring-your-own-tools).
 
+### Try the workflow offline (unreleased)
+
+From a development checkout ([setup](CONTRIBUTING.md)), try recorded results
+without a model or endpoint:
+
+```bash
+callprobe demo --out callprobe-offline-demo
+```
+
+The command writes two historical runs, their matching 18-case suite, and a
+walkthrough with commands to compare and explain failures. The candidate
+passed 11/18 cases versus the baseline's 5/18, but regressed two previously
+passing cases. The regression gate therefore exits `1`, as intended.
+
+These are [recorded observations](results/github-issues/README.md), not a
+fresh execution or a current model ranking. `demo` needs no network after
+installation. This command is not yet available in the published 0.8.0 package.
+
 ## A concrete regression example
 
 On our saved 18-case GitHub API suite, Qwen3 8B passed 11 cases versus
 Qwen2.5 7B's 5, but regressed on two previously passing cases. The regression
 gate correctly failed despite the higher overall score. These are individual
-local runs, not a general model ranking. [Conditions and raw results](results/github-issues/README.md).
+local runs, not a general model ranking. [Read the comparison report](results/github-issues/comparison.md)
+or the [conditions and raw results](results/github-issues/README.md).
 
 ## Historical core benchmark
 
@@ -144,10 +167,25 @@ responses also fail, including responses with no calls: reaching the token
 limit is not evidence of deliberate abstention. Selection, schema, and
 argument scores still diagnose the selected call independently.
 
-New run files record `scoring_version: 2`. Older files remain readable,
-but must be rerun before use as CI baselines or resumed checkpoints; the
-scoring changes can affect their success rates. Leaderboards reject mixed
-scoring versions unless `--allow-mixed` is supplied.
+**Unreleased development version:** new run files record `scoring_version: 3`.
+Published Callprobe 0.8.0 uses scoring version 2. Version 3 fixes lenient
+integer coercion: `"4225.9"` and `"4225.00000000000001"` stay incorrect
+instead of being truncated or rounded to `4225`. Exact integral strings
+such as `"4225.0"` and `"4.225e3"` still coerce, and large integers retain
+their exact value. Nonfinite numeric strings and integer values requiring
+more than 4300 decimal digits remain strings. Stringified arrays and objects
+use the same numeric safety limits. Strict scoring is unchanged.
+
+Historical files retain their recorded verdicts and remain readable; the
+offline demo still uses its original version-2 evidence. Complete, compatible
+version-2 runs can still be gated against each other. Gates, resume, and
+`--failed-from` refuse mixed scoring versions. Leaderboards also reject mixed
+versions unless `--allow-mixed` is supplied.
+
+When upgrading to version 3, rerun both baseline and candidate using the same
+suite and comparison settings, writing new files rather than replacing the
+old evidence. Corrected precision can raise or lower lenient scores; changing
+a saved file's version label is not a migration.
 
 ## What it measures that other harnesses do not
 
@@ -264,6 +302,14 @@ Existing suite files are protected unless you pass `--force`.
 
 Generated tasks are commented drafts; they do not invent correct answers from
 the schema. A suite with no active tasks cannot be validated as ready to run.
+
+In the development version (unreleased), validation checks every tool and
+distractor's JSON Schema, including unused tools. Duplicate names within a
+bundle or the distractor pool are rejected. Expected-argument checks resolve
+local references offline; external or unresolvable references produce a
+diagnostic when encountered, without fetching them. Validation checks the
+authored expectations, not every possible argument or reference path.
+
 Try the [six-test support API walkthrough](examples/openapi/README.md) for a
 complete example with human-authored expectations. The imported API is never
 executed, and no API credentials are needed.
@@ -457,6 +503,34 @@ settings, and the existing resume and suite-matching checks still apply.
 
 Available since 0.8.0. Install with `uv tool install callprobe@latest`.
 
+### Preview a run before spending tokens (unreleased)
+
+`--dry-run` merges `--config` and CLI flags, resolves `--suite`, and applies
+`--task`/`--failed-from` selection, then prints the resulting coverage and an
+planned request count and completion-token cap &mdash; it never probes the endpoint, never
+calls the model, and never writes `--out`:
+
+```bash
+callprobe run --config callprobe.yaml --model qwen3:8b --dry-run
+```
+
+The plan reports the model, suite label and hash, full vs. targeted scope
+(selected task ids or the full task count), the requested distractor counts,
+repeats, total planned requests (`tasks * pads * repeats`), temperature,
+`max_tokens`, concurrency, and `max_completion_tokens`, the request count
+times `max_tokens` &mdash; an upper bound a model could reach if every
+response used its full budget. This excludes prompt tokens and retries; it
+is not a billing estimate. Actual distractors can be fewer than requested
+when the available pool or task exclusions limit them. `--format json` emits
+the same plan as JSON with `"dry_run": true`. It never prints API keys,
+endpoint credentials, the endpoint URL, prompts, or tool arguments, and it
+reports no benchmark percentages, since no model was called. `--failed-from`
+with no failures still prints its existing no-op message and exits `0`
+without producing a plan. `--dry-run` cannot be combined with `--resume` or
+`--fail-under`, because a dry run neither resumes nor produces scored results; this is
+rejected before any file is read. This flag is not yet available in the
+published 0.8.0 package.
+
 ### Targeted debug reruns (since 0.8.0)
 
 `--task ID` (repeatable) runs only those exact task ids instead of the whole
@@ -515,6 +589,19 @@ callprobe compare results/before.json results/after.json
 
 It warns if the two runs' suite hashes differ, since part of the delta
 could then be the suite changing rather than the model.
+
+To save a readable report for review (unreleased):
+
+```bash
+callprobe compare results/before.json results/after.json --format markdown > comparison.md
+```
+
+Markdown includes scored observation counts, request errors, category deltas,
+and task changes. Categories without scored observations show `n/a`.
+Targeted-run and provenance warnings remain in the saved report. Add
+`--fail-on-regression` or `--policy` to include a CI verdict; without one,
+the report says **not requested**. A failing gate still writes its report
+and exits `1`, so shell scripts should preserve that status.
 
 To enforce a baseline in CI:
 
@@ -602,6 +689,15 @@ For example, after checking out your repository and starting your endpoint:
 Baseline inputs require v0.5.0 or newer. Keep the baseline separate from the action's
 `callprobe-results.json` output. The action also writes
 `callprobe-comparison.json` and includes it in the job summary.
+
+On the development branch (unreleased), the Action additionally writes
+`callprobe-comparison.md` and shows that readable report in the job summary,
+with raw run output collapsed below its heading. Both comparison formats
+come from the same saved results and policy; rendering does not call the
+model again. A `fail-under` violation still produces the baseline comparison
+before the Action exits with failure. Missing baseline/policy files and
+paths that alias generated outputs are rejected before model requests.
+Only reports produced by the current invocation appear in its summary.
 
 ## The failure digest
 

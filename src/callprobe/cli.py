@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import importlib.resources
 import json
+import math
 import os
 import shlex
 import sys
@@ -20,7 +21,8 @@ import yaml
 
 from . import __version__
 from .client import ChatClient, probe_server_version
-from .compare import category_deltas, flipped_tasks, render_compare
+from .compare import category_deltas, flipped_tasks, render_compare, render_compare_markdown
+from .demo import INSPECT_TASK, REGRESSED_TASKS, SUITE_DIRNAME, generate_demo_files
 from .examples import EXAMPLES, generate_example_suite, list_examples
 from .explain import explain_run, render_explain_text
 from .gates import evaluate_gate, load_policy, render_gate
@@ -156,7 +158,7 @@ def _merged_run_settings(args: argparse.Namespace):
         return default
 
     model = pick(args.model, "model")
-    if not model:
+    if not model or not model.strip():
         raise ValueError("--model is required: pass --model or set model in --config")
 
     if args.pad is not None:
@@ -193,8 +195,71 @@ def _merged_run_settings(args: argparse.Namespace):
     }
 
 
+def _render_dry_run_text(plan: dict) -> str:
+    lines = [
+        "DRY RUN: no endpoint probe, no model requests, no output written.",
+        f"model            {plan['model']}",
+        f"suite            {plan['suite']['label']}  (hash {plan['suite']['hash']})",
+    ]
+    if plan["scope"]["targeted"]:
+        lines.append(
+            f"scope            targeted, {plan['scope']['selected_task_count']} of "
+            f"{plan['scope']['total_task_count']} task(s): "
+            + ", ".join(plan["scope"]["task_ids"])
+        )
+    else:
+        lines.append(f"scope            full suite, {plan['scope']['total_task_count']} task(s)")
+    lines.append("requested pads   " + ", ".join(str(pad) for pad in plan["pads"]))
+    lines.append(f"repeats          {plan['repeats']}")
+    lines.append(f"temperature      {plan['temperature']}")
+    lines.append(f"max_tokens       {plan['max_tokens']}")
+    lines.append(f"concurrency      {plan['concurrency']}")
+    lines.append(f"total requests   {plan['total_requests']}")
+    lines.append(
+        f"max completion tokens (upper bound)   {plan['max_completion_tokens']}"
+    )
+    lines.append("Budget excludes prompt tokens and retries; it is not a billing estimate.")
+    return "\n".join(lines)
+
+
+def _dry_run_plan(suite, suite_label: str, config: RunConfig, concurrency: int) -> dict:
+    """Coverage/cost preview computed without any endpoint access.
+
+    `max_completion_tokens` is `requests * max_tokens`, an upper bound a model
+    could reach if every response used its full completion budget, not an
+    estimate of tokens actually spent.
+    """
+    task_count = (
+        len(config.selected_task_ids) if config.selected_task_ids is not None else len(suite.tasks)
+    )
+    total_requests = task_count * len(config.pads) * config.repeats
+    return {
+        "dry_run": True,
+        "model": config.model,
+        "suite": {"label": suite_label, "hash": suite.hash},
+        "scope": {
+            "targeted": config.selected_task_ids is not None,
+            "task_ids": config.selected_task_ids,
+            "selected_task_count": task_count if config.selected_task_ids is not None else None,
+            "total_task_count": len(suite.tasks),
+        },
+        "pads": config.pads,
+        "repeats": config.repeats,
+        "total_requests": total_requests,
+        "temperature": config.temperature,
+        "max_tokens": config.max_tokens,
+        "concurrency": concurrency,
+        "max_completion_tokens": total_requests * config.max_tokens,
+        "budget_excludes": ["prompt_tokens", "retries"],
+    }
+
+
 def _run(args: argparse.Namespace) -> int:
     settings = _merged_run_settings(args)
+    if not math.isfinite(settings["temperature"]):
+        raise ValueError("temperature must be finite")
+    if not settings["endpoint"].strip():
+        raise ValueError("endpoint must not be blank")
     if settings["concurrency"] < 1 or settings["max_tokens"] < 1 or settings["retries"] < 0:
         raise ValueError("concurrency/max-tokens must be positive and retries nonnegative")
 
@@ -222,7 +287,6 @@ def _run(args: argparse.Namespace) -> int:
                 print(message)
             return 0
 
-    server_name, server_version = probe_server_version(settings["endpoint"])
     config = RunConfig(
         model=settings["model"],
         endpoint=settings["endpoint"],
@@ -237,12 +301,21 @@ def _run(args: argparse.Namespace) -> int:
         suite_name=suite.name,
         suite_version=suite.version,
         suite_hash=suite.hash,
-        server_name=server_name,
-        server_version=server_version,
         selected_task_ids=selected_task_ids,
     )
-    api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     config = prepare_config(suite, config)
+
+    if args.dry_run:
+        plan = _dry_run_plan(suite, suite_label, config, settings["concurrency"])
+        if args.format == "json":
+            print(json.dumps(plan, indent=2))
+        else:
+            print(_render_dry_run_text(plan))
+        return 0
+
+    api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
+    server_name, server_version = probe_server_version(settings["endpoint"])
+    config = config.model_copy(update={"server_name": server_name, "server_version": server_version})
 
     resume_run = None
     if args.resume:
@@ -326,8 +399,8 @@ def _validate(args: argparse.Namespace) -> int:
     return 0
 
 
-def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
-    """Preflight every target, then write each file via temp + rename."""
+def _preflight_files(out: Path, files: dict[str, str], force: bool) -> None:
+    """Raise if writing `files` into `out` would be unsafe. Never writes."""
     if out.exists() and not out.is_dir():
         raise ValueError(f"{out} exists and is not a directory")
     conflicts = [name for name in files if os.path.lexists(out / name)]
@@ -338,6 +411,11 @@ def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
             f"refusing to overwrite existing file(s) in {out}: {', '.join(conflicts)} "
             "(pass --force to replace them)"
         )
+
+
+def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
+    """Preflight every target, then write each file via temp + rename."""
+    _preflight_files(out, files, force)
     out.mkdir(parents=True, exist_ok=True)
     for filename, content in files.items():
         temporary = None
@@ -395,6 +473,46 @@ def _init(args: argparse.Namespace) -> int:
     return 0
 
 
+def _demo(args: argparse.Namespace) -> int:
+    out = Path(args.out)
+    suite_out = out / SUITE_DIRNAME
+    try:
+        top_files, suite_files = generate_demo_files()
+        # Preflight both targets before writing either: a conflict in the
+        # suite subdirectory must not be discovered after top-level files
+        # (baseline.json, candidate.json, DEMO.md) have already been written.
+        _preflight_files(out, top_files, args.force)
+        _preflight_files(suite_out, suite_files, args.force)
+        _write_files(out, top_files, args.force)
+        _write_files(suite_out, suite_files, args.force)
+    except ValueError as exc:
+        sys.stderr.write(f"error: {exc}\n")
+        return 1
+
+    baseline = shlex.quote(str(out / "baseline.json"))
+    candidate = shlex.quote(str(out / "candidate.json"))
+    suite_display = shlex.quote(str(suite_out))
+    print(f"wrote {len(top_files) + len(suite_files)} files to {shlex.quote(str(out))}/")
+    print()
+    print("OFFLINE DEMO: recorded results, no model endpoint or network request was used.")
+    print("baseline.json (Qwen2.5 7B) and candidate.json (Qwen3 8B) are byte-identical")
+    print("copies of a real, historical run recorded under results/github-issues/ in the")
+    print("callprobe repository; this command made no fresh model calls, and neither does")
+    print("anything below. See DEMO.md for the full walkthrough.")
+    print()
+    print("Qwen2.5 7B passed 5/18 cases; Qwen3 8B passed 11/18, a higher aggregate score,")
+    print(f"but it regressed {len(REGRESSED_TASKS)} previously passing case(s): "
+          + ", ".join(REGRESSED_TASKS) + ".")
+    print("That is why the regression gate below is expected to fail (exit 1) despite the")
+    print("higher overall number: previously passing cases now fail.")
+    print()
+    print("Try it:")
+    print(f"  callprobe compare {baseline} {candidate} --fail-on-regression")
+    print(f"  callprobe explain {candidate} --suite {suite_display}")
+    print(f"  callprobe explain {candidate} --suite {suite_display} --task {shlex.quote(INSPECT_TASK)}")
+    return 0
+
+
 def _examples(args: argparse.Namespace) -> int:
     for name, count, description in list_examples():
         print(f"{name}  ({count} tasks)  {description}")
@@ -427,6 +545,8 @@ def _compare(args: argparse.Namespace) -> int:
         print(json.dumps({"by_category": category_deltas(a, b),
                           "regressed_tasks": regressions, "improved_tasks": improvements,
                           "gate": gate}, indent=2))
+    elif args.format == "markdown":
+        print(render_compare_markdown(a, b, gate))
     else:
         print(render_compare(a, b))
         if gate is not None:
@@ -521,6 +641,13 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="skip (task, pad, repeat) combinations already in this results file",
     )
+    run_cmd.add_argument(
+        "--dry-run",
+        dest="dry_run",
+        action="store_true",
+        help="print the planned coverage and request/token budget, no endpoint probe, "
+             "no model requests, no output write",
+    )
     targeting = run_cmd.add_mutually_exclusive_group()
     targeting.add_argument(
         "--task",
@@ -562,6 +689,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     examples_cmd.set_defaults(func=_examples)
 
+    demo_cmd = sub.add_parser(
+        "demo", help="build an offline demo of the CI gate and explain, using recorded results, "
+                     "no model endpoint or network access required"
+    )
+    demo_cmd.add_argument("--out", default="callprobe-demo", help="directory to write the demo to")
+    demo_cmd.add_argument("--force", action="store_true", help="overwrite existing generated files")
+    demo_cmd.set_defaults(func=_demo)
+
     validate_cmd = sub.add_parser(
         "validate", help="check task expectations against tool schemas, no model needed"
     )
@@ -578,7 +713,7 @@ def main(argv: list[str] | None = None) -> int:
     compare_cmd.add_argument("--fail-on-regression", action="store_true",
                              help="fail if any matched passing case regresses; requires complete runs")
     compare_cmd.add_argument("--policy", help="YAML CI policy; enables gating")
-    compare_cmd.add_argument("--format", choices=["text", "json"], default="text")
+    compare_cmd.add_argument("--format", choices=["text", "json", "markdown"], default="text")
     compare_cmd.set_defaults(func=_compare)
 
     explain_cmd = sub.add_parser(
@@ -608,6 +743,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "run" and args.fail_under is not None and (args.task or args.failed_from):
         parser.error("--fail-under cannot be combined with --task/--failed-from: "
                       "targeted runs are for debugging, not CI gating")
+    if args.command == "run" and args.dry_run and (args.resume or args.fail_under is not None):
+        parser.error("--dry-run cannot be combined with --resume/--fail-under: "
+                      "a dry run does not resume or produce scored results")
     try:
         if args.command == "run":
             if args.fail_under is not None and not 0 <= args.fail_under <= 1:

@@ -52,6 +52,7 @@ runs:
       run: pip install "$CALLPROBE_ACTION_PATH"
 
     - name: Run callprobe
+      id: evaluate
       shell: bash
       env:
         CALLPROBE_MODEL: ${{ inputs.model }}
@@ -66,6 +67,21 @@ runs:
         CALLPROBE_POLICY: ${{ inputs.policy }}
       run: |
         set -euo pipefail
+        # Inputs must survive cleanup and output writes, including aliases.
+        for source in "$CALLPROBE_BASELINE" "$CALLPROBE_POLICY"; do
+          if [ -z "$source" ]; then continue; fi
+          for target in callprobe-results.json callprobe-summary.json callprobe-comparison.json callprobe-comparison.md; do
+            if [ "$source" -ef "$target" ]; then
+              echo 'baseline and policy must be separate from generated reports/results' >&2
+              exit 2
+            fi
+          done
+        done
+        # Clear this action's own generated reports so a run that fails before
+        # reaching a stage never leaves a stale report from a prior
+        # invocation behind for the summary step. Never touch the baseline or
+        # results inputs.
+        rm -f callprobe-summary.json callprobe-comparison.json callprobe-comparison.md
         if [ -n "$CALLPROBE_POLICY" ] && [ -z "$CALLPROBE_BASELINE" ]; then
           echo 'policy requires baseline' >&2
           exit 2
@@ -74,6 +90,12 @@ runs:
           echo 'baseline must be separate from callprobe-results.json' >&2
           exit 2
         fi
+        for source in "$CALLPROBE_BASELINE" "$CALLPROBE_POLICY"; do
+          if [ -n "$source" ] && [ ! -f "$source" ]; then
+            echo 'baseline and policy inputs must be existing files' >&2
+            exit 2
+          fi
+        done
         args=(run --model "$CALLPROBE_MODEL" --endpoint "$CALLPROBE_ENDPOINT" \
           --pad "$CALLPROBE_PAD" --repeats "$CALLPROBE_REPEATS" \
           --max-tokens "$CALLPROBE_MAX_TOKENS" --format json --out callprobe-results.json)
@@ -83,32 +105,98 @@ runs:
         if [ -n "$CALLPROBE_FAIL_UNDER" ]; then
           args+=(--fail-under "$CALLPROBE_FAIL_UNDER")
         fi
+        # A threshold failure still writes valid results. Keep the comparison
+        # evidence, then preserve the failure status at the end of the step.
+        set +e
         callprobe "${args[@]}" | tee callprobe-summary.json
+        run_status=("${PIPESTATUS[@]}")
+        set -e
+        if [ "${run_status[1]}" -ne 0 ]; then exit "${run_status[1]}"; fi
+        if [ "${run_status[0]}" -gt 1 ]; then exit "${run_status[0]}"; fi
+        if [ -n "${GITHUB_OUTPUT:-}" ]; then echo 'summary_ready=true' >> "$GITHUB_OUTPUT"; fi
+        comparison_status=0
         if [ -n "$CALLPROBE_BASELINE" ]; then
-          compare_args=(compare "$CALLPROBE_BASELINE" callprobe-results.json --format json)
+          compare_base=(compare "$CALLPROBE_BASELINE" callprobe-results.json)
           if [ -n "$CALLPROBE_POLICY" ]; then
-            compare_args+=(--policy "$CALLPROBE_POLICY")
+            gate_args=(--policy "$CALLPROBE_POLICY")
           else
-            compare_args+=(--fail-on-regression)
+            gate_args=(--fail-on-regression)
           fi
-          callprobe "${compare_args[@]}" | tee callprobe-comparison.json
+          set +e
+          callprobe "${compare_base[@]}" "${gate_args[@]}" --format json | tee callprobe-comparison.json
+          compare_status=("${PIPESTATUS[@]}")
+          set -e
+          if [ "${compare_status[1]}" -ne 0 ]; then exit "${compare_status[1]}"; fi
+          comparison_status="${compare_status[0]}"
+          if [ "$comparison_status" -gt 1 ]; then exit "$comparison_status"; fi
+          # Re-render the same saved comparison as Markdown for a readable
+          # summary. This reads the same baseline/results files with the same
+          # gate arguments and makes no additional model request. A gate
+          # failure (exit 1) is expected and already tracked above; a fatal
+          # compare error or a failed write must still fail the step.
+          set +e
+          callprobe "${compare_base[@]}" "${gate_args[@]}" --format markdown | tee callprobe-comparison.md
+          markdown_status=("${PIPESTATUS[@]}")
+          set -e
+          if [ "${markdown_status[1]}" -ne 0 ]; then exit "${markdown_status[1]}"; fi
+          if [ "${markdown_status[0]}" -gt 1 ]; then exit "${markdown_status[0]}"; fi
+          if [ "${markdown_status[0]}" -eq 1 ]; then comparison_status=1; fi
+          if [ -n "${GITHUB_OUTPUT:-}" ]; then echo 'comparison_ready=true' >> "$GITHUB_OUTPUT"; fi
         fi
+        if [ "$comparison_status" -ne 0 ]; then exit "$comparison_status"; fi
+        exit "${run_status[0]}"
 
     - name: Write step summary
       if: always()
       shell: bash
       env:
         CALLPROBE_MODEL: ${{ inputs.model }}
+        CALLPROBE_SUMMARY_READY: ${{ steps.evaluate.outputs.summary_ready }}
+        CALLPROBE_COMPARISON_READY: ${{ steps.evaluate.outputs.comparison_ready }}
       run: |
-        {
-          echo "## callprobe: $CALLPROBE_MODEL"
-          echo '```json'
-          if [ -f callprobe-summary.json ]; then cat callprobe-summary.json; fi
-          echo '```'
-          if [ -f callprobe-comparison.json ]; then
-            echo '### Baseline comparison'
-            echo '```json'
-            cat callprobe-comparison.json
-            echo '```'
-          fi
-        } >> "$GITHUB_STEP_SUMMARY"
+        python3 - <<'PY'
+        import os
+        import re
+
+        def escape_md(text):
+            """Neutralize a value so it cannot inject Markdown/HTML
+            structure (headings, links, emphasis) when placed outside a
+            fenced code block."""
+            text = text.replace("\r\n", " ").replace("\n", " ").replace("\r", " ")
+            text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            for ch in "\\`*_[]()#|":
+                text = text.replace(ch, "\\" + ch)
+            return text
+
+        def fence_for(text):
+            """A backtick fence longer than any backtick run already in the
+            text, so the text cannot prematurely close its own code block."""
+            longest = max((len(run) for run in re.findall(r"`+", text)), default=0)
+            return "`" * max(3, longest + 1)
+
+        model = escape_md(os.environ.get("CALLPROBE_MODEL", ""))
+        lines = [f"## callprobe: {model}", ""]
+
+        if os.environ.get("CALLPROBE_SUMMARY_READY") == "true" and os.path.exists("callprobe-summary.json"):
+            raw = open("callprobe-summary.json", encoding="utf-8", errors="replace").read()
+            fence = fence_for(raw)
+            lines += [
+                "<details>",
+                "<summary>Raw run output</summary>",
+                "",
+                fence + "json",
+                raw.rstrip("\n"),
+                fence,
+                "",
+                "</details>",
+                "",
+            ]
+
+        if os.environ.get("CALLPROBE_COMPARISON_READY") == "true" and os.path.exists("callprobe-comparison.md"):
+            comparison = open("callprobe-comparison.md", encoding="utf-8", errors="replace").read()
+            lines.append(comparison.rstrip("\n"))
+            lines.append("")
+
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+        PY
