@@ -113,3 +113,24 @@ def test_render_compare_lists_flips_and_deltas():
     assert "t1" in text
     assert "pass -> fail (1):" in text
     assert "fail -> pass (0):" in text
+
+
+def test_comparison_reports_request_errors_without_inventing_rate_delta():
+    a = Run(config=_config(), started_at="now",
+            results=[_result("t1", "select", 0, False, error="timeout")])
+    b = Run(config=_config(), started_at="now",
+            results=[_result("t1", "select", 0, True)])
+    text = render_compare(a, b)
+    assert "scored observations: 0 -> 1" in text
+    assert "request errors: 1 -> 0" in text
+    row = next(line for line in text.splitlines() if line.startswith("select"))
+    assert row.split()[1:] == ["n/a", "100.0%", "n/a", "n/a", "0.0%", "n/a"]
+    assert "+100.0%" not in row
+
+
+def test_category_absent_from_candidate_is_not_reported_as_zero_percent():
+    a = Run(config=_config(), started_at="now",
+            results=[_result("t1", "select", 0, True)])
+    b = Run(config=_config(), started_at="now", results=[])
+    row = next(line for line in render_compare(a, b).splitlines() if line.startswith("select"))
+    assert row.split()[2:4] == ["n/a", "n/a"]

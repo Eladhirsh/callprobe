@@ -75,14 +75,30 @@ def _delta(value: float) -> str:
 
 
 def render_compare(a: Run, b: Run) -> str:
-    lines = [f"{a.config.model}  ->  {b.config.model}", ""]
+    scored_a = [r for r in a.results if not r.error]
+    scored_b = [r for r in b.results if not r.error]
+    lines = [
+        f"{a.config.model}  ->  {b.config.model}",
+        f"scored observations: {len(scored_a)} -> {len(scored_b)}",
+        f"request errors: {len(a.results) - len(scored_a)} -> {len(b.results) - len(scored_b)}",
+        "",
+    ]
+    categories_a = _group_by_category(scored_a)
+    categories_b = _group_by_category(scored_b)
     header = f"{'category':<10} {'success a':>10} {'success b':>10} {'delta':>8}   {'lenient a':>10} {'lenient b':>10} {'delta':>8}"
     lines.append(header)
     for category, d in category_deltas(a, b).items():
+        has_a, has_b = bool(categories_a.get(category)), bool(categories_b.get(category))
+        success_a = _pct(d["success_a"]) if has_a else "n/a"
+        success_b = _pct(d["success_b"]) if has_b else "n/a"
+        success_delta = _delta(d["success_delta"]) if has_a and has_b else "n/a"
+        lenient_a = _pct(d["lenient_a"]) if has_a else "n/a"
+        lenient_b = _pct(d["lenient_b"]) if has_b else "n/a"
+        lenient_delta = _delta(d["lenient_delta"]) if has_a and has_b else "n/a"
         lines.append(
-            f"{category:<10} {_pct(d['success_a']):>10} {_pct(d['success_b']):>10} "
-            f"{_delta(d['success_delta']):>8}   {_pct(d['lenient_a']):>10} "
-            f"{_pct(d['lenient_b']):>10} {_delta(d['lenient_delta']):>8}"
+            f"{category:<10} {success_a:>10} {success_b:>10} "
+            f"{success_delta:>8}   {lenient_a:>10} "
+            f"{lenient_b:>10} {lenient_delta:>8}"
         )
 
     pass_to_fail, fail_to_pass = flipped_tasks(a, b)
