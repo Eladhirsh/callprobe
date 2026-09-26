@@ -534,6 +534,19 @@ callprobe compare results/before.json results/after.json
 It warns if the two runs' suite hashes differ, since part of the delta
 could then be the suite changing rather than the model.
 
+To save a readable report for review (unreleased):
+
+```bash
+callprobe compare results/before.json results/after.json --format markdown > comparison.md
+```
+
+Markdown includes scored observation counts, request errors, category deltas,
+and task changes. Categories without scored observations show `n/a`.
+Targeted-run and provenance warnings remain in the saved report. Add
+`--fail-on-regression` or `--policy` to include a CI verdict; without one,
+the report says **not requested**. A failing gate still writes its report
+and exits `1`, so shell scripts should preserve that status.
+
 To enforce a baseline in CI:
 
 ```bash
