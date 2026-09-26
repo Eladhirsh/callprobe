@@ -258,3 +258,15 @@ def test_out_of_range_argument_path_returns_missing_instead_of_crashing(values, 
     passed, message = apply_check(arguments, ArgCheck(path=path, op="eq", value=1))
     assert passed is False
     assert "missing" in message
+
+
+@pytest.mark.parametrize("amount", ["inf", "-inf", "1e999", "NaN"])
+def test_nonfinite_integer_strings_fail_without_crashing_lenient_scoring(suite, amount):
+    result = run(suite, "args-partial-refund", body_with_call(
+        "issue_refund",
+        {"order_id": "ORD-991003", "reason": "damaged", "amount_cents": amount},
+    ))
+    assert not result.success
+    assert not result.success_lenient
+    assert not result.schema_ok_lenient
+    assert not result.type_coerced

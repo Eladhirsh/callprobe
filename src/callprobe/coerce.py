@@ -21,7 +21,7 @@ def _coerce_scalar(value, kind):
                 return True
             if low in FALSE:
                 return False
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return value
     return value
 
