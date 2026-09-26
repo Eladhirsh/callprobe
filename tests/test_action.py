@@ -324,3 +324,50 @@ def test_action_rejects_missing_inputs_before_model_run(tmp_path, baseline, poli
     assert result.returncode == 2
     assert "must be existing files" in result.stderr
     assert not (tmp_path / "callprobe-results.json").exists()
+
+
+def test_action_real_offline_comparison_survives_threshold_failure(tmp_path):
+    """Only model execution is stubbed; comparisons use the actual CLI."""
+    import sys
+
+    repo = ACTION.parent
+    recorded = repo / "results" / "github-issues"
+    (tmp_path / "baseline.json").write_bytes((recorded / "qwen2.5-7b.json").read_bytes())
+    executable = tmp_path / "callprobe"
+    executable.write_text(
+        '#!/bin/bash\n'
+        'if [ "$1" = run ]; then\n'
+        '  cp "$RECORDED_CANDIDATE" callprobe-results.json\n'
+        '  echo "{}"\n'
+        '  exit 1\n'
+        'fi\n'
+        'exec "$TEST_PYTHON" -m callprobe.cli "$@"\n'
+    )
+    executable.chmod(0o755)
+    steps = yaml.safe_load(ACTION.read_text())["runs"]["steps"]
+    script = next(step["run"] for step in steps if step["name"] == "Run callprobe")
+    env = {**os.environ, "PATH": f"{tmp_path}:{os.environ['PATH']}",
+           "TEST_PYTHON": sys.executable, "PYTHONPATH": str(repo / "src"),
+           "RECORDED_CANDIDATE": str(recorded / "qwen3-8b.json"),
+           "CALLPROBE_MODEL": "qwen3:8b", "CALLPROBE_ENDPOINT": "http://unused",
+           "CALLPROBE_SUITE": "", "CALLPROBE_FAIL_UNDER": "0.9", "CALLPROBE_PAD": "0",
+           "CALLPROBE_REPEATS": "1", "CALLPROBE_MAX_TOKENS": "4096",
+           "CALLPROBE_BASELINE": "baseline.json", "CALLPROBE_POLICY": "",
+           "GITHUB_OUTPUT": str(tmp_path / "outputs")}
+    result = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
+    assert result.returncode == 1, result.stderr
+    import json
+    report = json.loads((tmp_path / "callprobe-comparison.json").read_text())
+    assert report["gate"]["passed"] is False
+    assert len(report["gate"]["regressions"]) == 2
+    markdown = (tmp_path / "callprobe-comparison.md").read_text()
+    assert "**CI gate:** FAIL" in markdown
+    assert "comment-body-punctuation pad=0 repeat=0" in markdown
+    outputs = dict(line.split("=", 1) for line in (tmp_path / "outputs").read_text().splitlines())
+    script, env = _write_summary_script_env(tmp_path, "qwen3:8b", {
+        "CALLPROBE_SUMMARY_READY": outputs["summary_ready"],
+        "CALLPROBE_COMPARISON_READY": outputs["comparison_ready"],
+    })
+    result = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
+    assert result.returncode == 0, result.stderr
+    assert markdown.strip() in (tmp_path / "summary.md").read_text()
