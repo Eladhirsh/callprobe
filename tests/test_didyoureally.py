@@ -3,8 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from didyoureally import GivenClaims, Trace, Verdict, check, from_openai_messages, load_trace
-from didyoureally import bench
+from didyoureally import GivenClaims, Trace, Verdict, bench, check, from_openai_messages, load_trace
 from didyoureally.cli import main
 from didyoureally.extract import LLMExtractor, parse_claims
 from didyoureally.matcher import values_agree

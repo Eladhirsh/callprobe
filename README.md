@@ -67,7 +67,7 @@ From Python:
 ```python
 from didyoureally import load_trace, LLMExtractor, check, problems
 
-trace = load_trace(messages)            # OpenAI chat messages or native format
+trace = load_trace(messages)  # OpenAI chat messages or native format
 claims = LLMExtractor().extract(trace)
 for f in problems(check(trace, claims)):
     print(f.verdict.value, f.claim.text, f.explanation)

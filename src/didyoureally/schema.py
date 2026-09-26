@@ -50,7 +50,7 @@ class Trace:
     # ---- construction -------------------------------------------------
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Trace":
+    def from_dict(cls, data: dict[str, Any]) -> Trace:
         """Build from the native format: ``{"id", "tools", "events"}``."""
         tools: dict[str, ToolSpec] = {}
         for t in data.get("tools", []):
@@ -136,7 +136,7 @@ class Claim:
     message_index: int | None = None
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Claim":
+    def from_dict(cls, data: dict[str, Any]) -> Claim:
         return cls(
             text=data["text"],
             tool=data.get("tool"),

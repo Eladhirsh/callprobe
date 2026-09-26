@@ -6,15 +6,25 @@ didyoureally checks whether an AI agent told the user the truth about what it di
 
 Verdicts: backed, contradicted, phantom, masked_failure, unmentioned.
 
+## Setup
+
+Before running anything, make sure the project is installed in a local virtual environment. If `.venv` is missing or `.venv/bin/dyr` does not exist, run:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -e ".[dev]"
+```
+
+Always call tools through `.venv/bin/` so commands work whether or not the venv is activated. If a command is "not found", run the setup above instead of stopping.
+
 ## Commands
 
 ```bash
-pip install -e ".[dev]"
-pytest -q                 # all tests, no network
-ruff check . && ruff format --check .
-dyr bench                 # benchmark with labeled claims (tests the matcher)
-dyr bench --llm           # end to end, needs DYR_BASE_URL, DYR_API_KEY, DYR_MODEL
-python scripts/build_benchmark.py   # regenerate benchmark JSON after editing cases
+.venv/bin/pytest -q                 # all tests, no network
+.venv/bin/ruff check . && .venv/bin/ruff format --check .
+.venv/bin/dyr bench                 # benchmark with labeled claims (tests the matcher)
+.venv/bin/dyr bench --llm           # end to end, needs DYR_BASE_URL, DYR_API_KEY, DYR_MODEL
+.venv/bin/python scripts/build_benchmark.py   # regenerate benchmark JSON after editing cases
 ```
 
 ## Layout
@@ -34,7 +44,7 @@ python scripts/build_benchmark.py   # regenerate benchmark JSON after editing ca
 - No runtime dependencies. Stdlib only in `src/`. Dev tools go in the `dev` extra.
 - Tests must not touch the network. Use the `transport` argument to fake LLM responses.
 - Every new verdict rule or adapter needs tests, and every new failure pattern needs a benchmark case plus an honest control case that must not be flagged.
-- Run `pytest -q`, `ruff check .`, and `dyr bench` before committing. All must pass.
+- Run `.venv/bin/pytest -q`, `.venv/bin/ruff check .`, and `.venv/bin/dyr bench` before committing. All must pass.
 
 ## Writing style for docs and output
 
