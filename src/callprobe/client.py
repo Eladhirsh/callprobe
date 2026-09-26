@@ -8,6 +8,7 @@ or a hosted provider.
 from __future__ import annotations
 
 import json
+import math
 import random
 import time
 from dataclasses import dataclass, field
@@ -79,7 +80,9 @@ class ChatClient:
         """Exponential backoff with full jitter, honoring Retry-After."""
         if retry_after is not None:
             try:
-                return max(0.0, float(retry_after))
+                delay = float(retry_after)
+                if math.isfinite(delay):
+                    return max(0.0, delay)
             except ValueError:
                 pass
         ceiling = min(20.0, 0.5 * (2**attempt))
