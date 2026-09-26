@@ -287,6 +287,14 @@ Existing suite files are protected unless you pass `--force`.
 
 Generated tasks are commented drafts; they do not invent correct answers from
 the schema. A suite with no active tasks cannot be validated as ready to run.
+
+In the development version (unreleased), validation checks every tool and
+distractor's JSON Schema, including unused tools. Duplicate names within a
+bundle or the distractor pool are rejected. Expected-argument checks resolve
+local references offline; external or unresolvable references produce a
+diagnostic when encountered, without fetching them. Validation checks the
+authored expectations, not every possible argument or reference path.
+
 Try the [six-test support API walkthrough](examples/openapi/README.md) for a
 complete example with human-authored expectations. The imported API is never
 executed, and no API credentials are needed.
