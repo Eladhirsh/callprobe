@@ -246,3 +246,15 @@ def test_call_evidence_survives_json_roundtrip(suite):
     assert result.calls[0].raw_arguments == '{"order_id":'
     assert result.calls[0].parse_error
     assert result.finish_reason == "tool_calls"
+
+
+@pytest.mark.parametrize("values,index", [([], -1), ([1], -2), ([1], -99999), ([1], 1)])
+def test_out_of_range_argument_path_returns_missing_instead_of_crashing(values, index):
+    from callprobe.scoring import MISSING, resolve, apply_check
+    from callprobe.models import ArgCheck
+    arguments = {"items": values}
+    path = f"items.{index}"
+    assert resolve(arguments, path) is MISSING
+    passed, message = apply_check(arguments, ArgCheck(path=path, op="eq", value=1))
+    assert passed is False
+    assert "missing" in message

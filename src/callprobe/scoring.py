@@ -48,7 +48,7 @@ def resolve(data: Any, path: str) -> Any:
                 index = int(part)
             except ValueError:
                 return MISSING
-            if index >= len(current):
+            if index >= len(current) or index < -len(current):
                 return MISSING
             current = current[index]
         else:
