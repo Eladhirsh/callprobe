@@ -23,6 +23,35 @@ Validation should report **6 tasks, no problems found**. Setup and validation
 need no model endpoint. If you use pipx instead of uv, install with
 `pipx install callprobe`.
 
+### No model endpoint yet? See it work first (unreleased)
+
+`callprobe demo` builds a self-contained directory that shows what a CI
+regression gate and `callprobe explain` look like, using two real, historical
+recorded runs bundled inside the package. No model endpoint, no downloaded
+model, and no network access after installation:
+
+```bash
+callprobe demo --out callprobe-offline-demo
+```
+
+This writes `baseline.json` and `candidate.json` (byte-identical to the
+Qwen2.5 7B / Qwen3 8B runs recorded in [`results/github-issues`](results/github-issues/README.md)),
+the matching `github-issues-suite/` these were scored against, and a
+`DEMO.md` walkthrough, then prints copy/paste follow-up commands. It clearly
+labels its output as recorded results, not a fresh execution or a current
+model ranking: Qwen3 passed 11/18 cases against Qwen2.5's 5/18, but
+regressed two previously passing cases, so `callprobe compare
+callprobe-offline-demo/baseline.json callprobe-offline-demo/candidate.json
+--fail-on-regression` is expected to exit `1` here even though the aggregate
+score went up. That is the gate correctly catching regressions. `callprobe explain callprobe-offline-demo/candidate.json --suite
+callprobe-offline-demo/github-issues-suite --task comment-body-punctuation`
+shows exactly what went wrong on one of those two cases: a nested `body`
+argument the model flattened into a plain string.
+
+Available unreleased (not yet in a tagged release; the latest release is
+0.8.0). Use it from a checkout with `pip install -e ".[dev]"`, or build from
+source, until the next release ships it.
+
 With Ollama running and `qwen2.5:7b` already downloaded, run the six cases:
 
 ```bash
