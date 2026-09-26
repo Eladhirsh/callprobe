@@ -21,6 +21,7 @@ import yaml
 from . import __version__
 from .client import ChatClient, probe_server_version
 from .compare import category_deltas, flipped_tasks, render_compare
+from .demo import INSPECT_TASK, REGRESSED_TASKS, SUITE_DIRNAME, generate_demo_files
 from .examples import EXAMPLES, generate_example_suite, list_examples
 from .explain import explain_run, render_explain_text
 from .gates import evaluate_gate, load_policy, render_gate
@@ -326,8 +327,8 @@ def _validate(args: argparse.Namespace) -> int:
     return 0
 
 
-def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
-    """Preflight every target, then write each file via temp + rename."""
+def _preflight_files(out: Path, files: dict[str, str], force: bool) -> None:
+    """Raise if writing `files` into `out` would be unsafe. Never writes."""
     if out.exists() and not out.is_dir():
         raise ValueError(f"{out} exists and is not a directory")
     conflicts = [name for name in files if os.path.lexists(out / name)]
@@ -338,6 +339,11 @@ def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
             f"refusing to overwrite existing file(s) in {out}: {', '.join(conflicts)} "
             "(pass --force to replace them)"
         )
+
+
+def _write_files(out: Path, files: dict[str, str], force: bool) -> None:
+    """Preflight every target, then write each file via temp + rename."""
+    _preflight_files(out, files, force)
     out.mkdir(parents=True, exist_ok=True)
     for filename, content in files.items():
         temporary = None
@@ -392,6 +398,46 @@ def _init(args: argparse.Namespace) -> int:
     else:
         print("no tasks are active yet: uncomment and edit the drafts in tasks.yaml, then run:")
     print(f"  callprobe validate --suite {out_display}")
+    return 0
+
+
+def _demo(args: argparse.Namespace) -> int:
+    out = Path(args.out)
+    suite_out = out / SUITE_DIRNAME
+    try:
+        top_files, suite_files = generate_demo_files()
+        # Preflight both targets before writing either: a conflict in the
+        # suite subdirectory must not be discovered after top-level files
+        # (baseline.json, candidate.json, DEMO.md) have already been written.
+        _preflight_files(out, top_files, args.force)
+        _preflight_files(suite_out, suite_files, args.force)
+        _write_files(out, top_files, args.force)
+        _write_files(suite_out, suite_files, args.force)
+    except ValueError as exc:
+        sys.stderr.write(f"error: {exc}\n")
+        return 1
+
+    baseline = shlex.quote(str(out / "baseline.json"))
+    candidate = shlex.quote(str(out / "candidate.json"))
+    suite_display = shlex.quote(str(suite_out))
+    print(f"wrote {len(top_files) + len(suite_files)} files to {shlex.quote(str(out))}/")
+    print()
+    print("OFFLINE DEMO: recorded results, no model endpoint or network request was used.")
+    print("baseline.json (Qwen2.5 7B) and candidate.json (Qwen3 8B) are byte-identical")
+    print("copies of a real, historical run recorded under results/github-issues/ in the")
+    print("callprobe repository; this command made no fresh model calls, and neither does")
+    print("anything below. See DEMO.md for the full walkthrough.")
+    print()
+    print("Qwen2.5 7B passed 5/18 cases; Qwen3 8B passed 11/18, a higher aggregate score,")
+    print(f"but it regressed {len(REGRESSED_TASKS)} previously passing case(s): "
+          + ", ".join(REGRESSED_TASKS) + ".")
+    print("That is why the regression gate below is expected to fail (exit 1) despite the")
+    print("higher overall number: previously passing cases now fail.")
+    print()
+    print("Try it:")
+    print(f"  callprobe compare {baseline} {candidate} --fail-on-regression")
+    print(f"  callprobe explain {candidate} --suite {suite_display}")
+    print(f"  callprobe explain {candidate} --suite {suite_display} --task {shlex.quote(INSPECT_TASK)}")
     return 0
 
 
@@ -561,6 +607,14 @@ def main(argv: list[str] | None = None) -> int:
         "examples", help="list bundled runnable examples for `callprobe init --example`"
     )
     examples_cmd.set_defaults(func=_examples)
+
+    demo_cmd = sub.add_parser(
+        "demo", help="build an offline demo of the CI gate and explain, using recorded results, "
+                     "no model endpoint or network access required"
+    )
+    demo_cmd.add_argument("--out", default="callprobe-demo", help="directory to write the demo to")
+    demo_cmd.add_argument("--force", action="store_true", help="overwrite existing generated files")
+    demo_cmd.set_defaults(func=_demo)
 
     validate_cmd = sub.add_parser(
         "validate", help="check task expectations against tool schemas, no model needed"
