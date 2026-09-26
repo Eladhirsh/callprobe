@@ -51,6 +51,14 @@ def _suite_hash(root: SuiteRoot) -> str:
     return digest.hexdigest()[:16]
 
 
+def _check_unique_tool_names(tools: list[Tool], label: str) -> None:
+    seen: set[str] = set()
+    for tool in tools:
+        if tool.name in seen:
+            raise ValueError(f"{label}: duplicate tool name: {tool.name}")
+        seen.add(tool.name)
+
+
 def load_suite(directory: str | SuiteRoot) -> Suite:
     root = Path(directory) if isinstance(directory, str) else directory
     if not root.is_dir():
@@ -67,6 +75,10 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
 
     raw_distractors = _read(root / "distractors.yaml")
     distractors = [Tool(**tool) for tool in (raw_distractors.get("tools") or [])]
+
+    for name, bundle in bundles.items():
+        _check_unique_tool_names(bundle.tools, f"bundle {name}")
+    _check_unique_tool_names(distractors, "distractors")
 
     raw_tasks = _read(root / "tasks.yaml")
     tasks: list[Task] = []
