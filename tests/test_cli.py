@@ -378,6 +378,19 @@ def test_selected_task_run_cannot_gate_ci_via_compare(monkeypatch, tmp_path, cap
     assert code == 2
 
 
+def test_compare_format_markdown_reports_gate_and_leaves_exit_status_unchanged(
+    monkeypatch, tmp_path, capsys
+):
+    a = _write_source_run(monkeypatch, tmp_path, capsys)
+    b = tmp_path / "b.json"
+    a.replace(b)
+    code = cli.main(["compare", str(b), str(b), "--format", "markdown", "--fail-on-regression"])
+    out = capsys.readouterr().out
+    assert code == 0
+    assert "## Comparison" in out
+    assert "**CI gate:** PASS" in out
+
+
 def test_leaderboard_rejects_targeted_run_even_with_allow_mixed(monkeypatch, tmp_path, capsys):
     monkeypatch.setattr(cli, "ChatClient", _FakeClient)
     monkeypatch.setattr(cli, "probe_server_version", lambda _: (None, None))

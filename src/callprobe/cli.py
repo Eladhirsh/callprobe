@@ -20,7 +20,7 @@ import yaml
 
 from . import __version__
 from .client import ChatClient, probe_server_version
-from .compare import category_deltas, flipped_tasks, render_compare
+from .compare import category_deltas, flipped_tasks, render_compare, render_compare_markdown
 from .demo import INSPECT_TASK, REGRESSED_TASKS, SUITE_DIRNAME, generate_demo_files
 from .examples import EXAMPLES, generate_example_suite, list_examples
 from .explain import explain_run, render_explain_text
@@ -473,6 +473,8 @@ def _compare(args: argparse.Namespace) -> int:
         print(json.dumps({"by_category": category_deltas(a, b),
                           "regressed_tasks": regressions, "improved_tasks": improvements,
                           "gate": gate}, indent=2))
+    elif args.format == "markdown":
+        print(render_compare_markdown(a, b, gate))
     else:
         print(render_compare(a, b))
         if gate is not None:
@@ -632,7 +634,7 @@ def main(argv: list[str] | None = None) -> int:
     compare_cmd.add_argument("--fail-on-regression", action="store_true",
                              help="fail if any matched passing case regresses; requires complete runs")
     compare_cmd.add_argument("--policy", help="YAML CI policy; enables gating")
-    compare_cmd.add_argument("--format", choices=["text", "json"], default="text")
+    compare_cmd.add_argument("--format", choices=["text", "json", "markdown"], default="text")
     compare_cmd.set_defaults(func=_compare)
 
     explain_cmd = sub.add_parser(
