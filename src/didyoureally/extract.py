@@ -13,7 +13,8 @@ import json
 import os
 import re
 import urllib.request
-from typing import Any, Callable, Protocol
+from collections.abc import Callable
+from typing import Any, Protocol
 
 from .schema import Claim, Trace
 
@@ -52,7 +53,7 @@ def build_user_prompt(trace: Trace) -> str:
 
 def parse_claims(raw: str, trace: Trace) -> list[Claim]:
     text = raw.strip()
-    fence = re.search(r"```(?:json)?\s*(.*?)```", text, re.S)
+    fence = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
     if fence:
         text = fence.group(1)
     start, end = text.find("{"), text.rfind("}")
@@ -87,7 +88,7 @@ Transport = Callable[[str, dict[str, str], dict[str, Any]], dict[str, Any]]
 
 def _http_post(url: str, headers: dict[str, str], body: dict[str, Any]) -> dict[str, Any]:
     req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers, method="POST")
-    with urllib.request.urlopen(req, timeout=120) as resp:  # noqa: S310 (user-configured URL)
+    with urllib.request.urlopen(req, timeout=120) as resp:
         return json.loads(resp.read().decode())
 
 

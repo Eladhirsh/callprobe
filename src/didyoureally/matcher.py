@@ -68,7 +68,7 @@ class Finding:
 
 # ---- value comparison ---------------------------------------------------
 
-_NUM_RE = re.compile(r"^(?:[$€£¥]|usd|eur|gbp)?\s*(-?[\d,]*\.?\d+)\s*[a-zA-Z%]*$", re.I)
+_NUM_RE = re.compile(r"^(?:[$€£¥]|usd|eur|gbp)?\s*(-?[\d,]*\.?\d+)\s*[a-zA-Z%]*$", re.IGNORECASE)
 
 
 def _as_number(v: Any) -> float | None:
