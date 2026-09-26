@@ -635,6 +635,15 @@ Baseline inputs require v0.5.0 or newer. Keep the baseline separate from the act
 `callprobe-results.json` output. The action also writes
 `callprobe-comparison.json` and includes it in the job summary.
 
+On the development branch (unreleased), the Action additionally writes
+`callprobe-comparison.md` and shows that readable report in the job summary,
+with raw run output collapsed below its heading. Both comparison formats
+come from the same saved results and policy; rendering does not call the
+model again. A `fail-under` violation still produces the baseline comparison
+before the Action exits with failure. Missing baseline/policy files and
+paths that alias generated outputs are rejected before model requests.
+Only reports produced by the current invocation appear in its summary.
+
 ## The failure digest
 
 Every run ends with the specific failures, not just the rates. These are
