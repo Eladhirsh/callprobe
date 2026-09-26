@@ -39,6 +39,10 @@ jobs:
           /tmp/callprobe-wheel-env/bin/callprobe examples
           /tmp/callprobe-wheel-env/bin/callprobe init --example support --out /tmp/callprobe-support-example
           /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-support-example
+          /tmp/callprobe-wheel-env/bin/callprobe run --suite /tmp/callprobe-support-example \
+            --model offline-placeholder --endpoint http://127.0.0.1:1/v1 --pad 0 \
+            --dry-run --format json > /tmp/callprobe-plan.json
+          /tmp/callprobe-wheel-env/bin/python -c 'import json; p=json.load(open("/tmp/callprobe-plan.json")); assert p["dry_run"] and p["total_requests"] == 6'
           /tmp/callprobe-wheel-env/bin/callprobe init --example github-issues --out /tmp/callprobe-github-example
           /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-github-example
           /tmp/callprobe-wheel-env/bin/callprobe demo --out /tmp/callprobe-offline-demo
