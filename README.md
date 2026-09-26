@@ -68,7 +68,8 @@ installation. This command is not yet available in the published 0.8.0 package.
 On our saved 18-case GitHub API suite, Qwen3 8B passed 11 cases versus
 Qwen2.5 7B's 5, but regressed on two previously passing cases. The regression
 gate correctly failed despite the higher overall score. These are individual
-local runs, not a general model ranking. [Conditions and raw results](results/github-issues/README.md).
+local runs, not a general model ranking. [Read the comparison report](results/github-issues/comparison.md)
+or the [conditions and raw results](results/github-issues/README.md).
 
 ## Historical core benchmark
 
