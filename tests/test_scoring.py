@@ -260,8 +260,11 @@ def test_out_of_range_argument_path_returns_missing_instead_of_crashing(values, 
     assert "missing" in message
 
 
-@pytest.mark.parametrize("amount", ["inf", "-inf", "1e999", "NaN"])
-def test_nonfinite_integer_strings_fail_without_crashing_lenient_scoring(suite, amount):
+@pytest.mark.parametrize("amount", ["inf", "-inf", "NaN", "1e5000", "9" * 5000])
+def test_nonfinite_or_excessive_integer_strings_fail_without_crashing_lenient_scoring(suite, amount):
+    # "inf"/"NaN" are non-finite; "1e5000" and a 5000-digit string would both
+    # require materializing an integer past MAX_INTEGER_DIGITS, so both are
+    # left as strings rather than converted.
     result = run(suite, "args-partial-refund", body_with_call(
         "issue_refund",
         {"order_id": "ORD-991003", "reason": "damaged", "amount_cents": amount},
@@ -270,3 +273,34 @@ def test_nonfinite_integer_strings_fail_without_crashing_lenient_scoring(suite, 
     assert not result.success_lenient
     assert not result.schema_ok_lenient
     assert not result.type_coerced
+
+
+@pytest.mark.parametrize("amount", ["4225.9", "4225.00000000000001"])
+def test_fractional_integer_strings_are_not_rescued_by_coercion(suite, amount):
+    """Truncating or rounding a fractional string into the expected integer
+    would rescue a wrong value; it must stay a string and fail lenient too."""
+    result = run(suite, "args-partial-refund", body_with_call(
+        "issue_refund",
+        {"order_id": "ORD-991003", "reason": "damaged", "amount_cents": amount},
+    ))
+    assert not result.success
+    assert not result.success_lenient
+    assert not result.type_coerced
+
+
+@pytest.mark.parametrize("amount", ["4225.0", "4.225e3"])
+def test_integral_decimal_and_exponent_strings_are_coerced_leniently(suite, amount):
+    result = run(suite, "args-partial-refund", body_with_call(
+        "issue_refund",
+        {"order_id": "ORD-991003", "reason": "damaged", "amount_cents": amount},
+    ))
+    assert not result.success
+    assert result.success_lenient
+    assert result.type_coerced
+
+
+def test_exact_large_integer_strings_are_preserved_without_float_round_trip(suite):
+    from callprobe.coerce import _coerce_scalar
+
+    text = "1" * 30  # far beyond float64 precision; a float round trip would corrupt it
+    assert _coerce_scalar(text, "integer") == int(text)

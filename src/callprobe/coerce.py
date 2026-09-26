@@ -1,10 +1,43 @@
 """Separate wrong-type from wrong-value."""
 from __future__ import annotations
 import json
+import math
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 TRUE = {"true", "yes", "1"}
 FALSE = {"false", "no", "0"}
+
+# Python 3.11+ refuses int(str)/str(int) conversions past this many digits
+# (the default of sys.set_int_max_str_digits) to stop quadratic-time DoS on
+# huge digit strings; earlier supported versions have no such limit and would
+# happily materialize an arbitrarily large int. Enforcing the same bound
+# ourselves, before ever calling int(), keeps coercion outcomes identical
+# across supported Python versions instead of depending on which one is
+# running, and keeps a hostile "1e999999" from being expanded into a
+# thousands-of-digits integer at all.
+MAX_INTEGER_DIGITS = 4300
+
+
+def _bounded_exact_integer(text: str) -> int | None:
+    """The exact integer value of `text`, or None if it isn't an integral
+    decimal/exponent value, or is too large to materialize safely."""
+    try:
+        value = Decimal(text)
+    except (InvalidOperation, ValueError):
+        return None
+    if not value.is_finite():
+        return None
+    if value.is_zero():
+        return 0
+    integral = value.to_integral_value()
+    if integral != value:
+        return None
+    digits, exponent = integral.as_tuple().digits, integral.as_tuple().exponent
+    if len(digits) + max(exponent, 0) > MAX_INTEGER_DIGITS:
+        return None
+    return int(integral)
+
 
 def _coerce_scalar(value, kind):
     if not isinstance(value, str):
@@ -12,9 +45,13 @@ def _coerce_scalar(value, kind):
     text = value.strip()
     try:
         if kind == "integer":
-            return int(text, 10) if text.lstrip("-").isdigit() else int(float(text))
+            result = _bounded_exact_integer(text)
+            return value if result is None else result
         if kind == "number":
-            return float(text)
+            result = float(text)
+            if not math.isfinite(result):
+                return value
+            return result
         if kind == "boolean":
             low = text.lower()
             if low in TRUE:

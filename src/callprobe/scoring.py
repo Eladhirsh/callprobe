@@ -25,7 +25,7 @@ from .models import ArgCheck, Bundle, Call, Task, TaskResult
 from .client import Completion
 
 MISSING = object()
-SCORING_VERSION = 2
+SCORING_VERSION = 3
 
 THINK = re.compile(r"<(think|thinking|reasoning)>.*?</\1>", re.S)
 
