@@ -90,6 +90,12 @@ runs:
           echo 'baseline must be separate from callprobe-results.json' >&2
           exit 2
         fi
+        for source in "$CALLPROBE_BASELINE" "$CALLPROBE_POLICY"; do
+          if [ -n "$source" ] && [ ! -f "$source" ]; then
+            echo 'baseline and policy inputs must be existing files' >&2
+            exit 2
+          fi
+        done
         args=(run --model "$CALLPROBE_MODEL" --endpoint "$CALLPROBE_ENDPOINT" \
           --pad "$CALLPROBE_PAD" --repeats "$CALLPROBE_REPEATS" \
           --max-tokens "$CALLPROBE_MAX_TOKENS" --format json --out callprobe-results.json)

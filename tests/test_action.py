@@ -25,6 +25,8 @@ def test_action_passes_arguments_and_propagates_gate_failure(tmp_path, policy, g
     )
     executable.chmod(0o755)
     (tmp_path / "baseline.json").write_text("{}")
+    if policy:
+        (tmp_path / policy).write_text("fail_on_regression: true")
     model = 'model; $(touch injected)'
     env = {**os.environ, "PATH": f"{tmp_path}:{os.environ['PATH']}",
            "ARGS_FILE": str(tmp_path / "args"), "GATE_EXIT": str(gate_exit),
@@ -308,3 +310,17 @@ def test_summary_ignores_reports_without_current_step_readiness(tmp_path):
     result = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
     assert result.returncode == 0
     assert "STALE" not in (tmp_path / "summary.md").read_text()
+
+
+@pytest.mark.parametrize("baseline,policy", [
+    ("missing.json", ""), ("callprobe-results.json", ""), ("baseline.json", "missing.yaml"),
+])
+def test_action_rejects_missing_inputs_before_model_run(tmp_path, baseline, policy):
+    (tmp_path / "baseline.json").write_text("{}")
+    script = next(s["run"] for s in yaml.safe_load(ACTION.read_text())["runs"]["steps"]
+                  if s["name"] == "Run callprobe")
+    env = {**os.environ, "CALLPROBE_BASELINE": baseline, "CALLPROBE_POLICY": policy}
+    result = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert result.returncode == 2
+    assert "must be existing files" in result.stderr
+    assert not (tmp_path / "callprobe-results.json").exists()
