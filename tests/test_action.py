@@ -49,3 +49,40 @@ def test_action_rejects_baseline_output_collision(tmp_path):
     completed = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
     assert completed.returncode == 2
     assert baseline.read_text() == "baseline evidence"
+
+
+@pytest.mark.parametrize("run_exit,gate_exit,baseline,expected,compared", [
+    (1, 0, True, 1, True),
+    (1, 1, True, 1, True),
+    (1, 2, True, 2, True),
+    (2, 0, True, 2, False),
+    (1, 0, False, 1, False),
+    (0, 0, False, 0, False),
+])
+def test_action_keeps_comparison_after_threshold_failure(
+    tmp_path, run_exit, gate_exit, baseline, expected, compared
+):
+    script = next(s["run"] for s in yaml.safe_load(ACTION.read_text())["runs"]["steps"]
+                  if s["name"] == "Run callprobe")
+    executable = tmp_path / "callprobe"
+    executable.write_text(
+        '#!/bin/bash\n'
+        'echo "$1" >> "$ARGS_FILE"\n'
+        'echo "{}"\n'
+        'if [ "$1" = run ]; then exit "$RUN_EXIT"; fi\n'
+        'exit "$GATE_EXIT"\n'
+    )
+    executable.chmod(0o755)
+    (tmp_path / "baseline.json").write_text("{}")
+    env = {**os.environ, "PATH": f"{tmp_path}:{os.environ['PATH']}",
+           "ARGS_FILE": str(tmp_path / "args"), "RUN_EXIT": str(run_exit),
+           "GATE_EXIT": str(gate_exit), "CALLPROBE_MODEL": "stub",
+           "CALLPROBE_ENDPOINT": "http://unused", "CALLPROBE_SUITE": "",
+           "CALLPROBE_FAIL_UNDER": "0.9", "CALLPROBE_PAD": "0",
+           "CALLPROBE_REPEATS": "1", "CALLPROBE_MAX_TOKENS": "2048",
+           "CALLPROBE_BASELINE": "baseline.json" if baseline else "",
+           "CALLPROBE_POLICY": ""}
+    completed = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
+    assert completed.returncode == expected, completed.stderr
+    assert ("compare" in (tmp_path / "args").read_text().splitlines()) == compared
+    assert (tmp_path / "callprobe-comparison.json").exists() == compared

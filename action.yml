@@ -83,7 +83,15 @@ runs:
         if [ -n "$CALLPROBE_FAIL_UNDER" ]; then
           args+=(--fail-under "$CALLPROBE_FAIL_UNDER")
         fi
+        # A threshold failure still writes valid results. Keep the comparison
+        # evidence, then preserve the failure status at the end of the step.
+        set +e
         callprobe "${args[@]}" | tee callprobe-summary.json
+        run_status=("${PIPESTATUS[@]}")
+        set -e
+        if [ "${run_status[1]}" -ne 0 ]; then exit "${run_status[1]}"; fi
+        if [ "${run_status[0]}" -gt 1 ]; then exit "${run_status[0]}"; fi
+        comparison_status=0
         if [ -n "$CALLPROBE_BASELINE" ]; then
           compare_args=(compare "$CALLPROBE_BASELINE" callprobe-results.json --format json)
           if [ -n "$CALLPROBE_POLICY" ]; then
@@ -91,8 +99,15 @@ runs:
           else
             compare_args+=(--fail-on-regression)
           fi
+          set +e
           callprobe "${compare_args[@]}" | tee callprobe-comparison.json
+          compare_status=("${PIPESTATUS[@]}")
+          set -e
+          if [ "${compare_status[1]}" -ne 0 ]; then exit "${compare_status[1]}"; fi
+          comparison_status="${compare_status[0]}"
         fi
+        if [ "$comparison_status" -ne 0 ]; then exit "$comparison_status"; fi
+        exit "${run_status[0]}"
 
     - name: Write step summary
       if: always()
