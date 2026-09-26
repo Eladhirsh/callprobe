@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import importlib.resources
 import json
+import math
 import os
 import shlex
 import sys
@@ -157,7 +158,7 @@ def _merged_run_settings(args: argparse.Namespace):
         return default
 
     model = pick(args.model, "model")
-    if not model:
+    if not model or not model.strip():
         raise ValueError("--model is required: pass --model or set model in --config")
 
     if args.pad is not None:
@@ -196,6 +197,10 @@ def _merged_run_settings(args: argparse.Namespace):
 
 def _run(args: argparse.Namespace) -> int:
     settings = _merged_run_settings(args)
+    if not math.isfinite(settings["temperature"]):
+        raise ValueError("temperature must be finite")
+    if not settings["endpoint"].strip():
+        raise ValueError("endpoint must not be blank")
     if settings["concurrency"] < 1 or settings["max_tokens"] < 1 or settings["retries"] < 0:
         raise ValueError("concurrency/max-tokens must be positive and retries nonnegative")
 

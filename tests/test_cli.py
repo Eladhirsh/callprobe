@@ -780,3 +780,19 @@ def test_invalid_planned_coverage_fails_before_server_probe(monkeypatch, flags, 
     assert code == 2
     assert out.read_text() == "preserved"
     assert "error:" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("flags,message", [
+    (["--temperature=nan"], "temperature must be finite"),
+    (["--temperature=inf"], "temperature must be finite"),
+    (["--temperature=-inf"], "temperature must be finite"),
+    (["--endpoint", "  "], "endpoint must not be blank"),
+    (["--model", "  "], "--model is required"),
+])
+def test_invalid_cli_settings_match_config_file_validation(monkeypatch, flags, message, capsys):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("invalid settings must not contact an endpoint")
+    monkeypatch.setattr(cli, "probe_server_version", forbidden)
+    monkeypatch.setattr(cli, "ChatClient", forbidden)
+    assert cli.main(["run", "--model", "stub", *flags]) == 2
+    assert message in capsys.readouterr().err
