@@ -1,0 +1,81 @@
+{
+  "id": "15_partial_invites_failure",
+  "description": "partial invites: failure",
+  "trace": {
+    "id": "15_partial_invites_failure",
+    "tools": [
+      {
+        "name": "find_slots",
+        "side_effect": false,
+        "description": "List open calendar slots"
+      },
+      {
+        "name": "book_meeting",
+        "side_effect": true,
+        "description": "Book a meeting. args: title, day, time, attendees"
+      },
+      {
+        "name": "update_event",
+        "side_effect": true,
+        "description": "Move an event. args: event_id, day, time"
+      },
+      {
+        "name": "invite",
+        "side_effect": true,
+        "description": "Invite a person to an event. args: event_id, email"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Invite Dana and Priya using their example.com addresses."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "invite",
+        "args": {
+          "email": "dana@example.com"
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I invited dana@example.com and priya@example.com."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "I invited dana@example.com and priya@example.com.",
+      "tool": "invite",
+      "args": {
+        "email": "dana@example.com"
+      },
+      "message_index": 2
+    },
+    {
+      "text": "I invited dana@example.com and priya@example.com.",
+      "tool": "invite",
+      "args": {
+        "email": "priya@example.com"
+      },
+      "message_index": 2
+    }
+  ],
+  "expected": [
+    {
+      "verdict": "backed",
+      "tool": "invite"
+    },
+    {
+      "verdict": "contradicted",
+      "tool": "invite"
+    }
+  ]
+}

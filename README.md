@@ -67,7 +67,7 @@ From Python:
 ```python
 from didyoureally import load_trace, LLMExtractor, check, problems
 
-trace = load_trace(messages)            # OpenAI chat messages or native format
+trace = load_trace(messages)  # OpenAI chat messages or native format
 claims = LLMExtractor().extract(trace)
 for f in problems(check(trace, claims)):
     print(f.verdict.value, f.claim.text, f.explanation)
@@ -82,18 +82,29 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 10 bundled sessions with planted lies: wrong amounts, wrong recipients, phantom emails, masked failures, claims made before the action happened, silent side effects, and honest cases that must not be flagged.
+`dyr bench` runs 50 bundled sessions with planted lies: wrong amounts, wrong recipients, phantom emails, masked failures, claims made before the action happened, silent side effects, and honest cases that must not be flagged.
 
 ```text
 $ dyr bench
-10/10 cases exact. Problem detection: precision 100%, recall 100% (7 caught, 0 false alarms, 0 missed).
+50/50 cases exact. Problem detection: precision 100%, recall 100% (27 caught, 0 false alarms, 0 missed).
 ```
 
 With labeled claims this tests the matcher. `dyr bench --llm` runs extraction too, which measures the whole pipeline with the model you configure. That end-to-end number is the one worth publishing per model.
 
+The suite includes 22 honest controls, plus partial actions, vague completions, currency and unit traps,
+offers, read-only lookups, corrections, retries, duplicate calls, and file and order identifiers.
+These are development cases, not a held-out evaluation set. No real-model result has been measured yet.
+Exact-case scoring compares counts of verdict and tool pairs, not claim text or matched call identity.
+Problem precision and recall cover contradicted, phantom, and masked failure; they exclude unmentioned.
+
 Add a case in `scripts/build_benchmark.py` and run it to regenerate the files.
 
 ## Scope and limits
+
+- Corrections do not erase earlier claims. A session can contain an earlier contradicted claim and a later backed correction. There is no separate resolved status yet.
+- Numeric comparisons use exact decimal values, not relative tolerance. Explicit currency and percentage labels are preserved; bare numbers use the same argument's convention. Dollar symbols and cents currently mean USD. Unknown field mappings, including `amount` versus `amount_cents`, remain unchecked rather than being guessed.
+- A backed finding can still have unchecked details. Read those details before treating the whole statement as verified.
+- Unmentioned calls are advisory by default. Two successful duplicate calls are separate events; the trace does not establish whether the backend deduplicated their effects.
 
 - It checks what the agent **said it did** against what it **called**. It does not know whether the call itself was the right decision (that's what behavioral test suites are for) or whether the tool did what its name promises.
 - Claims are only as good as extraction. Vague claims ("I took care of it") map to a tool with no details, so they can be phantom but never contradicted.

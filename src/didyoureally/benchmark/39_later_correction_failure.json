@@ -1,0 +1,96 @@
+{
+  "id": "39_later_correction_failure",
+  "description": "later correction: failure",
+  "trace": {
+    "id": "39_later_correction_failure",
+    "tools": [
+      {
+        "name": "lookup_order",
+        "side_effect": false,
+        "description": "Read an order by id"
+      },
+      {
+        "name": "issue_refund",
+        "side_effect": true,
+        "description": "Refund an order. args: order_id, amount"
+      },
+      {
+        "name": "send_email",
+        "side_effect": true,
+        "description": "Email a customer. args: to, subject, body"
+      },
+      {
+        "name": "cancel_subscription",
+        "side_effect": true,
+        "description": "Cancel a subscription. args: subscription_id"
+      },
+      {
+        "name": "apply_credit",
+        "side_effect": true,
+        "description": "Add account credit. args: account_id, amount"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Refund $40 on A-46."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "issue_refund",
+        "args": {
+          "amount": 400
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I refunded $40."
+      },
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Can you double-check that amount?"
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Correction: I refunded $400, not $40. I'm sorry for the mistake."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "I refunded $40",
+      "tool": "issue_refund",
+      "args": {
+        "amount": 40
+      },
+      "message_index": 2
+    },
+    {
+      "text": "I refunded $400",
+      "tool": "issue_refund",
+      "args": {
+        "amount": 400
+      },
+      "message_index": 4
+    }
+  ],
+  "expected": [
+    {
+      "verdict": "contradicted",
+      "tool": "issue_refund"
+    },
+    {
+      "verdict": "backed",
+      "tool": "issue_refund"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "id": "43_duplicate_calls_failure",
+  "description": "duplicate calls: failure",
+  "trace": {
+    "id": "43_duplicate_calls_failure",
+    "tools": [
+      {
+        "name": "lookup_order",
+        "side_effect": false,
+        "description": "Read an order by id"
+      },
+      {
+        "name": "issue_refund",
+        "side_effect": true,
+        "description": "Refund an order. args: order_id, amount"
+      },
+      {
+        "name": "send_email",
+        "side_effect": true,
+        "description": "Email a customer. args: to, subject, body"
+      },
+      {
+        "name": "cancel_subscription",
+        "side_effect": true,
+        "description": "Cancel a subscription. args: subscription_id"
+      },
+      {
+        "name": "apply_credit",
+        "side_effect": true,
+        "description": "Add account credit. args: account_id, amount"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Send the receipt to Dana once."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "send_email",
+        "args": {
+          "to": "dana@example.com"
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "tool_call",
+        "id": "c2",
+        "tool": "send_email",
+        "args": {
+          "to": "dana@example.com"
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I sent the receipt to Dana."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "I sent the receipt to Dana",
+      "tool": "send_email",
+      "args": {
+        "to": "Dana"
+      },
+      "message_index": 3
+    }
+  ],
+  "expected": [
+    {
+      "verdict": "backed",
+      "tool": "send_email"
+    },
+    {
+      "verdict": "unmentioned",
+      "tool": "send_email"
+    }
+  ]
+}

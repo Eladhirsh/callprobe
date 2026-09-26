@@ -16,7 +16,7 @@ EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
 def test_bundled_benchmark_passes_with_labeled_claims():
     result = bench.run()
-    assert len(result.cases) == 10
+    assert len(result.cases) == 50
     failing = [c.case_id for c in result.cases if not c.passed]
     assert not failing, bench.render(result)
     tp, fp, fn = result.detection()
@@ -204,3 +204,95 @@ def test_cli_json_output(capsys):
     out = json.loads(capsys.readouterr().out)
     assert out["summary"]["masked_failure"] == 1
     assert out["findings"][0]["call"]["status"] == "error"
+
+
+@pytest.mark.parametrize(
+    "claimed,actual,expected",
+    [
+        ("40 cents", "$0.40", True),
+        ("40 cents", "$40", False),
+        ("40 EUR", "40 USD", False),
+        ("40 EUR", "€40", True),
+        ("20%", "$20", False),
+        ("20 percent", "20%", True),
+        ("$100", 100.40, False),
+        ("$100.40", 100.40, True),
+        ("report.csv", "report.csv.bak", False),
+        ("ORDER-100", "ORDER-1000", False),
+        ("Dana", "dana.k@example.com", True),
+        ("Dana", "danab@example.com", False),
+        (True, 1, False),
+        ("40 widgets", 40, False),
+    ],
+)
+def test_comparison_preserves_units_precision_and_identity(claimed, actual, expected):
+    assert values_agree(claimed, actual) is expected
+
+
+def test_unrelated_equal_value_cannot_verify_an_argument():
+    trace = Trace.from_dict(
+        {
+            "id": "units",
+            "events": [
+                {
+                    "type": "tool_call",
+                    "id": "c1",
+                    "tool": "issue_refund",
+                    "args": {"amount_cents": 40, "order_id": 40},
+                },
+                {"type": "message", "role": "assistant", "content": "I refunded $40."},
+            ],
+        }
+    )
+    [finding] = check(
+        trace,
+        GivenClaims(
+            [
+                {
+                    "text": "I refunded $40",
+                    "tool": "issue_refund",
+                    "args": {"amount": "$40"},
+                    "message_index": 1,
+                }
+            ]
+        ).claims,
+    )
+    assert finding.unchecked == ["amount"]
+
+
+def test_benchmark_has_honest_controls_and_matches_generator():
+    import runpy
+
+    source = runpy.run_path(str(EXAMPLES.parent / "scripts" / "build_benchmark.py"))
+    cases = source["CASES"]
+    honest = [c for c in cases if all(e["verdict"] == "backed" for e in c["expected"])]
+    assert len(honest) >= 17
+    assert len({c["id"] for c in cases}) == 50
+    for case in cases:
+        bundled = json.loads((bench.default_cases_dir() / f"{case['id']}.json").read_text())
+        assert bundled == source["build"](case)
+
+
+def test_extractor_sees_conversation_context_but_not_call_arguments():
+    from didyoureally.extract import build_user_prompt
+
+    trace = Trace.from_dict(
+        {
+            "id": "context",
+            "events": [
+                {"type": "message", "role": "user", "content": "Please refund order A-30."},
+                {
+                    "type": "tool_call",
+                    "id": "secret-call",
+                    "tool": "issue_refund",
+                    "args": {"internal_note": "SECRET_TRACE_DETAIL"},
+                },
+                {"type": "message", "role": "assistant", "content": "I took care of it."},
+            ],
+        }
+    )
+    prompt = build_user_prompt(trace)
+    assert "Please refund order A-30" in prompt
+    assert "I took care of it" in prompt
+    assert "SECRET_TRACE_DETAIL" not in prompt
+    assert "secret-call" not in prompt

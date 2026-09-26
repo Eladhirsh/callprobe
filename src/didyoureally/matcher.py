@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from decimal import Decimal, InvalidOperation
 from enum import Enum
 from typing import Any
 
@@ -68,20 +69,45 @@ class Finding:
 
 # ---- value comparison ---------------------------------------------------
 
-_NUM_RE = re.compile(r"^(?:[$€£¥]|usd|eur|gbp)?\s*(-?[\d,]*\.?\d+)\s*[a-zA-Z%]*$", re.IGNORECASE)
+_NUM_RE = re.compile(
+    r"^(?P<prefix>[$€£¥]|usd|eur|gbp|jpy)?\s*"
+    r"(?P<number>-?(?:\d[\d,]*(?:\.\d+)?|\.\d+))\s*"
+    r"(?P<suffix>usd|eur|gbp|jpy|dollars?|cents?|%|percent)?$",
+    re.IGNORECASE,
+)
+_UNITS = {
+    "$": "usd",
+    "dollar": "usd",
+    "dollars": "usd",
+    "€": "eur",
+    "£": "gbp",
+    "¥": "jpy",
+    "%": "percent",
+    "cent": "usd",
+    "cents": "usd",
+}
 
 
-def _as_number(v: Any) -> float | None:
+def _as_number(v: Any) -> tuple[Decimal, str | None] | None:
     if isinstance(v, bool):
         return None
     if isinstance(v, (int, float)):
-        return float(v)
+        number = Decimal(str(v))
+        return (number, None) if number.is_finite() else None
     if isinstance(v, str):
-        m = _NUM_RE.match(v.strip())
-        if m:
+        match = _NUM_RE.fullmatch(v.strip())
+        if match:
+            prefix = (match["prefix"] or "").lower()
+            suffix = (match["suffix"] or "").lower()
+            units = {_UNITS.get(u, u) for u in (prefix, suffix) if u}
+            if len(units) > 1:
+                return None
             try:
-                return float(m.group(1).replace(",", ""))
-            except ValueError:
+                number = Decimal(match["number"].replace(",", ""))
+                if suffix in ("cent", "cents"):
+                    number /= 100
+                return number, next(iter(units), None)
+            except InvalidOperation:
                 return None
     return None
 
@@ -94,9 +120,9 @@ def values_agree(claimed: Any, actual: Any) -> bool:
     """True when a stated value is consistent with the value actually used."""
     cn, an = _as_number(claimed), _as_number(actual)
     if cn is not None and an is not None:
-        return abs(cn - an) < 0.005 * max(1.0, abs(an))
+        return cn[0] == an[0] and (cn[1] is None or an[1] is None or cn[1] == an[1])
     if isinstance(claimed, bool) or isinstance(actual, bool):
-        return claimed == actual
+        return type(claimed) is type(actual) and claimed == actual
     if isinstance(claimed, (list, tuple, set)) and isinstance(actual, (list, tuple, set)):
         return all(any(values_agree(x, y) for y in actual) for x in claimed)
     if isinstance(claimed, (list, tuple, set)):
@@ -107,7 +133,9 @@ def values_agree(claimed: Any, actual: Any) -> bool:
     if c == a:
         return True
     # "Dana" vs "dana@acme.com": a stated name may be a fragment of the real value.
-    return len(c) >= 3 and len(a) >= 3 and (c in a or a in c)
+    if "@" in a and "@" not in c:
+        return c in re.split(r"[._+\-]", a.split("@", 1)[0])
+    return False
 
 
 def compare_args(claim: Claim, call: ToolCall) -> tuple[list[Mismatch], list[str], int]:
@@ -121,9 +149,13 @@ def compare_args(claim: Claim, call: ToolCall) -> tuple[list[Mismatch], list[str
                 agree += 1
             else:
                 mismatches.append(Mismatch(key, claimed, call.args[key]))
-        elif any(values_agree(claimed, v) for v in call.args.values()):
-            # The extractor named the field differently, but the value is there.
-            agree += 1
+        elif key == "amount" and "amt" in call.args:
+            # Only explicit aliases are comparable. Coincidental equal values in
+            # unrelated fields (such as cents or percentages) are not evidence.
+            if values_agree(claimed, call.args["amt"]):
+                agree += 1
+            else:
+                mismatches.append(Mismatch(key, claimed, call.args["amt"]))
         else:
             unchecked.append(key)
     return mismatches, unchecked, agree
