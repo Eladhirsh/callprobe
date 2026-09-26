@@ -89,3 +89,30 @@ def test_honors_retry_after_header():
     completion = client.complete("m", [], [])
     assert completion.error is None
     assert waits == ["0"]
+
+
+@pytest.mark.parametrize("body", [
+    [], None, {}, {"choices": []}, {"choices": [None]},
+    {"choices": [{"message": "private response text"}]},
+    {"choices": [{"message": {}}], "usage": {"prompt_tokens": "invalid"}},
+    {"choices": [{"message": {"tool_calls": ["invalid"]}}]},
+    {"choices": [{"message": {"content": 42}}]},
+    {"choices": [{"message": {"tool_calls": {"bad": "shape"}}} ]},
+])
+def test_malformed_success_response_is_request_error_and_next_request_survives(body):
+    responses = iter([body, OK_BODY])
+    calls = []
+    def handler(request):
+        calls.append(request)
+        import json
+        return httpx.Response(200, content=json.dumps(next(responses)))
+    client = _client(handler)
+    try:
+        malformed = client.complete("m", [], [])
+        assert malformed.error.startswith("invalid chat completion response")
+        assert "private response text" not in malformed.error
+        assert malformed.calls == []
+        assert client.complete("m", [], []).content == "hi"
+        assert len(calls) == 2  # Malformed payloads are not transient retries.
+    finally:
+        client.close()

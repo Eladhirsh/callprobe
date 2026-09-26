@@ -133,19 +133,40 @@ class ChatClient:
                     error=f"{type(exc).__name__}: {exc}",
                 )
 
-            return parse_completion(body, (time.perf_counter() - started) * 1000)
+            try:
+                return parse_completion(body, (time.perf_counter() - started) * 1000)
+            except (AttributeError, TypeError, ValueError, IndexError, KeyError, OverflowError) as exc:
+                # A malformed provider response is a request error, not a model
+                # verdict. Do not abort the suite or expose response contents.
+                return Completion(
+                    latency_ms=(time.perf_counter() - started) * 1000,
+                    error=f"invalid chat completion response ({type(exc).__name__})",
+                )
 
         raise AssertionError("unreachable: loop always returns or retries")
 
 
 def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
     """Turn a chat completion body into calls, tolerating provider quirks."""
+    if not isinstance(body, dict):
+        raise ValueError("response must be an object")
+    choices = body.get("choices")
+    if (not isinstance(choices, list) or not choices
+            or not isinstance(choices[0], dict)
+            or not isinstance(choices[0].get("message"), dict)):
+        raise ValueError("response must contain a choice with a message")
     usage = body.get("usage") or {}
     choices = body.get("choices") or [{}]
     choice = choices[0] or {}
     message = choice.get("message") or {}
     finish_reason = choice.get("finish_reason") or ""
     reasoning = message.get("reasoning") or message.get("reasoning_content") or ""
+    if not all(isinstance(value, str) for value in (
+        message.get("content") or "", finish_reason, reasoning
+    )):
+        raise ValueError("message text and finish reason must be strings")
+    if message.get("tool_calls") is not None and not isinstance(message["tool_calls"], list):
+        raise ValueError("tool_calls must be an array")
 
     calls: list[Call] = []
     for entry in message.get("tool_calls") or []:
