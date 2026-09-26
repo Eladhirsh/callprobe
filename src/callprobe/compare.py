@@ -147,6 +147,24 @@ def render_compare_markdown(a: Run, b: Run, gate: dict | None = None) -> str:
         "",
     ]
 
+    lines += [
+        "| Run setting | Baseline | Candidate |",
+        "| --- | --- | --- |",
+    ]
+    for label, field in (
+        ("Suite hash", "suite_hash"), ("Scoring version", "scoring_version"),
+        ("Temperature", "temperature"), ("Maximum output tokens", "max_tokens"),
+        ("Distractor counts", "pads"), ("Repeats per case", "repeats"),
+    ):
+        values = []
+        for run in (a, b):
+            value = getattr(run.config, field)
+            if isinstance(value, list):
+                value = ", ".join(str(item) for item in value)
+            values.append(_escape_md(value if value is not None else "missing"))
+        lines.append(f"| {label} | {values[0]} | {values[1]} |")
+    lines.append("")
+
     warnings: list[str] = []
     if a.config.selected_task_ids is not None or b.config.selected_task_ids is not None:
         warnings.append("comparing targeted debug run(s), not full benchmark coverage")

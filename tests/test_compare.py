@@ -289,3 +289,16 @@ def test_markdown_does_not_wrap_escaped_metadata_in_code_spans():
     assert "**Baseline model:** " + chr(92) + "`" in text
     assert "<img" not in text
     assert "&lt;img" in text
+
+
+def test_markdown_records_generation_conditions_without_endpoint_credentials():
+    a = Run(config=_config().model_copy(update={"temperature": 0.0, "max_tokens": 1024, "pads": [0],
+                          "endpoint": "https://private-secret@example.test/v1"}),
+            started_at="now", results=[])
+    b = Run(config=_config().model_copy(update={"temperature": 0.5, "max_tokens": 4096, "pads": [0, 8]}),
+            started_at="now", results=[])
+    text = render_compare_markdown(a, b)
+    assert "| Temperature | 0.0 | 0.5 |" in text
+    assert "| Maximum output tokens | 1024 | 4096 |" in text
+    assert "| Distractor counts | 0 | 0, 8 |" in text
+    assert "private-secret" not in text

@@ -12,6 +12,15 @@ offline from the saved result files; no new model requests were made.
 - Scored observations: 18 -> 18
 - Request errors: 0 -> 0
 
+| Run setting | Baseline | Candidate |
+| --- | --- | --- |
+| Suite hash | 877e1bb5a8652258 | 877e1bb5a8652258 |
+| Scoring version | 2 | 2 |
+| Temperature | 0.0 | 0.0 |
+| Maximum output tokens | 4096 | 4096 |
+| Distractor counts | 0 | 0 |
+| Repeats per case | 1 | 1 |
+
 | category | strict a | strict b | delta strict | lenient a | lenient b | delta lenient |
 | --- | --- | --- | --- | --- | --- | --- |
 | abstain | 40.0% | 100.0% | +60.0% | 40.0% | 100.0% | +60.0% |
