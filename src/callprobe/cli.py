@@ -223,7 +223,6 @@ def _run(args: argparse.Namespace) -> int:
                 print(message)
             return 0
 
-    server_name, server_version = probe_server_version(settings["endpoint"])
     config = RunConfig(
         model=settings["model"],
         endpoint=settings["endpoint"],
@@ -238,12 +237,12 @@ def _run(args: argparse.Namespace) -> int:
         suite_name=suite.name,
         suite_version=suite.version,
         suite_hash=suite.hash,
-        server_name=server_name,
-        server_version=server_version,
         selected_task_ids=selected_task_ids,
     )
     api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     config = prepare_config(suite, config)
+    server_name, server_version = probe_server_version(settings["endpoint"])
+    config = config.model_copy(update={"server_name": server_name, "server_version": server_version})
 
     resume_run = None
     if args.resume:

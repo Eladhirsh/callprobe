@@ -764,3 +764,19 @@ def test_config_source_is_protected_from_output_aliases(monkeypatch, tmp_path, c
     code, _, err = _run_config_cli(monkeypatch, args, capsys, client=_UnreachableClient)
     assert code == 2 and "alias" in err
     assert config.read_bytes() == original
+
+
+@pytest.mark.parametrize("flags", [
+    ["--pad", "0,0"], ["--pad", ""], ["--pad=-1"], ["--repeats", "0"],
+])
+def test_invalid_planned_coverage_fails_before_server_probe(monkeypatch, flags, tmp_path, capsys):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("invalid coverage must not contact an endpoint")
+    monkeypatch.setattr(cli, "ChatClient", forbidden)
+    monkeypatch.setattr(cli, "probe_server_version", forbidden)
+    out = tmp_path / "results.json"
+    out.write_text("preserved")
+    code = cli.main(["run", "--model", "stub", "--out", str(out), *flags])
+    assert code == 2
+    assert out.read_text() == "preserved"
+    assert "error:" in capsys.readouterr().err
