@@ -173,7 +173,8 @@ integer coercion: `"4225.9"` and `"4225.00000000000001"` stay incorrect
 instead of being truncated or rounded to `4225`. Exact integral strings
 such as `"4225.0"` and `"4.225e3"` still coerce, and large integers retain
 their exact value. Nonfinite numeric strings and integer values requiring
-more than 4300 decimal digits remain strings. Strict scoring is unchanged.
+more than 4300 decimal digits remain strings. Stringified arrays and objects
+use the same numeric safety limits. Strict scoring is unchanged.
 
 Historical files retain their recorded verdicts and remain readable; the
 offline demo still uses its original version-2 evidence. Complete, compatible

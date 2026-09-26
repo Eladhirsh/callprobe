@@ -70,6 +70,19 @@ def _types(schema):
         return [t for t in declared if isinstance(t, str)]
     return []
 
+def _json_number(text: str):
+    """Encoded containers use the same finite/size limits as scalar coercion."""
+    if any(marker in text for marker in ".eE"):
+        number = float(text)
+        if math.isfinite(number):
+            return number
+    else:
+        number = _bounded_exact_integer(text)
+        if number is not None:
+            return number
+    raise ValueError("nonfinite or oversized JSON number")
+
+
 def coerce(value, schema):
     if not isinstance(schema, dict):
         return value
@@ -78,8 +91,9 @@ def coerce(value, schema):
         text = value.strip()
         if text[:1] in "[{":
             try:
-                value = json.loads(text)
-            except json.JSONDecodeError:
+                value = json.loads(text, parse_int=_json_number, parse_float=_json_number,
+                                   parse_constant=_json_number)
+            except ValueError:
                 return value
     if isinstance(value, dict):
         properties = schema.get("properties") or {}

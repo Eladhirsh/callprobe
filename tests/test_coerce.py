@@ -1,3 +1,5 @@
+import pytest
+
 from callprobe.coerce import MAX_INTEGER_DIGITS, _coerce_scalar
 
 
@@ -60,3 +62,18 @@ def test_large_integral_decimal_preserves_digits_a_float_would_round():
 
 def test_zero_with_large_exponent_needs_no_integer_expansion():
     assert _coerce_scalar("0e999999", "integer") == 0
+
+
+@pytest.mark.parametrize("number", ["NaN", "Infinity", "-Infinity", "1e999", "9" * 4301])
+def test_stringified_containers_do_not_bypass_numeric_limits(number):
+    from callprobe.coerce import coerce
+    for text, schema in [
+        ('{"value": ' + number + '}', {"type": "object", "properties": {"value": {"type": "number"}}}),
+        ('[' + number + ']', {"type": "array", "items": {"type": "number"}}),
+    ]:
+        assert coerce(text, schema) == text
+
+
+def test_valid_stringified_containers_still_coerce():
+    from callprobe.coerce import coerce
+    assert coerce('[1, 2.5, "3"]', {"type": "array", "items": {"type": "number"}}) == [1, 2.5, 3]
