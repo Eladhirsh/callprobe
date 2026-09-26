@@ -1,5 +1,30 @@
 # Contributing
 
+## Development setup
+
+Use Python 3.10 or newer. From a checkout, create an environment and install
+the project with its test dependencies:
+
+```bash
+uv venv
+uv pip install -e '.[dev]'
+.venv/bin/python -m pytest -q
+.venv/bin/callprobe validate
+```
+
+The automated suite uses local fixtures and does not require API keys,
+Ollama, or paid model calls. Add a regression test for a behavior change,
+then run the relevant tests and the full suite before opening a PR.
+
+For packaging changes, also build a wheel with `uv build` and install it in
+a separate environment. Run the CLI from outside the checkout: importing
+from `src/` can hide missing package resources. CI checks Python 3.10–3.13
+and validates the examples from an installed wheel.
+
+Keep changes focused. Describe the user-visible behavior and how you
+verified it in the PR. Do not include API keys or private model prompts in
+test fixtures or submitted results.
+
 ## Writing a task
 
 A task lives in `tasks.yaml` and asserts what a model should do for one
