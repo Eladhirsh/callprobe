@@ -25,3 +25,27 @@ def test_tool_names_may_repeat_across_separate_bundles_and_distractor_pool(tmp_p
     suite = load_suite(tmp_path)
     assert len(suite.bundles) == 2
     assert len(suite.distractors) == 1
+
+
+@pytest.mark.parametrize("filename,document,diagnostic", [
+    ("suite.yaml", [], "suite.yaml: expected a YAML mapping"),
+    ("tools.yaml", False, "tools.yaml: expected a YAML mapping"),
+    ("tools.yaml", {"bundles": []}, "bundles must be a mapping"),
+    ("tools.yaml", {"bundles": {"support": "oops"}}, "expected a list"),
+    ("tools.yaml", {"bundles": {"support": [1]}}, "item 1 must be a mapping"),
+    ("distractors.yaml", {"tools": {}}, "expected a list"),
+    ("tasks.yaml", {"tasks": "oops"}, "expected a list"),
+    ("tasks.yaml", {"tasks": [None]}, "item 1 must be a mapping"),
+    ("tasks.yaml", {"tasks": [{1: "oops"}]}, "mapping with string keys"),
+])
+def test_malformed_suite_yaml_has_actionable_error(tmp_path, filename, document, diagnostic):
+    (tmp_path / filename).write_text(yaml.safe_dump(document))
+    with pytest.raises(ValueError, match=diagnostic):
+        load_suite(tmp_path)
+
+
+def test_invalid_suite_yaml_is_cli_error_without_traceback(tmp_path, capsys):
+    from callprobe.cli import main
+    (tmp_path / "tasks.yaml").write_text("tasks: wrong-shape")
+    assert main(["validate", "--suite", str(tmp_path)]) == 2
+    assert "tasks.yaml tasks: expected a list" in capsys.readouterr().err

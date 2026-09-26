@@ -33,7 +33,23 @@ def _read(path: SuiteRoot) -> dict:
     if not path.is_file():
         return {}
     with path.open("r", encoding="utf-8") as handle:
-        return yaml.safe_load(handle) or {}
+        data = yaml.safe_load(handle)
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise ValueError(f"{path.name}: expected a YAML mapping")
+    return data
+
+
+def _entries(value, label: str) -> list[dict]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise ValueError(f"{label}: expected a list")
+    for index, entry in enumerate(value, start=1):
+        if not isinstance(entry, dict) or not all(isinstance(key, str) for key in entry):
+            raise ValueError(f"{label}: item {index} must be a mapping with string keys")
+    return value
 
 
 def _suite_hash(root: SuiteRoot) -> str:
@@ -68,13 +84,18 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
 
     raw_tools = _read(root / "tools.yaml")
     bundles: dict[str, Bundle] = {}
-    for name, tools in (raw_tools.get("bundles") or {}).items():
+    raw_bundles = raw_tools.get("bundles")
+    if raw_bundles is None:
+        raw_bundles = {}
+    if not isinstance(raw_bundles, dict):
+        raise ValueError("tools.yaml: bundles must be a mapping")
+    for name, tools in raw_bundles.items():
         bundles[name] = Bundle(
-            name=name, tools=[Tool(**tool) for tool in tools]
+            name=name, tools=[Tool(**tool) for tool in _entries(tools, f"tools.yaml bundle {name}")]
         )
 
     raw_distractors = _read(root / "distractors.yaml")
-    distractors = [Tool(**tool) for tool in (raw_distractors.get("tools") or [])]
+    distractors = [Tool(**tool) for tool in _entries(raw_distractors.get("tools"), "distractors.yaml tools")]
 
     for name, bundle in bundles.items():
         _check_unique_tool_names(bundle.tools, f"bundle {name}")
@@ -83,7 +104,7 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
     raw_tasks = _read(root / "tasks.yaml")
     tasks: list[Task] = []
     seen: set[str] = set()
-    for entry in raw_tasks.get("tasks") or []:
+    for entry in _entries(raw_tasks.get("tasks"), "tasks.yaml tasks"):
         task = Task(**entry)
         if task.id in seen:
             raise ValueError(f"duplicate task id: {task.id}")
