@@ -229,3 +229,13 @@ def test_coverage_does_not_materialize_large_planned_sweeps():
     config = _config(task_ids=["t1"], repeats=10**12)
     text = render_markdown([Run(config=config, started_at="now", results=[_result()])])
     assert "1/1/1000000000000 INCOMPLETE (999999999999 missing)" in text
+
+
+def test_leaderboard_preserves_table_structure_for_external_labels():
+    run = Run(config=_config(model="model|<img>\n# title", suite_name="suite\n<script>",
+                             suite_version=1), started_at="now", results=[_result()])
+    text = render_markdown([run])
+    assert "<img>" not in text and "<script>" not in text
+    assert "model\\|&lt;img&gt; \\# title" in text
+    assert "suite: suite &lt;script&gt; v1" in text
+    assert "\n# title" not in text

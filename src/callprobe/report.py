@@ -11,6 +11,7 @@ import statistics
 from collections import defaultdict
 
 from .bootstrap import bootstrap_ci
+from .compare import _escape_md
 from .models import Run, TaskResult
 
 
@@ -222,7 +223,7 @@ def render_markdown(runs: list[Run]) -> str:
     if len(versions) == 1:
         name, version = next(iter(versions))
         if name and version:
-            lines.append(f"suite: {name} v{version}")
+            lines.append(f"suite: {_escape_md(name)} v{version}")
             lines.append("")
     header = (
         "| model | success | 95% CI | type-lenient | selection | schema | args | "
@@ -248,7 +249,7 @@ def render_markdown(runs: list[Run]) -> str:
                 coverage=_coverage(run),
                 errors=s["errors"],
                 truncated=s["truncated"],
-                model=model_label,
+                model=_escape_md(model_label),
                 lenient=_pct(s["lenient"]["success"]).strip(),
                 abstain=_pct((s["by_category"].get("abstain") or {}).get("success", 0.0)).strip(),
                 success=_pct(s["overall"]["success"]).strip(),
