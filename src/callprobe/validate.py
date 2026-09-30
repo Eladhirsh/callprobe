@@ -16,6 +16,7 @@ from referencing import Registry
 from referencing.exceptions import Unresolvable
 
 from .models import Suite, Tool
+from .scoring import apply_check
 
 
 def _forbid_remote_retrieve(uri: str):
@@ -76,6 +77,20 @@ def validate_suite(suite: Suite) -> list[str]:
         for check in task.expect.arg_checks:
             if check.path.split(".")[0] not in properties:
                 problems.append(f"{task.id}: check path {check.path}")
+            # args values are exact at their declared paths, including
+            # nested objects. A descendant check cannot require additional
+            # fields or a different value inside an exact expectation.
+            for path, expected in task.expect.args.items():
+                if check.path == path or check.path.startswith(path + "."):
+                    suffix = check.path[len(path):]
+                    local_check = check.model_copy(update={"path": "expected" + suffix})
+                    passed, _ = apply_check({"expected": expected}, local_check)
+                    if not passed:
+                        problems.append(
+                            f"{task.id}: exact args expectation at {path} conflicts with "
+                            f"check {check.path} {check.op}; use arg_checks for partial nested matching"
+                        )
+                    break
 
         if not task.expect.args:
             continue

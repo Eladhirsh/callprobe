@@ -167,3 +167,25 @@ def test_recursive_reference_failure_is_a_diagnostic_not_a_traceback():
               "$defs": {"loop": {"$ref": "#/$defs/loop"}}}
     problems = validate.validate_suite(_suite([_tool("loop", schema)], [_call_task("t", "loop", {"a": 1})]))
     assert any("cannot validate offline" in problem for problem in problems)
+
+
+@pytest.mark.parametrize("query,conflict", [
+    ({"from": "dana@example.invalid"}, True),
+    ({"from": "dana@example.invalid", "subject_contains": "invoice"}, False),
+])
+def test_exact_parent_expectation_cannot_conflict_with_descendant_check(query, conflict):
+    from callprobe.models import ArgCheck
+    schema = {"type": "object", "properties": {"query": {"type": "object", "properties": {
+        "from": {"type": "string"}, "subject_contains": {"type": "string"}}}}}
+    task = _call_task("search", "search", {"query": query})
+    task.expect.arg_checks = [ArgCheck(path="query.subject_contains", op="matches", value="invoice")]
+    problems = validate.validate_suite(_suite([_tool("search", schema)], [task]))
+    assert any("conflicts with check query.subject_contains" in item for item in problems) == conflict
+
+
+def test_exact_scalar_and_range_check_conflict_is_reported():
+    from callprobe.models import ArgCheck
+    task = _call_task("t", "tool", {"a": 1})
+    task.expect.arg_checks = [ArgCheck(path="a", op="gte", value=2)]
+    assert any("conflicts with check a gte" in item for item in
+               validate.validate_suite(_suite([_tool("tool", VALID_SCHEMA)], [task])))
