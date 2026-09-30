@@ -1,0 +1,63 @@
+{
+  "command-r7b:latest": {
+    "no_call": 39
+  },
+  "llama3.2:3b": {
+    "no_call": 3,
+    "unexpected_call": 10,
+    "multiple_calls": 1,
+    "wrong_tool": 7,
+    "schema": 18,
+    "argument_value": 17
+  },
+  "hermes3:8b": {
+    "no_call": 3,
+    "unexpected_call": 4,
+    "multiple_calls": 3,
+    "wrong_tool": 3,
+    "schema": 5,
+    "argument_value": 9
+  },
+  "phi4-mini:latest": {
+    "no_call": 36,
+    "unexpected_call": 1,
+    "schema": 2,
+    "argument_value": 2
+  },
+  "granite3.3:8b": {
+    "no_call": 10,
+    "unexpected_call": 6,
+    "multiple_calls": 3,
+    "wrong_tool": 1,
+    "schema": 4,
+    "argument_value": 6
+  },
+  "mistral-nemo:latest": {
+    "no_call": 8,
+    "unexpected_call": 4,
+    "multiple_calls": 2,
+    "wrong_tool": 4,
+    "argument_value": 7
+  },
+  "qwen2.5:7b": {
+    "no_call": 1,
+    "multiple_calls": 2,
+    "wrong_tool": 2,
+    "schema": 2,
+    "argument_value": 8
+  },
+  "qwen3:8b": {
+    "unexpected_call": 1,
+    "multiple_calls": 2,
+    "wrong_tool": 1,
+    "argument_value": 5
+  },
+  "llama3.1:8b": {
+    "no_call": 2,
+    "unexpected_call": 9,
+    "multiple_calls": 3,
+    "wrong_tool": 6,
+    "schema": 22,
+    "argument_value": 18
+  }
+}

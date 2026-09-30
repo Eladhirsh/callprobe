@@ -33,8 +33,8 @@ callprobe explain callprobe-demo/baseline.json --suite callprobe-demo
 
 Use `--endpoint` for another OpenAI-compatible server and `--model` for a
 model it serves. In a development checkout (unreleased), add `--dry-run` to
-any `callprobe run` invocation to preview the planned coverage and an
-planned request count and completion-token cap with no endpoint access; see
+any `callprobe run` invocation to preview coverage, the planned request count,
+and the completion-token cap with no endpoint access; see
 [Preview a run before spending tokens](#preview-a-run-before-spending-tokens-unreleased).
 Failed cases are useful findings, not installation errors. To retry only
 tasks that failed:
@@ -74,6 +74,15 @@ Qwen2.5 7B's 5, but regressed on two previously passing cases. The regression
 gate correctly failed despite the higher overall score. These are individual
 local runs, not a general model ranking. [Read the comparison report](results/github-issues/comparison.md)
 or the [conditions and raw results](results/github-issues/README.md).
+
+## September 2026 core smoke test
+
+[Nine local models, 450 observations](results/2026-09-30-smoke/README.md) on the
+current 50-case core suite: Qwen 3 passed 42/50 versus Qwen 2.5's 38/50, but
+regressed two previously passing cases. The [matched CI gate fails](results/2026-09-30-smoke/qwen-comparison.md)
+despite the higher total. Raw results, coverage, model digests, and source
+provenance are included. These single-repeat runs are integration findings,
+not a general model ranking.
 
 ## Historical core benchmark
 
@@ -411,7 +420,7 @@ and exits nonzero if there are any.
 
 ```bash
 # a single model
-callprobe run --model llama3.1:8b --pad 0,8,16,24 --repeats 3 \
+callprobe run --model llama3.1:8b --pad 0,8 --repeats 3 \
   --max-tokens 4096 --out results/llama31-8b.json
 
 # any OpenAI-compatible endpoint
@@ -434,6 +443,17 @@ server sends one.
 
 `--max-tokens` defaults to 2048. Reasoning models can need more (see the
 truncation section above).
+
+In the development version, `run` and the GitHub Action default to `--pad 0`:
+a baseline without distractors. Additional counts are explicit, for example
+`--pad 0,8` on the core suite or `--pad 0,2,4` on the mail example. The requested
+count must fit every selected task after exclusions and tool-name collisions;
+impossible counts fail before endpoint access instead of silently sending fewer
+tools. The core suite supports up to 15 distractors for every task.
+
+Earlier versions defaulted to `0,8,16` and could silently cap padding at the
+available pool size. Collect a new baseline with valid, explicit counts when
+migrating such experiments; do not relabel old observations.
 
 For a controlled multi-model sweep, use already-served models (unreleased):
 
@@ -702,7 +722,7 @@ For example, after checking out your repository and starting your endpoint:
     endpoint: http://localhost:11434/v1
     baseline: results/baseline.json
     policy: callprobe-policy.yaml
-    pad: '0,8,16,24'
+    pad: '0,8'
     repeats: '3'
     max-tokens: '4096'
 ```
