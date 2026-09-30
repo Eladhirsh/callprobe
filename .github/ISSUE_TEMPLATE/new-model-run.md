@@ -16,7 +16,7 @@ Ollama, LM Studio, llama.cpp server, vLLM, or a hosted provider, and the
 The exact `callprobe run` invocation. The recommended flags are:
 
 ```bash
-callprobe run --model your-model --pad 0,8,16,24 --repeats 3 \
+callprobe run --model your-model --pad 0,8 --repeats 3 \
   --max-tokens 4096 --out results/your-model.json
 ```
 

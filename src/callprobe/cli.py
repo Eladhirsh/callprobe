@@ -1,7 +1,7 @@
 """Command line interface.
 
     callprobe run --model qwen3:8b --endpoint http://localhost:11434/v1
-    callprobe run --model llama3.1:8b --pad 0,8,16 --repeats 3 --quant q4_K_M
+    callprobe run --model llama3.1:8b --pad 0,8 --repeats 3 --quant q4_K_M
     callprobe leaderboard results/qwen3-8b.json results/llama31-8b.json
 """
 
@@ -38,10 +38,10 @@ from .sweep import add_arguments as add_sweep_arguments, run_sweep
 from .validate import validate_suite
 
 # Hardcoded fallbacks used only when neither a CLI flag nor --config supplies
-# a value, so a plain `callprobe run --model X` behaves exactly as before.
+# a value. Start with a zero-distractor baseline; extra tools are opt-in.
 RUN_DEFAULTS = {
     "endpoint": "http://localhost:11434/v1",
-    "pad": "0,8,16",
+    "pad": "0",
     "repeats": 1,
     "temperature": 0.0,
     "max_tokens": 2048,

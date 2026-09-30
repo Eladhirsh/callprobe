@@ -93,7 +93,7 @@ baseline for the current suite and scorer.
 For a new full-suite experiment, one possible configuration is:
 
 ```bash
-callprobe run --model your-model --pad 0,8,16,24 --repeats 3 \
+callprobe run --model your-model --pad 0,8 --repeats 3 \
   --max-tokens 4096 --out results/your-model.json
 ```
 

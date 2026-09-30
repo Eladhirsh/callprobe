@@ -417,7 +417,7 @@ def _run_config_cli(monkeypatch, args, capsys, client=_FakeClient):
     return code, captured.out, captured.err
 
 
-def test_no_config_behavior_and_defaults_unchanged(monkeypatch, capsys):
+def test_no_config_defaults_to_zero_padding(monkeypatch, capsys):
     code, out, _ = _run_config_cli(
         monkeypatch,
         ["--model", "stub", "--suite", str(SUITE), "--quiet", "--format", "json"],
@@ -426,7 +426,7 @@ def test_no_config_behavior_and_defaults_unchanged(monkeypatch, capsys):
     assert code == 0
     payload = json.loads(out)
     assert payload["endpoint"] == "http://localhost:11434/v1"
-    assert set(payload["by_pad"]) == {"0", "8", "16"}
+    assert set(payload["by_pad"]) == {"0"}
 
 
 def test_missing_model_without_config_or_flag_is_actionable_exit_2(monkeypatch, capsys):
@@ -518,11 +518,11 @@ def test_cli_pad_comma_notation_overrides_config_pads(monkeypatch, tmp_path, cap
     config_path.write_text(f"model: stub\nsuite: {SUITE}\npads: [0, 8]\n")
     code, out, _ = _run_config_cli(
         monkeypatch,
-        ["--config", str(config_path), "--pad", "0,8,16", "--quiet", "--format", "json"],
+        ["--config", str(config_path), "--pad", "0,4,8", "--quiet", "--format", "json"],
         capsys,
     )
     assert code == 0
-    assert set(json.loads(out)["by_pad"]) == {"0", "8", "16"}
+    assert set(json.loads(out)["by_pad"]) == {"0", "4", "8"}
 
 
 def test_config_pads_used_when_no_cli_pad_given(monkeypatch, tmp_path, capsys):
@@ -826,8 +826,8 @@ def test_dry_run_default_full_coverage(monkeypatch, capsys):
         "selected_task_count": None, "total_task_count": len(_SUITE_OBJ.tasks),
     }
     assert plan["repeats"] == 1
-    assert plan["pads"] == [0, 8, 16]
-    assert plan["total_requests"] == len(_SUITE_OBJ.tasks) * 3
+    assert plan["pads"] == [0]
+    assert plan["total_requests"] == len(_SUITE_OBJ.tasks)
     assert plan["temperature"] == 0.0
     assert plan["max_tokens"] == 2048
     assert plan["concurrency"] == 1
@@ -878,7 +878,7 @@ def test_dry_run_targeted_scope_via_task_flag(monkeypatch, capsys):
         "targeted": True, "task_ids": expected_ids,
         "selected_task_count": 2, "total_task_count": len(_SUITE_OBJ.tasks),
     }
-    assert plan["total_requests"] == 2 * 3
+    assert plan["total_requests"] == 2
 
 
 def test_dry_run_failed_from_targets_failing_tasks(monkeypatch, tmp_path, capsys):

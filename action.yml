@@ -30,7 +30,7 @@ inputs:
     default: ''
   pad:
     description: 'Comma-separated distractor counts; must match the baseline.'
-    default: '0,8,16'
+    default: '0'
   repeats:
     description: 'Repeats per task; must match the baseline.'
     default: '1'
