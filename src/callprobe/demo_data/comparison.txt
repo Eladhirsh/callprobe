@@ -1,0 +1,26 @@
+qwen2.5:7b  ->  qwen3:8b
+
+category    success a  success b    delta    lenient a  lenient b    delta
+abstain         40.0%     100.0%   +60.0%        40.0%     100.0%   +60.0%
+args            40.0%      20.0%   -20.0%        40.0%      20.0%   -20.0%
+depth           33.3%      66.7%   +33.3%        33.3%      66.7%   +33.3%
+select           0.0%      60.0%   +60.0%         0.0%      60.0%   +60.0%
+
+pass -> fail (2):
+  comment-body-punctuation
+  pagination-upper-values
+
+fail -> pass (8):
+  comment-body-multiline
+  correction-changes-issue
+  draft-only-do-not-post
+  missing-issue-number
+  missing-repository
+  owner-repo-from-url
+  post-comment-simple
+  read-discussion-not-post
+
+CI gate: FAIL
+  2 previously passing case(s) regressed
+  regressed: comment-body-punctuation pad=0 repeat=0
+  regressed: pagination-upper-values pad=0 repeat=0

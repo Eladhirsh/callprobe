@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.9.0rc1
+
+Release candidate; not yet published.
+
+- Add an offline `demo` with recorded evidence, its matching suite, and a
+  regression-gate walkthrough. No endpoint or API key is required.
+- Add `sweep` for already-served models, with preflight plans, per-model results,
+  a manifest, and a leaderboard. Add `run --dry-run` for offline request budgets.
+- Bundle the 18-case fictional mail example; improve schema validation and
+  diagnostics for nested arguments and tool-shaped assistant text.
+- Export readable Markdown comparisons and CI summaries, retaining evidence
+  even when a quality gate fails. Show incomplete coverage in leaderboards.
+- Record reproducible nine-model smoke evidence, without treating single runs
+  as a general model ranking.
+
+### Upgrade and baseline migration
+
+- New runs use **scoring version 3**. Lenient integer coercion no longer truncates
+  fractional strings or loses large-integer precision. Strict scoring is unchanged.
+  Historical files keep their verdicts and remain readable; compatible version-2
+  files can still be compared with each other. Gates, resume, and `--failed-from`
+  reject mixed scoring versions. Rerun both baseline and candidate under this
+  version with the same suite and settings, using new output files. Never edit
+  old scoring-version labels to migrate them.
+- `run` and the GitHub Action now default to **`--pad 0`**, replacing `0,8,16`.
+  Padding that cannot fit every selected task is rejected before endpoint access;
+  old releases could silently cap it. Choose explicit valid counts (for example
+  `--pad 0,8` for core or `--pad 0,2,4` for mail) and collect fresh baselines.
+  Old silently capped observations must not be relabeled as new runs.
+- The offline demo deliberately retains its historical version-2 evidence.
+  Compare its two bundled files together rather than using them as new baselines.
+
+## 0.8.0
+
+- Add bundled support and GitHub Issues examples, saved YAML run settings, and
+  targeted reruns with `--failed-from`.
+
 ## 0.7.0
 
 - Add offline `explain RESULTS.json --suite DIR` diagnostics with task filtering

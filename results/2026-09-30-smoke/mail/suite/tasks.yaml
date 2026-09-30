@@ -1,0 +1,178 @@
+# 18 authored cases for the synthetic mail workflow (not MailOps). Copy into the
+# suite that `callprobe init --from-openapi openapi.yaml` generates.
+# Each `args` value is the complete expected value for that top-level key.
+name: synthetic-mail-sandbox
+tasks:
+  - id: search-by-sender
+    category: select
+    bundle: main
+    messages:
+      - {role: user, content: "Find messages from dana.rivera@example.invalid."}
+    expect:
+      type: call
+      tool: search_messages
+      args:
+        query: {q: "from:dana.rivera@example.invalid"}
+  - id: search-by-subject
+    category: select
+    bundle: main
+    messages:
+      - {role: user, content: "Look for mail with the subject Quarterly lunch plan."}
+    expect:
+      type: call
+      tool: search_messages
+      args:
+        query: {q: "subject:Quarterly lunch plan"}
+  - id: search-archive-folder
+    category: select
+    bundle: main
+    messages:
+      - {role: user, content: "Search my archive folder for the word invoice."}
+    expect:
+      type: call
+      tool: search_messages
+      args:
+        query: {q: invoice, folder: archive}
+  - id: search-with-limit
+    category: select
+    bundle: main
+    messages:
+      - {role: user, content: "Show at most 5 messages about the offsite."}
+    expect:
+      type: call
+      tool: search_messages
+      args:
+        query: {q: offsite, limit: 5}
+  - id: get-by-id
+    category: select
+    bundle: main
+    messages:
+      - {role: user, content: "Open message msg-1042."}
+    expect:
+      type: call
+      tool: get_message
+      args:
+        path: {message_id: msg-1042}
+  - id: get-id-with-punctuation
+    category: args
+    bundle: main
+    messages:
+      - {role: user, content: "Fetch message msg-2024.07_a-19 please."}
+    expect:
+      type: call
+      tool: get_message
+      args:
+        path: {message_id: msg-2024.07_a-19}
+  - id: reply-send
+    category: args
+    bundle: main
+    messages:
+      - {role: user, content: "Send a reply to msg-1042 saying: Confirmed for Tuesday."}
+    expect:
+      type: call
+      tool: send_reply
+      args:
+        path: {message_id: msg-1042}
+        body: {text: "Confirmed for Tuesday.", mode: send}
+  - id: reply-draft-only
+    category: args
+    bundle: main
+    messages:
+      - {role: user, content: "Draft a reply to msg-1042 that says: Let me check and get back to you. Draft only, do not send it."}
+    expect:
+      type: call
+      tool: send_reply
+      args:
+        path: {message_id: msg-1042}
+        body: {text: "Let me check and get back to you.", mode: draft}
+  - id: no-send-chat-only
+    category: abstain
+    bundle: main
+    messages:
+      - {role: user, content: "Do not send or save anything. Just tell me in chat what a polite decline to msg-1042 could look like."}
+    expect:
+      type: no_call
+  - id: get-missing-id
+    category: abstain
+    bundle: main
+    messages:
+      - {role: user, content: "Open the message from yesterday."}
+    expect:
+      type: no_call
+  - id: reply-missing-id
+    category: abstain
+    bundle: main
+    messages:
+      - {role: user, content: "Reply to that email and tell them yes."}
+    expect:
+      type: no_call
+  - id: search-missing-criteria
+    category: abstain
+    bundle: main
+    messages:
+      - {role: user, content: "Search my mail."}
+    expect:
+      type: no_call
+  - id: unsupported-delete
+    category: abstain
+    bundle: main
+    messages:
+      - {role: user, content: "Delete message msg-1042 permanently."}
+    expect:
+      type: no_call
+  - id: unsupported-forward
+    category: abstain
+    bundle: main
+    messages:
+      - {role: user, content: "Forward msg-1042 to sam.lee@example.invalid."}
+    expect:
+      type: no_call
+  - id: reply-body-quotes
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: 'Reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]'
+    expect:
+      type: call
+      tool: send_reply
+      args:
+        path: {message_id: msg-3001}
+        body: {text: 'Please send the "final" draft by 5:00 p.m.; thanks!', mode: send}
+  - id: reply-body-symbols
+    category: args
+    bundle: main
+    messages:
+      - role: user
+        content: "Reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"
+    expect:
+      type: call
+      tool: send_reply
+      args:
+        path: {message_id: msg-3002}
+        body: {text: "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", mode: send}
+  - id: correction-search-sender
+    category: depth
+    bundle: main
+    messages:
+      - {role: user, content: "Find messages from dana.rivera@example.invalid."}
+      - {role: assistant, content: "Searching for messages from dana.rivera@example.invalid."}
+      - {role: user, content: "Sorry, I meant sam.lee@example.invalid instead."}
+    expect:
+      type: call
+      tool: search_messages
+      args:
+        query: {q: "from:sam.lee@example.invalid"}
+  - id: correction-reply-target
+    category: depth
+    bundle: main
+    messages:
+      - {role: user, content: "Reply to msg-1042 saying: Approved."}
+      - {role: assistant, content: "Should I send that, or keep it as a draft?"}
+      - {role: user, content: "Draft only, and use msg-1043 instead of msg-1042."}
+    expect:
+      type: call
+      tool: send_reply
+      args:
+        path: {message_id: msg-1043}
+        body: {text: "Approved.", mode: draft}

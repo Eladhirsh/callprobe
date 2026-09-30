@@ -7,6 +7,14 @@ against an OpenAI-compatible model endpoint. Bring your own tools or start
 with a bundled example. It evaluates model responses; it does not execute
 the API operations described by your tools.
 
+## Release candidate: 0.9.0rc1
+
+This branch prepares **0.9.0rc1**; it is not published yet. Test from a checkout
+with `uv tool install . --force`. After publication, install the candidate
+explicitly with `uv tool install callprobe==0.9.0rc1 --force` (or
+`python -m pip install callprobe==0.9.0rc1`). `@latest` continues to select the
+stable release. See [upgrade notes](CHANGELOG.md#090rc1) before reusing baselines.
+
 ## Try it
 
 Python 3.10+ is required. Install or replace an older pinned installation:
@@ -32,8 +40,12 @@ callprobe explain callprobe-demo/baseline.json --suite callprobe-demo
 ```
 
 Use `--endpoint` for another OpenAI-compatible server and `--model` for a
-model it serves. Failed cases are useful findings, not installation errors.
-To retry only tasks that failed:
+model it serves. In 0.9.0rc1, add `--dry-run` to
+any `callprobe run` invocation to preview coverage, the planned request count,
+and the completion-token cap with no endpoint access; see
+[Preview a run before spending tokens](#preview-a-run-before-spending-tokens-090rc1).
+Failed cases are useful findings, not installation errors. To retry only
+tasks that failed:
 
 ```bash
 callprobe run --suite callprobe-demo --model qwen2.5:7b \
@@ -45,12 +57,40 @@ Want to help test? [Report your first-run experience](https://github.com/Eladhir
 which endpoint/model you used, whether the walkthrough worked, and one thing
 that confused you. You can also import your own [OpenAPI file](#bring-your-own-tools).
 
+### Try the workflow offline (0.9.0rc1)
+
+From a development checkout ([setup](CONTRIBUTING.md)), try recorded results
+without a model or endpoint:
+
+```bash
+callprobe demo --out callprobe-offline-demo
+```
+
+The command writes two historical runs, their matching 18-case suite, and a
+walkthrough with commands to compare and explain failures. The candidate
+passed 11/18 cases versus the baseline's 5/18, but regressed two previously
+passing cases. The regression gate therefore exits `1`, as intended.
+
+These are [recorded observations](results/github-issues/README.md), not a
+fresh execution or a current model ranking. `demo` needs no network after
+installation. This command is not yet available in the published 0.8.0 package.
+
 ## A concrete regression example
 
 On our saved 18-case GitHub API suite, Qwen3 8B passed 11 cases versus
 Qwen2.5 7B's 5, but regressed on two previously passing cases. The regression
 gate correctly failed despite the higher overall score. These are individual
-local runs, not a general model ranking. [Conditions and raw results](results/github-issues/README.md).
+local runs, not a general model ranking. [Read the comparison report](results/github-issues/comparison.md)
+or the [conditions and raw results](results/github-issues/README.md).
+
+## September 2026 core smoke test
+
+[Nine local models, 450 observations](results/2026-09-30-smoke/README.md) on the
+current 50-case core suite: Qwen 3 passed 42/50 versus Qwen 2.5's 38/50, but
+regressed two previously passing cases. The [matched CI gate fails](results/2026-09-30-smoke/qwen-comparison.md)
+despite the higher total. Raw results, coverage, model digests, and source
+provenance are included. These single-repeat runs are integration findings,
+not a general model ranking.
 
 ## Historical core benchmark
 
@@ -144,10 +184,25 @@ responses also fail, including responses with no calls: reaching the token
 limit is not evidence of deliberate abstention. Selection, schema, and
 argument scores still diagnose the selected call independently.
 
-New run files record `scoring_version: 2`. Older files remain readable,
-but must be rerun before use as CI baselines or resumed checkpoints; the
-scoring changes can affect their success rates. Leaderboards reject mixed
-scoring versions unless `--allow-mixed` is supplied.
+**Starting with 0.9.0rc1:** new run files record `scoring_version: 3`.
+Published Callprobe 0.8.0 uses scoring version 2. Version 3 fixes lenient
+integer coercion: `"4225.9"` and `"4225.00000000000001"` stay incorrect
+instead of being truncated or rounded to `4225`. Exact integral strings
+such as `"4225.0"` and `"4.225e3"` still coerce, and large integers retain
+their exact value. Nonfinite numeric strings and integer values requiring
+more than 4300 decimal digits remain strings. Stringified arrays and objects
+use the same numeric safety limits. Strict scoring is unchanged.
+
+Historical files retain their recorded verdicts and remain readable; the
+offline demo still uses its original version-2 evidence. Complete, compatible
+version-2 runs can still be gated against each other. Gates, resume, and
+`--failed-from` refuse mixed scoring versions. Leaderboards also reject mixed
+versions unless `--allow-mixed` is supplied.
+
+When upgrading to version 3, rerun both baseline and candidate using the same
+suite and comparison settings, writing new files rather than replacing the
+old evidence. Corrected precision can raise or lower lenient scores; changing
+a saved file's version label is not a migration.
 
 ## What it measures that other harnesses do not
 
@@ -264,6 +319,14 @@ Existing suite files are protected unless you pass `--force`.
 
 Generated tasks are commented drafts; they do not invent correct answers from
 the schema. A suite with no active tasks cannot be validated as ready to run.
+
+In 0.9.0rc1, validation checks every tool and
+distractor's JSON Schema, including unused tools. Duplicate names within a
+bundle or the distractor pool are rejected. Expected-argument checks resolve
+local references offline; external or unresolvable references produce a
+diagnostic when encountered, without fetching them. Validation checks the
+authored expectations, not every possible argument or reference path.
+
 Try the [six-test support API walkthrough](examples/openapi/README.md) for a
 complete example with human-authored expectations. The imported API is never
 executed, and no API credentials are needed.
@@ -294,6 +357,12 @@ callprobe run --suite my-support-suite --model qwen2.5:7b --pad 0 --repeats 1 --
 Unlike `--from-openapi`, `--example` writes a suite with its tasks already
 active; there is nothing to uncomment first. Available since 0.8.0; install
 with `uv tool install callprobe@latest`.
+
+The development version also includes `mail-sandbox`: 18 fictional mail cases
+covering search, retrieval, draft/send, missing identifiers, and literal text.
+Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
+cases and four distractors without downloading or copying repository files.
+It is not a MailOps integration.
 
 ### Write a suite directly
 
@@ -359,7 +428,7 @@ and exits nonzero if there are any.
 
 ```bash
 # a single model
-callprobe run --model llama3.1:8b --pad 0,8,16,24 --repeats 3 \
+callprobe run --model llama3.1:8b --pad 0,8 --repeats 3 \
   --max-tokens 4096 --out results/llama31-8b.json
 
 # any OpenAI-compatible endpoint
@@ -383,12 +452,32 @@ server sends one.
 `--max-tokens` defaults to 2048. Reasoning models can need more (see the
 truncation section above).
 
-For a multi-model overnight sweep, `scripts/overnight.sh` pulls each model,
-runs it, and rebuilds the leaderboard at the end:
+Starting with 0.9.0rc1, `run` and the GitHub Action default to `--pad 0`:
+a baseline without distractors. Additional counts are explicit, for example
+`--pad 0,8` on the core suite or `--pad 0,2,4` on the mail example. The requested
+count must fit every selected task after exclusions and tool-name collisions;
+impossible counts fail before endpoint access instead of silently sending fewer
+tools. The core suite supports up to 15 distractors for every task.
+
+Earlier versions defaulted to `0,8,16` and could silently cap padding at the
+available pool size. Collect a new baseline with valid, explicit counts when
+migrating such experiments; do not relabel old observations.
+
+For a controlled multi-model sweep, use already-served models (0.9.0rc1):
 
 ```bash
-REPEATS=3 caffeinate -is ./scripts/overnight.sh qwen3:8b llama3.1:8b
+callprobe sweep --models qwen2.5:7b llama3.1:8b \
+  --out /tmp/callprobe-model-plan --dry-run
+callprobe sweep --models qwen2.5:7b llama3.1:8b \
+  --out /tmp/callprobe-model-results
 ```
+
+The runner plans requests first, uses a fresh output directory, and saves a
+manifest, per-model evidence, and a leaderboard from that sweep alone.
+Use `--suite` for your own tools; see the [mail sweep guide](examples/mail-sandbox/README.md#sweep-several-local-models).
+This command is available in the development checkout and next release; it is
+not included in PyPI 0.8.0. It does not download models. The older `scripts/overnight.sh` is a legacy
+convenience script that pulls models and combines files in `results/`.
 
 Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted
 providers. `--quant` is a free-text label so quantizations of the same
@@ -457,6 +546,40 @@ settings, and the existing resume and suite-matching checks still apply.
 
 Available since 0.8.0. Install with `uv tool install callprobe@latest`.
 
+The development version also includes `mail-sandbox`: 18 fictional mail cases
+covering search, retrieval, draft/send, missing identifiers, and literal text.
+Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
+cases and four distractors without downloading or copying repository files.
+It is not a MailOps integration.
+
+### Preview a run before spending tokens (0.9.0rc1)
+
+`--dry-run` merges `--config` and CLI flags, resolves `--suite`, and applies
+`--task`/`--failed-from` selection, then prints the resulting coverage and a
+planned request count and completion-token cap &mdash; it never probes the endpoint, never
+calls the model, and never writes `--out`:
+
+```bash
+callprobe run --config callprobe.yaml --model qwen3:8b --dry-run
+```
+
+The plan reports the model, suite label and hash, full vs. targeted scope
+(selected task ids or the full task count), the requested distractor counts,
+repeats, total planned requests (`tasks * pads * repeats`), temperature,
+`max_tokens`, concurrency, and `max_completion_tokens`, the request count
+times `max_tokens` &mdash; an upper bound a model could reach if every
+response used its full budget. This excludes prompt tokens and retries; it
+is not a billing estimate. Requested distractor counts must fit every selected task; impossible counts
+are rejected before endpoint access. `--format json` emits
+the same plan as JSON with `"dry_run": true`. It never prints API keys,
+endpoint credentials, the endpoint URL, prompts, or tool arguments, and it
+reports no benchmark percentages, since no model was called. `--failed-from`
+with no failures still prints its existing no-op message and exits `0`
+without producing a plan. `--dry-run` cannot be combined with `--resume` or
+`--fail-under`, because a dry run neither resumes nor produces scored results; this is
+rejected before any file is read. This flag is not yet available in the
+published 0.8.0 package.
+
 ### Targeted debug reruns (since 0.8.0)
 
 `--task ID` (repeatable) runs only those exact task ids instead of the whole
@@ -515,6 +638,19 @@ callprobe compare results/before.json results/after.json
 
 It warns if the two runs' suite hashes differ, since part of the delta
 could then be the suite changing rather than the model.
+
+To save a readable report for review (0.9.0rc1):
+
+```bash
+callprobe compare results/before.json results/after.json --format markdown > comparison.md
+```
+
+Markdown includes scored observation counts, request errors, category deltas,
+and task changes. Categories without scored observations show `n/a`.
+Targeted-run and provenance warnings remain in the saved report. Add
+`--fail-on-regression` or `--policy` to include a CI verdict; without one,
+the report says **not requested**. A failing gate still writes its report
+and exits `1`, so shell scripts should preserve that status.
 
 To enforce a baseline in CI:
 
@@ -594,7 +730,7 @@ For example, after checking out your repository and starting your endpoint:
     endpoint: http://localhost:11434/v1
     baseline: results/baseline.json
     policy: callprobe-policy.yaml
-    pad: '0,8,16,24'
+    pad: '0,8'
     repeats: '3'
     max-tokens: '4096'
 ```
@@ -602,6 +738,15 @@ For example, after checking out your repository and starting your endpoint:
 Baseline inputs require v0.5.0 or newer. Keep the baseline separate from the action's
 `callprobe-results.json` output. The action also writes
 `callprobe-comparison.json` and includes it in the job summary.
+
+In 0.9.0rc1, the Action additionally writes
+`callprobe-comparison.md` and shows that readable report in the job summary,
+with raw run output collapsed below its heading. Both comparison formats
+come from the same saved results and policy; rendering does not call the
+model again. A `fail-under` violation still produces the baseline comparison
+before the Action exits with failure. Missing baseline/policy files and
+paths that alias generated outputs are rejected before model requests.
+Only reports produced by the current invocation appear in its summary.
 
 ## The failure digest
 
@@ -614,7 +759,13 @@ any reasoning trace stripped, when it produced no call at all.
 
 ## Explaining a saved run (since 0.7.0)
 
-Install or upgrade with `uv tool install callprobe@latest`. This also
+Install or upgrade with `uv tool install callprobe@latest`.
+
+The development version also includes `mail-sandbox`: 18 fictional mail cases
+covering search, retrieval, draft/send, missing identifiers, and literal text.
+Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
+cases and four distractors without downloading or copying repository files.
+It is not a MailOps integration. This also
 replaces an older version-pinned installation.
 
 `callprobe explain RESULTS.json --suite DIR` turns a results file back into
@@ -672,6 +823,22 @@ forbid extra properties. Supported schemas get error paths, messages, and
 expected types; unsupported schemas retain the recorded failure reasons
 with an explanation of the diagnostic limitation.
 
+When an expected call is missing, `explain` can also flag bounded, parseable
+JSON in ordinary assistant text that names a tool from the suite. This is an
+advisory to check the model/provider's response format or tool-call parser;
+it does not establish the cause. Text that resembles a call is never executed,
+converted into a call, or re-scored. Malformed or ambiguous text is left as
+recorded evidence rather than guessed at.
+
+The JSON report also carries `argument_shape_summary`:
+`affected_observations` (failing task/pad/repeat records that already have
+a `shape_hint`), `unique_tasks`, and `by_kind` counts. Only existing hints
+are counted; nothing is inferred from other schema failures, and `--task`
+limits it to that task. The text report adds a short note when any hints
+exist: inspect the proposed arguments, make sure your application adapter
+and the tool contract agree, and rerun with the same suite. Nothing is
+repaired or re-scored automatically.
+
 ## Status
 
 The suite (version 2) is 50 hand-written tasks: 6 select, 11 abstain, 12
@@ -714,6 +881,19 @@ pip install -e ".[dev]"
 
 pytest
 ```
+
+Exercise the public CLI end to end with a synthetic mail workflow:
+
+```bash
+python scripts/selftest_agent.py --out /tmp/callprobe-selftest
+```
+
+This checks imports, validation, 162 scripted observations per run, regression
+reports, and targeted reruns without a model or credentials. It writes commands,
+outputs, and assertions to `report.md` and `report.json`. See the
+[mail sandbox guide](examples/mail-sandbox/README.md) for testing an installed
+wheel or adding a separate live-model run. Scripted scores verify the test
+pipeline; they are not model benchmark results.
 
 ## License
 

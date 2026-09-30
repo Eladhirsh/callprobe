@@ -1,0 +1,90 @@
+openapi: 3.0.3
+info:
+  title: Synthetic Mail Workflow
+  version: 1.0.0
+  description: >-
+    Synthetic mail workflow contract authored for CallProbe self-tests. It is NOT
+    MailOps, does not describe any real mail API, and needs no server. Addresses
+    use example.invalid.
+paths:
+  /messages:
+    get:
+      operationId: search_messages
+      tags: [mail]
+      summary: Search messages.
+      description: >-
+        The q parameter uses `from:ADDRESS`, `subject:WORDS`, or plain words.
+        Use folder only when the user names a folder, and limit only when the
+        user gives a maximum count.
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+            description: Search text, for example from:dana.rivera@example.invalid.
+        - in: query
+          name: folder
+          schema:
+            type: string
+            enum: [inbox, archive]
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+      responses:
+        '200':
+          description: Matching messages
+  /messages/{message_id}:
+    get:
+      operationId: get_message
+      tags: [mail]
+      summary: Get one message by its exact message ID.
+      parameters:
+        - $ref: '#/components/parameters/MessageId'
+      responses:
+        '200':
+          description: The message
+  /messages/{message_id}/replies:
+    post:
+      operationId: send_reply
+      tags: [mail]
+      summary: Create a reply to a known message.
+      description: >-
+        Set mode to draft when the user wants a draft only or says not to send;
+        set mode to send only when the user asks to send. Text is used verbatim.
+      parameters:
+        - $ref: '#/components/parameters/MessageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reply'
+      responses:
+        '201':
+          description: Reply created
+components:
+  parameters:
+    MessageId:
+      in: path
+      name: message_id
+      required: true
+      schema:
+        type: string
+        pattern: '^msg-[A-Za-z0-9._-]+$'
+        description: A message ID such as msg-1042.
+  schemas:
+    Reply:
+      type: object
+      additionalProperties: false
+      required: [text, mode]
+      properties:
+        text:
+          type: string
+          minLength: 1
+        mode:
+          type: string
+          enum: [draft, send]

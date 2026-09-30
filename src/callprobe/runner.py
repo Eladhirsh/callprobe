@@ -17,10 +17,16 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 from .client import ChatClient
-from .models import Bundle, Run, RunConfig, Suite, Task, TaskResult
+from .models import Bundle, Run, RunConfig, Suite, Task, TaskResult, Tool
 from .scoring import SCORING_VERSION, score
 
 WorkItem = tuple[int, int, Task]
+
+
+def _eligible_distractors(suite: Suite, task: Task) -> list[Tool]:
+    """Distractors eligible for this task, in the original suite order."""
+    blocked = {t.name for t in suite.bundles[task.bundle].tools} | set(task.exclude_distractors)
+    return [d for d in suite.distractors if d.name not in blocked]
 
 
 def prepare_config(suite: Suite, config: RunConfig) -> RunConfig:
@@ -48,6 +54,19 @@ def prepare_config(suite: Suite, config: RunConfig) -> RunConfig:
             raise ValueError("unknown task id(s): " + ", ".join(unknown))
         wanted = set(selected)
         selected = [tid for tid in task_ids if tid in wanted]
+    max_pad = max(config.pads)
+    if max_pad:
+        run_ids = set(selected) if selected is not None else set(task_ids)
+        for task in suite.tasks:
+            if task.id not in run_ids:
+                continue
+            available = len(_eligible_distractors(suite, task))
+            if available < max_pad:
+                raise ValueError(
+                    f"pad {max_pad} requested but task {task.id!r} has only {available} "
+                    "eligible distractor(s) after exclusions and tool-name collisions; "
+                    "use a lower pad or add more distractors"
+                )
     return config.model_copy(update={
         "suite_name": suite.name,
         "suite_version": suite.version,
@@ -95,8 +114,7 @@ def build_toolset(
     tools = list(bundle.tools)
     if pad and suite.distractors:
         rng = random.Random(f"{task.id}:{pad}:{seed}")
-        blocked = {t.name for t in tools} | set(task.exclude_distractors)
-        pool = [d for d in suite.distractors if d.name not in blocked]
+        pool = _eligible_distractors(suite, task)
         rng.shuffle(pool)
         tools.extend(pool[:pad])
     rng = random.Random(f"order:{task.id}:{pad}:{seed}")

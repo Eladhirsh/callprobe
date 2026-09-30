@@ -533,6 +533,63 @@ def test_input_run_and_suite_are_not_mutated(github_suite):
     assert github_suite.model_dump_json() == before_suite
 
 
+def _flat_failure(task, **kwargs):
+    call = Call(name=task.expect.tool,
+                arguments={"owner": "octo-org", "repo": "widget", "issue_number": 42})
+    return _base_result(task, called=task.expect.tool, calls=[call], selection_ok=True,
+                        schema_ok=False, args_ok=False, **kwargs)
+
+
+def test_shape_summary_counts_observations_separately_from_unique_tasks(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [_flat_failure(task, pad=0, repeat=0), _flat_failure(task, pad=0, repeat=1),
+               _flat_failure(task, pad=8, repeat=0)]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    report = explain_run(run, github_suite)
+    assert report["argument_shape_summary"] == {
+        "affected_observations": 3, "unique_tasks": 1, "by_kind": {"nested_move": 3},
+    }
+    text = render_explain_text(report)
+    assert "3 observation(s) across 1 task(s)" in text
+    assert "adapter" in text and "rerun with the same suite" in text
+    assert "nothing was repaired" in text
+
+
+def test_shape_summary_is_empty_without_hints_and_ignores_plain_schema_failures(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    unhinted = _base_result(task, called=task.expect.tool,
+                            calls=[Call(name=task.expect.tool, arguments={"owner": "o"})],
+                            selection_ok=True, schema_ok=False, args_ok=False,
+                            failures=["schema: (root): 'path' is a required property"])
+    run = Run(config=_config(github_suite), started_at="now", results=[unhinted])
+    report = explain_run(run, github_suite)
+    assert "shape_hint" not in report["cases"][0]
+    assert report["argument_shape_summary"] == {
+        "affected_observations": 0, "unique_tasks": 0, "by_kind": {},
+    }
+    assert "argument shape hints" not in render_explain_text(report)
+
+
+def test_shape_summary_respects_task_filter(github_suite):
+    tasks = _tasks(github_suite)
+    task = tasks["get-issue-details"]
+    other = tasks["post-comment-simple"]
+    other_call = Call(name=other.expect.tool, arguments={
+        "path": {"owner": "octo-org", "repo": "widget", "issue_number": 101},
+        "body": "LGTM!"})
+    other_result = _base_result(other, called=other.expect.tool, calls=[other_call],
+                                selection_ok=True, schema_ok=False, args_ok=False)
+    results = [_flat_failure(task), _flat_failure(task, repeat=1), other_result]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    assert explain_run(run, github_suite)["argument_shape_summary"] == {
+        "affected_observations": 3, "unique_tasks": 2,
+        "by_kind": {"nested_move": 2, "scalar_wrap": 1},
+    }
+    scoped = explain_run(run, github_suite, task_id="get-issue-details")["argument_shape_summary"]
+    assert scoped["affected_observations"] == 2
+    assert scoped["unique_tasks"] == 1
+
+
 def test_diagnostic_counts_are_case_counts_not_reason_counts(github_suite):
     tasks = _tasks(github_suite)
     task = tasks["get-issue-details"]
@@ -781,3 +838,123 @@ def test_permissive_root_is_not_relocated(github_suite):
     tool = _tool(github_suite, _tasks(github_suite)['get-issue-details'].expect.tool).model_copy(deep=True)
     tool.parameters['additionalProperties'] = True
     assert build_shape_hint(tool, {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 42}) is None
+
+
+# ------------------------------------------- tool JSON in assistant content
+
+_GET = 'issues_get_cf0062ad'
+_ARGS = {"path": {"owner": "octo-org", "repo": "widget", "issue_number": 42}}
+
+
+def _content_case(suite, text, task_id='get-issue-details', **kwargs):
+    task = _tasks(suite)[task_id]
+    result = _base_result(task, response_text=text, **kwargs)
+    run = Run(config=_config(suite), started_at='now', results=[result])
+    return explain_run(run, suite), result
+
+
+@pytest.mark.parametrize('payload', [
+    {"name": _GET, "arguments": _ARGS},
+    {"function": {"name": _GET, "arguments": _ARGS}},
+    {"type": "function", "function": {"name": _GET, "arguments": json.dumps(_ARGS)}},
+    [{"name": _GET, "arguments": _ARGS}, {"function": {"name": _GET, "arguments": {}}}],
+    {"type": "function", "function": {"name": _GET, "description": "d", "parameters": {"type": "object"}}},
+])
+def test_content_tool_json_matches_exact_forms(github_suite, payload):
+    report, result = _content_case(github_suite, "  " + json.dumps(payload) + "\n",
+                                   failures=["no tool call"])
+    case = report['cases'][0]
+    assert case['diagnostics'] == ['no_call']
+    assert case['content_tool_json']['tools'] == [_GET]
+    advisory = case['content_tool_json']['advisory']
+    assert 'not the provider' in advisory and 'adapter' in advisory
+    assert 'does not establish the root cause' in advisory
+    assert case['response_text'] == result.response_text
+    assert case['reasons'] == ['no tool call']
+    assert 'shape_hint' not in case
+    assert 'tool JSON in assistant text' in render_explain_text(report)
+
+
+@pytest.mark.parametrize('text', [
+    json.dumps({"name": "not_a_tool", "arguments": {}}),
+    json.dumps({"name": _GET}),
+    json.dumps({"name": _GET, "arguments": {}, "extra": 1}),
+    json.dumps({"type": "function", "function": {"name": _GET, "arguments": {}, "x": 1}}),
+    json.dumps({"type": "other", "function": {"name": _GET, "arguments": {}}}),
+    json.dumps({"function": {"name": _GET, "parameters": {}}}),  # definition needs type
+    json.dumps({"name": ["x"], "arguments": {}}),
+    json.dumps([{"name": _GET, "arguments": {}}, {"name": "nope", "arguments": {}}]),
+    json.dumps([]),
+    json.dumps({"unrelated": True}),
+    '{"name": "' + _GET + '", "arguments": NaN}',
+    json.dumps(_GET),
+    f"I will call {_GET} with owner octo-org",
+    f'Sure: {json.dumps({"name": _GET, "arguments": {}})}',
+    "```json\n" + json.dumps({"name": _GET, "arguments": {}}) + "\n```",
+    '{"name": "' + _GET + '", "arguments": ',
+    "",
+])
+def test_content_tool_json_false_positives(github_suite, text):
+    report, _ = _content_case(github_suite, text)
+    assert 'content_tool_json' not in report['cases'][0]
+    assert 'tool JSON in assistant text' not in render_explain_text(report)
+
+
+def test_content_tool_json_rejects_oversized_and_deep_content(github_suite):
+    big = json.dumps({"name": _GET, "arguments": {"pad": "x" * 30_000}})
+    deep = "[" * 100_000 + "]" * 100_000
+    many = json.dumps([{"name": _GET, "arguments": {}}] * 21)
+    for text in (big, deep, many):
+        report, _ = _content_case(github_suite, text)
+        assert 'content_tool_json' not in report['cases'][0]
+
+
+def test_content_tool_json_survives_deeply_nested_arguments(github_suite):
+    nested = "[" * 3000 + "]" * 3000
+    report, _ = _content_case(github_suite, '{"name": "%s", "arguments": %s}' % (_GET, nested))
+    # either parsed (outer shape matches) or safely skipped on recursion
+    # limits; never an exception, and the no_call classification is kept
+    assert report['cases'][0]['diagnostics'] == ['no_call']
+
+
+def test_content_tool_json_ineligible_cases(github_suite):
+    text = json.dumps({"name": _GET, "arguments": _ARGS})
+    for kwargs in ({'error': 'boom'}, {'truncated': True},
+                   {'calls': [Call(name=_GET, arguments=_ARGS)], 'called': _GET}):
+        report, _ = _content_case(github_suite, text, **kwargs)
+        assert 'content_tool_json' not in report['cases'][0]
+    # an abstention task is not an expected-call task
+    report, _ = _content_case(github_suite, text, task_id='missing-repository')
+    assert 'content_tool_json' not in report['cases'][0]
+
+
+def test_content_tool_json_does_not_change_scores_or_inputs(github_suite):
+    task = _tasks(github_suite)['get-issue-details']
+    text = json.dumps({"name": _GET, "arguments": _ARGS})
+    result = _base_result(task, response_text=text)
+    run = Run(config=_config(github_suite), started_at='now', results=[result])
+    before = run.model_dump_json()
+    case = explain_run(run, github_suite)['cases'][0]
+    assert run.model_dump_json() == before
+    assert (result.selection_ok, result.schema_ok, result.args_ok, result.success) == (False,) * 4
+    assert case['diagnostics'] == ['no_call']
+    assert case['calls'] == [] and case['call_evidence'] == 'none'
+
+
+def test_content_tool_json_ignores_tool_not_in_bundle(github_suite):
+    report, _ = _content_case(github_suite, json.dumps({"name": "other", "arguments": {}}))
+    assert 'content_tool_json' not in report['cases'][0]
+
+
+def test_observed_phi_text_tool_shape_is_advisory_only():
+    suite = load_suite(str(Path(__file__).resolve().parents[1] / "src/callprobe/suites/core"))
+    # Exact structural form observed in the local Phi-4 Mini run: it names
+    # the function in `type` and places values in `parameters`.
+    text = json.dumps([{"type": "cancel_meeting", "function": {
+        "name": "cancel_meeting", "parameters": {
+            "meeting_id": "mtg_9012", "notify_attendees": False}}}])
+    report, result = _content_case(suite, text, task_id="depth-notify-preference-earlier")
+    case = report["cases"][0]
+    assert case["content_tool_json"]["tools"] == ["cancel_meeting"]
+    assert case["diagnostics"] == ["no_call"]
+    assert not result.success and not result.calls

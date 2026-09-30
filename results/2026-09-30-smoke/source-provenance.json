@@ -1,0 +1,18 @@
+{
+  "source_revision": "0d9c1e19daf5a3d908b02656df8f32adde878519",
+  "scoring_files_sha256": {
+    "runner.py": "7409fe43116ad076c3bffe83076f6809bbf5c1630fd0449b2143286a66802f40",
+    "client.py": "cb333f34c7ff37e6f111e98af5096263889c014f5f8c60f5a7ad1e0dcc4d6d0c",
+    "scoring.py": "25ff4c0192522f3778176d21e13915621542dc497fc1003295b14aa1ff63cf46",
+    "coerce.py": "d783f9cb5a4d34db429c835abe880135a6e59fc137cbb0052c82eefee4275164",
+    "models.py": "d69b1c94fd332664f7b9ab904baa93cefd6345961ac16393f0bf60156b511778"
+  },
+  "environment_note": "Editable install uses current source but retains stale 0.5.0 package metadata. Raw callprobe_version is preserved. Scoring code above and suite hash identify the evaluated implementation; report-only changes occurred during the sequential run.",
+  "python_version": "3.14.2 (main, Dec  5 2025, 21:11:58) [Clang 21.1.4 ]",
+  "dependencies": {
+    "httpx": "0.28.1",
+    "pydantic": "2.13.5",
+    "jsonschema": "4.26.0",
+    "PyYAML": "6.0.3"
+  }
+}

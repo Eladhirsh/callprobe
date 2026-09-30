@@ -1,0 +1,789 @@
+{
+  "config": {
+    "model": "qwen2.5:7b",
+    "endpoint": "http://localhost:11434/v1",
+    "suite": "github-issues-suite",
+    "pads": [
+      0
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.6.0",
+    "suite_name": "github-issues-suite",
+    "suite_version": 1,
+    "suite_hash": "877e1bb5a8652258",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 2,
+    "task_ids": [
+      "get-issue-details",
+      "list-comments-of-issue",
+      "post-comment-simple",
+      "owner-repo-from-url",
+      "read-discussion-not-post",
+      "pagination-upper-values",
+      "pagination-lowest-values",
+      "comments-since-timestamp",
+      "comment-body-multiline",
+      "comment-body-punctuation",
+      "missing-repository",
+      "missing-issue-number",
+      "missing-comment-text",
+      "draft-only-do-not-post",
+      "unsupported-delete-or-close",
+      "correction-changes-issue",
+      "earlier-turn-supplies-issue",
+      "ambiguous-that-one"
+    ]
+  },
+  "started_at": "2026-09-21T23:07:04.276746+00:00",
+  "finished_at": "2026-09-21T23:55:46.730424+00:00",
+  "results": [
+    {
+      "task_id": "get-issue-details",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_get_cf0062ad",
+      "expected": "issues_get_cf0062ad",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 42}, got missing"
+      ],
+      "prompt_tokens": 1714,
+      "completion_tokens": 42,
+      "latency_ms": 5360.06091699528,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_fqk0v4hz",
+          "name": "issues_get_cf0062ad",
+          "arguments": {
+            "repo": "widget",
+            "issue_number": 42,
+            "owner": "octo-org"
+          },
+          "raw_arguments": "{\"repo\":\"widget\",\"issue_number\":42,\"owner\":\"octo-org\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "list-comments-of-issue",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_list-comments_e6abc434",
+      "expected": "issues_list-comments_e6abc434",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 42}, got missing"
+      ],
+      "prompt_tokens": 1714,
+      "completion_tokens": 43,
+      "latency_ms": 31170.679708004172,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4oi66sbq",
+          "name": "issues_list-comments_e6abc434",
+          "arguments": {
+            "owner": "octo-org",
+            "repo": "widget",
+            "issue_number": 42
+          },
+          "raw_arguments": "{\"owner\":\"octo-org\",\"repo\":\"widget\",\"issue_number\":42}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "post-comment-simple",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_create-comment_27544d18",
+      "expected": "issues_create-comment_27544d18",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: body: 'Thanks, this is fixed in the next release.' is not of type 'object'",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 42}, got missing",
+        "body expected {'body': 'Thanks, this is fixed in the next release.'}, got 'Thanks, this is fixed in the next release.'"
+      ],
+      "prompt_tokens": 1726,
+      "completion_tokens": 61,
+      "latency_ms": 42339.25891599938,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_r8d5wc5e",
+          "name": "issues_create-comment_27544d18",
+          "arguments": {
+            "repo": "widget",
+            "issue_number": 42,
+            "body": "Thanks, this is fixed in the next release.",
+            "owner": "octo-org"
+          },
+          "raw_arguments": "{\"repo\":\"widget\",\"issue_number\":42,\"body\":\"Thanks, this is fixed in the next release.\",\"owner\":\"octo-org\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "owner-repo-from-url",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_get_cf0062ad",
+      "expected": "issues_get_cf0062ad",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 57}, got missing"
+      ],
+      "prompt_tokens": 1735,
+      "completion_tokens": 42,
+      "latency_ms": 6934.21749999834,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2p3dwfld",
+          "name": "issues_get_cf0062ad",
+          "arguments": {
+            "owner": "octo-org",
+            "repo": "widget",
+            "issue_number": 57
+          },
+          "raw_arguments": "{\"owner\":\"octo-org\",\"repo\":\"widget\",\"issue_number\":57}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "read-discussion-not-post",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_list-comments_e6abc434",
+      "expected": "issues_list-comments_e6abc434",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 19}, got missing"
+      ],
+      "prompt_tokens": 1724,
+      "completion_tokens": 43,
+      "latency_ms": 8915.951208000479,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zw91fe3s",
+          "name": "issues_list-comments_e6abc434",
+          "arguments": {
+            "owner": "octo-org",
+            "repo": "widget",
+            "issue_number": 19
+          },
+          "raw_arguments": "{\"owner\":\"octo-org\",\"repo\":\"widget\",\"issue_number\":19}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "pagination-upper-values",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "issues_list-comments_e6abc434",
+      "expected": "issues_list-comments_e6abc434",
+      "failures": [],
+      "prompt_tokens": 1725,
+      "completion_tokens": 65,
+      "latency_ms": 20093.373541996698,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_elxi675u",
+          "name": "issues_list-comments_e6abc434",
+          "arguments": {
+            "query": {
+              "page": 3,
+              "per_page": 100
+            },
+            "path": {
+              "issue_number": 42,
+              "owner": "octo-org",
+              "repo": "widget"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"page\":3,\"per_page\":100},\"path\":{\"issue_number\":42,\"owner\":\"octo-org\",\"repo\":\"widget\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "pagination-lowest-values",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_list-comments_e6abc434",
+      "expected": "issues_list-comments_e6abc434",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'page', 'per_page', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 42}, got missing",
+        "query.page missing",
+        "query.per_page missing"
+      ],
+      "prompt_tokens": 1724,
+      "completion_tokens": 56,
+      "latency_ms": 8503.86512499972,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4ygegjp5",
+          "name": "issues_list-comments_e6abc434",
+          "arguments": {
+            "owner": "octo-org",
+            "repo": "widget",
+            "issue_number": 42,
+            "per_page": 1,
+            "page": 1
+          },
+          "raw_arguments": "{\"owner\":\"octo-org\",\"repo\":\"widget\",\"issue_number\":42,\"per_page\":1,\"page\":1}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "comments-since-timestamp",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_list-comments_e6abc434",
+      "expected": "issues_list-comments_e6abc434",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo', 'since' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 1205}, got missing",
+        "query.since missing"
+      ],
+      "prompt_tokens": 1738,
+      "completion_tokens": 70,
+      "latency_ms": 16727.556750003714,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_kuczihl8",
+          "name": "issues_list-comments_e6abc434",
+          "arguments": {
+            "since": "2025-03-01T00:00:00Z",
+            "owner": "octo-org",
+            "repo": "widget",
+            "issue_number": 1205
+          },
+          "raw_arguments": "{\"since\":\"2025-03-01T00:00:00Z\",\"owner\":\"octo-org\",\"repo\":\"widget\",\"issue_number\":1205}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "comment-body-multiline",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_create-comment_27544d18",
+      "expected": "issues_create-comment_27544d18",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: body: 'Steps to reproduce:\\n1. Open the settings page.\\n2. Click \"Save\".\\n\\nExpected: it saves. Actual: it crashes (see #12).' is not of type 'object'",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 88}, got missing",
+        "body expected {'body': 'Steps to reproduce:\\n1. Open the settings page.\\n2. Click \"Save\".\\n\\nExpected: it saves. Actual: it crashes (see #12).'}, got 'Steps to reproduce:\\n1. Open the settings page.\\n2. Click \"Save\".\\n\\nExpected: it saves. Actual: it crashes (see #12).'"
+      ],
+      "prompt_tokens": 1763,
+      "completion_tokens": 88,
+      "latency_ms": 15413.541084002645,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_osvr1th6",
+          "name": "issues_create-comment_27544d18",
+          "arguments": {
+            "owner": "octo-org",
+            "repo": "widget",
+            "issue_number": 88,
+            "body": "Steps to reproduce:\n1. Open the settings page.\n2. Click \"Save\".\n\nExpected: it saves. Actual: it crashes (see #12)."
+          },
+          "raw_arguments": "{\"owner\":\"octo-org\",\"repo\":\"widget\",\"issue_number\":88,\"body\":\"Steps to reproduce:\\n1. Open the settings page.\\n2. Click \\\"Save\\\".\\n\\nExpected: it saves. Actual: it crashes (see #12).\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "comment-body-punctuation",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "issues_create-comment_27544d18",
+      "expected": "issues_create-comment_27544d18",
+      "failures": [],
+      "prompt_tokens": 1736,
+      "completion_tokens": 80,
+      "latency_ms": 3116.50008399738,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_3avr0f2m",
+          "name": "issues_create-comment_27544d18",
+          "arguments": {
+            "body": {
+              "body": "LGTM! Could you rebase onto \"main\" & re-run CI? (Thanks -- Sam)"
+            },
+            "path": {
+              "issue_number": 101,
+              "owner": "octo-org",
+              "repo": "widget"
+            }
+          },
+          "raw_arguments": "{\"body\":{\"body\":\"LGTM! Could you rebase onto \\\"main\\\" \\u0026 re-run CI? (Thanks -- Sam)\"},\"path\":{\"issue_number\":101,\"owner\":\"octo-org\",\"repo\":\"widget\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "missing-repository",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_create-comment_27544d18",
+      "expected": null,
+      "failures": [
+        "called issues_create-comment_27544d18 when no tool applied"
+      ],
+      "prompt_tokens": 1712,
+      "completion_tokens": 58,
+      "latency_ms": 19434.498166003323,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_11hbi4od",
+          "name": "issues_create-comment_27544d18",
+          "arguments": {
+            "body": "The fix has been deployed.",
+            "owner": "octocat",
+            "repo": "hello-world",
+            "issue_number": 42
+          },
+          "raw_arguments": "{\"body\":\"The fix has been deployed.\",\"owner\":\"octocat\",\"repo\":\"hello-world\",\"issue_number\":42}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "missing-issue-number",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_list-comments_e6abc434",
+      "expected": null,
+      "failures": [
+        "called issues_list-comments_e6abc434 when no tool applied"
+      ],
+      "prompt_tokens": 1722,
+      "completion_tokens": 110,
+      "latency_ms": 30636.11666700308,
+      "error": null,
+      "response_text": "To find the issue number for the bug about login timeouts on the `octo-org/widget` repository, we would typically need to search for the issue title or description. However, since we don't have a direct search function, I will list all comments for the repository and look for the relevant issue. Let",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_hu33lq21",
+          "name": "issues_list-comments_e6abc434",
+          "arguments": {
+            "repo": "widget",
+            "owner": "octo-org"
+          },
+          "raw_arguments": "{\"repo\":\"widget\",\"owner\":\"octo-org\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "missing-comment-text",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 1741,
+      "completion_tokens": 42,
+      "latency_ms": 1679.3585409977823,
+      "error": null,
+      "response_text": "Sure, I can help with that! Before we proceed, could you please provide me with the text you'd like to include in your comment for issue 42 in the octo-org/widget repository?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "draft-only-do-not-post",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_create-comment_27544d18",
+      "expected": null,
+      "failures": [
+        "called issues_create-comment_27544d18 when no tool applied"
+      ],
+      "prompt_tokens": 1775,
+      "completion_tokens": 109,
+      "latency_ms": 5653.879333003715,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_i9691ecx",
+          "name": "issues_create-comment_27544d18",
+          "arguments": {
+            "body": {
+              "body": "Hi there! We noticed you reported an issue with the app crashing when saving. Just wanted to let you know that we've got this covered in version 2.4.0. Everything you need is included in this message, no further action required!"
+            },
+            "path": {
+              "issue_number": 42,
+              "owner": "octo-org",
+              "repo": "widget"
+            }
+          },
+          "raw_arguments": "{\"body\":{\"body\":\"Hi there! We noticed you reported an issue with the app crashing when saving. Just wanted to let you know that we've got this covered in version 2.4.0. Everything you need is included in this message, no further action required!\"},\"path\":{\"issue_number\":42,\"owner\":\"octo-org\",\"repo\":\"widget\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-delete-or-close",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 1738,
+      "completion_tokens": 145,
+      "latency_ms": 21347.921082997345,
+      "error": null,
+      "response_text": "The tools I have available can help with listing and creating comments on issues, but they do not provide the capability to close issues or delete comments directly. To close issue 42 in the `octo-org/widget` repository, you would typically use the `PATCH /repos/{owner}/{repo}/issues/{issue_number}`",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-changes-issue",
+      "category": "depth",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_list-comments_e6abc434",
+      "expected": "issues_list-comments_e6abc434",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 44}, got missing"
+      ],
+      "prompt_tokens": 1751,
+      "completion_tokens": 43,
+      "latency_ms": 9978.623416995106,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_55tyh6ot",
+          "name": "issues_list-comments_e6abc434",
+          "arguments": {
+            "owner": "octo-org",
+            "repo": "widget",
+            "issue_number": 44
+          },
+          "raw_arguments": "{\"owner\":\"octo-org\",\"repo\":\"widget\",\"issue_number\":44}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "earlier-turn-supplies-issue",
+      "category": "depth",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issues_create-comment_27544d18",
+      "expected": "issues_create-comment_27544d18",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('issue_number', 'owner', 'repo' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: body: 'Reproduced on v2.3.1.' is not of type 'object'",
+        "path expected {'owner': 'octo-org', 'repo': 'widget', 'issue_number': 73}, got missing",
+        "body expected {'body': 'Reproduced on v2.3.1.'}, got 'Reproduced on v2.3.1.'"
+      ],
+      "prompt_tokens": 1753,
+      "completion_tokens": 62,
+      "latency_ms": 12794.736333999026,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zhq9taj2",
+          "name": "issues_create-comment_27544d18",
+          "arguments": {
+            "repo": "widget",
+            "issue_number": 73,
+            "body": "Reproduced on v2.3.1.",
+            "owner": "octo-org"
+          },
+          "raw_arguments": "{\"repo\":\"widget\",\"issue_number\":73,\"body\":\"Reproduced on v2.3.1.\",\"owner\":\"octo-org\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "ambiguous-that-one",
+      "category": "depth",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 1764,
+      "completion_tokens": 141,
+      "latency_ms": 9567.18245799857,
+      "error": null,
+      "response_text": "Sure, we can prepare the comment you want to make. Since you haven't chosen which repository yet, I'll provide an example for both repositories. You can choose the appropriate one or let me know which one you want to use.\n\nHere are the prepared comments:\n\nFor `octo-org/widget#12`:\n```json\n{\n  \"body\"",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    }
+  ]
+}

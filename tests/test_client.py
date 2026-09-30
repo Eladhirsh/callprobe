@@ -89,3 +89,57 @@ def test_honors_retry_after_header():
     completion = client.complete("m", [], [])
     assert completion.error is None
     assert waits == ["0"]
+
+
+@pytest.mark.parametrize("body", [
+    [], None, {}, {"choices": []}, {"choices": [None]},
+    {"choices": [{"message": "private response text"}]},
+    {"choices": [{"message": {}}], "usage": {"prompt_tokens": "invalid"}},
+    {"choices": [{"message": {"tool_calls": ["invalid"]}}]},
+    {"choices": [{"message": {"content": 42}}]},
+    {"choices": [{"message": {"tool_calls": {"bad": "shape"}}} ]},
+])
+def test_malformed_success_response_is_request_error_and_next_request_survives(body):
+    responses = iter([body, OK_BODY])
+    calls = []
+    def handler(request):
+        calls.append(request)
+        import json
+        return httpx.Response(200, content=json.dumps(next(responses)))
+    client = _client(handler)
+    try:
+        malformed = client.complete("m", [], [])
+        assert malformed.error.startswith("invalid chat completion response")
+        assert "private response text" not in malformed.error
+        assert malformed.calls == []
+        assert client.complete("m", [], []).content == "hi"
+        assert len(calls) == 2  # Malformed payloads are not transient retries.
+    finally:
+        client.close()
+
+
+@pytest.mark.parametrize("retry_after", ["inf", "-inf", "NaN", "1e999", "invalid"])
+def test_invalid_retry_after_uses_finite_backoff(monkeypatch, retry_after):
+    responses = iter([
+        httpx.Response(429, headers={"Retry-After": retry_after}, json={}),
+        httpx.Response(200, json=OK_BODY),
+    ])
+    client = ChatClient("http://fake/v1", retries=1,
+                        transport=httpx.MockTransport(lambda request: next(responses)))
+    waits = []
+    monkeypatch.setattr("callprobe.client.random.uniform", lambda low, high: 0.125)
+    monkeypatch.setattr("callprobe.client.time.sleep", waits.append)
+    try:
+        assert client.complete("m", [], []).error is None
+        assert waits == [0.125]
+    finally:
+        client.close()
+
+
+@pytest.mark.parametrize("version", [None, 42, {}, ["0.1"], True, "", "  "])
+def test_version_probe_does_not_record_malformed_metadata(monkeypatch, version):
+    from callprobe.client import probe_server_version
+    monkeypatch.setattr("callprobe.client.httpx.get", lambda *args, **kwargs:
+                        httpx.Response(200, json={"version": version},
+                                       request=httpx.Request("GET", "http://fake/api/version")))
+    assert probe_server_version("http://fake/v1") == (None, None)

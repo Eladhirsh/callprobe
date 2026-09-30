@@ -13,7 +13,7 @@ if [ ${#MODELS[@]} -eq 0 ]; then
   MODELS=(qwen3:8b llama3.1:8b mistral-nemo qwen2.5:7b granite3.3:8b)
 fi
 
-PADS="${PADS:-0,8,16,24}"
+PADS="${PADS:-0,8}"
 REPEATS="${REPEATS:-5}"
 MAX_TOKENS="${MAX_TOKENS:-4096}"
 
