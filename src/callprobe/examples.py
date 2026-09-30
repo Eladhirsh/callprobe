@@ -23,6 +23,12 @@ EXAMPLES: dict[str, dict[str, Any]] = {
         "description": "3 real GitHub issue/comment operations, GitHub's OpenAPI description",
         "provenance_files": ("LICENSE.md", "provenance.json"),
     },
+    "mail-sandbox": {
+        "openapi_file": "openapi.yaml",
+        "description": "3 fictional mail operations with draft/send and abstention cases",
+        "provenance_files": (),
+        "extra_files": ("distractors.yaml",),
+    },
     "support": {
         "openapi_file": "openapi.yaml",
         "description": "a small fictional order/refund API",
@@ -97,6 +103,6 @@ def generate_example_suite(key: str, name: str):
     files, result = generate_openapi_suite(document, name, skip_unsupported=False)
     files["tasks.yaml"] = _resource_text(key, "tasks.yaml")
     files["README.md"] = _readme(key, _task_count(key))
-    for filename in info["provenance_files"]:
+    for filename in (*info["provenance_files"], *info.get("extra_files", ())):
         files[filename] = _resource_text(key, filename)
     return files, result

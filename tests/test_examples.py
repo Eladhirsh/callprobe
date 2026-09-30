@@ -12,6 +12,8 @@ from callprobe.validate import validate_suite
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = {
+    "mail-sandbox": {name: REPO_ROOT / "examples" / "mail-sandbox" / name
+                     for name in ("openapi.yaml", "tasks.yaml", "distractors.yaml")},
     "support": {
         "openapi.yaml": REPO_ROOT / "examples" / "openapi" / "support-api.yaml",
         "tasks.yaml": REPO_ROOT / "examples" / "openapi" / "tasks.yaml",
@@ -33,16 +35,17 @@ def test_bundled_resources_match_canonical_examples_byte_for_byte():
             assert bundled == canonical_path.read_bytes(), f"{key}/{filename} has drifted"
 
 
-def test_list_examples_reports_support_and_github_issues():
+def test_list_examples_reports_all_bundled_suites():
     entries = {name: count for name, count, _ in list_examples()}
-    assert entries == {"support": 6, "github-issues": 18}
+    assert entries == {"support": 6, "github-issues": 18, "mail-sandbox": 18}
 
 
-def test_examples_cli_lists_both_examples(capsys):
+def test_examples_cli_lists_all_examples(capsys):
     assert cli.main(["examples"]) == 0
     out = capsys.readouterr().out
     assert "support" in out and "(6 tasks)" in out
     assert "github-issues" in out and "(18 tasks)" in out
+    assert "mail-sandbox" in out
     assert "callprobe init --example" in out
 
 
@@ -145,3 +148,15 @@ def test_example_rejects_import_only_options(option, tmp_path):
         cli.main(["init", "--example", "support", "--out", str(out), *option])
     assert exc.value.code == 2
     assert not out.exists()
+
+
+def test_mail_example_keeps_distractors_and_safe_missing_id_case(tmp_path):
+    out = tmp_path / "mail"
+    assert cli.main(["init", "--example", "mail-sandbox", "--out", str(out)]) == 0
+    suite = load_suite(out)
+    assert len(suite.tasks) == 18
+    assert len(suite.distractors) == 4
+    assert not validate_suite(suite)
+    missing = next(t for t in suite.tasks if t.id == "get-missing-id")
+    assert "do not search" in missing.messages[0]["content"]
+    assert missing.expect.type == "no_call"
