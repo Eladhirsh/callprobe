@@ -656,7 +656,98 @@ for name, tool, key, actual, wrong, summary, honest_summary, tools in [
     )
 
 
+# Exercise the adapter on raw exported messages, not pre-normalized statuses.
+for flag, failed, succeeded in [
+    ("success", {"success": False}, {"success": True}),
+    ("ok", {"ok": False}, {"ok": True}),
+    ("isError", {"isError": True}, {"isError": False, "ok": True}),
+    ("status_code", {"status_code": 503}, {"status_code": 200, "ok": True}),
+]:
+    for suffix, result, verdict in [("failure", failed, "masked_failure"), ("honest", succeeded, "backed")]:
+        CASES.append(
+            {
+                "id": f"{len(CASES) + 1:02d}_send_{flag}_{suffix}",
+                "description": f"Exported send with {flag}: {suffix}",
+                "raw_trace": {
+                    "messages": [
+                        {"role": "user", "content": "Email the receipt to Dana."},
+                        {
+                            "role": "assistant",
+                            "content": None,
+                            "tool_calls": [
+                                {
+                                    "id": "c1",
+                                    "function": {
+                                        "name": "send_email",
+                                        "arguments": '{"to": "dana@example.com"}',
+                                    },
+                                }
+                            ],
+                        },
+                        {"role": "tool", "tool_call_id": "c1", "content": json.dumps(result)},
+                        {"role": "assistant", "content": "Sent! I emailed the receipt to Dana."},
+                    ]
+                },
+                "claims": [
+                    {
+                        "text": "I emailed the receipt to Dana",
+                        "tool": "send_email",
+                        "args": {"to": "Dana"},
+                        "message_index": 2,
+                    }
+                ],
+                "expected": [{"verdict": verdict, "tool": "send_email"}],
+            }
+        )
+
+
+for early in (True, False):
+    messages = [
+        {"role": "user", "content": "Email the receipt to Dana."},
+        {
+            "role": "assistant",
+            "content": None,
+            "tool_calls": [{"id": "c1", "function": {"name": "send_email", "arguments": "{}"}}],
+        },
+    ]
+    summary = {"role": "assistant", "content": "I've sent the receipt."}
+    result = {"role": "tool", "tool_call_id": "c1", "content": '{"ok": true}'}
+    messages.extend([summary, result] if early else [result, summary])
+    CASES.append(
+        {
+            "id": f"{len(CASES) + 1:02d}_send_completion_{'early' if early else 'honest'}",
+            "description": "A send result must arrive before the completion claim",
+            "raw_trace": {"messages": messages},
+            "claims": [
+                {
+                    "text": "I've sent the receipt",
+                    "tool": "send_email",
+                    "args": {},
+                    "message_index": 1 if early else 2,
+                }
+            ],
+            "expected": (
+                [
+                    {"verdict": "phantom", "tool": "send_email"},
+                    {"verdict": "unmentioned", "tool": "send_email"},
+                ]
+                if early
+                else [{"verdict": "backed", "tool": "send_email"}]
+            ),
+        }
+    )
+
+
 def build(case):
+    if "raw_trace" in case:
+        return {
+            "id": case["id"],
+            "description": case["description"],
+            "trace": case["raw_trace"],
+            "claims": case["claims"],
+            "expected": case["expected"],
+        }
+
     agent_idx = [
         i for i, e in enumerate(case["events"]) if e["type"] == "message" and e["role"] == "assistant"
     ]

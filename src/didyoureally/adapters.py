@@ -34,20 +34,45 @@ def guess_side_effect(tool: str) -> bool:
     return not tool.lower().startswith(READ_ONLY_PREFIXES)
 
 
-def _looks_like_error(content: Any) -> bool:
+def _result_status(content: Any, side_effect: bool) -> str:
+    """Recognize explicit outcomes, refusing to infer successful writes from silence."""
     if isinstance(content, str):
         text = content.strip()
         try:
             content = json.loads(text)
-        except (ValueError, TypeError):
-            low = text.lower()
-            return low.startswith(("error", "exception", "failed", "traceback"))
+        except ValueError:
+            low = text.lower().rstrip(".! ")
+            if low.startswith(("error", "exception", "failed", "traceback")):
+                return "error"
+            if low in {"ok", "success", "sent", "done", "completed", "cancelled", "deleted"}:
+                return "ok"
     if isinstance(content, dict):
-        if content.get("error") or content.get("is_error"):
-            return True
+        if (
+            content.get("error")
+            or content.get("is_error") is True
+            or content.get("isError") is True
+            or content.get("success") is False
+            or content.get("ok") is False
+        ):
+            return "error"
         status = str(content.get("status", "")).lower()
-        return status in {"error", "failed", "failure"}
-    return False
+        code = content.get("status_code")
+        if status in {"error", "failed", "failure"} or (
+            isinstance(code, int) and not isinstance(code, bool) and code >= 400
+        ):
+            return "error"
+        if (
+            content.get("success") is True
+            or content.get("ok") is True
+            or status in {"ok", "success", "sent", "completed", "cancelled", "deleted"}
+        ):
+            return "ok"
+    if content is not None and not side_effect:
+        return "ok"
+    raise ValueError(
+        "Unrecognized or missing tool outcome; normalize this result to native "
+        "status 'ok' or 'error' before checking it. Success was not assumed."
+    )
 
 
 def _content_text(content: Any) -> str:
@@ -81,16 +106,24 @@ def from_openai_messages(data: Any, trace_id: str = "trace") -> Trace:
         )
     known = {t["name"] for t in tools}
 
-    results: dict[str, Any] = {
-        m["tool_call_id"]: m.get("content")
-        for m in messages
-        if m.get("role") == "tool" and "tool_call_id" in m
-    }
+    # Calls become completed events only when their result arrives. A later
+    # result cannot back an earlier completion claim.
+    pending: dict[str, dict[str, Any]] = {}
+    completed: set[str] = set()
+    side_effects = {t["name"]: t["side_effect"] for t in tools}
 
     events: list[dict[str, Any]] = []
     for m in messages:
         role = m.get("role")
         if role == "tool":
+            cid = m.get("tool_call_id")
+            if cid not in pending:
+                raise ValueError(f"Tool result has no pending call: {cid!r}")
+            event = pending.pop(cid)
+            event["result"] = m.get("content")
+            event["status"] = _result_status(event["result"], side_effects[event["tool"]])
+            events.append(event)
+            completed.add(cid)
             continue
         text = _content_text(m.get("content"))
         if role in ("user", "assistant") and text.strip():
@@ -102,21 +135,17 @@ def from_openai_messages(data: Any, trace_id: str = "trace") -> Trace:
                 args = json.loads(raw) if isinstance(raw, str) else dict(raw)
             except ValueError:
                 args = {"_raw": raw}
-            result = results.get(tc.get("id"))
             name = fn.get("name", "unknown")
             if name not in known:
                 tools.append({"name": name, "side_effect": guess_side_effect(name)})
                 known.add(name)
-            events.append(
-                {
-                    "type": "tool_call",
-                    "id": tc.get("id"),
-                    "tool": name,
-                    "args": args,
-                    "status": "error" if _looks_like_error(result) else "ok",
-                    "result": result,
-                }
-            )
+            side_effects.setdefault(name, guess_side_effect(name))
+            cid = tc.get("id")
+            if not isinstance(cid, str) or not cid or cid in pending or cid in completed:
+                raise ValueError("Tool calls require unique nonempty string IDs.")
+            pending[cid] = {"type": "tool_call", "id": cid, "tool": name, "args": args}
+    if pending:
+        raise ValueError("Missing tool results; success was not assumed for: " + ", ".join(pending))
     return Trace.from_dict({"id": trace_id, "tools": tools, "events": events})
 
 
