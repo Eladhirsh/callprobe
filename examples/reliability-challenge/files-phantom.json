@@ -8,7 +8,15 @@
       {
         "name": "delete_file",
         "description": "Delete one file. args: path",
-        "side_effect": true
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
       }
     ],
     "events": [

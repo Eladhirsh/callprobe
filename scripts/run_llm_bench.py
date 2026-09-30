@@ -67,12 +67,20 @@ def summarize(rows):
     }
 
 
-def evaluate(case, base_url, model):
+def evaluate(case, base_url, model, *, json_mode=False):
     raw = []
+    responses = []
 
     def capture(url, headers, body):
         response = _http_post(url, headers, body)
         raw.append(response["choices"][0]["message"]["content"])
+        responses.append(
+            {
+                "model": response.get("model"),
+                "usage": response.get("usage"),
+                "finish_reason": response["choices"][0].get("finish_reason"),
+            }
+        )
         return response
 
     row = {
@@ -86,7 +94,9 @@ def evaluate(case, base_url, model):
     started = time.monotonic()
     try:
         trace = load_trace(case["trace"], case["id"])
-        claims = LLMExtractor(base_url=base_url, model=model, transport=capture).extract(trace)
+        claims = LLMExtractor(base_url=base_url, model=model, transport=capture, json_mode=json_mode).extract(
+            trace
+        )
         findings = check(trace, claims)
         row["claims"] = [asdict(c) for c in claims]
         row["findings"] = [f.to_dict() for f in findings]
@@ -98,6 +108,7 @@ def evaluate(case, base_url, model):
         # Provider error messages can contain secrets. Record only the exception type.
         row["error"] = type(exc).__name__
     row["raw_responses"] = raw
+    row["responses"] = responses
     row["seconds"] = round(time.monotonic() - started, 3)
     return row
 
@@ -138,6 +149,9 @@ def markdown(rows):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--endpoint", nargs=2, action="append", required=True, metavar=("BASE_URL", "MODEL"))
+    parser.add_argument(
+        "--json-mode", action="store_true", help="Request JSON mode from a compatible endpoint"
+    )
     parser.add_argument("--out", type=Path, required=True, help="New evidence directory")
     parser.add_argument("--cases", type=Path, default=default_cases_dir(), help="Synthetic case directory")
     parser.add_argument("--case", action="append", help="Only these case IDs (repeatable)")
@@ -158,6 +172,11 @@ def main(argv=None):
     )
     metadata = {
         "revision": revision.stdout.strip(),
+        "source_sha256": {
+            str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted((ROOT / "src/didyoureally").glob("*.py"))
+        },
+        "json_mode": args.json_mode,
         "prompt_sha256": hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest(),
         "cases_sha256": hashlib.sha256(json.dumps(cases, sort_keys=True).encode()).hexdigest(),
         "models": [model for _, model in args.endpoint],
@@ -169,7 +188,7 @@ def main(argv=None):
     with (args.out / "records.jsonl").open("w") as stream:
         for base_url, model in args.endpoint:
             for case in cases:
-                row = evaluate(case, base_url, model)
+                row = evaluate(case, base_url, model, json_mode=args.json_mode)
                 rows.append(row)
                 stream.write(json.dumps(row) + "\n")
                 stream.flush()

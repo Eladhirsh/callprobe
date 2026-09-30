@@ -21,6 +21,7 @@ class ToolSpec:
     name: str
     side_effect: bool = True
     description: str = ""
+    parameters: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -58,6 +59,7 @@ class Trace:
                 name=t["name"],
                 side_effect=bool(t.get("side_effect", True)),
                 description=t.get("description", ""),
+                parameters=dict(t.get("parameters") or {}),
             )
             tools[spec.name] = spec
 

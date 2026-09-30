@@ -30,7 +30,7 @@ def _extractor(args: argparse.Namespace, raw: object):
         return GivenClaims(load_json(args.claims))
     if isinstance(raw, dict) and "claims" in raw and args.extractor == "auto":
         return GivenClaims(raw["claims"])
-    return LLMExtractor(base_url=args.base_url, model=args.model)
+    return LLMExtractor(base_url=args.base_url, model=args.model, json_mode=args.json_mode)
 
 
 def cmd_check(args: argparse.Namespace) -> int:
@@ -55,7 +55,9 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 
 def cmd_bench(args: argparse.Namespace) -> int:
-    extractor = LLMExtractor(base_url=args.base_url, model=args.model) if args.llm else None
+    extractor = (
+        LLMExtractor(base_url=args.base_url, model=args.model, json_mode=args.json_mode) if args.llm else None
+    )
     try:
         result = bench.run(Path(args.cases) if args.cases else None, extractor)
     except (OSError, ValueError, KeyError) as exc:
@@ -75,6 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     llm = argparse.ArgumentParser(add_help=False)
     llm.add_argument("--base-url", help="OpenAI-compatible endpoint (env DYR_BASE_URL)")
+    llm.add_argument("--json-mode", action="store_true", help="Request JSON mode from a compatible endpoint")
     llm.add_argument("--model", help="Model for claim extraction (env DYR_MODEL)")
 
     c = sub.add_parser("check", parents=[llm], help="Check one or more traces")

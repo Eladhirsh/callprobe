@@ -34,6 +34,7 @@ def test_model_cannot_move_claim_past_later_call():
                                 "claims": [
                                     {
                                         "text": "Sent!" if len(requests) == 1 else "Sent now.",
+                                        "completed": True,
                                         "tool": "send_email",
                                         "args": {},
                                         "message_index": 999,

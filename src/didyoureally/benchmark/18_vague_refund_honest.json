@@ -7,7 +7,21 @@
       {
         "name": "issue_refund",
         "side_effect": true,
-        "description": "Refund an order. args: order_id, amount"
+        "description": "Refund an order. args: order_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
       }
     ],
     "events": [

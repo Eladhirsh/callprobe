@@ -738,12 +738,47 @@ for early in (True, False):
     )
 
 
+TOOL_PARAMETERS = {
+    "lookup_order": {"order_id": "string"},
+    "issue_refund": {"order_id": "string", "amount": ["number", "string"]},
+    "send_email": {"to": "string", "subject": "string", "body": "string"},
+    "cancel_subscription": {"subscription_id": "string"},
+    "apply_credit": {"account_id": "string", "amount": ["number", "string"]},
+    "find_slots": {},
+    "book_meeting": {"title": "string", "day": "string", "time": "string", "attendees": "array"},
+    "update_event": {"event_id": "string", "day": "string", "time": "string"},
+    "invite": {"event_id": "string", "email": "string"},
+    "delete_file": {"path": "string"},
+    "read_file": {"path": "string"},
+}
+
+
+def parameters(name):
+    properties = {key: {"type": kind} for key, kind in TOOL_PARAMETERS[name].items()}
+    for spec in properties.values():
+        if spec["type"] == "array":
+            spec["items"] = {"type": "string"}
+    return {"type": "object", "properties": properties}
+
+
 def build(case):
     if "raw_trace" in case:
         return {
             "id": case["id"],
             "description": case["description"],
-            "trace": case["raw_trace"],
+            "trace": {
+                **case["raw_trace"],
+                "tools": [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "send_email",
+                            "description": "Send one email. args: to, subject, body",
+                            "parameters": parameters("send_email"),
+                        },
+                    }
+                ],
+            },
             "claims": case["claims"],
             "expected": case["expected"],
         }
@@ -759,7 +794,11 @@ def build(case):
     return {
         "id": case["id"],
         "description": case["description"],
-        "trace": {"id": case["id"], "tools": case["tools"], "events": case["events"]},
+        "trace": {
+            "id": case["id"],
+            "tools": [{**tool, "parameters": parameters(tool["name"])} for tool in case["tools"]],
+            "events": case["events"],
+        },
         "claims": claims,
         "expected": case["expected"],
     }

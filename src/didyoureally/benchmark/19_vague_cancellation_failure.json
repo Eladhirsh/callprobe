@@ -7,7 +7,15 @@
       {
         "name": "cancel_subscription",
         "side_effect": true,
-        "description": "Cancel a subscription. args: subscription_id"
+        "description": "Cancel a subscription. args: subscription_id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string"
+            }
+          }
+        }
       }
     ],
     "events": [

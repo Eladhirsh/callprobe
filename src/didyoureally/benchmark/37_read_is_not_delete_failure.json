@@ -7,12 +7,28 @@
       {
         "name": "delete_file",
         "side_effect": true,
-        "description": "Delete one file. args: path"
+        "description": "Delete one file. args: path",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
       },
       {
         "name": "read_file",
         "side_effect": false,
-        "description": "Read a file. args: path"
+        "description": "Read a file. args: path",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
       }
     ],
     "events": [

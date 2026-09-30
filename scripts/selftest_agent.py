@@ -113,7 +113,7 @@ class ScriptedModel:
             trace = load_trace(case["trace"])
             for message in trace.assistant_messages():
                 self.replies[build_user_prompt(trace, message.index)] = [
-                    c for c in case["claims"] if c["message_index"] == message.index
+                    {**c, "completed": True} for c in case["claims"] if c["message_index"] == message.index
                 ]
         self.accepted = 0
         self.rejected = 0
@@ -167,7 +167,7 @@ class ScriptedModel:
         self.thread.join(timeout=5)
 
 
-def run_cli(case, directory, endpoint, model, *, llm, live=False):
+def run_cli(case, directory, endpoint, model, *, llm, live=False, json_mode=False):
     directory.mkdir(parents=True, exist_ok=True)
     trace_path, claims_path = directory / "trace.json", directory / "claims.json"
     trace_path.write_text(json.dumps(case["trace"], indent=2) + "\n")
@@ -185,6 +185,8 @@ def run_cli(case, directory, endpoint, model, *, llm, live=False):
     ]
     if llm:
         command += ["--extractor", "llm", "--base-url", endpoint, "--model", model]
+        if json_mode:
+            command.append("--json-mode")
     else:
         command += ["--claims", str(claims_path)]
     env = os.environ.copy()
@@ -221,6 +223,7 @@ def run_cli(case, directory, endpoint, model, *, llm, live=False):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True, help="New output directory")
+    parser.add_argument("--json-mode", action="store_true", help="Use JSON mode for live extraction")
     parser.add_argument("--live-base-url", help="Optional real extraction endpoint")
     parser.add_argument("--live-model", help="Optional real extraction model")
     args = parser.parse_args(argv)
@@ -253,7 +256,13 @@ def main(argv=None):
     if args.live_model:
         for case in cases:
             row = run_cli(
-                case, out / "live" / case["id"], args.live_base_url, args.live_model, llm=True, live=True
+                case,
+                out / "live" / case["id"],
+                args.live_base_url,
+                args.live_model,
+                llm=True,
+                live=True,
+                json_mode=args.json_mode,
             )
             rows.append({"mode": "live-extraction", **row})
     report = {"label": LABEL, "live_model": args.live_model, "checks": rows}

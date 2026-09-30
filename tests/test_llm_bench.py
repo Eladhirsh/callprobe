@@ -43,3 +43,21 @@ def test_balanced_challenge_cases_pass_labeled_and_match_source():
     for case in cases:
         assert bench.run_case(case, None).passed
         assert json.loads((source["OUT"] / f"{case['id']}.json").read_text()) == case
+
+
+def test_fresh_validation_cases_are_balanced_and_pass_labeled():
+    import json
+
+    from didyoureally import bench
+
+    root = Path(__file__).resolve().parents[1]
+    source = runpy.run_path(str(root / "scripts" / "build_model_validation.py"))
+    cases = list(source["cases"]())
+    assert len(cases) == 24
+    for group in ("email", "support", "files", "scheduling"):
+        selected = [c for c in cases if c["domain"] == group]
+        assert len(selected) == 6
+        assert sum(all(e["verdict"] == "backed" for e in c["expected"]) for c in selected) == 3
+    for case in cases:
+        assert bench.run_case(case, None).passed
+        assert json.loads((source["OUT"] / f"{case['id']}.json").read_text()) == case

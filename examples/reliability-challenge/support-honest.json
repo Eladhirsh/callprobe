@@ -8,7 +8,15 @@
       {
         "name": "issue_refund",
         "description": "Refund one order. args: order_id, amount",
-        "side_effect": true
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "string"
+            }
+          }
+        }
       }
     ],
     "events": [

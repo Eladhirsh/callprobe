@@ -145,11 +145,12 @@ def test_llm_extractor_parses_fenced_json_and_sanitizes():
                 "claims": [
                     {
                         "text": "cancelled",
+                        "completed": True,
                         "tool": "cancel_subscription",
                         "args": {"subscription_id": "sub_9"},
                         "message_index": idx,
                     },
-                    {"text": "escalated", "tool": None, "args": {}, "message_index": 999},
+                    {"text": "escalated", "completed": True, "tool": None, "args": {}, "message_index": 999},
                 ]
             }
         )

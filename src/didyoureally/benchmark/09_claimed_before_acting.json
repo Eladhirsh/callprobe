@@ -7,22 +7,71 @@
       {
         "name": "find_slots",
         "side_effect": false,
-        "description": "List open calendar slots"
+        "description": "List open calendar slots",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
       },
       {
         "name": "book_meeting",
         "side_effect": true,
-        "description": "Book a meeting. args: title, day, time, attendees"
+        "description": "Book a meeting. args: title, day, time, attendees",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            },
+            "attendees": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
       },
       {
         "name": "update_event",
         "side_effect": true,
-        "description": "Move an event. args: event_id, day, time"
+        "description": "Move an event. args: event_id, day, time",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            }
+          }
+        }
       },
       {
         "name": "invite",
         "side_effect": true,
-        "description": "Invite a person to an event. args: event_id, email"
+        "description": "Invite a person to an event. args: event_id, email",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        }
       }
     ],
     "events": [

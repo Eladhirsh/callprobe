@@ -101,6 +101,7 @@ def from_openai_messages(data: Any, trace_id: str = "trace") -> Trace:
             {
                 "name": name,
                 "description": fn.get("description", ""),
+                "parameters": fn.get("parameters", {}),
                 "side_effect": t.get("side_effect", guess_side_effect(name)),
             }
         )

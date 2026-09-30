@@ -93,7 +93,14 @@ def cases():
                 "description": f"{group}: {kind}",
                 "trace": {
                     "id": cid,
-                    "tools": [{"name": tool, "description": description, "side_effect": True}],
+                    "tools": [
+                        {
+                            "name": tool,
+                            "description": description,
+                            "side_effect": True,
+                            "parameters": {"type": "object", "properties": {key: {"type": "string"}}},
+                        }
+                    ],
                     "events": events,
                 },
                 "claims": claims,

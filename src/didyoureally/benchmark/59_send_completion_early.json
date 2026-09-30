@@ -29,6 +29,29 @@
         "tool_call_id": "c1",
         "content": "{\"ok\": true}"
       }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "send_email",
+          "description": "Send one email. args: to, subject, body",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     ]
   },
   "claims": [

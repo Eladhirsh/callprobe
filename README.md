@@ -190,3 +190,33 @@ validation set. Generate it with `python scripts/build_reliability_challenge.py`
 Time arguments accept equivalent clock forms such as `2 pm` and `14:00`. Explicit currency
 claims are checked against currency embedded in an amount. Duplicate benchmark IDs now cause
 an error instead of silently counting the same evidence twice.
+
+## Model comparison and extraction contracts
+
+Tool definitions can include a JSON Schema `parameters` object in native traces. The OpenAI
+adapter retains `function.parameters`. Supply these definitions when exporting traces; the
+extractor never fills in schema information from call argument values.
+
+The extractor explicitly classifies whether a statement asserts a completed action. This is
+language extraction, not a model verdict about whether the trace supports it. Noncompleted
+statements are excluded. Unspecified null arguments trigger repair instead of becoming false
+contradictions. Parameters declared scalar can split an extracted list into separate claims;
+actual array parameters retain a single action, and ambiguous parallel lists require repair.
+Without a schema the extractor does not guess whether a parameter is scalar.
+
+For endpoints supporting it, `--json-mode` requests JSON object output. It is opt-in to retain
+compatibility with other providers. Ollama documents this capability in its
+[OpenAI compatibility reference](https://docs.ollama.com/api/openai-compatibility).
+The flag works with `dyr check`, `dyr bench`, and both evaluation scripts.
+
+```bash
+python scripts/run_llm_bench.py --json-mode \
+  --endpoint http://localhost:11434/v1 hermes3:8b \
+  --endpoint http://localhost:11434/v1 granite3.3:8b \
+  --cases examples/reliability-challenge --out /tmp/dyr-model-screen
+```
+
+The original challenge is now a development screening set. A separate set in
+`examples/model-validation` supplies fresh wording, including negations, conditional offers,
+"I can confirm" completion claims, and filenames whose trailing dot is meaningful. Its source
+is `scripts/build_model_validation.py`. Both sets remain synthetic and small.
