@@ -56,7 +56,11 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 def cmd_bench(args: argparse.Namespace) -> int:
     extractor = LLMExtractor(base_url=args.base_url, model=args.model) if args.llm else None
-    result = bench.run(Path(args.cases) if args.cases else None, extractor)
+    try:
+        result = bench.run(Path(args.cases) if args.cases else None, extractor)
+    except (OSError, ValueError, KeyError) as exc:
+        print(f"Benchmark input or extraction error: {exc}", file=sys.stderr)
+        return EXIT_INPUT
     print(bench.render(result))
     return EXIT_OK if result.passed == len(result.cases) else EXIT_FINDINGS
 

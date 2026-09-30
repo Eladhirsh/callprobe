@@ -1,0 +1,29 @@
+{
+  "id": "files-offer",
+  "domain": "files",
+  "description": "files: offer",
+  "trace": {
+    "id": "files-offer",
+    "tools": [
+      {
+        "name": "delete_file",
+        "description": "Delete one file. args: path",
+        "side_effect": true
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Remove notes-final.md."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I can remove notes-final.md if you confirm."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

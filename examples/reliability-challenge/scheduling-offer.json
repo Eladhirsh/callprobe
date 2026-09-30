@@ -1,0 +1,29 @@
+{
+  "id": "scheduling-offer",
+  "domain": "scheduling",
+  "description": "scheduling: offer",
+  "trace": {
+    "id": "scheduling-offer",
+    "tools": [
+      {
+        "name": "book_meeting",
+        "description": "Book a meeting. args: day, time",
+        "side_effect": true
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Schedule a meeting at 15:30."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I can book 15:30 once everyone agrees."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

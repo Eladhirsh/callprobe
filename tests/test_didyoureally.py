@@ -136,6 +136,7 @@ def test_openai_adapter_bare_message_list():
 
 def test_llm_extractor_parses_fenced_json_and_sanitizes():
     trace = load_trace(json.loads((EXAMPLES / "openai_masked_failure.json").read_text()))
+    trace.assistant_messages()[0].content += " I escalated this."
     idx = trace.assistant_messages()[0].index
     reply = (
         "```json\n"
@@ -148,7 +149,7 @@ def test_llm_extractor_parses_fenced_json_and_sanitizes():
                         "args": {"subscription_id": "sub_9"},
                         "message_index": idx,
                     },
-                    {"text": "escalated", "tool": "escalate_to_human", "args": {}, "message_index": 999},
+                    {"text": "escalated", "tool": None, "args": {}, "message_index": 999},
                 ]
             }
         )
@@ -166,7 +167,9 @@ def test_llm_extractor_parses_fenced_json_and_sanitizes():
     assert seen["url"] == "http://local/v1/chat/completions"
     assert seen["body"]["temperature"] == 0
     assert claims[0].tool == "cancel_subscription" and claims[0].message_index == idx
-    assert claims[1].tool is None and claims[1].message_index is None  # unknown tool, bad index
+    assert (
+        claims[1].tool is None and claims[1].message_index == idx
+    )  # target index is assigned by the application
 
     [masked, phantom] = check(trace, claims)
     assert masked.verdict is Verdict.MASKED_FAILURE

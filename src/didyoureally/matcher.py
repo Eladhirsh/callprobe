@@ -138,6 +138,27 @@ def values_agree(claimed: Any, actual: Any) -> bool:
     return False
 
 
+def _clock_minutes(value: Any) -> int | None:
+    match = re.fullmatch(r"(\d{1,2})(?::(\d{2}))?\s*(am|pm)?", str(value).strip(), re.IGNORECASE)
+    if not match:
+        return None
+    hour, minute = int(match[1]), int(match[2] or 0)
+    suffix = (match[3] or "").lower()
+    if minute > 59 or hour > 23 or (suffix and not 1 <= hour <= 12):
+        return None
+    if suffix:
+        hour = hour % 12 + (12 if suffix == "pm" else 0)
+    return hour * 60 + minute
+
+
+def _argument_agrees(key: str, claimed: Any, actual: Any) -> bool:
+    if key == "time":
+        left, right = _clock_minutes(claimed), _clock_minutes(actual)
+        if left is not None and right is not None:
+            return left == right
+    return values_agree(claimed, actual)
+
+
 def compare_args(claim: Claim, call: ToolCall) -> tuple[list[Mismatch], list[str], int]:
     """Return (mismatches, unchecked keys, number of agreeing keys)."""
     mismatches: list[Mismatch] = []
@@ -145,10 +166,19 @@ def compare_args(claim: Claim, call: ToolCall) -> tuple[list[Mismatch], list[str
     agree = 0
     for key, claimed in claim.args.items():
         if key in call.args:
-            if values_agree(claimed, call.args[key]):
+            if _argument_agrees(key, claimed, call.args[key]):
                 agree += 1
             else:
                 mismatches.append(Mismatch(key, claimed, call.args[key]))
+        elif key == "currency" and "amount" in call.args:
+            amount = _as_number(call.args["amount"])
+            unit = amount[1] if amount else None
+            if unit not in {"usd", "eur", "gbp", "jpy"}:
+                unchecked.append(key)
+            elif _norm_str(claimed) == unit:
+                agree += 1
+            else:
+                mismatches.append(Mismatch(key, claimed, unit))
         elif key == "amount" and "amt" in call.args:
             # Only explicit aliases are comparable. Coincidental equal values in
             # unrelated fields (such as cents or percentages) are not evidence.

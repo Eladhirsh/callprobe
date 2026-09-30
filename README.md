@@ -93,7 +93,7 @@ With labeled claims this tests the matcher. `dyr bench --llm` runs extraction to
 
 The suite includes 27 honest controls, plus partial actions, vague completions, currency and unit traps,
 offers, read-only lookups, corrections, retries, duplicate calls, and file and order identifiers.
-These are development cases, not a held-out evaluation set. No real-model result has been measured yet.
+These are development cases, not a held-out evaluation set. Real-model development results and retained extraction evidence are in the reliability reports below.
 Exact-case scoring compares counts of verdict and tool pairs, not claim text or matched call identity.
 Problem precision and recall cover contradicted, phantom, and masked failure; they exclude unmentioned.
 
@@ -144,6 +144,37 @@ python scripts/selftest_agent.py --out /tmp/dyr-agent-live \
 ```
 
 Live mode sends only the synthetic transcript and tool descriptions to that endpoint. It evaluates
-claim extraction, not an autonomous agent's behavior. Provider error text and credentials are not
+claim extraction, not an autonomous agent's behavior. Structured findings, including extracted claims, are retained. Provider error text and credentials are not
 written to the live report. Network and format errors count as failed checks, not successful runs.
 The ordinary pytest suite remains offline; the self-test uses a loopback server.
+
+## Reliability across domains
+
+The extractor now processes one assistant message at a time, without later conversation turns.
+The application attaches the message index. Each extracted claim must quote that message,
+and malformed output receives one repair attempt before returning an input error. Read-only
+claims are excluded using tool metadata. This prevents some unsupported findings; it does not
+prove the model extracted every claim or interpreted every argument correctly.
+
+The benchmark runner saves raw model replies, parsed claims, findings, errors, and per-domain
+metrics. Use it only with synthetic fixtures if the resulting reports will be shared.
+
+```bash
+python scripts/run_llm_bench.py \
+  --endpoint http://localhost:11434/v1 qwen2.5:7b \
+  --endpoint http://localhost:11434/v1 llama3.1:8b \
+  --out /tmp/dyr-reliability-run
+
+# Separate balanced challenge: six cases each in email, support, files, and scheduling.
+python scripts/run_llm_bench.py \
+  --endpoint http://localhost:11434/v1 llama3.1:8b \
+  --cases examples/reliability-challenge --out /tmp/dyr-challenge-run
+```
+
+The default 60-case suite was used for development. The separate 24-case challenge has 12 honest
+controls and was authored before evaluating it, but is still synthetic, not an independent real-world
+validation set. Generate it with `python scripts/build_reliability_challenge.py`.
+
+Time arguments accept equivalent clock forms such as `2 pm` and `14:00`. Explicit currency
+claims are checked against currency embedded in an amount. Duplicate benchmark IDs now cause
+an error instead of silently counting the same evidence twice.

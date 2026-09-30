@@ -106,9 +106,15 @@ class ScriptedModel:
     """Loopback OpenAI-compatible extractor. Rejects unknown prompts and models."""
 
     def __init__(self, cases):
-        self.replies = {
-            build_user_prompt(load_trace(c["trace"])): c["claims"] for c in cases if c["expected"] is not None
-        }
+        self.replies = {}
+        for case in cases:
+            if case["expected"] is None:
+                continue
+            trace = load_trace(case["trace"])
+            for message in trace.assistant_messages():
+                self.replies[build_user_prompt(trace, message.index)] = [
+                    c for c in case["claims"] if c["message_index"] == message.index
+                ]
         self.accepted = 0
         self.rejected = 0
         outer = self
@@ -193,6 +199,7 @@ def run_cli(case, directory, endpoint, model, *, llm, live=False):
             got = None
         else:
             payload = json.loads(run.stdout)
+            (directory / "findings.json").write_text(json.dumps(payload, indent=2) + "\n")
             got = sorted(f["verdict"] for f in payload["findings"])
             expected_exit = int(any(v != "backed" for v in case["expected"]))
             passed = got == sorted(case["expected"]) and run.returncode == expected_exit

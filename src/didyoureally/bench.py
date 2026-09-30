@@ -68,8 +68,12 @@ def default_cases_dir() -> Path:
 def run(cases_dir: Path | None = None, extractor: Extractor | None = None) -> BenchResult:
     folder = cases_dir or default_cases_dir()
     result = BenchResult()
-    for path in sorted(folder.glob("*.json")):
-        result.cases.append(run_case(load_json(path), extractor))
+    cases = [load_json(path) for path in sorted(folder.glob("*.json"))]
+    ids = [case.get("id") for case in cases]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Duplicate benchmark case IDs; refusing to inflate the evaluation")
+    for case in cases:
+        result.cases.append(run_case(case, extractor))
     return result
 
 
