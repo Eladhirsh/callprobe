@@ -124,3 +124,30 @@ When submitting a new OpenAPI example, include its source revision and
 license, authored expectations, and a small deterministic test that proves
 the expected arguments satisfy the imported schema. Quote YAML messages
 containing ` #` so issue numbers and similar text are not parsed as comments.
+
+### Testing several models
+
+Start with a small, identical suite on every model before expanding coverage.
+For imported tools, include nested arguments, missing identifiers, abstention,
+conversation corrections, and literal text preservation. Keep the suite and
+scoring version fixed within a comparison; save raw responses and endpoint/model
+provenance alongside the generated report.
+
+Use a staged experiment:
+
+1. **Smoke test:** one repeat and no distractors. Check transport errors,
+   truncation, tool selection, argument structure, and authoring mistakes.
+2. **Coverage test:** the core suite plus application-specific suites. Expand
+   tool counts with the same padding settings for every model.
+3. **Repeatability:** multiple repeats at the intended production settings.
+   Report uncertainty and per-task regressions, not just an overall percentage.
+
+Small smoke tests identify failure patterns; they do not establish a general
+model ranking. Keep reasoning/token settings explicit: a model that exhausts
+its completion budget needs a separate budget-controlled experiment. Report
+that limit rather than silently giving selected models more tokens.
+
+If diagnostics propose a corrected argument shape, inspect the values too.
+A wrapper can fix JSON structure while retaining a wrong email address or ID.
+Change the adapter or contract deliberately, then collect a new run; never
+rewrite the recorded response to make an existing evaluation pass.

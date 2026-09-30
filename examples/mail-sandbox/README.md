@@ -69,3 +69,39 @@ suite once (pad 0, repeats 1) against that OpenAI-compatible endpoint, with cred
 from the usual `API_KEY` environment variable. Wrong model answers are listed as findings
 in the report (`live.json` holds the raw run); transport errors fail the self-test. Only the
 chat endpoint is called; the mail operations are never executed.
+
+## Sweep several local models
+
+`scripts/model_sweep.py` runs one suite against several models that are already served at
+an OpenAI-compatible endpoint, one at a time, through the public CLI only. It never
+downloads or pulls a model. The self-test above leaves a ready suite in
+`/tmp/callprobe-selftest/suite`.
+
+```sh
+# Plan first: dry runs for every model, prints total planned requests, sends nothing.
+.venv/bin/python scripts/model_sweep.py --models model-a model-b \
+  --suite /tmp/callprobe-selftest/suite --out /tmp/sweep --dry-run
+
+# Then run for real (--out must not exist, so use a new directory).
+.venv/bin/python scripts/model_sweep.py --models model-a model-b \
+  --suite /tmp/callprobe-selftest/suite --out /tmp/sweep-real
+```
+
+Options: `--endpoint` (default `http://127.0.0.1:11434/v1`; embedded credentials, query,
+and fragment are rejected), `--python`, `--pad` (default `0`), `--repeats` (default `1`),
+`--max-tokens` (default `4096`), `--timeout` (seconds per step, positive, default `1800`).
+
+- Every model is dry-run first; real runs follow, at temperature 0, concurrency 1,
+  retries 0. `PYTHONPATH` and `PYTHONHOME` are removed. `API_KEY` is inherited from the
+  environment and never placed on a command line.
+- Files in `--out` are numbered (`01-run.stdout.txt`, `01-result.json`, ...), never named
+  after the model. `manifest.json` records each step's command, status, duration, and
+  output files. A failed or timed-out step does not stop the next model. Failed runs are
+  left out of the leaderboard; any raw result file is retained.
+- `leaderboard.md` uses only result files from successful runs of this invocation. Offline
+  `explain` output is saved only when `--suite` is given. Exit status is 1 if any
+  subprocess failed. Runs with request errors fail the sweep even when some
+  observations succeeded; ordinary model mistakes remain scored findings.
+
+Scores are reported as the CLI produced them, with no repair. A few tasks and repeats is a
+small sample: the leaderboard does not show that the model order is robust.

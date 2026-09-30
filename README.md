@@ -429,12 +429,20 @@ server sends one.
 `--max-tokens` defaults to 2048. Reasoning models can need more (see the
 truncation section above).
 
-For a multi-model overnight sweep, `scripts/overnight.sh` pulls each model,
-runs it, and rebuilds the leaderboard at the end:
+For a controlled multi-model sweep from a checkout, use already-served models:
 
 ```bash
-REPEATS=3 caffeinate -is ./scripts/overnight.sh qwen3:8b llama3.1:8b
+python scripts/model_sweep.py --models qwen2.5:7b llama3.1:8b \
+  --out /tmp/callprobe-model-plan --dry-run
+python scripts/model_sweep.py --models qwen2.5:7b llama3.1:8b \
+  --out /tmp/callprobe-model-results
 ```
+
+The runner plans requests first, uses a fresh output directory, and saves a
+manifest, per-model evidence, and a leaderboard from that sweep alone.
+Use `--suite` for your own tools; see the [mail sweep guide](examples/mail-sandbox/README.md#sweep-several-local-models).
+It does not download models. The older `scripts/overnight.sh` is a legacy
+convenience script that pulls models and combines files in `results/`.
 
 Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted
 providers. `--quant` is a free-text label so quantizations of the same
