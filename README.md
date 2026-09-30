@@ -768,6 +768,15 @@ forbid extra properties. Supported schemas get error paths, messages, and
 expected types; unsupported schemas retain the recorded failure reasons
 with an explanation of the diagnostic limitation.
 
+The JSON report also carries `argument_shape_summary`:
+`affected_observations` (failing task/pad/repeat records that already have
+a `shape_hint`), `unique_tasks`, and `by_kind` counts. Only existing hints
+are counted; nothing is inferred from other schema failures, and `--task`
+limits it to that task. The text report adds a short note when any hints
+exist: inspect the proposed arguments, make sure your application adapter
+and the tool contract agree, and rerun with the same suite. Nothing is
+repaired or re-scored automatically.
+
 ## Status
 
 The suite (version 2) is 50 hand-written tasks: 6 select, 11 abstain, 12

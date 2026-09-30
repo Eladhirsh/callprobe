@@ -336,8 +336,13 @@ class Agent:
                                    if not r["success"] and not r["error"]},
                 "note": "Live results are findings about that model on this synthetic suite, "
                         "saved in live.json. They are not part of the fixture assertions."}
-        self.step("live-explain", ["explain", "live.json", "--suite", "suite", "--format", "json"],
-                  live=True)
+        explained, _ = self.step("live-explain", ["explain", "live.json", "--suite", "suite",
+                                                   "--format", "json"], live=True)
+        diagnostics = json.loads(explained)
+        if "live_findings" in self.notes:
+            self.notes["live_findings"]["argument_shape_summary"] = diagnostics.get(
+                "argument_shape_summary")
+
 
 
 # -------------------------------------------------------------------- report
@@ -364,6 +369,12 @@ def render_markdown(report: dict) -> str:
         lines += ["", "## Live findings (separate from fixtures)", "",
                   f"{live['model']}: {live['successes']}/{live['observations']} at pad 0, repeats 1.",
                   live["note"], ""]
+        shape = live.get("argument_shape_summary")
+        if shape and shape["affected_observations"]:
+            lines += [f"Argument shape hints: {shape['affected_observations']} observations "
+                      f"across {shape['unique_tasks']} tasks.",
+                      "Inspect the live-explain artifact for proposed arguments. These are advisory; "
+                      "values may still be wrong and scores have not changed.", ""]
         lines += [f"- {task}: {'; '.join(why)}" for task, why in live["model_mistakes"].items()]
     lines += ["", "## Known limitations", ""] + [f"- {item}" for item in LIMITATIONS]
     return "\n".join(lines) + "\n"

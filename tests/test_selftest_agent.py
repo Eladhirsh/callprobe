@@ -137,6 +137,10 @@ def test_live_mode_runs_separately_against_a_loopback_endpoint(tmp_path):
     assert code == 0 and report["steps"][-2]["name"] == "live-run"
     assert (findings["observations"], findings["successes"]) == (18, 14)
     assert set(findings["model_mistakes"]) == set(agent.INJECTED)
+    # Injected failures include a wrong value type, not a repairable nesting error.
+    assert findings["argument_shape_summary"] == {
+        "affected_observations": 0, "unique_tasks": 0, "by_kind": {}}
+
     assert len(json.loads((out / "live.json").read_text())["results"]) == 18
 
 

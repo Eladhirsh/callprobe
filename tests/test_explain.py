@@ -533,6 +533,63 @@ def test_input_run_and_suite_are_not_mutated(github_suite):
     assert github_suite.model_dump_json() == before_suite
 
 
+def _flat_failure(task, **kwargs):
+    call = Call(name=task.expect.tool,
+                arguments={"owner": "octo-org", "repo": "widget", "issue_number": 42})
+    return _base_result(task, called=task.expect.tool, calls=[call], selection_ok=True,
+                        schema_ok=False, args_ok=False, **kwargs)
+
+
+def test_shape_summary_counts_observations_separately_from_unique_tasks(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [_flat_failure(task, pad=0, repeat=0), _flat_failure(task, pad=0, repeat=1),
+               _flat_failure(task, pad=8, repeat=0)]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    report = explain_run(run, github_suite)
+    assert report["argument_shape_summary"] == {
+        "affected_observations": 3, "unique_tasks": 1, "by_kind": {"nested_move": 3},
+    }
+    text = render_explain_text(report)
+    assert "3 observation(s) across 1 task(s)" in text
+    assert "adapter" in text and "rerun with the same suite" in text
+    assert "nothing was repaired" in text
+
+
+def test_shape_summary_is_empty_without_hints_and_ignores_plain_schema_failures(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    unhinted = _base_result(task, called=task.expect.tool,
+                            calls=[Call(name=task.expect.tool, arguments={"owner": "o"})],
+                            selection_ok=True, schema_ok=False, args_ok=False,
+                            failures=["schema: (root): 'path' is a required property"])
+    run = Run(config=_config(github_suite), started_at="now", results=[unhinted])
+    report = explain_run(run, github_suite)
+    assert "shape_hint" not in report["cases"][0]
+    assert report["argument_shape_summary"] == {
+        "affected_observations": 0, "unique_tasks": 0, "by_kind": {},
+    }
+    assert "argument shape hints" not in render_explain_text(report)
+
+
+def test_shape_summary_respects_task_filter(github_suite):
+    tasks = _tasks(github_suite)
+    task = tasks["get-issue-details"]
+    other = tasks["post-comment-simple"]
+    other_call = Call(name=other.expect.tool, arguments={
+        "path": {"owner": "octo-org", "repo": "widget", "issue_number": 101},
+        "body": "LGTM!"})
+    other_result = _base_result(other, called=other.expect.tool, calls=[other_call],
+                                selection_ok=True, schema_ok=False, args_ok=False)
+    results = [_flat_failure(task), _flat_failure(task, repeat=1), other_result]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    assert explain_run(run, github_suite)["argument_shape_summary"] == {
+        "affected_observations": 3, "unique_tasks": 2,
+        "by_kind": {"nested_move": 2, "scalar_wrap": 1},
+    }
+    scoped = explain_run(run, github_suite, task_id="get-issue-details")["argument_shape_summary"]
+    assert scoped["affected_observations"] == 2
+    assert scoped["unique_tasks"] == 1
+
+
 def test_diagnostic_counts_are_case_counts_not_reason_counts(github_suite):
     tasks = _tasks(github_suite)
     task = tasks["get-issue-details"]

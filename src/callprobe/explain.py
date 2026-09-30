@@ -527,6 +527,23 @@ def check_suite_matches(run: Run, suite: Suite) -> None:
         )
 
 
+def _argument_shape_summary(cases: list[dict]) -> dict:
+    """Aggregate the existing per-case shape hints; nothing is inferred.
+
+    Only cases that already carry a `shape_hint` count. Observations are
+    (task, pad, repeat) records; unique_tasks dedupes by task id.
+    """
+    hinted = [c for c in cases if c.get("shape_hint") is not None]
+    kinds: dict[str, int] = defaultdict(int)
+    for case in hinted:
+        kinds[case["shape_hint"]["kind"]] += 1
+    return {
+        "affected_observations": len(hinted),
+        "unique_tasks": len({c["task_id"] for c in hinted}),
+        "by_kind": dict(sorted(kinds.items())),
+    }
+
+
 def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
     """Build the structured diagnostics report for a run.
 
@@ -589,6 +606,7 @@ def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
         "request_errors": request_errors,
         "failed_cases": len(cases),
         "diagnostic_counts": diagnostic_counts,
+        "argument_shape_summary": _argument_shape_summary(cases),
         "cases": cases,
     }
     if task_id is not None:
@@ -637,6 +655,19 @@ def render_explain_text(report: dict) -> str:
     lines.append("diagnostic counts (cases; a case may carry more than one category)")
     for category, count in report["diagnostic_counts"].items():
         lines.append(f"  {category:<20} {count:>4}   {CATEGORY_LABELS[category]}")
+
+    shape = report.get("argument_shape_summary")
+    if shape and shape["affected_observations"]:
+        kinds = ", ".join(f"{k}={v}" for k, v in shape["by_kind"].items())
+        lines.append("")
+        lines.append(
+            f"argument shape hints: {shape['affected_observations']} observation(s) "
+            f"across {shape['unique_tasks']} task(s) ({kinds})"
+        )
+        lines.append("  next steps (advisory; nothing was repaired, executed, or re-scored):")
+        lines.append("  - inspect each case's proposed arguments below; values may still be wrong")
+        lines.append("  - make sure the application adapter and the tool contract agree on argument shape")
+        lines.append("  - rerun with the same suite to measure any change")
 
     lines.append("")
     lines.append("failed cases")
