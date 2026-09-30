@@ -795,6 +795,13 @@ forbid extra properties. Supported schemas get error paths, messages, and
 expected types; unsupported schemas retain the recorded failure reasons
 with an explanation of the diagnostic limitation.
 
+When an expected call is missing, `explain` can also flag bounded, parseable
+JSON in ordinary assistant text that names a tool from the suite. This is an
+advisory to check the model/provider's response format or tool-call parser;
+it does not establish the cause. Text that resembles a call is never executed,
+converted into a call, or re-scored. Malformed or ambiguous text is left as
+recorded evidence rather than guessed at.
+
 The JSON report also carries `argument_shape_summary`:
 `affected_observations` (failing task/pad/repeat records that already have
 a `shape_hint`), `unique_tasks`, and `by_kind` counts. Only existing hints

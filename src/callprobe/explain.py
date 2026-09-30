@@ -25,6 +25,7 @@ about is skipped with a clear note rather than guessed at.
 
 from __future__ import annotations
 
+import json
 from collections import defaultdict
 from typing import Any
 
@@ -313,6 +314,88 @@ def build_shape_hint(tool: Tool, arguments: dict) -> dict | None:
     return None
 
 
+# ------------------------------------------------- tool JSON in assistant text
+
+# Bounds for the content-JSON check: assistant text longer than this is
+# never parsed, and a list of calls longer than this is never matched.
+_CONTENT_JSON_MAX_CHARS = 20_000
+_CONTENT_JSON_MAX_ITEMS = 20
+
+_CONTENT_JSON_NOTE = (
+    "advisory only: the assistant's text content is JSON that names a tool "
+    "in this suite ({names}), but it is not the provider's structured "
+    "tool_calls response, so it was not counted as a call. The model/provider "
+    "adapter (chat template, tool-call parser) needs checking; this does not "
+    "establish the root cause, and the text was not executed or re-scored"
+)
+
+
+def _named_tool(item: Any, bundle: Bundle) -> str | None:
+    """The bundle tool an exact call-like or definition-like JSON value
+    names, or None. Only whole-value, exact key-set shapes match; nothing
+    is searched for, normalized, or recursed into.
+    """
+    if not isinstance(item, dict):
+        return None
+    keys = set(item)
+    if keys == {"name", "arguments"}:
+        inner = item
+    elif keys in ({"function"}, {"type", "function"}):
+        inner = item["function"]
+        if not isinstance(inner, dict):
+            return None
+        if "type" in item and item["type"] not in ("function", inner.get("name")):
+            return None
+        inner_keys = set(inner)
+        if inner_keys in ({"name", "parameters"}, {"name", "description", "parameters"}):
+            if item.get("type") not in ("function", inner.get("name")):
+                return None
+        elif inner_keys != {"name", "arguments"}:
+            return None
+    else:
+        return None
+    name = inner.get("name")
+    if not isinstance(name, str) or bundle.by_name(name) is None:
+        return None
+    return name
+
+
+def _reject_json_constant(value: str):
+    raise ValueError(f"non-JSON constant: {value}")
+
+
+def _content_tool_json(task: Task, bundle: Bundle | None, result: TaskResult) -> list[str] | None:
+    """Names of bundle tools, if the assistant text of a failed
+    expected-call case with no structured calls is exactly tool-call or
+    tool-definition JSON. Never raises; deeply nested or oversized text is
+    simply not matched.
+    """
+    text = result.response_text
+    if (
+        bundle is None
+        or task.expect.type != "call"
+        or result.error
+        or result.truncated
+        or result.called is not None
+        or result.calls
+        or not isinstance(text, str)
+        or not text.strip()
+        or len(text) > _CONTENT_JSON_MAX_CHARS
+    ):
+        return None
+    try:
+        value = json.loads(text, parse_constant=_reject_json_constant)
+        items = value if isinstance(value, list) else [value]
+        if not items or len(items) > _CONTENT_JSON_MAX_ITEMS:
+            return None
+        names = [_named_tool(item, bundle) for item in items]
+    except (ValueError, RecursionError, MemoryError):
+        return None
+    if any(n is None for n in names):
+        return None
+    return list(dict.fromkeys(names))
+
+
 # ------------------------------------------------------------ case report
 
 
@@ -472,6 +555,12 @@ def _case_report(task: Task, bundle: Bundle | None, result: TaskResult) -> dict:
         case["calls"] = []
 
     if not result.calls:
+        names = _content_tool_json(task, bundle, result)
+        if names:
+            case["content_tool_json"] = {
+                "tools": names,
+                "advisory": _CONTENT_JSON_NOTE.format(names=", ".join(names)),
+            }
         return case
 
     chosen = pick_call(result.calls, task.expect.tool)
@@ -705,6 +794,10 @@ def render_explain_text(report: dict) -> str:
                                   f"raw={call['raw_arguments']!r}")
                 else:
                     lines.append(f"  call: {call['name']} arguments={call['arguments']}")
+
+        content_json = case.get("content_tool_json")
+        if content_json is not None:
+            lines.append(f"  note [tool JSON in assistant text] {content_json['advisory']}")
 
         for assertion in case.get("argument_assertions", []):
             mark = "ok" if assertion["ok"] else "FAIL"
