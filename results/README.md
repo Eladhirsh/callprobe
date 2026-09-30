@@ -1,3 +1,5 @@
+Latest: [seven-model comparison](model-comparison.md). The report below preserves the earlier experiment.
+
 # Reliability evaluation, September 30, 2026
 
 Two locally installed models were evaluated through Ollama 0.34.2. No external API was used.

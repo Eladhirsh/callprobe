@@ -220,3 +220,17 @@ The original challenge is now a development screening set. A separate set in
 `examples/model-validation` supplies fresh wording, including negations, conditional offers,
 "I can confirm" completion claims, and filenames whose trailing dot is meaningful. Its source
 is `scripts/build_model_validation.py`. Both sets remain synthetic and small.
+
+## Wider local-model results
+
+Seven local models were compared with the revised extraction profile. The screening leaders
+were selected for the full development suite and fresh validation:
+
+| Model | Screening | Development | Fresh validation |
+|---|---|---|---|
+| mistral-nemo:latest | 24/24 | 48/60 | 20/24 |
+| qwen2.5:7b | 22/24 | 47/60 | 20/24 |
+
+See the [seven-model comparison](results/model-comparison.md) for all model scores, honest-case
+false alarms, extraction errors, qualification results, and evidence. These are small synthetic
+evaluations; the full suite remains harder than the screening set.

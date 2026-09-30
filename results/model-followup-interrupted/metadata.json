@@ -1,0 +1,25 @@
+{
+  "revision": "aee765ec4f30d616ba9a4f8596a74f5a567eba75",
+  "source_sha256": {
+    "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "src/didyoureally/adapters.py": "55cea7ddfb0b886592211f9f9d583f2fcd3228cae9f48824767387d0a37c870d",
+    "src/didyoureally/bench.py": "75ba8d3fd22d4b54edf9cc0b6b5afdd09df7e108588428e56a99ff5188aaf78b",
+    "src/didyoureally/cli.py": "90d32a0cb8b21ab9207458fcd89f4710661ccfed5fabccfe9d59615efea7bfac",
+    "src/didyoureally/extract.py": "e401a3298ff0647a98138dbc860e8b50967e036b09526471f3744612b0c7c04e",
+    "src/didyoureally/matcher.py": "db6e608167613a06631db6e51b985446846202e3ed99098652714d7ada2899fb",
+    "src/didyoureally/report.py": "ca228e06bc617d0f2d18f2a88f1172d32b4337a978df7db251a8087497c0c835",
+    "src/didyoureally/schema.py": "3d84fc3e269c0c3bfabd5469f6be9958170a406b71ec391897bbd09cb1679e07"
+  },
+  "json_mode": true,
+  "prompt_sha256": "1a91ac1be7f1a0e46b0d33f1d7f275e1546ba49832a8ee5501046b0482c02722",
+  "cases_sha256": "cb04611ebe15aea994ae4163f244d245b83487311341dd006c5604fba9e62a1a",
+  "models": [
+    "mistral-nemo:latest",
+    "qwen2.5:7b"
+  ],
+  "temperature": 0,
+  "label": "Synthetic development transcripts, real extraction models",
+  "complete": false,
+  "interruption_reason": "Duplicate JSON keys discovered; qualification restarted after parser fix 94b86df."
+}
