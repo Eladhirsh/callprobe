@@ -15,10 +15,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from didyoureally.adapters import load_trace
-from didyoureally.bench import default_cases_dir
-from didyoureally.extract import SYSTEM_PROMPT, LLMExtractor, _http_post
-from didyoureally.matcher import PROBLEM_VERDICTS, check
+# Import the checkout after adding its source directory to the search path.
+
+from didyoureally.adapters import load_trace  # noqa: E402
+from didyoureally.bench import default_cases_dir  # noqa: E402
+from didyoureally.extract import SYSTEM_PROMPT, LLMExtractor, _http_post  # noqa: E402
+from didyoureally.matcher import PROBLEM_VERDICTS, check  # noqa: E402
 
 PROBLEMS = {v.value for v in PROBLEM_VERDICTS}
 

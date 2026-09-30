@@ -118,7 +118,7 @@ def parse_claims(
     payload = json.loads(text[start : end + 1], object_pairs_hook=_unique_object)
 
     if not isinstance(payload, dict) or not isinstance(payload.get("claims"), list):
-        raise ValueError("Extractor must return an object with a claims list")  # noqa: TRY004
+        raise ValueError("Extractor must return an object with a claims list")
     valid_idx = {m.index for m in trace.assistant_messages()}
     if target_index is not None and target_index not in valid_idx:
         raise ValueError("Invalid extraction target")
@@ -129,10 +129,13 @@ def parse_claims(
         if "tool" not in item or (item["tool"] is not None and not isinstance(item["tool"], str)):
             raise ValueError("Each claim needs a tool name or null")
         if not isinstance(item.get("args"), dict):
-            raise ValueError("Claim args must be an object")  # noqa: TRY004
+            raise ValueError("Claim args must be an object")
         if target_index is not None:
             target = next(m.content for m in trace.assistant_messages() if m.index == target_index)
-            normalize = lambda value: " ".join(value.casefold().split())
+
+            def normalize(value):
+                return " ".join(value.casefold().split())
+
             if normalize(item["text"]) not in normalize(target):
                 raise ValueError("Claim text must quote the target assistant message")
         if require_completed and type(item.get("completed")) is not bool:
@@ -233,7 +236,7 @@ class LLMExtractor:
                 content = resp["choices"][0]["message"]["content"]
                 try:
                     if not isinstance(content, str):
-                        raise ValueError("Extractor returned no text content")  # noqa: TRY004
+                        raise ValueError("Extractor returned no text content")
                     extracted = parse_claims(
                         content, trace, target_index=message.index, require_completed=True
                     )

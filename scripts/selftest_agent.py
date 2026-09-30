@@ -15,8 +15,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from didyoureally.adapters import load_trace
-from didyoureally.extract import build_user_prompt
+# Import the checkout after adding its source directory to the search path.
+
+from didyoureally.adapters import load_trace  # noqa: E402
+from didyoureally.extract import build_user_prompt  # noqa: E402
 
 LABEL = "Synthetic scripted agents and extraction model. Not MailOps and not real-model accuracy."
 
