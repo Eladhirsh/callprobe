@@ -97,6 +97,18 @@ These are development cases, not a held-out evaluation set. Real-model developme
 Exact-case scoring compares counts of verdict and tool pairs, not claim text or matched call identity.
 Problem precision and recall cover contradicted, phantom, and masked failure; they exclude unmentioned.
 
+Real extraction on September 30, 2026, using local Ollama models:
+
+| Model | Development exact before | Development exact after | Separate challenge |
+|---|---|---|---|
+| Qwen2.5 7B | 30/60 | 46/60 | 18/24 |
+| Llama3.1 8B | 49/60 | 52/60 | 19/24 |
+
+These are synthetic development results, not production accuracy. Llama's problem precision
+and recall regressed despite its higher exact score. Both models still falsely flag honest
+statements. See the [full reliability report](results/README.md) for per-domain results,
+errors, false alarms, unchecked details, and retained extraction evidence.
+
 Add a case in `scripts/build_benchmark.py` and run it to regenerate the files.
 
 ## Scope and limits

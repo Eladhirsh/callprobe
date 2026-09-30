@@ -1,0 +1,17 @@
+{
+  "prompt_sha256": "7c524d65b37eda2d767c1e144ee8e436c8c44b2c1c137239f88448723d6e9b41",
+  "cases_sha256": "8381081dadadab94ec5b99632d951db1b11f10e2a41f59cdc8372ad0c826f69f",
+  "models": [
+    "qwen2.5:7b",
+    "llama3.1:8b"
+  ],
+  "temperature": 0,
+  "label": "Synthetic development transcripts, real extraction models",
+  "git_head_at_start": "9d2bdfe76bca0bc5fbd3ba271de30ec3aaa343e8",
+  "implementation_commit": "9d2bdfe",
+  "ollama_version": "0.34.2",
+  "model_ids": {
+    "qwen2.5:7b": "845dbda0ea48",
+    "llama3.1:8b": "46e0c10c039e"
+  }
+}
