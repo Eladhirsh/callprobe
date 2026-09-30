@@ -156,3 +156,18 @@ def test_legacy_run_json_without_selected_task_ids_field_still_loads():
     run = RunModel.model_validate_json(json.dumps(legacy))
     assert run.config.selected_task_ids is None
     assert summarize(run)["scope"]["targeted"] is False
+
+
+def test_leaderboard_labels_actual_maximum_padding_without_falling_back():
+    runs = [
+        Run(config=_config(pads=[0]), started_at="now", results=[_result()]),
+        Run(config=_config(pads=[0, 24, 32]), started_at="now",
+            results=[_result(pad=24), _result(pad=32, success=False)]),
+        Run(config=_config(pads=[0, 8]), started_at="now",
+            results=[_result(), _result(pad=8, success=False, error="timeout")]),
+    ]
+    text = render_markdown(runs)
+    assert "success @ +24 tools" not in text
+    assert "100.0% (+0 tools)" in text
+    assert "0.0% (+32 tools)" in text
+    assert "unscored (+8 tools)" in text

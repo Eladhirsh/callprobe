@@ -194,13 +194,14 @@ def render_markdown(runs: list[Run]) -> str:
             lines.append("")
     header = (
         "| model | success | 95% CI | type-lenient | selection | schema | args | "
-        "abstain | success @ +24 tools | tokens per success |\n"
+        "abstain | success @ max padding | tokens per success |\n"
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
     )
     rows = []
     for run in runs:
         s = summarize(run)
-        padded = s["by_pad"].get(24) or s["by_pad"].get(max(s["by_pad"], default=0))
+        max_pad = max(run.config.pads, default=0)
+        padded = s["by_pad"].get(max_pad)
         tps = s["cost"]["tokens_per_success"]
         model_label = s["model"]
         if s["scope"]["targeted"]:
@@ -219,7 +220,8 @@ def render_markdown(runs: list[Run]) -> str:
                 selection=_pct(s["overall"]["selection"]).strip(),
                 schema=_pct(s["overall"]["schema"]).strip(),
                 args=_pct(s["overall"]["args"]).strip(),
-                padded=_pct(padded["success"]).strip() if padded else "-",
+                padded=(f"{_pct(padded['success']).strip()} (+{max_pad} tools)"
+                        if padded else f"unscored (+{max_pad} tools)"),
                 tps=f"{tps:.0f}" if tps != float("inf") else "-",
             )
         )
