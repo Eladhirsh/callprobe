@@ -19,6 +19,15 @@ from typing import Any, Protocol
 from .schema import Claim, Trace
 
 
+class ExtractionError(ValueError):
+    """A trace was not completely extracted. No clean verdict may be inferred."""
+
+    def __init__(self, message_index: int, reason: str):
+        self.message_index = message_index
+        self.reason = reason
+        super().__init__(f"Incomplete extraction at message {message_index}: {reason}")
+
+
 class Extractor(Protocol):
     def extract(self, trace: Trace) -> list[Claim]: ...
 
@@ -317,8 +326,17 @@ class LLMExtractor:
             if self.json_mode:
                 body["response_format"] = {"type": "json_object"}
             for attempt in range(2):
-                resp = self.transport(f"{self.base_url}/chat/completions", headers, body)
-                content = resp["choices"][0]["message"]["content"]
+                try:
+                    resp = self.transport(f"{self.base_url}/chat/completions", headers, body)
+                    choice = resp["choices"][0]
+                    if choice.get("finish_reason") not in (None, "stop"):
+                        raise ExtractionError(message.index, "unfinished_response")
+                    content = choice["message"]["content"]
+                except ExtractionError:
+                    raise
+                except (OSError, ValueError, KeyError, TypeError, IndexError):
+                    # Provider text may contain credentials or private prompts.
+                    raise ExtractionError(message.index, "provider_error") from None
                 try:
                     if not isinstance(content, str):
                         raise ValueError("Extractor returned no text content")
@@ -327,7 +345,7 @@ class LLMExtractor:
                     )
                 except ValueError:
                     if attempt:
-                        raise
+                        raise ExtractionError(message.index, "invalid_claims") from None
                     body["messages"].append({"role": "assistant", "content": content or ""})
                     body["messages"].append(
                         {

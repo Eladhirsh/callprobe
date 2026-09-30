@@ -1,0 +1,84 @@
+import json
+
+import pytest
+
+from didyoureally.cli import main
+from didyoureally.extract import ExtractionError, LLMExtractor
+from didyoureally.schema import Trace
+
+
+def trace():
+    return Trace.from_dict(
+        {"id": "incomplete", "events": [{"type": "message", "role": "assistant", "content": "Sent!"}]}
+    )
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        {},
+        {"choices": []},
+        {"choices": [{"message": {"content": '{"claims": []}'}, "finish_reason": "length"}]},
+    ],
+)
+def test_bad_or_truncated_provider_response_never_becomes_clean(response):
+    with pytest.raises(ExtractionError):
+        LLMExtractor(transport=lambda *args: response).extract(trace())
+
+
+def test_provider_exception_is_sanitized():
+    def transport(*args):
+        raise OSError("Authorization: secret-token")
+
+    with pytest.raises(ExtractionError) as exc:
+        LLMExtractor(transport=transport).extract(trace())
+    assert "secret" not in str(exc.value)
+    assert exc.value.reason == "provider_error"
+
+
+def test_failed_second_message_does_not_return_partial_claims():
+    t = trace()
+    from didyoureally.schema import Message
+
+    t.messages.append(Message("assistant", "Done!", 1))
+    calls = 0
+
+    def transport(*args):
+        nonlocal calls
+        calls += 1
+        return {"choices": [{"message": {"content": '{"claims": []}' if calls == 1 else "{}"}}]}
+
+    with pytest.raises(ExtractionError) as exc:
+        LLMExtractor(transport=transport).extract(t)
+    assert exc.value.message_index == 1
+
+
+def test_batch_continues_but_incomplete_exit_takes_precedence(tmp_path, monkeypatch, capsys):
+    bad = tmp_path / "bad.json"
+    good = tmp_path / "good.json"
+    bad.write_text(json.dumps(trace().to_dict()))
+    good.write_text(json.dumps({"id": "good", "events": [], "claims": []}))
+
+    def fail(self, t):
+        raise ExtractionError(0, "invalid_claims")
+
+    monkeypatch.setattr(LLMExtractor, "extract", fail)
+    assert main(["check", str(bad), str(good), "--format", "json", "--fail-on", ""]) == 3
+    output = capsys.readouterr().out
+    decoder = json.JSONDecoder()
+    first, end = decoder.raw_decode(output)
+    second = json.loads(output[end:])
+    assert first["status"] == "incomplete" and first["summary"] is None
+    assert second["status"] == "complete"
+
+
+def test_invalid_input_is_distinct_from_incomplete_extraction(tmp_path, capsys):
+    path = tmp_path / "bad.json"
+    path.write_text("{")
+    assert main(["check", str(path), "--format", "json"]) == 2
+    assert json.loads(capsys.readouterr().out)["status"] == "invalid_input"
+
+
+def test_empty_benchmark_is_not_a_clean_check(tmp_path, capsys):
+    assert main(["bench", "--cases", str(tmp_path)]) == 2
+    assert "No benchmark cases" in capsys.readouterr().err

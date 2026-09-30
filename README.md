@@ -248,3 +248,16 @@ An extracted `actions` array produces separate claims sharing the source message
 A recorded call can back at most one action within that group. A later summary can refer to the
 same calls again. Explicit tool schemas distinguish a batch argument from separate scalar actions.
 Retries remain eligible evidence, and an extra successful duplicate can still be unmentioned.
+
+### CI completion status
+
+`dyr check` returns exit code 0 for a completed check without selected findings, 1 for selected
+findings, 2 for invalid input, and 3 for incomplete LLM extraction. Code 3 takes precedence in a
+batch and cannot be disabled with `--fail-on`. All input traces are attempted.
+
+JSON reports include `status`: `complete`, `invalid_input`, or `incomplete`. An incomplete report
+has `summary: null`, an extraction error category, and the affected message index. It does not
+report zero problems. Provider error bodies are not printed. A completed check can still have
+`unchecked` details or extraction omissions; completion does not guarantee semantic accuracy.
+
+Treat any nonzero exit code as a CI failure, while routing code 3 for retry or reviewed claims.

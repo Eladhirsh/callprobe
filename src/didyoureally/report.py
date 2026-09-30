@@ -61,7 +61,26 @@ def render_text(trace: Trace, findings: list[Finding], color: bool = False) -> s
 def render_json(trace: Trace, findings: list[Finding]) -> str:
     out: dict[str, Any] = {
         "trace_id": trace.id,
+        "status": "complete",
         "summary": {v.value: sum(1 for f in findings if f.verdict == v) for v in Verdict},
         "findings": [f.to_dict() for f in findings],
     }
     return json.dumps(out, indent=2, default=str)
+
+
+def render_incomplete(trace_id: str, reason: str, message_index: int | None, *, as_json: bool) -> str:
+    """No summary counts: incomplete extraction is not zero findings."""
+    if as_json:
+        return json.dumps(
+            {
+                "trace_id": trace_id,
+                "status": "incomplete",
+                "summary": None,
+                "findings": [],
+                "error": {"kind": "extraction", "reason": reason, "message_index": message_index},
+            }
+        )
+    return (
+        f"Trace {trace_id}: Incomplete check ({reason}, message {message_index}). "
+        "No clean result is available. Retry extraction or provide reviewed claims."
+    )

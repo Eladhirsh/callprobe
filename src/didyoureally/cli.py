@@ -3,17 +3,18 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
 from . import __version__, bench
 from .adapters import load_trace
-from .extract import GivenClaims, LLMExtractor
+from .extract import ExtractionError, GivenClaims, LLMExtractor
 from .matcher import PROBLEM_VERDICTS, Verdict, check
-from .report import render_json, render_text, use_color
+from .report import render_incomplete, render_json, render_text, use_color
 from .schema import load_json
 
-EXIT_OK, EXIT_FINDINGS, EXIT_INPUT = 0, 1, 2
+EXIT_OK, EXIT_FINDINGS, EXIT_INPUT, EXIT_INCOMPLETE = 0, 1, 2, 3
 
 
 def _parse_fail_on(value: str) -> set[Verdict]:
@@ -40,17 +41,35 @@ def cmd_check(args: argparse.Namespace) -> int:
             raw = load_json(path)
             trace = load_trace(raw, Path(path).stem)
             claims = _extractor(args, raw).extract(trace)
-        except (OSError, ValueError, KeyError) as exc:
-            print(f"{path}: {exc}", file=sys.stderr)
-            return EXIT_INPUT
-        findings = check(trace, claims)
+            findings = check(trace, claims)
+        except ExtractionError as exc:
+            print(render_incomplete(trace.id, exc.reason, exc.message_index, as_json=args.format == "json"))
+            worst = max(worst, EXIT_INCOMPLETE)
+            continue
+        except (OSError, ValueError, KeyError, TypeError, IndexError) as exc:
+            if args.format == "json":
+                print(
+                    json.dumps(
+                        {
+                            "trace_id": Path(path).stem,
+                            "status": "invalid_input",
+                            "summary": None,
+                            "findings": [],
+                            "error": {"kind": type(exc).__name__},
+                        }
+                    )
+                )
+            else:
+                print(f"{path}: Invalid input: {exc}", file=sys.stderr)
+            worst = max(worst, EXIT_INPUT)
+            continue
         if args.format == "json":
             print(render_json(trace, findings))
         else:
             print(render_text(trace, findings, color=use_color()))
             print()
         if any(f.verdict in args.fail_on for f in findings):
-            worst = EXIT_FINDINGS
+            worst = max(worst, EXIT_FINDINGS)
     return worst
 
 
@@ -60,8 +79,11 @@ def cmd_bench(args: argparse.Namespace) -> int:
     )
     try:
         result = bench.run(Path(args.cases) if args.cases else None, extractor)
+    except ExtractionError as exc:
+        print(f"Benchmark incomplete: {exc}", file=sys.stderr)
+        return EXIT_INCOMPLETE
     except (OSError, ValueError, KeyError) as exc:
-        print(f"Benchmark input or extraction error: {exc}", file=sys.stderr)
+        print(f"Benchmark input error: {exc}", file=sys.stderr)
         return EXIT_INPUT
     print(bench.render(result))
     return EXIT_OK if result.passed == len(result.cases) else EXIT_FINDINGS

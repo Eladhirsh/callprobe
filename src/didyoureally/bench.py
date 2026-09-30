@@ -69,6 +69,8 @@ def run(cases_dir: Path | None = None, extractor: Extractor | None = None) -> Be
     folder = cases_dir or default_cases_dir()
     result = BenchResult()
     cases = [load_json(path) for path in sorted(folder.glob("*.json"))]
+    if not cases:
+        raise ValueError("No benchmark cases found")
     ids = [case.get("id") for case in cases]
     if len(ids) != len(set(ids)):
         raise ValueError("Duplicate benchmark case IDs; refusing to inflate the evaluation")
