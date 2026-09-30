@@ -171,3 +171,61 @@ def test_leaderboard_labels_actual_maximum_padding_without_falling_back():
     assert "100.0% (+0 tools)" in text
     assert "0.0% (+32 tools)" in text
     assert "unscored (+8 tools)" in text
+
+
+def _row(text):
+    return next(l for l in text.splitlines() if l.startswith("| stub"))
+
+
+def _cells(text):
+    return [c.strip() for c in _row(text).strip("|").split("|")]
+
+
+def test_leaderboard_full_run_coverage_is_complete():
+    config = _config(task_ids=["t1", "t2"], pads=[0, 8], repeats=2)
+    results = [_result(task_id=t, pad=p, repeat=r)
+               for t in ("t1", "t2") for p in (0, 8) for r in (0, 1)]
+    cells = _cells(render_markdown([Run(config=config, started_at="now", results=results)]))
+    assert cells[-3:] == ["8/8/8", "0", "0"]
+
+
+def test_leaderboard_partial_run_is_flagged_and_metrics_unchanged():
+    config = _config(task_ids=["t1", "t2"], pads=[0, 8], repeats=1)
+    run = Run(config=config, started_at="now", results=[_result(), _result(task_id="t2")])
+    text = render_markdown([run])
+    assert "2/2/4 INCOMPLETE (2 missing)" in _row(text)
+    assert "100.0%" in _row(text)  # existing metric values preserved
+    assert "request errors are excluded" in text and "truncated" in text
+
+
+def test_leaderboard_counts_errors_and_truncations_without_hiding_rows():
+    config = _config(task_ids=["t1", "t2", "t3"])
+    results = [
+        _result(),
+        _result(task_id="t2", success=False, truncated=True),
+        _result(task_id="t3", success=False, error="timeout"),
+    ]
+    run = Run(config=config, started_at="now", results=results)
+    cells = _cells(render_markdown([run]))
+    assert cells[-3:] == ["2/3/3", "1", "1"]
+    assert cells[1] == "50.0%"  # truncation is a failure; error is not scored
+    assert len(run.results) == 3
+
+
+def test_leaderboard_duplicate_and_unexpected_rows_not_complete():
+    config = _config(task_ids=["t1", "t2"])
+    results = [_result(), _result(), _result(task_id="zz")]
+    cell = _cells(render_markdown([Run(config=config, started_at="now", results=results)]))[-3]
+    assert cell == "3/3/2 INCOMPLETE (1 missing, 1 duplicate, 1 unexpected)"
+
+
+def test_leaderboard_legacy_run_without_task_ids_has_unknown_planned():
+    run = Run(config=_config(), started_at="now", results=[_result()])
+    cell = _cells(render_markdown([run]))[-3]
+    assert cell == "1/1/? (planned unknown)"
+
+
+def test_coverage_does_not_materialize_large_planned_sweeps():
+    config = _config(task_ids=["t1"], repeats=10**12)
+    text = render_markdown([Run(config=config, started_at="now", results=[_result()])])
+    assert "1/1/1000000000000 INCOMPLETE (999999999999 missing)" in text

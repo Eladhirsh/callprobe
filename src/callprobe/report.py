@@ -183,6 +183,38 @@ def render_text(run: Run) -> str:
     return "\n".join(lines)
 
 
+def _coverage(run: Run) -> str:
+    """`scored/recorded/planned`, plus a flag unless coverage is exactly complete.
+
+    Identity is (task, pad, repeat). Planned comes only from the config (the
+    selected subset for a targeted run); it is never inferred from results.
+    """
+    scored = sum(1 for r in run.results if not r.error)
+    cfg = run.config
+    task_ids = cfg.selected_task_ids if cfg.selected_task_ids is not None else cfg.task_ids
+    if not task_ids:
+        return f"{scored}/{len(run.results)}/? (planned unknown)"
+    if not cfg.pads or cfg.repeats < 1 or any(p < 0 for p in cfg.pads):
+        return f"{scored}/{len(run.results)}/? (invalid planned coverage)"
+    tasks, pads = set(task_ids), set(cfg.pads)
+    planned = len(tasks) * len(pads) * cfg.repeats
+    seen = [(r.task_id, r.pad, r.repeat) for r in run.results]
+    distinct = set(seen)
+    # Count valid identities rather than allocating the planned Cartesian
+    # product: saved configurations can describe arbitrarily large sweeps.
+    valid = {key for key in distinct if key[0] in tasks and key[1] in pads
+             and 0 <= key[2] < cfg.repeats}
+    flags = []
+    if planned - len(valid):
+        flags.append(f"{planned - len(valid)} missing")
+    if len(seen) - len(distinct):
+        flags.append(f"{len(seen) - len(distinct)} duplicate")
+    if distinct - valid:
+        flags.append(f"{len(distinct - valid)} unexpected")
+    text = f"{scored}/{len(run.results)}/{planned}"
+    return text + (f" INCOMPLETE ({', '.join(flags)})" if flags else "")
+
+
 def render_markdown(runs: list[Run]) -> str:
     """Leaderboard table across models. This is the artifact people link to."""
     lines = []
@@ -194,8 +226,9 @@ def render_markdown(runs: list[Run]) -> str:
             lines.append("")
     header = (
         "| model | success | 95% CI | type-lenient | selection | schema | args | "
-        "abstain | success @ max padding | tokens per success |\n"
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+        "abstain | success @ max padding | tokens per success | "
+        "scored/recorded/planned | request errors | truncated |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
     )
     rows = []
     for run in runs:
@@ -211,7 +244,10 @@ def render_markdown(runs: list[Run]) -> str:
             )
         rows.append(
             "| {model} | {success} | {ci} | {lenient} | {selection} | {schema} | {args} | "
-            "{abstain} | {padded} | {tps} |".format(
+            "{abstain} | {padded} | {tps} | {coverage} | {errors} | {truncated} |".format(
+                coverage=_coverage(run),
+                errors=s["errors"],
+                truncated=s["truncated"],
                 model=model_label,
                 lenient=_pct(s["lenient"]["success"]).strip(),
                 abstain=_pct((s["by_category"].get("abstain") or {}).get("success", 0.0)).strip(),
@@ -225,7 +261,13 @@ def render_markdown(runs: list[Run]) -> str:
                 tps=f"{tps:.0f}" if tps != float("inf") else "-",
             )
         )
-    return "\n".join([*lines, header, *rows])
+    note = (
+        "Note: request errors are excluded from scored success rates; truncated "
+        "responses stay in them as failures. Rates are only comparable when "
+        "scored/recorded/planned is complete; INCOMPLETE or `?` means partial or "
+        "unverifiable coverage."
+    )
+    return "\n".join([*lines, header, *rows, "", note])
 
 
 def failure_digest(run: Run, limit: int = 15) -> str:
