@@ -811,6 +811,19 @@ pip install -e ".[dev]"
 pytest
 ```
 
+Exercise the public CLI end to end with a synthetic mail workflow:
+
+```bash
+python scripts/selftest_agent.py --out /tmp/callprobe-selftest
+```
+
+This checks imports, validation, 162 scripted observations per run, regression
+reports, and targeted reruns without a model or credentials. It writes commands,
+outputs, and assertions to `report.md` and `report.json`. See the
+[mail sandbox guide](examples/mail-sandbox/README.md) for testing an installed
+wheel or adding a separate live-model run. Scripted scores verify the test
+pipeline; they are not model benchmark results.
+
 ## License
 
 MIT

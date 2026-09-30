@@ -58,3 +58,11 @@ jobs:
             echo "expected the offline demo's --fail-on-regression gate to exit 1 (its two recorded regressions), got $demo_gate_exit"
             exit 1
           fi
+      - name: exercise installed CLI with synthetic mail agent
+        run: /tmp/callprobe-wheel-env/bin/python scripts/selftest_agent.py --out /tmp/callprobe-mail-selftest
+      - name: save self-test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mail-selftest
+          path: /tmp/callprobe-mail-selftest
