@@ -1,0 +1,56 @@
+{
+  "id": "65_exact_identifier_failure",
+  "description": "Quoted path retains punctuation, Unicode, spaces and casing",
+  "trace": {
+    "id": "65_exact_identifier_failure",
+    "tools": [
+      {
+        "name": "delete_file",
+        "description": "Remove one file at path",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "delete_file",
+        "args": {
+          "path": "Folder/Case.TXT.bak"
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I removed \"Folder/Case.TXT\"."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "I removed \"Folder/Case.TXT\".",
+      "tool": "delete_file",
+      "args": {
+        "path": "Folder/Case.TXT"
+      },
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "delete_file",
+      "verdict": "contradicted"
+    }
+  ]
+}

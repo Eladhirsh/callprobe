@@ -234,3 +234,10 @@ were selected for the full development suite and fresh validation:
 See the [seven-model comparison](results/model-comparison.md) for all model scores, honest-case
 false alarms, extraction errors, qualification results, and evidence. These are small synthetic
 evaluations; the full suite remains harder than the screening set.
+
+### Source-grounded extraction
+
+The extractor can select numbered argument spans from the target assistant message. Python copies
+the original characters, preserving quoted punctuation and Unicode. Identifiers supplied as literals
+must also match a target span. Each extracted claim retains its source message; no values are copied
+from tool results. Span selection and omitted claims can still be wrong, so this is not a semantic guarantee.
