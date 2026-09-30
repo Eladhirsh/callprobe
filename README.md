@@ -7,6 +7,14 @@ against an OpenAI-compatible model endpoint. Bring your own tools or start
 with a bundled example. It evaluates model responses; it does not execute
 the API operations described by your tools.
 
+## Release candidate: 0.9.0rc1
+
+This branch prepares **0.9.0rc1**; it is not published yet. Test from a checkout
+with `uv tool install . --force`. After publication, install the candidate
+explicitly with `uv tool install callprobe==0.9.0rc1 --force` (or
+`python -m pip install callprobe==0.9.0rc1`). `@latest` continues to select the
+stable release. See [upgrade notes](CHANGELOG.md#090rc1) before reusing baselines.
+
 ## Try it
 
 Python 3.10+ is required. Install or replace an older pinned installation:
@@ -32,10 +40,10 @@ callprobe explain callprobe-demo/baseline.json --suite callprobe-demo
 ```
 
 Use `--endpoint` for another OpenAI-compatible server and `--model` for a
-model it serves. In a development checkout (unreleased), add `--dry-run` to
+model it serves. In 0.9.0rc1, add `--dry-run` to
 any `callprobe run` invocation to preview coverage, the planned request count,
 and the completion-token cap with no endpoint access; see
-[Preview a run before spending tokens](#preview-a-run-before-spending-tokens-unreleased).
+[Preview a run before spending tokens](#preview-a-run-before-spending-tokens-090rc1).
 Failed cases are useful findings, not installation errors. To retry only
 tasks that failed:
 
@@ -49,7 +57,7 @@ Want to help test? [Report your first-run experience](https://github.com/Eladhir
 which endpoint/model you used, whether the walkthrough worked, and one thing
 that confused you. You can also import your own [OpenAPI file](#bring-your-own-tools).
 
-### Try the workflow offline (unreleased)
+### Try the workflow offline (0.9.0rc1)
 
 From a development checkout ([setup](CONTRIBUTING.md)), try recorded results
 without a model or endpoint:
@@ -176,7 +184,7 @@ responses also fail, including responses with no calls: reaching the token
 limit is not evidence of deliberate abstention. Selection, schema, and
 argument scores still diagnose the selected call independently.
 
-**Unreleased development version:** new run files record `scoring_version: 3`.
+**Starting with 0.9.0rc1:** new run files record `scoring_version: 3`.
 Published Callprobe 0.8.0 uses scoring version 2. Version 3 fixes lenient
 integer coercion: `"4225.9"` and `"4225.00000000000001"` stay incorrect
 instead of being truncated or rounded to `4225`. Exact integral strings
@@ -312,7 +320,7 @@ Existing suite files are protected unless you pass `--force`.
 Generated tasks are commented drafts; they do not invent correct answers from
 the schema. A suite with no active tasks cannot be validated as ready to run.
 
-In the development version (unreleased), validation checks every tool and
+In 0.9.0rc1, validation checks every tool and
 distractor's JSON Schema, including unused tools. Duplicate names within a
 bundle or the distractor pool are rejected. Expected-argument checks resolve
 local references offline; external or unresolvable references produce a
@@ -444,7 +452,7 @@ server sends one.
 `--max-tokens` defaults to 2048. Reasoning models can need more (see the
 truncation section above).
 
-In the development version, `run` and the GitHub Action default to `--pad 0`:
+Starting with 0.9.0rc1, `run` and the GitHub Action default to `--pad 0`:
 a baseline without distractors. Additional counts are explicit, for example
 `--pad 0,8` on the core suite or `--pad 0,2,4` on the mail example. The requested
 count must fit every selected task after exclusions and tool-name collisions;
@@ -455,7 +463,7 @@ Earlier versions defaulted to `0,8,16` and could silently cap padding at the
 available pool size. Collect a new baseline with valid, explicit counts when
 migrating such experiments; do not relabel old observations.
 
-For a controlled multi-model sweep, use already-served models (unreleased):
+For a controlled multi-model sweep, use already-served models (0.9.0rc1):
 
 ```bash
 callprobe sweep --models qwen2.5:7b llama3.1:8b \
@@ -544,10 +552,10 @@ Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.
 It is not a MailOps integration.
 
-### Preview a run before spending tokens (unreleased)
+### Preview a run before spending tokens (0.9.0rc1)
 
 `--dry-run` merges `--config` and CLI flags, resolves `--suite`, and applies
-`--task`/`--failed-from` selection, then prints the resulting coverage and an
+`--task`/`--failed-from` selection, then prints the resulting coverage and a
 planned request count and completion-token cap &mdash; it never probes the endpoint, never
 calls the model, and never writes `--out`:
 
@@ -561,8 +569,8 @@ repeats, total planned requests (`tasks * pads * repeats`), temperature,
 `max_tokens`, concurrency, and `max_completion_tokens`, the request count
 times `max_tokens` &mdash; an upper bound a model could reach if every
 response used its full budget. This excludes prompt tokens and retries; it
-is not a billing estimate. Actual distractors can be fewer than requested
-when the available pool or task exclusions limit them. `--format json` emits
+is not a billing estimate. Requested distractor counts must fit every selected task; impossible counts
+are rejected before endpoint access. `--format json` emits
 the same plan as JSON with `"dry_run": true`. It never prints API keys,
 endpoint credentials, the endpoint URL, prompts, or tool arguments, and it
 reports no benchmark percentages, since no model was called. `--failed-from`
@@ -631,7 +639,7 @@ callprobe compare results/before.json results/after.json
 It warns if the two runs' suite hashes differ, since part of the delta
 could then be the suite changing rather than the model.
 
-To save a readable report for review (unreleased):
+To save a readable report for review (0.9.0rc1):
 
 ```bash
 callprobe compare results/before.json results/after.json --format markdown > comparison.md
@@ -731,7 +739,7 @@ Baseline inputs require v0.5.0 or newer. Keep the baseline separate from the act
 `callprobe-results.json` output. The action also writes
 `callprobe-comparison.json` and includes it in the job summary.
 
-On the development branch (unreleased), the Action additionally writes
+In 0.9.0rc1, the Action additionally writes
 `callprobe-comparison.md` and shows that readable report in the job summary,
 with raw run output collapsed below its heading. Both comparison formats
 come from the same saved results and policy; rendering does not call the
