@@ -341,6 +341,12 @@ Unlike `--from-openapi`, `--example` writes a suite with its tasks already
 active; there is nothing to uncomment first. Available since 0.8.0; install
 with `uv tool install callprobe@latest`.
 
+The development version also includes `mail-sandbox`: 18 fictional mail cases
+covering search, retrieval, draft/send, missing identifiers, and literal text.
+Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
+cases and four distractors without downloading or copying repository files.
+It is not a MailOps integration.
+
 ### Write a suite directly
 
 A suite is three YAML files. Drop your real tool schemas into `tools.yaml`,
@@ -429,19 +435,20 @@ server sends one.
 `--max-tokens` defaults to 2048. Reasoning models can need more (see the
 truncation section above).
 
-For a controlled multi-model sweep from a checkout, use already-served models:
+For a controlled multi-model sweep, use already-served models (unreleased):
 
 ```bash
-python scripts/model_sweep.py --models qwen2.5:7b llama3.1:8b \
+callprobe sweep --models qwen2.5:7b llama3.1:8b \
   --out /tmp/callprobe-model-plan --dry-run
-python scripts/model_sweep.py --models qwen2.5:7b llama3.1:8b \
+callprobe sweep --models qwen2.5:7b llama3.1:8b \
   --out /tmp/callprobe-model-results
 ```
 
 The runner plans requests first, uses a fresh output directory, and saves a
 manifest, per-model evidence, and a leaderboard from that sweep alone.
 Use `--suite` for your own tools; see the [mail sweep guide](examples/mail-sandbox/README.md#sweep-several-local-models).
-It does not download models. The older `scripts/overnight.sh` is a legacy
+This command is available in the development checkout and next release; it is
+not included in PyPI 0.8.0. It does not download models. The older `scripts/overnight.sh` is a legacy
 convenience script that pulls models and combines files in `results/`.
 
 Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted
@@ -510,6 +517,12 @@ remain explicit CLI flags. Saved results record the effective experiment
 settings, and the existing resume and suite-matching checks still apply.
 
 Available since 0.8.0. Install with `uv tool install callprobe@latest`.
+
+The development version also includes `mail-sandbox`: 18 fictional mail cases
+covering search, retrieval, draft/send, missing identifiers, and literal text.
+Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
+cases and four distractors without downloading or copying repository files.
+It is not a MailOps integration.
 
 ### Preview a run before spending tokens (unreleased)
 
@@ -718,7 +731,13 @@ any reasoning trace stripped, when it produced no call at all.
 
 ## Explaining a saved run (since 0.7.0)
 
-Install or upgrade with `uv tool install callprobe@latest`. This also
+Install or upgrade with `uv tool install callprobe@latest`.
+
+The development version also includes `mail-sandbox`: 18 fictional mail cases
+covering search, retrieval, draft/send, missing identifiers, and literal text.
+Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
+cases and four distractors without downloading or copying repository files.
+It is not a MailOps integration. This also
 replaces an older version-pinned installation.
 
 `callprobe explain RESULTS.json --suite DIR` turns a results file back into

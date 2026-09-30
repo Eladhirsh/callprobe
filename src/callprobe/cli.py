@@ -34,6 +34,7 @@ from .report import failure_digest, render_markdown, render_text, summarize
 from .run_config import load_run_config
 from .runner import prepare_config, run_suite, validate_resume
 from .scoring import SCORING_VERSION
+from .sweep import add_arguments as add_sweep_arguments, run_sweep
 from .validate import validate_suite
 
 # Hardcoded fallbacks used only when neither a CLI flag nor --config supplies
@@ -736,6 +737,15 @@ def main(argv: list[str] | None = None) -> int:
         help="build the table even if runs come from different suite versions or content",
     )
     board.set_defaults(func=_leaderboard)
+
+    sweep_cmd = sub.add_parser(
+        "sweep",
+        help="run several models already served at one endpoint, sequentially; never downloads models",
+        description="Run CallProbe against several models already served at one endpoint, one at "
+                    "a time. Never downloads or pulls a model and never overwrites output.",
+    )
+    add_sweep_arguments(sweep_cmd)
+    sweep_cmd.set_defaults(func=run_sweep)
 
     args = parser.parse_args(argv)
     if args.command == "init" and args.from_openapi is None and (args.tag or args.skip_unsupported):

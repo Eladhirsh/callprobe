@@ -127,6 +127,11 @@ containing ` #` so issue numbers and similar text are not parsed as comments.
 
 ### Testing several models
 
+Use `callprobe sweep --models MODEL_A MODEL_B --out /tmp/model-plan --dry-run`
+to inspect the planned requests, then a new output directory for the real run.
+Add `--suite` for your application suite. The command is available in development
+builds and does not pull model weights.
+
 Start with a small, identical suite on every model before expanding coverage.
 For imported tools, include nested arguments, missing identifiers, abstention,
 conversation corrections, and literal text preservation. Keep the suite and

@@ -152,3 +152,24 @@ def test_relative_interpreter_is_resolved_before_changing_directory(tmp_path, mo
     relative = os.path.relpath(sys.executable)
     agent.main(["--out", str(tmp_path / "out"), "--python", relative])
     assert observed == [os.path.abspath(relative)]
+
+
+def test_public_sweep_exercises_two_models_through_the_real_cli(tmp_path):
+    from callprobe import cli
+
+    suite = tmp_path / "mail"
+    assert cli.main(["init", "--example", "mail-sandbox", "--out", str(suite)]) == 0
+    tasks = yaml.safe_load((suite / "tasks.yaml").read_text())["tasks"]
+    out = tmp_path / "sweep"
+    with agent.ScriptedServer(tasks) as server:
+        assert cli.main(["sweep", "--models", "synthetic-baseline", "synthetic-candidate",
+                         "--suite", str(suite), "--endpoint", server.endpoint,
+                         "--out", str(out)]) == 0
+        assert (server.accepted, server.rejected) == (36, 0)
+    manifest = json.loads((out / "manifest.json").read_text())
+    assert manifest["status"] == "complete"
+    assert manifest["total_planned_requests"] == 36
+    scores = [sum(r["success"] for r in json.loads((out / entry["result_file"]).read_text())["results"])
+              for entry in manifest["models"]]
+    assert scores == [18, 14]
+    assert "18/18/18" in (out / "leaderboard.md").read_text()

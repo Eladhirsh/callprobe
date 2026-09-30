@@ -1,18 +1,13 @@
 """model_sweep tests: subprocess is mocked, so no CLI, model, or network is touched."""
 
-import importlib.util
+import argparse
 import json
 import subprocess
-import sys
 from pathlib import Path
 
 import pytest
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "model_sweep.py"
-spec = importlib.util.spec_from_file_location("model_sweep", SCRIPT)
-sweep = importlib.util.module_from_spec(spec)
-sys.modules["model_sweep"] = sweep
-spec.loader.exec_module(sweep)
+from callprobe import cli, sweep
 
 
 class Fake:
@@ -151,3 +146,73 @@ def test_relative_python_not_symlink_resolved(tmp_path, monkeypatch):
     (tmp_path / "venv-python").symlink_to(real)
     monkeypatch.chdir(tmp_path)
     assert sweep.resolve_python("./venv-python") == str(tmp_path / "venv-python")
+
+
+def test_public_cli_dry_run(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    out = tmp_path / "new"
+    assert cli.main(["sweep", "--models", "a", "b", "--out", str(out), "--dry-run"]) == 0
+    assert json.loads((out / "manifest.json").read_text())["total_planned_requests"] == 10
+    assert len(fake.calls) == 2 and all("--dry-run" in c for c, _ in fake.calls)
+
+
+def test_public_cli_propagates_failure_status(tmp_path, monkeypatch):
+    Fake(monkeypatch, fail={("a", "run"): "exit"})
+    out = tmp_path / "new"
+    assert cli.main(["sweep", "--models", "a", "--out", str(out)]) == 1
+    assert json.loads((out / "manifest.json").read_text())["failed"] is True
+
+
+def test_public_cli_refuses_existing_out(tmp_path):
+    assert cli.main(["sweep", "--models", "a", "--out", str(tmp_path)]) == 2
+
+
+def test_public_cli_help_states_scope(capsys):
+    with pytest.raises(SystemExit) as exc:
+        cli.main(["sweep", "--help"])
+    assert exc.value.code == 0
+    text = " ".join(capsys.readouterr().out.split()).lower()
+    assert "one at a time" in text and "never downloads" in text and "already served" in text
+
+
+def test_public_cli_and_standalone_parse_identically(monkeypatch):
+    seen = {}
+
+    def capture(ns):
+        seen["ns"] = ns
+        return 0
+
+    monkeypatch.setattr(cli, "run_sweep", capture)
+    assert cli.main(["sweep", "--models", "a", "--out", "x"]) == 0
+    standalone = argparse.ArgumentParser()
+    sweep.add_arguments(standalone)
+    expected = vars(standalone.parse_args(["--models", "a", "--out", "x"]))
+    actual = {k: v for k, v in vars(seen["ns"]).items() if k not in ("command", "func")}
+    assert actual == expected
+    assert (expected["endpoint"], expected["pad"], expected["repeats"], expected["max_tokens"],
+            expected["timeout"], expected["dry_run"]) == (
+        sweep.DEFAULT_ENDPOINT, "0", 1, 4096, 1800.0, False)
+
+
+def test_script_entry_point_delegates_to_package():
+    import runpy
+    script = Path(__file__).resolve().parents[1] / "scripts" / "model_sweep.py"
+    assert runpy.run_path(str(script))["main"] is sweep.main
+
+
+def test_manifest_exposes_running_step_before_subprocess_finishes(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    observed = []
+
+    def inspect(command, **kwargs):
+        manifest = json.loads((Path(kwargs["cwd"]) / "manifest.json").read_text())
+        observed.append(manifest["status"])
+        if command[3] == "run":
+            assert any(step["status"] == "running" for model in manifest["models"]
+                       for step in model["steps"])
+        return fake(command, **kwargs)
+
+    monkeypatch.setattr(sweep.subprocess, "run", inspect)
+    code, _, manifest = run(tmp_path, models=("a",))
+    assert code == 0 and observed and set(observed) == {"running"}
+    assert manifest["status"] == "complete"

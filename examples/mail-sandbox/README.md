@@ -7,6 +7,26 @@ reproduce MailOps compatibility or any figure (for example a 92% pass rate) repo
 by anyone else.** We have neither that API nor its code. All addresses use
 `example.invalid`, and no real mail API is ever called.
 
+## Try the installed example
+
+In the development build / next release (not PyPI 0.8.0):
+
+```sh
+callprobe init --example mail-sandbox --out my-mail-suite
+callprobe validate --suite my-mail-suite
+callprobe sweep --suite my-mail-suite --models qwen2.5:7b llama3.1:8b \
+  --out /tmp/mail-model-plan --dry-run
+callprobe sweep --suite my-mail-suite --models qwen2.5:7b llama3.1:8b \
+  --out /tmp/mail-model-results
+```
+
+Use models already served by your endpoint. The first command writes the tools,
+18 active tasks, and four distractors. The last command makes 36 model requests
+with the default pad 0 and one repeat; it never executes mail operations.
+
+The missing-ID prompt now explicitly forbids searching. Earlier saved smoke
+results use the previous suite hash and must not be combined with this revision.
+
 ## Files
 
 | File | Purpose |
@@ -72,18 +92,18 @@ chat endpoint is called; the mail operations are never executed.
 
 ## Sweep several local models
 
-`scripts/model_sweep.py` runs one suite against several models that are already served at
+`callprobe sweep` (development build / next release) runs one suite against several models that are already served at
 an OpenAI-compatible endpoint, one at a time, through the public CLI only. It never
 downloads or pulls a model. The self-test above leaves a ready suite in
 `/tmp/callprobe-selftest/suite`.
 
 ```sh
 # Plan first: dry runs for every model, prints total planned requests, sends nothing.
-.venv/bin/python scripts/model_sweep.py --models model-a model-b \
+callprobe sweep --models model-a model-b \
   --suite /tmp/callprobe-selftest/suite --out /tmp/sweep --dry-run
 
 # Then run for real (--out must not exist, so use a new directory).
-.venv/bin/python scripts/model_sweep.py --models model-a model-b \
+callprobe sweep --models model-a model-b \
   --suite /tmp/callprobe-selftest/suite --out /tmp/sweep-real
 ```
 
