@@ -55,7 +55,11 @@ First distinguish assertions from offers, plans, questions, failures and denials
 Read-only lookups are outside scope. A message containing only a lookup returns {"claims": []}.
 You may omit noncompleted items and return {"claims": []} for pure offers or failures.
 
-Separate each completed action. Split explicitly named objects when the tool takes ONE object:
+For multiple completed actions using the SAME tool, return ONE group with "actions", an array
+of argument objects, instead of "args". Every object means one distinct call. Never put parallel
+lists in different fields or duplicate JSON keys. Use the same source evidence for the whole group.
+Example: {"completed": true, "tool": "delete_file", "actions": [{"path": {"span": 1}}, {"path": {"span": 3}}]}.
+For a single action use "args". Split explicitly named objects when the tool takes ONE object:
 "Removed one.txt and two.txt" with delete_file(path: string) -> two claims, one per path.
 A booking's attendees parameter is an array, so one booking can mention multiple attendees.
 Use context to identify the tool for "I took care of it", with empty args if no details are stated.
@@ -171,7 +175,19 @@ def parse_claims(
     if target_index is not None and target_index not in valid_idx:
         raise ValueError("Invalid extraction target")
     claims: list[Claim] = []
-    for item in payload["claims"]:
+    expanded_items = []
+    for position, item in enumerate(payload["claims"]):
+        if isinstance(item, dict) and "actions" in item:
+            actions = item["actions"]
+            if "args" in item or not isinstance(actions, list) or not actions or len(actions) > 100:
+                raise ValueError("Action groups need 1 to 100 argument objects and no shared args")
+            for arguments in actions:
+                if not isinstance(arguments, dict):
+                    raise ValueError("Each grouped action needs an argument object")
+                expanded_items.append(({**item, "args": arguments}, f"{target_index}:{position}"))
+        else:
+            expanded_items.append((item, None))
+    for item, group_id in expanded_items:
         if isinstance(item, dict) and "text" not in item and target_index is not None and require_completed:
             item = {**item, "text": next(m.content for m in trace.messages if m.index == target_index)}
         if not isinstance(item, dict) or not isinstance(item.get("text"), str) or not item["text"].strip():
@@ -209,8 +225,20 @@ def parse_claims(
         if require_completed and any(value is None for value in arguments.values()):
             raise ValueError("Do not use null as an unspecified argument placeholder")
         variants = _argument_variants(arguments, trace.tools[tool].parameters if tool else {})
+        if group_id is not None and len(variants) != 1:
+            raise ValueError("Each grouped action must describe one object, not another scalar list")
+        if group_id is None and len(variants) > 1:
+            group_id = f"{idx}:expanded:{len(claims)}"
         for args in variants:
-            claims.append(Claim(text=item["text"], tool=tool, args=args, message_index=idx))
+            claims.append(
+                Claim(text=item["text"], tool=tool, args=args, message_index=idx, group_id=group_id)
+            )
+    # Models may choose separate items instead of the explicit actions array.
+    # Claims in one message about the same tool still assert distinct actions.
+    for claim in claims:
+        peers = [c for c in claims if c.message_index == claim.message_index and c.tool == claim.tool]
+        if len(peers) > 1:
+            claim.group_id = f"{claim.message_index}:{claim.tool}"
     return claims
 
 
@@ -226,7 +254,11 @@ def _argument_variants(args: dict[str, Any], parameters: dict[str, Any]) -> list
         spec = properties.get(key, {})
         allowed = spec.get("type", [])
         allowed = [allowed] if isinstance(allowed, str) else allowed
-        if isinstance(value, list) and allowed and "array" not in allowed:
+        if (
+            isinstance(value, list)
+            and allowed
+            and set(allowed) <= {"string", "number", "integer", "boolean", "null"}
+        ):
             if not value or not all(isinstance(v, (str, int, float, bool)) for v in value):
                 raise ValueError("Scalar argument lists must contain explicit scalar values")
             expanded.append((key, value))
@@ -303,7 +335,7 @@ class LLMExtractor:
                             "content": "Your response did not satisfy the extraction format. Return a valid JSON object "
                             "with a claims array. Omit text; the application attaches the TARGET. Every item needs "
                             "completed (boolean grammatical classification), tool (an exact available name or null), "
-                            "and args (an object with no null placeholders). "
+                            "and args (an object with no null placeholders) or actions (separate argument objects). "
                             "Use an empty claims array when there are no completed actions. "
                             "Do not extract claims from other messages.",
                         }

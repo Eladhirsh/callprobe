@@ -136,6 +136,7 @@ class Claim:
     tool: str | None
     args: dict[str, Any] = field(default_factory=dict)
     message_index: int | None = None
+    group_id: str | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Claim:
@@ -144,6 +145,7 @@ class Claim:
             tool=data.get("tool"),
             args=dict(data.get("args", {})),
             message_index=data.get("message_index"),
+            group_id=data.get("group_id"),
         )
 
 

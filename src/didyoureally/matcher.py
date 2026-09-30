@@ -52,6 +52,7 @@ class Finding:
                 "tool": self.claim.tool,
                 "args": self.claim.args,
                 "message_index": self.claim.message_index,
+                "group_id": self.claim.group_id,
             },
             "call": None
             if self.call is None
@@ -205,6 +206,7 @@ def _candidates(trace: Trace, claim: Claim) -> list[ToolCall]:
 def check(trace: Trace, claims: list[Claim]) -> list[Finding]:
     findings: list[Finding] = []
     linked: set[str] = set()
+    grouped_calls: dict[tuple[int | None, str], set[str]] = {}
 
     for claim in claims:
         if claim.tool is None or claim.tool not in trace.tools:
@@ -218,12 +220,18 @@ def check(trace: Trace, claims: list[Claim]) -> list[Finding]:
             continue
 
         cands = _candidates(trace, claim)
+        group_key = (claim.message_index, claim.group_id) if claim.group_id is not None else None
+        if group_key is not None:
+            used = grouped_calls.setdefault(group_key, set())
+            cands = [call for call in cands if call.id not in used]
         if not cands:
             findings.append(
                 Finding(
                     Verdict.PHANTOM,
                     claim=claim,
-                    explanation=f"The agent never called {claim.tool} before saying this.",
+                    explanation=f"No unused call to {claim.tool} backs this grouped action before the message."
+                    if group_key is not None
+                    else f"The agent never called {claim.tool} before saying this.",
                 )
             )
             continue
@@ -238,6 +246,8 @@ def check(trace: Trace, claims: list[Claim]) -> list[Finding]:
         scored.sort(key=lambda s: s[0])
         _, call, mm, unchecked = scored[0]
         linked.add(call.id)
+        if group_key is not None:
+            grouped_calls[group_key].add(call.id)
 
         if mm:
             parts = ", ".join(f"{m.key}: said {m.claimed!r}, was {m.actual!r}" for m in mm)

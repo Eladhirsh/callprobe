@@ -241,3 +241,10 @@ The extractor can select numbered argument spans from the target assistant messa
 the original characters, preserving quoted punctuation and Unicode. Identifiers supplied as literals
 must also match a target span. Each extracted claim retains its source message; no values are copied
 from tool results. Span selection and omitted claims can still be wrong, so this is not a semantic guarantee.
+
+### Grouped actions
+
+An extracted `actions` array produces separate claims sharing the source message and a `group_id`.
+A recorded call can back at most one action within that group. A later summary can refer to the
+same calls again. Explicit tool schemas distinguish a batch argument from separate scalar actions.
+Retries remain eligible evidence, and an extra successful duplicate can still be unmentioned.
