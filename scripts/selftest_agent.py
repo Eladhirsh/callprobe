@@ -199,7 +199,13 @@ def run_cli(case, directory, endpoint, model, *, llm, live=False, json_mode=Fals
     try:
         run = subprocess.run(command, capture_output=True, text=True, env=env, timeout=180, check=False)
         if case["expected"] is None:
-            passed = run.returncode == 2 and "success was not assumed" in run.stderr.lower()
+            payload = json.loads(run.stdout)
+            passed = (
+                run.returncode == 2
+                and payload.get("status") == "invalid_input"
+                and payload.get("summary") is None
+                and payload.get("error", {}).get("kind") == "ValueError"
+            )
             got = None
         else:
             payload = json.loads(run.stdout)

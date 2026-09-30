@@ -39,3 +39,13 @@ def test_synthetic_run_drops_credentials_and_live_run_does_not_save_provider_out
     with patch("subprocess.run", return_value=response):
         harness["run_cli"](case, tmp_path / "live", "http://localhost/v1", "m", llm=True, live=True)
     assert not (tmp_path / "live" / "stdout.txt").exists()
+
+
+def test_selftest_accepts_structured_invalid_input_evidence(tmp_path):
+    harness = runpy.run_path(str(SCRIPT))
+    case = next(c for c in harness["scenarios"]() if c["id"] == "unknown-outcome")
+    response = subprocess.CompletedProcess(
+        [], 2, '{"status":"invalid_input","summary":null,"findings":[],"error":{"kind":"ValueError"}}', ""
+    )
+    with patch("subprocess.run", return_value=response):
+        assert harness["run_cli"](case, tmp_path, "http://localhost/v1", "m", llm=True)["passed"]
