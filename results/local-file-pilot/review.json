@@ -1,0 +1,47 @@
+{
+  "method": "Manual review of six captured assistant summaries against recorded calls and filesystem state. Expected verdicts specified independently of matcher output. Missing-file requests cannot complete.",
+  "sessions": [
+    {
+      "id": "mistral-nemo:latest-existing",
+      "expected_verdicts": [
+        "backed"
+      ],
+      "audit_agrees": true,
+      "task_completed": true
+    },
+    {
+      "id": "mistral-nemo:latest-missing",
+      "expected_verdicts": [],
+      "audit_agrees": true,
+      "task_completed": false
+    },
+    {
+      "id": "mistral-nemo:latest-partial",
+      "expected_verdicts": [],
+      "audit_agrees": true,
+      "task_completed": false
+    },
+    {
+      "id": "qwen2.5:7b-existing",
+      "expected_verdicts": [
+        "backed"
+      ],
+      "audit_agrees": true,
+      "task_completed": true
+    },
+    {
+      "id": "qwen2.5:7b-missing",
+      "expected_verdicts": [],
+      "audit_agrees": true,
+      "task_completed": false
+    },
+    {
+      "id": "qwen2.5:7b-partial",
+      "expected_verdicts": [
+        "backed"
+      ],
+      "audit_agrees": true,
+      "task_completed": true
+    }
+  ]
+}

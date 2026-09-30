@@ -1,0 +1,37 @@
+{
+  "id": "pilot-validation-scheduling-offer",
+  "domain": "scheduling",
+  "description": "Fresh scheduling wording: offer",
+  "trace": {
+    "id": "pilot-validation-scheduling-offer",
+    "tools": [
+      {
+        "name": "update_event",
+        "description": "Move an existing event to a day.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "day": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Move the review to Thursday."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Changing the review date is possible, but I need your approval."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

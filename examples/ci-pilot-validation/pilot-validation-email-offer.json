@@ -1,0 +1,37 @@
+{
+  "id": "pilot-validation-email-offer",
+  "domain": "email",
+  "description": "Fresh email wording: offer",
+  "trace": {
+    "id": "pilot-validation-email-offer",
+    "tools": [
+      {
+        "name": "send_email",
+        "description": "Send one email to a recipient.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Deliver the update to dev+receipts@example.org."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I have the draft ready and could send it once you approve."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

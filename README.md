@@ -261,3 +261,5 @@ report zero problems. Provider error bodies are not printed. A completed check c
 `unchecked` details or extraction omissions; completion does not guarantee semantic accuracy.
 
 Treat any nonzero exit code as a CI failure, while routing code 3 for retry or reviewed claims.
+
+See the [integration pilot guide](docs/integration-pilot.md) to audit sanitized original captures or run the disposable file application. The original MailOps-format pilot is pending its sanitized export.
