@@ -75,23 +75,23 @@ for f in problems(check(trace, claims)):
 
 ### Trace formats
 
-- **OpenAI chat messages**: a list of messages, or `{"messages": [...], "tools": [...]}`. Tool errors are detected from `{"error": ...}` payloads or text starting with "Error". Tools named `get_`, `list_`, `search_`, `read_` and similar are treated as read-only unless the tool entry sets `"side_effect"`.
+- **OpenAI chat messages**: a list of messages, or `{"messages": [...], "tools": [...]}`. Tool errors include explicit `error`, `success: false`, `ok: false`, `isError: true`, failed status strings, and integer `status_code` values of 400 or higher. Missing results and unrecognized write outcomes produce an input error (exit 2), never an assumed success. Normalize unsupported result envelopes to native explicit statuses. A call becomes completed when its result arrives. Tools named `get_`, `list_`, `search_`, `read_` and similar are treated as read-only unless the tool entry sets `"side_effect"`.
 - **Native**: `{"id", "tools": [{"name", "side_effect"}], "events": [...]}` where events are `message` or `tool_call` with `status: "ok" | "error"`.
 
 Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Langfuse exports.
 
 ## Benchmark
 
-`dyr bench` runs 50 bundled sessions with planted lies: wrong amounts, wrong recipients, phantom emails, masked failures, claims made before the action happened, silent side effects, and honest cases that must not be flagged.
+`dyr bench` runs 60 bundled sessions with planted lies: wrong amounts, wrong recipients, phantom emails, masked failures, claims made before the action happened, silent side effects, and honest cases that must not be flagged.
 
 ```text
 $ dyr bench
-50/50 cases exact. Problem detection: precision 100%, recall 100% (27 caught, 0 false alarms, 0 missed).
+60/60 cases exact. Problem detection: precision 100%, recall 100% (32 caught, 0 false alarms, 0 missed).
 ```
 
 With labeled claims this tests the matcher. `dyr bench --llm` runs extraction too, which measures the whole pipeline with the model you configure. That end-to-end number is the one worth publishing per model.
 
-The suite includes 22 honest controls, plus partial actions, vague completions, currency and unit traps,
+The suite includes 27 honest controls, plus partial actions, vague completions, currency and unit traps,
 offers, read-only lookups, corrections, retries, duplicate calls, and file and order identifiers.
 These are development cases, not a held-out evaluation set. No real-model result has been measured yet.
 Exact-case scoring compares counts of verdict and tool pairs, not claim text or matched call identity.
@@ -118,3 +118,32 @@ Add a case in `scripts/build_benchmark.py` and run it to regenerate the files.
 ## License
 
 Apache-2.0
+
+## Test with synthetic agents
+
+Run the same public CLI checks with scripted honest and faulty mail agents, using a local
+OpenAI-compatible extraction endpoint:
+
+```bash
+python scripts/selftest_agent.py --out /tmp/dyr-agent-selftest
+```
+
+Choose a new output directory for each run. The harness checks honest sends, wrong recipients,
+phantom sends, three explicit failure encodings, honest failure disclosures, silent sends,
+unknown outcomes, and missing results. It runs labeled and scripted extraction modes and verifies
+CLI exit codes and JSON verdicts. Reports and replayable traces are saved under the output directory.
+No mail is sent. These synthetic agents and scripted model replies test integration behavior,
+not real-model intelligence, and are not a reproduction of MailOps' original export format.
+
+To test a real extractor against the same synthetic transcripts:
+
+```bash
+# Set DYR_API_KEY in your environment if the endpoint requires authentication.
+python scripts/selftest_agent.py --out /tmp/dyr-agent-live \
+  --live-base-url http://localhost:11434/v1 --live-model YOUR_MODEL
+```
+
+Live mode sends only the synthetic transcript and tool descriptions to that endpoint. It evaluates
+claim extraction, not an autonomous agent's behavior. Provider error text and credentials are not
+written to the live report. Network and format errors count as failed checks, not successful runs.
+The ordinary pytest suite remains offline; the self-test uses a loopback server.
