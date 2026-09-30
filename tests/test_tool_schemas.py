@@ -106,3 +106,25 @@ def test_json_mode_is_explicit_and_repair_contains_original_reply():
     assert LLMExtractor(transport=transport, json_mode=True).extract(trace) == []
     assert calls[0]["response_format"] == {"type": "json_object"}
     assert calls[1]["messages"][-2] == {"role": "assistant", "content": "{}"}
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [
+        '{"claims": [], "claims": []}',
+        (
+            '{"claims": [{"text": "Deleted alpha.txt and beta.txt.", "tool": "act", "completed": true, '
+            '"args": {"path": "alpha.txt", "path": "beta.txt"}}]}'
+        ),
+    ],
+)
+def test_duplicate_json_keys_are_rejected_instead_of_losing_claim_details(raw):
+    trace = trace_with_schema({"path": {"type": "string"}})
+    with pytest.raises(ValueError, match="duplicate JSON keys"):
+        parse_claims(raw, trace, target_index=0, require_completed=True)
+
+
+def test_distinct_argument_keys_are_preserved():
+    trace = trace_with_schema({"path": {"type": "string"}, "recursive": {"type": "boolean"}})
+    [claim] = parse(trace, {"path": "alpha.txt", "recursive": False})
+    assert claim.args == {"path": "alpha.txt", "recursive": False}

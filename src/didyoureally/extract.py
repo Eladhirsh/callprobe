@@ -96,6 +96,15 @@ def build_user_prompt(trace: Trace, target_index: int | None = None) -> str:
     return f"Available tools:\n{tools}\n\nConversation (extract only assistant claims):\n{msgs}{target}"
 
 
+def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Extractor returned duplicate JSON keys")
+        result[key] = value
+    return result
+
+
 def parse_claims(
     raw: str, trace: Trace, target_index: int | None = None, *, require_completed: bool = False
 ) -> list[Claim]:
@@ -106,7 +115,7 @@ def parse_claims(
     start, end = text.find("{"), text.rfind("}")
     if start == -1 or end == -1:
         raise ValueError(f"Extractor returned no JSON object: {raw[:200]!r}")
-    payload = json.loads(text[start : end + 1])
+    payload = json.loads(text[start : end + 1], object_pairs_hook=_unique_object)
 
     if not isinstance(payload, dict) or not isinstance(payload.get("claims"), list):
         raise ValueError("Extractor must return an object with a claims list")  # noqa: TRY004
