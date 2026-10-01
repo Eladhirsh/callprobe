@@ -7,14 +7,14 @@ against an OpenAI-compatible model endpoint. Bring your own tools or start
 with a bundled example. It evaluates model responses; it does not execute
 the API operations described by your tools.
 
-## Release candidate: 0.9.0rc1
+## Release candidate: 0.9.0rc2
 
-**0.9.0rc1 is published.** Install it explicitly with
-`uv tool install callprobe==0.9.0rc1 --force` (or
-`python -m pip install callprobe==0.9.0rc1`). `@latest` selects the stable
-release. See [upgrade notes](CHANGELOG.md#090rc1) before reusing baselines.
-This checkout is **0.9.0rc2.dev0**, an unpublished development version;
-install it with `uv tool install . --force` to test the unreleased changes.
+This checkout prepares **0.9.0rc2**; publication is pending. Test it from this
+checkout with `uv tool install . --force`. The latest published candidate is
+still `0.9.0rc1` (`uv tool install callprobe==0.9.0rc1 --force`).
+`@latest` selects the stable release. See [rc2 upgrade notes](CHANGELOG.md#090rc2)
+and the [scoring/baseline migration](CHANGELOG.md#upgrade-and-baseline-migration)
+before reusing baselines.
 
 ## Try it
 
@@ -60,7 +60,7 @@ that confused you. You can also import your own [OpenAPI file](#bring-your-own-t
 
 ### Try the workflow offline (0.9.0rc1)
 
-From a development checkout ([setup](CONTRIBUTING.md)), try recorded results
+With 0.9.0rc1 or later installed, try recorded results
 without a model or endpoint:
 
 ```bash
@@ -76,7 +76,7 @@ These are [recorded observations](results/github-issues/README.md), not a
 fresh execution or a current model ranking. `demo` needs no network after
 installation. This command is not yet available in the published 0.8.0 package.
 
-### Compare tool contracts (development checkout)
+### Compare tool contracts (0.9.0rc2)
 
 Use `compare-contracts` when testing a schema or tool-description change against
 **the same model and prompts**. This is an informational experiment report;
@@ -115,7 +115,7 @@ Unknown provenance stays unknown; matching a model tag does not verify weights.
 prove semantic equivalence or rescore responses. It exits zero for a valid
 report even when regressions exist; there is no gate option. After choosing a
 contract, record a new baseline and use the ordinary same-suite CI gate.
-This command is in `0.9.0rc2.dev0`; it is not in published `0.9.0rc1`.
+This command is in the `0.9.0rc2` candidate; it is not in published `0.9.0rc1`.
 
 ## A concrete regression example
 
@@ -400,7 +400,7 @@ Unlike `--from-openapi`, `--example` writes a suite with its tasks already
 active; there is nothing to uncomment first. Available since 0.8.0; install
 with `uv tool install callprobe@latest`.
 
-The development version also includes `mail-sandbox`: 18 fictional mail cases
+Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
 covering search, retrieval, draft/send, missing identifiers, and literal text.
 Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.
@@ -491,7 +491,7 @@ retried with exponential backoff before it's recorded as an error rather
 than a model failure; those retries honor a `Retry-After` header when the
 server sends one.
 
-In the unreleased development version, use `--request-timeout 300` to allow
+In 0.9.0rc2, use `--request-timeout 300` to allow
 longer waits for slow local models, or set `request_timeout: 300` in a YAML
 run config. The default is 120 seconds. Values must be positive and finite.
 This configures HTTPX connect/read/write/pool operation timeouts; it is not
@@ -501,7 +501,7 @@ historical files leave it unknown. Changing a transport timeout does not
 change scoring or make otherwise compatible baselines incompatible.
 
 `sweep --request-timeout 300` forwards the same setting to each model run.
-The development GitHub Action exposes the same `request-timeout` input.
+The GitHub Action in this checkout exposes the same `request-timeout` input.
 `sweep --timeout` controls the entire subprocess step (default 1800
 seconds); increase that separately when a whole suite needs more time.
 
@@ -531,7 +531,7 @@ callprobe sweep --models qwen2.5:7b llama3.1:8b \
 The runner plans requests first, uses a fresh output directory, and saves a
 manifest, per-model evidence, and a leaderboard from that sweep alone.
 Use `--suite` for your own tools; see the [mail sweep guide](examples/mail-sandbox/README.md#sweep-several-local-models).
-This command is available in the development checkout and next release; it is
+This command is available starting with 0.9.0rc1; it is
 not included in PyPI 0.8.0. It does not download models. The older `scripts/overnight.sh` is a legacy
 convenience script that pulls models and combines files in `results/`.
 
@@ -589,7 +589,7 @@ provided in the file or with `--model`.
 
 Accepted keys are `model`, `endpoint`, `suite`, `pads` (an integer list),
 `repeats`, `temperature`, `max_tokens`, `quant`, `notes`, `retries`,
-`concurrency`, and `out`; the development version also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
+`concurrency`, and `out`; 0.9.0rc2 also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
 types, and invalid numeric values are rejected even when a CLI flag would
 override them. `suite` and `out` in YAML resolve relative to the config
 file; paths supplied on the CLI remain relative to your working directory.
@@ -602,7 +602,7 @@ settings, and the existing resume and suite-matching checks still apply.
 
 Available since 0.8.0. Install with `uv tool install callprobe@latest`.
 
-The development version also includes `mail-sandbox`: 18 fictional mail cases
+Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
 covering search, retrieval, draft/send, missing identifiers, and literal text.
 Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.
@@ -817,7 +817,7 @@ any reasoning trace stripped, when it produced no call at all.
 
 Install or upgrade with `uv tool install callprobe@latest`.
 
-The development version also includes `mail-sandbox`: 18 fictional mail cases
+Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
 covering search, retrieval, draft/send, missing identifiers, and literal text.
 Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.

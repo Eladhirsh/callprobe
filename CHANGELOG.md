@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased (0.9.0rc2.dev0)
+## 0.9.0rc2
+
+Release candidate prepared for tester validation; publication pending.
 
 - Add offline `compare-contracts` for controlled schema/description experiments:
   verify matching suite snapshots, prompts, model settings and full coverage;
@@ -8,7 +10,6 @@
   the existing same-suite CI gate. Scores remain recorded, never rescored.
 - Add `demo --contracts` with frozen Hermes3 nested/flat runs and matching suites.
   The higher-scoring contract still has two regressions; no endpoint is needed.
-
 - Add configurable HTTP request timeouts to `run` and `sweep`, including YAML
   defaults, dry-run plans, and recorded run metadata. The default remains 120
   seconds; historical files without this field remain readable.
@@ -16,6 +17,21 @@
   aligning the prompts with their expected send mode. This changes the active
   example suite hash: generate a fresh suite and baseline. Archived benchmark
   suites and responses retain their original wording and results.
+
+### Upgrading from rc1
+
+- Scoring remains **version 3** and padding still defaults to **zero**. Existing
+  version-3 baselines remain usable when the suite and model settings match.
+- The regenerated `mail-sandbox` example has two clarified send instructions.
+  Preserve old results with their original suite snapshot. Generate a fresh
+  suite and baseline for the updated example; never edit old hashes or verdicts.
+- `compare-contracts` is informational and accepts deliberate contract changes
+  only with matching prompts and experimental controls. It does not migrate
+  baselines, prove assertion equivalence, or replace the same-suite CI gate.
+- Runs now record the HTTP request timeout. Older files keep `null` (unknown);
+  transport timeout differences are disclosed by contract comparisons.
+- Users upgrading from 0.8.0 or earlier must also follow the rc1 scoring and
+  padding migration notes below.
 
 ## 0.9.0rc1
 
