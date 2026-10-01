@@ -60,7 +60,7 @@ that confused you. You can also import your own [OpenAPI file](#bring-your-own-t
 
 ### Try the workflow offline (0.9.0rc1)
 
-From a development checkout ([setup](CONTRIBUTING.md)), try recorded results
+With 0.9.0rc1 or later installed, try recorded results
 without a model or endpoint:
 
 ```bash
@@ -400,7 +400,7 @@ Unlike `--from-openapi`, `--example` writes a suite with its tasks already
 active; there is nothing to uncomment first. Available since 0.8.0; install
 with `uv tool install callprobe@latest`.
 
-The development version also includes `mail-sandbox`: 18 fictional mail cases
+Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
 covering search, retrieval, draft/send, missing identifiers, and literal text.
 Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.
@@ -491,7 +491,7 @@ retried with exponential backoff before it's recorded as an error rather
 than a model failure; those retries honor a `Retry-After` header when the
 server sends one.
 
-In the unreleased development version, use `--request-timeout 300` to allow
+In 0.9.0rc2, use `--request-timeout 300` to allow
 longer waits for slow local models, or set `request_timeout: 300` in a YAML
 run config. The default is 120 seconds. Values must be positive and finite.
 This configures HTTPX connect/read/write/pool operation timeouts; it is not
@@ -501,7 +501,7 @@ historical files leave it unknown. Changing a transport timeout does not
 change scoring or make otherwise compatible baselines incompatible.
 
 `sweep --request-timeout 300` forwards the same setting to each model run.
-The development GitHub Action exposes the same `request-timeout` input.
+The GitHub Action in this checkout exposes the same `request-timeout` input.
 `sweep --timeout` controls the entire subprocess step (default 1800
 seconds); increase that separately when a whole suite needs more time.
 
@@ -531,7 +531,7 @@ callprobe sweep --models qwen2.5:7b llama3.1:8b \
 The runner plans requests first, uses a fresh output directory, and saves a
 manifest, per-model evidence, and a leaderboard from that sweep alone.
 Use `--suite` for your own tools; see the [mail sweep guide](examples/mail-sandbox/README.md#sweep-several-local-models).
-This command is available in the development checkout and next release; it is
+This command is available starting with 0.9.0rc1; it is
 not included in PyPI 0.8.0. It does not download models. The older `scripts/overnight.sh` is a legacy
 convenience script that pulls models and combines files in `results/`.
 
@@ -589,7 +589,7 @@ provided in the file or with `--model`.
 
 Accepted keys are `model`, `endpoint`, `suite`, `pads` (an integer list),
 `repeats`, `temperature`, `max_tokens`, `quant`, `notes`, `retries`,
-`concurrency`, and `out`; the development version also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
+`concurrency`, and `out`; 0.9.0rc2 also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
 types, and invalid numeric values are rejected even when a CLI flag would
 override them. `suite` and `out` in YAML resolve relative to the config
 file; paths supplied on the CLI remain relative to your working directory.
@@ -602,7 +602,7 @@ settings, and the existing resume and suite-matching checks still apply.
 
 Available since 0.8.0. Install with `uv tool install callprobe@latest`.
 
-The development version also includes `mail-sandbox`: 18 fictional mail cases
+Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
 covering search, retrieval, draft/send, missing identifiers, and literal text.
 Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.
@@ -817,7 +817,7 @@ any reasoning trace stripped, when it produced no call at all.
 
 Install or upgrade with `uv tool install callprobe@latest`.
 
-The development version also includes `mail-sandbox`: 18 fictional mail cases
+Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
 covering search, retrieval, draft/send, missing identifiers, and literal text.
 Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.
