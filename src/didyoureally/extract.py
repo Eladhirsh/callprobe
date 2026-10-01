@@ -360,7 +360,11 @@ class LLMExtractor:
             for attempt in range(2):
                 try:
                     resp = self.transport(f"{self.base_url}/chat/completions", headers, body)
+                    if not isinstance(resp, dict) or not isinstance(resp.get("choices"), list):
+                        raise ValueError("Invalid provider response envelope")
                     choice = resp["choices"][0]
+                    if not isinstance(choice, dict):
+                        raise ValueError("Invalid provider choice")
                     if choice.get("finish_reason") not in (None, "stop"):
                         raise ExtractionError(message.index, "unfinished_response")
                     content = choice["message"]["content"]

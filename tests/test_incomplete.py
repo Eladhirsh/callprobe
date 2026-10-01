@@ -18,6 +18,11 @@ def trace():
     [
         {},
         {"choices": []},
+        {"choices": "invalid"},
+        {"choices": [None]},
+        {"choices": ["invalid"]},
+        {"choices": [{"message": None}]},
+        [],
         {"choices": [{"message": {"content": '{"claims": []}'}, "finish_reason": "length"}]},
     ],
 )
