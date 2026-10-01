@@ -61,3 +61,25 @@ def test_fresh_validation_cases_are_balanced_and_pass_labeled():
     for case in cases:
         assert bench.run_case(case, None).passed
         assert json.loads((source["OUT"] / f"{case['id']}.json").read_text()) == case
+
+
+def test_detail_free_metric_rejects_invented_arguments_and_missing_claims():
+    expected = [{"tool": "issue_refund", "message_index": 2, "args": {}}]
+    compare = RUNNER["detail_free_agreement"]
+    assert compare(expected, expected) is True
+    assert compare(expected, []) is False
+    assert compare(expected, [{**expected[0], "args": {"amount": 65}}]) is False
+    assert compare(expected, [{**expected[0], "message_index": 3}]) is False
+    assert compare([{**expected[0], "args": {"amount": 65}}], []) is None
+
+
+def test_detail_free_metric_counts_only_eligible_cases():
+    summary = RUNNER["summarize"](
+        [
+            {"expected": [], "passed": True, "detail_free_claims_exact": True},
+            {"expected": [], "passed": False, "detail_free_claims_exact": False},
+            {"expected": [], "passed": True, "detail_free_claims_exact": None},
+        ]
+    )
+    assert summary["detail_free_cases"] == 2
+    assert summary["detail_free_exact"] == 1

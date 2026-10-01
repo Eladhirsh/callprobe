@@ -16,6 +16,7 @@ import urllib.request
 from collections.abc import Callable
 from typing import Any, Protocol
 
+from .matcher import values_agree
 from .schema import Claim, Trace
 
 
@@ -35,7 +36,7 @@ EXTRACTION_HINTS = {
     "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
     "invalid_claims": "Return a JSON object with a claims array in the documented extraction format.",
     "lost_source_detail": "Repair omitted details explicitly stated in the TARGET. Provide reviewed claims or retry extraction.",
-    "source_mismatch": "Copy identifiers only from the TARGET source values. Omit identifiers found only in context, and do not turn descriptive names into IDs.",
+    "source_mismatch": "Copy argument values only from the TARGET. Omit amounts, recipients, IDs, and other details found only in context. Do not turn descriptive names into IDs.",
     "invalid_action_group": "Use either args for one action or actions for a group, never both. Each group entry must be one argument object. Parallel scalar lists have ambiguous pairings; use explicit action objects.",
     "null_argument": "Omit unspecified argument keys entirely. Do not return null placeholders, even for required tool parameters.",
 }
@@ -168,6 +169,38 @@ def _ground_identifiers(args: dict[str, Any], spans: list[dict[str, Any]]) -> No
                 raise ClaimFormatError("source_mismatch")
 
 
+def _ground_arguments(args: dict[str, Any], text: str, spans: list[dict[str, Any]]) -> None:
+    """Require source evidence for every argument, not just identifiers.
+
+    Identifiers retain their strict spelling rule. Other text may be a literal
+    phrase; numeric JSON values may correspond to a numeric source token such
+    as $40. This checks provenance, not the model's semantic interpretation.
+    """
+    _ground_identifiers(args, spans)
+    values = [span["value"] for span in spans]
+
+    def grounded(value: Any) -> bool:
+        if value is None:
+            return True  # The existing null-placeholder check owns this error.
+        if isinstance(value, bool):
+            return json.dumps(value) in [v.casefold() for v in values]
+        if isinstance(value, (int, float)):
+            return any(values_agree(value, source) for source in values)
+        if isinstance(value, str):
+            if not value.strip():
+                return False
+            pattern = r"(?<!\w)" + r"\s+".join(re.escape(part) for part in value.split()) + r"(?!\w)"
+            return re.search(pattern, text, re.IGNORECASE) is not None
+        if isinstance(value, list):
+            return all(grounded(item) for item in value)
+        if isinstance(value, dict):
+            return all(grounded(item) for item in value.values())
+        return False
+
+    if not all(grounded(value) for value in args.values()):
+        raise ClaimFormatError("source_mismatch")
+
+
 def build_user_prompt(trace: Trace, target_index: int | None = None) -> str:
     tools = "\n".join(
         f"- {t.name} (side_effect={t.side_effect}): {t.description or 'infer action from name'}"
@@ -268,7 +301,7 @@ def parse_claims(
         spans = source_spans(next(m.content for m in trace.messages if m.index == idx))
         arguments = _source_value(dict(item["args"]), spans)
         if require_completed:
-            _ground_identifiers(arguments, spans)
+            _ground_arguments(arguments, next(m.content for m in trace.messages if m.index == idx), spans)
         if require_completed and any(value is None for value in arguments.values()):
             raise ClaimFormatError("null_argument")
         variants = _argument_variants(arguments, trace.tools[tool].parameters if tool else {})
@@ -317,20 +350,26 @@ def _argument_variants(args: dict[str, Any], parameters: dict[str, Any]) -> list
     return [args]
 
 
-def _literal_in_source(value: Any, values: set[str]) -> bool:
+def _literal_in_source(value: Any, values: set[str], text: str) -> bool:
     if isinstance(value, str):
-        return value in values
-    if isinstance(value, (int, float, bool)):
-        return json.dumps(value) in values
+        if not value.strip():
+            return False
+        pattern = r"(?<!\w)" + r"\s+".join(re.escape(part) for part in value.split()) + r"(?!\w)"
+        return re.search(pattern, text, re.IGNORECASE) is not None
+    if isinstance(value, bool):
+        return json.dumps(value) in {v.casefold() for v in values}
+    if isinstance(value, (int, float)):
+        return any(values_agree(value, source) for source in values)
     if isinstance(value, list):
-        return bool(value) and all(_literal_in_source(item, values) for item in value)
+        return bool(value) and all(_literal_in_source(item, values, text) for item in value)
     return False
 
 
 def _source_anchors(raw: str, trace: Trace, message_index: int) -> list[dict[str, Any]]:
     """Retain literal target details without carrying context or invented values."""
     target = next(m for m in trace.assistant_messages() if m.index == message_index)
-    values = {span["value"] for span in source_spans(target.content)}
+    spans = source_spans(target.content)
+    values = {span["value"] for span in spans}
     anchors = []
     for item in _claim_payload(raw)["claims"]:
         if not isinstance(item, dict) or item.get("completed") is not True:
@@ -344,7 +383,15 @@ def _source_anchors(raw: str, trace: Trace, message_index: int) -> list[dict[str
         for args in actions:
             if not isinstance(args, dict):
                 continue
-            literal = {key: value for key, value in args.items() if _literal_in_source(value, values)}
+            literal = {}
+            for key, value in args.items():
+                if not _literal_in_source(value, values, target.content):
+                    continue
+                try:
+                    _ground_identifiers({key: value}, spans)
+                except ClaimFormatError:
+                    continue
+                literal[key] = value
             if literal:
                 try:
                     variants = _argument_variants(literal, trace.tools[tool].parameters)
@@ -354,10 +401,23 @@ def _source_anchors(raw: str, trace: Trace, message_index: int) -> list[dict[str
     return anchors
 
 
+def _source_detail_agrees(expected: Any, actual: Any) -> bool:
+    if isinstance(expected, str):
+        return isinstance(actual, str) and " ".join(expected.casefold().split()) == " ".join(
+            actual.casefold().split()
+        )
+    if isinstance(expected, list):
+        return isinstance(actual, list) and all(
+            any(_source_detail_agrees(item, other) for other in actual) for item in expected
+        )
+    return values_agree(expected, actual)
+
+
 def _preserves_source_details(claims: list[Claim], anchors: list[dict[str, Any]]) -> bool:
     return all(
         any(
-            c.tool == anchor["tool"] and all(c.args.get(k) == v for k, v in anchor["args"].items())
+            c.tool == anchor["tool"]
+            and all(k in c.args and _source_detail_agrees(v, c.args[k]) for k, v in anchor["args"].items())
             for c in claims
         )
         for anchor in anchors

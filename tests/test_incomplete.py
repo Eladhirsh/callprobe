@@ -273,7 +273,7 @@ def test_source_repair_cannot_drop_or_change_stated_details(repaired):
 
     with pytest.raises(ExtractionError) as caught:
         LLMExtractor(transport=transport).extract(t)
-    assert caught.value.reason == "lost_source_detail"
+    assert caught.value.reason == ("source_mismatch" if repaired else "lost_source_detail")
 
 
 def test_source_repair_preserves_valid_detail_and_still_catches_contradiction():
@@ -305,3 +305,46 @@ def test_source_repair_preserves_valid_detail_and_still_catches_contradiction():
         }
 
     assert check(t, LLMExtractor(transport=transport).extract(t))[0].verdict.value == "contradicted"
+
+
+def test_numeric_detail_cannot_be_lost_during_context_repair():
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "issue_refund"}],
+            "events": [
+                {"type": "message", "role": "user", "content": "Refund order secret-order."},
+                {"type": "message", "role": "assistant", "content": "Refunded $40."},
+            ],
+        }
+    )
+    replies = iter([{"order_id": "secret-order", "amount": 40}, {}])
+
+    def transport(*args):
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {"claims": [{"completed": True, "tool": "issue_refund", "args": next(replies)}]}
+                        )
+                    }
+                }
+            ]
+        }
+
+    with pytest.raises(ExtractionError) as caught:
+        LLMExtractor(transport=transport).extract(t)
+    assert caught.value.reason == "lost_source_detail"
+
+
+def test_source_detail_guard_retains_stated_units():
+    from didyoureally.extract import _preserves_source_details
+    from didyoureally.schema import Claim
+
+    anchors = [{"tool": "issue_refund", "args": {"amount": "40 EUR"}}]
+    assert not _preserves_source_details(
+        [Claim("Refunded 40 EUR", "issue_refund", {"amount": 40}, 1)], anchors
+    )
+    assert _preserves_source_details(
+        [Claim("Refunded 40 EUR", "issue_refund", {"amount": "40 EUR"}, 1)], anchors
+    )

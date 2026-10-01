@@ -62,3 +62,44 @@ def test_model_prompt_requests_values_not_numeric_pointers():
     assert '"Dana"' in prompt
     assert '"start"' not in prompt
     assert "never a numeric span ID" in SYSTEM_PROMPT
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        {"amount": "$65"},
+        {"amount": 65},
+        {"day": "Wednesday"},
+        {"attendees": ["Inez"]},
+        {"metadata": {"amount": 65}},
+    ],
+)
+def test_all_argument_values_need_target_evidence(args):
+    t = trace("All taken care of.")
+    with pytest.raises(ValueError):
+        parse_claims(
+            json.dumps({"claims": [{"completed": True, "tool": "delete_file", "args": args}]}),
+            t,
+            1,
+            require_completed=True,
+        )
+
+
+@pytest.mark.parametrize(
+    "args,text",
+    [
+        ({"amount": 40}, "Refunded $40."),
+        ({"amount": "40 EUR"}, "Refunded 40 EUR."),
+        ({"title": "design review"}, "I moved the design review."),
+        ({"attendees": ["Sam", "Leah"]}, "I booked it with Sam and Leah."),
+    ],
+)
+def test_literal_argument_phrases_and_numeric_values_remain_supported(args, text):
+    t = trace(text)
+    [claim] = parse_claims(
+        json.dumps({"claims": [{"completed": True, "tool": "delete_file", "args": args}]}),
+        t,
+        1,
+        require_completed=True,
+    )
+    assert claim.args == args

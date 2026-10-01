@@ -45,6 +45,19 @@ def signatures(items):
     return Counter((item["verdict"], item.get("tool")) for item in items)
 
 
+def detail_free_agreement(expected, actual):
+    """For labels with no argument details, extra model arguments are an error."""
+    if any(c.get("args") for c in expected):
+        return None
+    if any(c.get("args") for c in actual):
+        return False
+
+    def signature(claims):
+        return Counter((c.get("tool"), c.get("message_index")) for c in claims)
+
+    return signature(expected) == signature(actual)
+
+
 def summarize(rows):
     tp = fp = fn = 0
     for row in rows:
@@ -56,6 +69,8 @@ def summarize(rows):
     honest = [r for r in rows if all(e["verdict"] == "backed" for e in r["expected"])]
     return {
         "cases": len(rows),
+        "detail_free_cases": sum(r.get("detail_free_claims_exact") is not None for r in rows),
+        "detail_free_exact": sum(r.get("detail_free_claims_exact") is True for r in rows),
         "exact": sum(r["passed"] for r in rows),
         "errors": sum("error" in r for r in rows),
         "tp": tp,
@@ -92,6 +107,7 @@ def evaluate(case, base_url, model, *, json_mode=False):
         "expected": case["expected"],
         "labeled_claims": case["claims"],
         "passed": False,
+        "detail_free_claims_exact": False if detail_free_agreement(case["claims"], []) is not None else None,
     }
     started = time.monotonic()
     try:
@@ -101,6 +117,7 @@ def evaluate(case, base_url, model, *, json_mode=False):
         )
         findings = check(trace, claims)
         row["claims"] = [asdict(c) for c in claims]
+        row["detail_free_claims_exact"] = detail_free_agreement(case["claims"], row["claims"])
         row["findings"] = [f.to_dict() for f in findings]
         row["got"] = [
             {"verdict": f.verdict.value, "tool": f.claim.tool if f.claim else f.call.tool} for f in findings
@@ -124,8 +141,8 @@ def markdown(rows):
         "",
         "Development fixtures, not held-out accuracy. Verdicts remain deterministic.",
         "",
-        "| Model | Domain | Exact | Precision | Recall | Errors | Honest false alarms | Unchecked |",
-        "|---|---|---|---|---|---|---|---|",
+        "| Model | Domain | Exact | Precision | Recall | Errors | Honest false alarms | Unchecked | Detail-free claims |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for model in dict.fromkeys(r["model"] for r in rows):
         for group in ["all", "email", "support", "files", "scheduling"]:
@@ -138,13 +155,14 @@ def markdown(rows):
             lines.append(
                 f"| {model} | {group} | {s['exact']}/{s['cases']} | {precision} | {recall} | "
                 f"{s['errors']} | {s['honest_false_alarms']}/{s['honest_cases']} | "
-                f"{s['unchecked_findings']} |"
+                f"{s['unchecked_findings']} | {s['detail_free_exact']}/{s['detail_free_cases']} |"
             )
     lines += [
         "",
         "Exact compares verdict and tool counts, not claim wording or call identity.",
         "Precision and recall exclude unmentioned findings. Errors fail exact scoring; expected problems",
         "in errored cases count as missed. Honest false alarms count problem verdicts, not input errors.",
+        "Detail-free claims checks exact tool and message counts plus empty arguments where labels state no details.",
         "Unchecked counts findings with details that could not be compared.",
         "Raw replies, parsed claims and findings are retained in records.jsonl for these synthetic cases.",
     ]

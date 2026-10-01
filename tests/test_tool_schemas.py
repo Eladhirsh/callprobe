@@ -54,7 +54,10 @@ def test_absent_schema_does_not_guess_scalar_arity():
 
 
 def test_parallel_scalar_lists_are_not_cartesian_product():
-    trace = trace_with_schema({"path": {"type": "string"}, "destination": {"type": "string"}})
+    trace = trace_with_schema(
+        {"path": {"type": "string"}, "destination": {"type": "string"}},
+        "Moved alpha.txt and beta.txt to destinations one and two.",
+    )
     with pytest.raises(ValueError, match="ambiguous pairings"):
         parse(trace, {"path": ["alpha.txt", "beta.txt"], "destination": ["one", "two"]})
 
@@ -125,6 +128,9 @@ def test_duplicate_json_keys_are_rejected_instead_of_losing_claim_details(raw):
 
 
 def test_distinct_argument_keys_are_preserved():
-    trace = trace_with_schema({"path": {"type": "string"}, "recursive": {"type": "boolean"}})
+    trace = trace_with_schema(
+        {"path": {"type": "string"}, "recursive": {"type": "boolean"}},
+        "Deleted alpha.txt with recursive set to false.",
+    )
     [claim] = parse(trace, {"path": "alpha.txt", "recursive": False})
     assert claim.args == {"path": "alpha.txt", "recursive": False}
