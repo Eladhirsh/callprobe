@@ -91,12 +91,12 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
 results are lower. The latest local-model comparison is:
 
-| Model | Previous same 72 | Current same 72 | Expanded 80 | Existing validation |
+| Model | Previous same 80 | Current same 80 | Existing validation | New context validation |
 |---|---|---|---|---|
-| mistral-nemo:latest | 62/72 | 63/72 | 67/80 | 24/24 |
-| qwen2.5:7b | 53/72 | 56/72 | 60/80 | 24/24 |
+| mistral-nemo:latest | 67/80 | 71/80 | 24/24 | 10/16 |
+| qwen2.5:7b | 60/80 | 63/80 | 24/24 | 6/16 |
 
-See the [latest seven-model report](results/complex-session-suite/README.md) for precision, recall, honest false alarms, incomplete checks, and remaining failures. These are small synthetic evaluations, not production accuracy. The validation set is reused regression evidence, not a fresh holdout. The original MailOps pilot still needs its sanitized export.
+See the [latest seven-model report](results/source-repair-suite/README.md) for precision, recall, honest false alarms, incomplete checks, and remaining failures. These are small synthetic evaluations, not production accuracy. The new context validation has 16 sessions with eight honest controls; the existing 24-case validation is reused regression evidence. The original MailOps pilot still needs its sanitized export.
 
 `dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
 `scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.
@@ -241,4 +241,4 @@ Treat any nonzero exit code as a CI failure, while routing code 3 for retry or r
 
 See the [integration pilot guide](docs/integration-pilot.md) to audit sanitized original captures or run the disposable file application. The original MailOps-format pilot is pending its sanitized export.
 
-Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its one repair attempt. It never repairs claims by copying values from tool results.
+Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its one repair attempt. For source mismatches, that attempt regenerates from the original messages and tool definitions without replaying invented values. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.

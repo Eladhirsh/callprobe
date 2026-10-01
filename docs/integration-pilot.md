@@ -68,3 +68,19 @@ This uses the same seven installed model names as the previous comparison. It ru
 under `examples/ci-pilot-validation`. The finalists were selected in the previous milestone, not
 from these fresh results. Once inspected, a validation set becomes regression evidence for future
 work rather than a fresh holdout. One run per model does not measure run-to-run variance.
+
+## Context and correction validation
+
+The separate `examples/context-validation` set contains 16 multi-turn sessions in email, refunds,
+files, and scheduling, including eight honest controls. Labels were written before real-model
+validation. Regenerate them with `python scripts/build_context_validation.py`.
+
+```bash
+.venv/bin/python scripts/run_llm_bench.py --json-mode \
+  --cases examples/context-validation \
+  --endpoint http://localhost:11434/v1 mistral-nemo:latest \
+  --endpoint http://localhost:11434/v1 qwen2.5:7b \
+  --out results/my-context-validation
+```
+
+After inspecting a run, treat this set as regression evidence rather than a fresh holdout.
