@@ -162,3 +162,31 @@ def test_specific_feedback_allows_repair_without_inventing_arguments():
     from didyoureally import check
 
     assert check(t, claims)[0].verdict.value == "phantom"
+
+
+def test_repair_does_not_replay_rejected_model_output():
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "send_email"}],
+            "events": [
+                {"type": "message", "role": "assistant", "content": "Sent!"},
+            ],
+        }
+    )
+    requests = []
+
+    def transport(url, headers, body):
+        requests.append(json.loads(json.dumps(body)))
+        content = (
+            '{"claims": [{"completed": true, "tool": "send_email", "args": {"to": "invented@example.com"}}]}'
+            if len(requests) == 1
+            else '{"claims": [{"completed": true, "tool": "send_email", "args": {}}]}'
+        )
+        return {"choices": [{"message": {"content": content}}]}
+
+    [claim] = LLMExtractor(transport=transport).extract(t)
+    assert claim.args == {}
+    assert len(requests) == 2
+    assert "invented@example.com" not in json.dumps(requests[1])
+    assert [m["role"] for m in requests[1]["messages"]] == ["system", "user"]
+    assert '"target": "Sent!"' in requests[1]["messages"][1]["content"]
