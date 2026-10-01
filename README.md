@@ -82,34 +82,27 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 60 bundled sessions with planted lies: wrong amounts, wrong recipients, phantom emails, masked failures, claims made before the action happened, silent side effects, and honest cases that must not be flagged.
+`dyr bench` runs 72 bundled sessions with planted failures and honest controls:
 
 ```text
-$ dyr bench
-60/60 cases exact. Problem detection: precision 100%, recall 100% (32 caught, 0 false alarms, 0 missed).
+72/72 cases exact. Problem detection: precision 100%, recall 100% (38 caught, 0 false alarms, 0 missed).
 ```
 
-With labeled claims this tests the matcher. `dyr bench --llm` runs extraction too, which measures the whole pipeline with the model you configure. That end-to-end number is the one worth publishing per model.
+That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
+results are lower. The latest local-model qualification is:
 
-The suite includes 27 honest controls, plus partial actions, vague completions, currency and unit traps,
-offers, read-only lookups, corrections, retries, duplicate calls, and file and order identifiers.
-These are development cases, not a held-out evaluation set. Real-model development results and retained extraction evidence are in the reliability reports below.
-Exact-case scoring compares counts of verdict and tool pairs, not claim text or matched call identity.
-Problem precision and recall cover contradicted, phantom, and masked failure; they exclude unmentioned.
+| Model | Expanded development | Fresh validation |
+|---|---|---|
+| mistral-nemo:latest | 62/72 | 24/24 |
+| qwen2.5:7b | 53/72 | 24/24 |
 
-Real extraction on September 30, 2026, using local Ollama models:
+See the [latest seven-model report](results/ci-pilot-suite/README.md) for per-model scores,
+precision, recall, false alarms, incomplete checks, and the real file-application pilot.
+These are small synthetic evaluations, not production accuracy. Model regressions are retained.
+The original MailOps integration remains pending its sanitized export.
 
-| Model | Development exact before | Development exact after | Separate challenge |
-|---|---|---|---|
-| Qwen2.5 7B | 30/60 | 46/60 | 18/24 |
-| Llama3.1 8B | 49/60 | 52/60 | 19/24 |
-
-These are synthetic development results, not production accuracy. Llama's problem precision
-and recall regressed despite its higher exact score. Both models still falsely flag honest
-statements. See the [full reliability report](results/README.md) for per-domain results,
-errors, false alarms, unchecked details, and retained extraction evidence.
-
-Add a case in `scripts/build_benchmark.py` and run it to regenerate the files.
+`dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
+`scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.
 
 ## Scope and limits
 
@@ -163,8 +156,8 @@ The ordinary pytest suite remains offline; the self-test uses a loopback server.
 ## Reliability across domains
 
 The extractor now processes one assistant message at a time, without later conversation turns.
-The application attaches the message index. Each extracted claim must quote that message,
-and malformed output receives one repair attempt before returning an input error. Read-only
+The application attaches the source message and its index. Malformed output receives one repair
+attempt before returning an incomplete check with exit code 3. Read-only
 claims are excluded using tool metadata. This prevents some unsupported findings; it does not
 prove the model extracted every claim or interpreted every argument correctly.
 
@@ -183,7 +176,7 @@ python scripts/run_llm_bench.py \
   --cases examples/reliability-challenge --out /tmp/dyr-challenge-run
 ```
 
-The default 60-case suite was used for development. The separate 24-case challenge has 12 honest
+The original 60-case suite, now expanded to 72 cases, was used for development. The separate 24-case challenge has 12 honest
 controls and was authored before evaluating it, but is still synthetic, not an independent real-world
 validation set. Generate it with `python scripts/build_reliability_challenge.py`.
 
@@ -220,20 +213,6 @@ The original challenge is now a development screening set. A separate set in
 `examples/model-validation` supplies fresh wording, including negations, conditional offers,
 "I can confirm" completion claims, and filenames whose trailing dot is meaningful. Its source
 is `scripts/build_model_validation.py`. Both sets remain synthetic and small.
-
-## Wider local-model results
-
-Seven local models were compared with the revised extraction profile. The screening leaders
-were selected for the full development suite and fresh validation:
-
-| Model | Screening | Development | Fresh validation |
-|---|---|---|---|
-| mistral-nemo:latest | 24/24 | 48/60 | 20/24 |
-| qwen2.5:7b | 22/24 | 47/60 | 20/24 |
-
-See the [seven-model comparison](results/model-comparison.md) for all model scores, honest-case
-false alarms, extraction errors, qualification results, and evidence. These are small synthetic
-evaluations; the full suite remains harder than the screening set.
 
 ### Source-grounded extraction
 

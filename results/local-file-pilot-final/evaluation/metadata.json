@@ -1,0 +1,24 @@
+{
+  "revision": "cdba612460fcaa923077ceeed45f44989487dfb4",
+  "source_sha256": {
+    "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "src/didyoureally/adapters.py": "55cea7ddfb0b886592211f9f9d583f2fcd3228cae9f48824767387d0a37c870d",
+    "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "src/didyoureally/cli.py": "498d7971cafa58910f7323e9e125e294291f709269332cf16e885a26841c6175",
+    "src/didyoureally/extract.py": "afc04b179e95d4ec35af9189a99c588b6b5e40ee67be89ab54ad12b60e7c59a0",
+    "src/didyoureally/matcher.py": "9a065580743431cbe3bc14eaead84f385f2f9a95fabbdc699132566bffb7cdf3",
+    "src/didyoureally/report.py": "d595f188a7bb659ecdaa26d11840d19b2113c658ac743dedf5293257199a06cf",
+    "src/didyoureally/schema.py": "8287d2cd2b5714ff293dacfb4dd6b61ee3ea56fba05855aa2d4c389eb9892a64"
+  },
+  "json_mode": true,
+  "prompt_sha256": "45f347a201cda858b03fb203d47140a7fea625a20b154a75de8a4d492d48364a",
+  "cases_sha256": "e237034101e5d7dbea3fe7498ccc2c8c0e388acd2d5f3e886ffa020194dbf8e6",
+  "models": [
+    "mistral-nemo:latest",
+    "qwen2.5:7b"
+  ],
+  "temperature": 0,
+  "label": "Synthetic development transcripts, real extraction models",
+  "reporting_correction": "All six captures are from the disposable file application. Domain tags corrected to files after evaluation; original case snapshots, replies, claims, findings and scores are unchanged."
+}

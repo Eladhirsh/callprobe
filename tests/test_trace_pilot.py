@@ -20,6 +20,7 @@ def test_pilot_retains_original_export_and_separate_labels(tmp_path):
                     {
                         "id": "mail",
                         "application": "mail-app",
+                        "domain": "email",
                         "trace": "trace.json",
                         "claims": "claims.json",
                         "expected": [],
@@ -29,7 +30,9 @@ def test_pilot_retains_original_export_and_separate_labels(tmp_path):
         )
     )
     PREPARE(manifest, tmp_path / "prepared")
-    assert json.loads((tmp_path / "prepared/mail.json").read_text())["trace"] == trace
+    prepared = json.loads((tmp_path / "prepared/mail.json").read_text())
+    assert prepared["trace"] == trace
+    assert prepared["domain"] == "email"
 
 
 def test_pilot_requires_explicit_sanitization_declaration(tmp_path):

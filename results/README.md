@@ -1,4 +1,6 @@
-Latest: [seven-model comparison](model-comparison.md). The report below preserves the earlier experiment.
+Latest: [CI pilot reliability results](ci-pilot-suite/README.md).
+
+Earlier: [seven-model comparison](model-comparison.md). The report below preserves the earlier experiment.
 
 # Reliability evaluation, September 30, 2026
 

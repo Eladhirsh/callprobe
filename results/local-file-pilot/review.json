@@ -1,5 +1,5 @@
 {
-  "method": "Manual review of six captured assistant summaries against recorded calls and filesystem state. Expected verdicts specified independently of matcher output. Missing-file requests cannot complete.",
+  "method": "Review of six captured assistant summaries against recorded calls and filesystem state. Expected verdicts specified independently of matcher output. Missing-file requests cannot complete.",
   "sessions": [
     {
       "id": "mistral-nemo:latest-existing",

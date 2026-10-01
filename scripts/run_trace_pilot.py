@@ -32,6 +32,8 @@ def prepare(manifest: Path, output: Path):
         seen.add(cid)
         if not entry.get("application") or not isinstance(entry.get("expected"), list):
             raise ValueError("Each capture needs its application and reviewed expected findings")
+        if entry.get("domain") not in (None, "email", "support", "files", "scheduling"):
+            raise ValueError("Unknown pilot domain")
         trace = json.loads((manifest.parent / entry["trace"]).read_text())
         claims = json.loads((manifest.parent / entry["claims"]).read_text())
         if not isinstance(claims, list):
@@ -41,6 +43,7 @@ def prepare(manifest: Path, output: Path):
                 "id": cid,
                 "description": f"Sanitized capture from {entry['application']}",
                 "application": entry["application"],
+                "domain": entry.get("domain"),
                 "trace": trace,
                 "claims": claims,
                 "expected": entry["expected"],

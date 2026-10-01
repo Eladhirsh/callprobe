@@ -32,6 +32,7 @@ values refer to the canonical Trace event order, not raw export row numbers. Ins
   "cases": [{
     "id": "failed-send",
     "application": "MailOps",
+    "domain": "email",
     "trace": "failed-send.export.json",
     "claims": "failed-send.claims.json",
     "expected": [{"tool": "send_email", "verdict": "masked_failure"}]
