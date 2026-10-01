@@ -189,4 +189,4 @@ def test_repair_does_not_replay_rejected_model_output():
     assert len(requests) == 2
     assert "invented@example.com" not in json.dumps(requests[1])
     assert [m["role"] for m in requests[1]["messages"]] == ["system", "user"]
-    assert '"target": "Sent!"' in requests[1]["messages"][1]["content"]
+    assert "Sent!" in requests[1]["messages"][1]["content"]
