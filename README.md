@@ -7,14 +7,14 @@ against an OpenAI-compatible model endpoint. Bring your own tools or start
 with a bundled example. It evaluates model responses; it does not execute
 the API operations described by your tools.
 
-## Release candidate: 0.9.0rc1
+## Release candidate: 0.9.0rc2
 
-**0.9.0rc1 is published.** Install it explicitly with
-`uv tool install callprobe==0.9.0rc1 --force` (or
-`python -m pip install callprobe==0.9.0rc1`). `@latest` selects the stable
-release. See [upgrade notes](CHANGELOG.md#090rc1) before reusing baselines.
-This checkout is **0.9.0rc2.dev0**, an unpublished development version;
-install it with `uv tool install . --force` to test the unreleased changes.
+This checkout prepares **0.9.0rc2**; publication is pending. Test it from this
+checkout with `uv tool install . --force`. The latest published candidate is
+still `0.9.0rc1` (`uv tool install callprobe==0.9.0rc1 --force`).
+`@latest` selects the stable release. See [rc2 upgrade notes](CHANGELOG.md#090rc2)
+and the [scoring/baseline migration](CHANGELOG.md#upgrade-and-baseline-migration)
+before reusing baselines.
 
 ## Try it
 
@@ -76,7 +76,7 @@ These are [recorded observations](results/github-issues/README.md), not a
 fresh execution or a current model ranking. `demo` needs no network after
 installation. This command is not yet available in the published 0.8.0 package.
 
-### Compare tool contracts (development checkout)
+### Compare tool contracts (0.9.0rc2)
 
 Use `compare-contracts` when testing a schema or tool-description change against
 **the same model and prompts**. This is an informational experiment report;
@@ -115,7 +115,7 @@ Unknown provenance stays unknown; matching a model tag does not verify weights.
 prove semantic equivalence or rescore responses. It exits zero for a valid
 report even when regressions exist; there is no gate option. After choosing a
 contract, record a new baseline and use the ordinary same-suite CI gate.
-This command is in `0.9.0rc2.dev0`; it is not in published `0.9.0rc1`.
+This command is in the `0.9.0rc2` candidate; it is not in published `0.9.0rc1`.
 
 ## A concrete regression example
 
