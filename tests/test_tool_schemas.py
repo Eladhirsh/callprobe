@@ -94,7 +94,7 @@ def test_null_placeholder_requires_repair():
         parse(trace, {"event_id": None})
 
 
-def test_json_mode_is_explicit_and_repair_retains_original_evidence():
+def test_json_mode_is_explicit_and_format_repair_contains_original_reply():
     calls = []
 
     def transport(url, headers, body):
@@ -105,8 +105,7 @@ def test_json_mode_is_explicit_and_repair_retains_original_evidence():
     trace = trace_with_schema({}, "I can delete it later.")
     assert LLMExtractor(transport=transport, json_mode=True).extract(trace) == []
     assert calls[0]["response_format"] == {"type": "json_object"}
-    assert all(m["role"] != "assistant" for m in calls[1]["messages"])
-    assert "I can delete it later." in calls[1]["messages"][-1]["content"]
+    assert calls[1]["messages"][-2] == {"role": "assistant", "content": "{}"}
 
 
 @pytest.mark.parametrize(

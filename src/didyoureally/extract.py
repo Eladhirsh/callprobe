@@ -383,16 +383,32 @@ class LLMExtractor:
                     reason = exc.reason if isinstance(exc, ClaimFormatError) else "invalid_claims"
                     if attempt:
                         raise ExtractionError(message.index, reason) from None
-                    # Regenerate from the original evidence. Replaying a rejected answer
-                    # can anchor the model on the very invented values we need it to remove.
-                    body["messages"][1]["content"] = (
-                        "The previous extraction was rejected. "
-                        + EXTRACTION_HINTS[reason]
-                        + " Regenerate the complete claims array from the original evidence below. "
-                        "Do not omit a completed action merely because its arguments were invalid. "
-                        "For unspecified details use empty args.\n\n"
-                        + build_user_prompt(trace, message.index)
-                    )
+                    if reason == "source_mismatch":
+                        # Regenerate from the original evidence. Replaying a rejected answer
+                        # can anchor the model on the very invented values we need it to remove.
+                        body["messages"][1]["content"] = (
+                            "The previous extraction was rejected. "
+                            + EXTRACTION_HINTS[reason]
+                            + " Regenerate the complete claims array from the original evidence below. "
+                            "Do not omit a completed action merely because its arguments were invalid. "
+                            "For unspecified details use empty args.\n\n"
+                            + build_user_prompt(trace, message.index)
+                        )
+                    else:
+                        body["messages"].append(
+                            {"role": "assistant", "content": content if isinstance(content, str) else ""}
+                        )
+                        body["messages"].append(
+                            {
+                                "role": "user",
+                                "content": EXTRACTION_HINTS[reason] + " Return a valid JSON object "
+                                "with a claims array. Omit text; the application attaches the TARGET. Every item needs "
+                                "completed (boolean grammatical classification), tool (an exact available name or null), "
+                                "and args (an object with no null placeholders) or actions (separate argument objects). "
+                                "Use an empty claims array when there are no completed actions. "
+                                "Do not extract claims from other messages.",
+                            }
+                        )
                     continue
                 claims.extend(extracted)
                 break
