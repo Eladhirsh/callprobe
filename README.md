@@ -89,17 +89,14 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
-results are lower. The previous local-model qualification (before the complex-session update) is:
+results are lower. The latest local-model comparison is:
 
-| Model | Expanded development | Fresh validation |
-|---|---|---|
-| mistral-nemo:latest | 62/72 | 24/24 |
-| qwen2.5:7b | 53/72 | 24/24 |
+| Model | Previous same 72 | Current same 72 | Expanded 80 | Existing validation |
+|---|---|---|---|---|
+| mistral-nemo:latest | 62/72 | 63/72 | 67/80 | 24/24 |
+| qwen2.5:7b | 53/72 | 56/72 | 60/80 | 24/24 |
 
-See the [latest seven-model report](results/ci-pilot-suite/README.md) for per-model scores,
-precision, recall, false alarms, incomplete checks, and the real file-application pilot.
-These are small synthetic evaluations, not production accuracy. Model regressions are retained.
-The original MailOps integration remains pending its sanitized export.
+See the [latest seven-model report](results/complex-session-suite/README.md) for precision, recall, honest false alarms, incomplete checks, and remaining failures. These are small synthetic evaluations, not production accuracy. The validation set is reused regression evidence, not a fresh holdout. The original MailOps pilot still needs its sanitized export.
 
 `dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
 `scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.
