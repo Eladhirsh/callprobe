@@ -2,7 +2,7 @@
 
 ## 0.9.0rc2
 
-Release candidate prepared for tester validation; publication pending.
+Published tester prerelease on 2026-10-01.
 
 - Add offline `compare-contracts` for controlled schema/description experiments:
   verify matching suite snapshots, prompts, model settings and full coverage;

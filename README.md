@@ -9,11 +9,17 @@ the API operations described by your tools.
 
 ## Release candidate: 0.9.0rc2
 
-This checkout prepares **0.9.0rc2**; publication is pending. Test it from this
-checkout with `uv tool install . --force`. The latest published candidate is
-still `0.9.0rc1` (`uv tool install callprobe==0.9.0rc1 --force`).
-`@latest` selects the stable release. See [rc2 upgrade notes](CHANGELOG.md#090rc2)
-and the [scoring/baseline migration](CHANGELOG.md#upgrade-and-baseline-migration)
+**0.9.0rc2 is published.** Install the tester prerelease explicitly:
+
+```bash
+uv tool install callprobe==0.9.0rc2 --force
+callprobe --version
+```
+
+Alternatively, use `python -m pip install --upgrade callprobe==0.9.0rc2`.
+`@latest` selects the stable release. See the [release notes](https://github.com/Eladhirsh/callprobe/releases/tag/v0.9.0rc2),
+[rc2 upgrade notes](CHANGELOG.md#090rc2), and
+[scoring/baseline migration](CHANGELOG.md#upgrade-and-baseline-migration)
 before reusing baselines.
 
 ## Try it
@@ -115,7 +121,7 @@ Unknown provenance stays unknown; matching a model tag does not verify weights.
 prove semantic equivalence or rescore responses. It exits zero for a valid
 report even when regressions exist; there is no gate option. After choosing a
 contract, record a new baseline and use the ordinary same-suite CI gate.
-This command is in the `0.9.0rc2` candidate; it is not in published `0.9.0rc1`.
+This command requires `0.9.0rc2` or later.
 
 ## A concrete regression example
 
