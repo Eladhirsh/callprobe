@@ -22,7 +22,9 @@ outcomes. Keep failed results and the final user-facing summary. Preserve the or
 If an export is unsupported, record the failure and add an adapter against that real structure;
 do not quietly relabel the export as a different framework.
 
-Create reviewed claims and expected findings separately from the export. Use a manifest like:
+Create reviewed claims and expected findings separately from the export. Claim `message_index`
+values refer to the canonical Trace event order, not raw export row numbers. Inspect
+`load_trace(export).assistant_messages()` to obtain those indices. Use a manifest like:
 
 ```json
 {

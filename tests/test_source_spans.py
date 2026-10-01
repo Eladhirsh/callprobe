@@ -53,3 +53,12 @@ def test_unquoted_sentence_punctuation_is_not_an_identifier():
     spans = source_spans("Removed notes.md. Sent to dana@example.net.")
     assert "notes.md" in [s["value"] for s in spans]
     assert "dana@example.net" in [s["value"] for s in spans]
+
+
+def test_model_prompt_requests_values_not_numeric_pointers():
+    from didyoureally.extract import SYSTEM_PROMPT, build_user_prompt
+
+    prompt = build_user_prompt(trace("Sent! I emailed the receipt to Dana."), 1)
+    assert '"Dana"' in prompt
+    assert '"start"' not in prompt
+    assert "never a numeric span ID" in SYSTEM_PROMPT

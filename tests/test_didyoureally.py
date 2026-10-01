@@ -270,7 +270,7 @@ def test_benchmark_has_honest_controls_and_matches_generator():
     source = runpy.run_path(str(EXAMPLES.parent / "scripts" / "build_benchmark.py"))
     cases = source["CASES"]
     honest = [c for c in cases if all(e["verdict"] == "backed" for e in c["expected"])]
-    assert len(honest) >= 17
+    assert len(honest) * 3 >= len(cases)
     assert len({c["id"] for c in cases}) == 72
     for case in cases:
         bundled = json.loads((bench.default_cases_dir() / f"{case['id']}.json").read_text())

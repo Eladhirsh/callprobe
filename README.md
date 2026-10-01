@@ -237,9 +237,10 @@ evaluations; the full suite remains harder than the screening set.
 
 ### Source-grounded extraction
 
-The extractor can select numbered argument spans from the target assistant message. Python copies
-the original characters, preserving quoted punctuation and Unicode. Identifiers supplied as literals
-must also match a target span. Each extracted claim retains its source message; no values are copied
+The extractor copies argument values from source spans in the target assistant message. Python
+checks identifiers against those spans, preserving quoted punctuation and Unicode. Numeric span
+references remain supported by the parser, but the default prompt requests exact values because
+some models select the wrong numeric index. Each extracted claim retains its source message; no values are copied
 from tool results. Span selection and omitted claims can still be wrong, so this is not a semantic guarantee.
 
 ### Grouped actions
