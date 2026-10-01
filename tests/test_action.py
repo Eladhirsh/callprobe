@@ -33,11 +33,13 @@ def test_action_passes_arguments_and_propagates_gate_failure(tmp_path, policy, g
            "CALLPROBE_MODEL": model, "CALLPROBE_ENDPOINT": "http://localhost:1234/v1",
            "CALLPROBE_SUITE": "suite with spaces", "CALLPROBE_FAIL_UNDER": "",
            "CALLPROBE_PAD": "0,8", "CALLPROBE_REPEATS": "2", "CALLPROBE_MAX_TOKENS": "4096",
-           "CALLPROBE_BASELINE": "baseline.json", "CALLPROBE_POLICY": policy}
+           "CALLPROBE_BASELINE": "baseline.json", "CALLPROBE_POLICY": policy,
+           "CALLPROBE_REQUEST_TIMEOUT": "300.5"}
     completed = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
     assert completed.returncode == gate_exit, completed.stderr
     args = (tmp_path / "args").read_text().splitlines()
     assert model in args
+    assert args[args.index("--request-timeout") + 1] == "300.5"
     assert "suite with spaces" in args
     assert "--policy" in args if policy else "--fail-on-regression" in args
     assert not (tmp_path / "injected").exists()

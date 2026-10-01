@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 ALLOWED_KEYS = {
     "model", "endpoint", "suite", "pads", "repeats", "temperature",
     "max_tokens", "quant", "notes", "retries", "concurrency", "out",
+    "request_timeout",
 }
 
 _STR_FIELDS = ("model", "endpoint", "suite", "quant", "notes", "out")
@@ -42,6 +43,7 @@ class RunFileConfig(BaseModel):
     retries: int | None = None
     concurrency: int | None = None
     out: str | None = None
+    request_timeout: float | None = None
 
     @field_validator(*_STR_FIELDS, mode="before")
     @classmethod
@@ -84,6 +86,21 @@ class RunFileConfig(BaseModel):
             raise ValueError("temperature must be finite") from None
         if value != value or value in (float("inf"), float("-inf")):
             raise ValueError("temperature must be finite")
+        return value
+
+    @field_validator("request_timeout", mode="before")
+    @classmethod
+    def _check_request_timeout(cls, value: Any) -> Any:
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError("request_timeout must be a number")
+        try:
+            value = float(value)
+        except OverflowError:
+            raise ValueError("request_timeout must be a finite positive number") from None
+        if value != value or value in (float("inf"), float("-inf")):
+            raise ValueError("request_timeout must be a finite positive number")
+        if value <= 0:
+            raise ValueError("request_timeout must be a finite positive number")
         return value
 
     @field_validator("pads", mode="before")

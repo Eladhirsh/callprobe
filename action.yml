@@ -37,6 +37,9 @@ inputs:
   max-tokens:
     description: 'Maximum completion tokens per request.'
     default: '2048'
+  request-timeout:
+    description: 'HTTP operation timeout in seconds; positive and finite (not an overall job deadline).'
+    default: '120'
 runs:
   using: 'composite'
   steps:
@@ -63,6 +66,7 @@ runs:
         CALLPROBE_PAD: ${{ inputs.pad }}
         CALLPROBE_REPEATS: ${{ inputs.repeats }}
         CALLPROBE_MAX_TOKENS: ${{ inputs.max-tokens }}
+        CALLPROBE_REQUEST_TIMEOUT: ${{ inputs.request-timeout }}
         CALLPROBE_BASELINE: ${{ inputs.baseline }}
         CALLPROBE_POLICY: ${{ inputs.policy }}
       run: |
@@ -98,7 +102,7 @@ runs:
         done
         args=(run --model "$CALLPROBE_MODEL" --endpoint "$CALLPROBE_ENDPOINT" \
           --pad "$CALLPROBE_PAD" --repeats "$CALLPROBE_REPEATS" \
-          --max-tokens "$CALLPROBE_MAX_TOKENS" --format json --out callprobe-results.json)
+          --max-tokens "$CALLPROBE_MAX_TOKENS" --request-timeout "${CALLPROBE_REQUEST_TIMEOUT:-120}" --format json --out callprobe-results.json)
         if [ -n "$CALLPROBE_SUITE" ]; then
           args+=(--suite "$CALLPROBE_SUITE")
         fi

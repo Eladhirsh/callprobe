@@ -174,3 +174,61 @@ def test_unsupported_yaml_tag_does_not_echo_input(tmp_path):
     assert "secret-token" not in str(exc.value)
     assert "private-value" not in str(exc.value)
     assert "line 1" in str(exc.value)
+
+
+def test_request_timeout_accepts_positive_float(tmp_path):
+    path = _write(tmp_path, "model: stub\nrequest_timeout: 30.5\n")
+    config, _ = load_run_config(str(path))
+    assert config.request_timeout == 30.5
+
+
+def test_request_timeout_accepts_positive_int(tmp_path):
+    path = _write(tmp_path, "model: stub\nrequest_timeout: 60\n")
+    config, _ = load_run_config(str(path))
+    assert config.request_timeout == 60.0
+    assert isinstance(config.request_timeout, float)
+
+
+def test_request_timeout_default_is_none_so_cli_default_still_wins(tmp_path):
+    path = _write(tmp_path, "model: stub\n")
+    config, _ = load_run_config(str(path))
+    assert config.request_timeout is None
+
+
+@pytest.mark.parametrize("text", [
+    "model: stub\nrequest_timeout: 0\n",
+    "model: stub\nrequest_timeout: -1\n",
+    "model: stub\nrequest_timeout: -0.5\n",
+])
+def test_request_timeout_rejects_nonpositive(tmp_path, text):
+    with pytest.raises(ValueError, match="request_timeout"):
+        load_run_config(str(_write(tmp_path, text)))
+
+
+@pytest.mark.parametrize("text", [
+    "model: stub\nrequest_timeout: .nan\n",
+    "model: stub\nrequest_timeout: .inf\n",
+    "model: stub\nrequest_timeout: -.inf\n",
+])
+def test_request_timeout_rejects_nonfinite(tmp_path, text):
+    with pytest.raises(ValueError, match="request_timeout"):
+        load_run_config(str(_write(tmp_path, text)))
+
+
+@pytest.mark.parametrize("text", [
+    "model: stub\nrequest_timeout: true\n",
+    "model: stub\nrequest_timeout: false\n",
+])
+def test_request_timeout_rejects_booleans(tmp_path, text):
+    with pytest.raises(ValueError, match="request_timeout"):
+        load_run_config(str(_write(tmp_path, text)))
+
+
+def test_request_timeout_rejects_strings(tmp_path):
+    with pytest.raises(ValueError, match="request_timeout"):
+        load_run_config(str(_write(tmp_path, 'model: stub\nrequest_timeout: "60"\n')))
+
+
+def test_request_timeout_rejects_null(tmp_path):
+    with pytest.raises(ValueError, match="request_timeout"):
+        load_run_config(str(_write(tmp_path, "model: stub\nrequest_timeout: null\n")))

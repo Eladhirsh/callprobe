@@ -47,6 +47,7 @@ RUN_DEFAULTS = {
     "max_tokens": 2048,
     "retries": 3,
     "concurrency": 1,
+    "request_timeout": 120.0,
 }
 
 # Sentinel meaning "use the suite packaged inside callprobe itself", resolved
@@ -192,6 +193,9 @@ def _merged_run_settings(args: argparse.Namespace):
         "notes": pick(args.notes, "notes"),
         "retries": pick(args.retries, "retries", RUN_DEFAULTS["retries"]),
         "concurrency": pick(args.concurrency, "concurrency", RUN_DEFAULTS["concurrency"]),
+        "request_timeout": pick(
+            args.request_timeout, "request_timeout", RUN_DEFAULTS["request_timeout"]
+        ),
         "out": out,
     }
 
@@ -215,6 +219,7 @@ def _render_dry_run_text(plan: dict) -> str:
     lines.append(f"temperature      {plan['temperature']}")
     lines.append(f"max_tokens       {plan['max_tokens']}")
     lines.append(f"concurrency      {plan['concurrency']}")
+    lines.append(f"request_timeout  {plan['request_timeout']}")
     lines.append(f"total requests   {plan['total_requests']}")
     lines.append(
         f"max completion tokens (upper bound)   {plan['max_completion_tokens']}"
@@ -250,6 +255,7 @@ def _dry_run_plan(suite, suite_label: str, config: RunConfig, concurrency: int) 
         "temperature": config.temperature,
         "max_tokens": config.max_tokens,
         "concurrency": concurrency,
+        "request_timeout": config.request_timeout,
         "max_completion_tokens": total_requests * config.max_tokens,
         "budget_excludes": ["prompt_tokens", "retries"],
     }
@@ -263,6 +269,9 @@ def _run(args: argparse.Namespace) -> int:
         raise ValueError("endpoint must not be blank")
     if settings["concurrency"] < 1 or settings["max_tokens"] < 1 or settings["retries"] < 0:
         raise ValueError("concurrency/max-tokens must be positive and retries nonnegative")
+    request_timeout = settings["request_timeout"]
+    if not math.isfinite(request_timeout) or request_timeout <= 0:
+        raise ValueError("--request-timeout must be a finite positive number of seconds")
 
     suite, suite_label = _resolve_suite(settings["suite"])
     pads = settings["pads"]
@@ -303,6 +312,7 @@ def _run(args: argparse.Namespace) -> int:
         suite_version=suite.version,
         suite_hash=suite.hash,
         selected_task_ids=selected_task_ids,
+        request_timeout=float(request_timeout),
     )
     config = prepare_config(suite, config)
 
@@ -323,7 +333,12 @@ def _run(args: argparse.Namespace) -> int:
         resume_run = _read_run(args.resume)
         validate_resume(config, resume_run)
 
-    client = ChatClient(settings["endpoint"], api_key=api_key, retries=settings["retries"])
+    client = ChatClient(
+        settings["endpoint"],
+        api_key=api_key,
+        retries=settings["retries"],
+        timeout=float(request_timeout),
+    )
 
     task_count = len(config.selected_task_ids) if config.selected_task_ids is not None else len(suite.tasks)
     total = task_count * len(pads) * settings["repeats"]
@@ -607,8 +622,8 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.add_argument(
         "--config", default=None,
         help="YAML file of defaults (model, endpoint, suite, pads, repeats, temperature, "
-             "max_tokens, quant, notes, retries, concurrency, out); explicit flags win, "
-             "never auto-discovered"
+             "max_tokens, quant, notes, retries, concurrency, out, request_timeout); "
+             "explicit flags win, never auto-discovered"
     )
     run_cmd.add_argument("--model", default=None, help="required, here or in --config")
     run_cmd.add_argument("--endpoint", default=None)
@@ -636,6 +651,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     run_cmd.add_argument(
         "--concurrency", type=int, default=None, help="parallel requests via a thread pool"
+    )
+    run_cmd.add_argument(
+        "--request-timeout",
+        dest="request_timeout",
+        type=float,
+        default=None,
+        help="HTTP operation timeout in seconds (positive finite float, default 120); "
+             "not a total request deadline or a model parameter",
     )
     run_cmd.add_argument(
         "--resume",

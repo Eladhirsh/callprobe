@@ -965,3 +965,154 @@ def test_dry_run_never_exposes_endpoint_or_api_credentials(monkeypatch, capsys):
     assert "example.test" not in text
     plan = json.loads(text)
     assert plan["budget_excludes"] == ["prompt_tokens", "retries"]
+
+
+# ------------------------------------------------------------ request-timeout
+
+
+def test_default_request_timeout_recorded_and_passed_to_client(monkeypatch, tmp_path, capsys):
+    captured: dict = {}
+
+    class _Capturing(_FakeClient):
+        def __init__(self, endpoint, api_key=None, retries=0, timeout=120.0):
+            captured["timeout"] = timeout
+            super().__init__()
+
+    out_path = tmp_path / "run.json"
+    code, _ = _run_cli(monkeypatch, ["--out", str(out_path)], capsys, client=_Capturing)
+    assert code == 0
+    assert captured["timeout"] == 120.0
+    saved = json.loads(out_path.read_text())
+    assert saved["config"]["request_timeout"] == 120.0
+
+
+def test_cli_flag_overrides_default_request_timeout(monkeypatch, tmp_path, capsys):
+    captured: dict = {}
+
+    class _Capturing(_FakeClient):
+        def __init__(self, endpoint, api_key=None, retries=0, timeout=120.0):
+            captured["timeout"] = timeout
+            super().__init__()
+
+    out_path = tmp_path / "run.json"
+    code, _ = _run_cli(
+        monkeypatch,
+        ["--request-timeout", "45.5", "--out", str(out_path)],
+        capsys,
+        client=_Capturing,
+    )
+    assert code == 0
+    assert captured["timeout"] == 45.5
+    saved = json.loads(out_path.read_text())
+    assert saved["config"]["request_timeout"] == 45.5
+
+
+def test_config_file_request_timeout_used_when_no_cli_flag(monkeypatch, tmp_path, capsys):
+    captured: dict = {}
+
+    class _Capturing(_FakeClient):
+        def __init__(self, endpoint, api_key=None, retries=0, timeout=120.0):
+            captured["timeout"] = timeout
+            super().__init__()
+
+    config_path = tmp_path / "run.yaml"
+    out_path = tmp_path / "run.json"
+    config_path.write_text(
+        f"model: stub\nsuite: {SUITE}\npads: [0]\nrequest_timeout: 90\nout: {out_path.name}\n"
+    )
+    code, _, _ = _run_config_cli(
+        monkeypatch, ["--config", str(config_path), "--quiet"], capsys, client=_Capturing
+    )
+    assert code == 0
+    assert captured["timeout"] == 90.0
+    saved = json.loads(out_path.read_text())
+    assert saved["config"]["request_timeout"] == 90.0
+
+
+def test_cli_flag_overrides_config_request_timeout(monkeypatch, tmp_path, capsys):
+    captured: dict = {}
+
+    class _Capturing(_FakeClient):
+        def __init__(self, endpoint, api_key=None, retries=0, timeout=120.0):
+            captured["timeout"] = timeout
+            super().__init__()
+
+    config_path = tmp_path / "run.yaml"
+    config_path.write_text(
+        f"model: stub\nsuite: {SUITE}\npads: [0]\nrequest_timeout: 90\n"
+    )
+    code, _, _ = _run_config_cli(
+        monkeypatch,
+        ["--config", str(config_path), "--request-timeout", "15", "--quiet"],
+        capsys,
+        client=_Capturing,
+    )
+    assert code == 0
+    assert captured["timeout"] == 15.0
+
+
+@pytest.mark.parametrize("value,message", [
+    ("0", "finite positive"),
+    ("-1", "finite positive"),
+    ("nan", "finite positive"),
+    ("inf", "finite positive"),
+    ("-inf", "finite positive"),
+])
+def test_invalid_request_timeout_fails_before_endpoint_probe(monkeypatch, capsys, value, message):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("invalid request-timeout must not contact an endpoint")
+
+    monkeypatch.setattr(cli, "probe_server_version", forbidden)
+    monkeypatch.setattr(cli, "ChatClient", forbidden)
+    code = cli.main(["run", "--model", "stub", "--suite", str(SUITE), f"--request-timeout={value}"])
+    assert code == 2
+    assert message in capsys.readouterr().err
+
+
+def test_invalid_config_request_timeout_fails_before_endpoint_probe(monkeypatch, tmp_path, capsys):
+    config_path = tmp_path / "run.yaml"
+    config_path.write_text(f"model: stub\nsuite: {SUITE}\nrequest_timeout: -5\n")
+    monkeypatch.setattr(cli, "ChatClient", _UnreachableClient)
+
+    def boom(_):
+        raise AssertionError("must fail before probing the endpoint")
+
+    monkeypatch.setattr(cli, "probe_server_version", boom)
+    code, _, err = _run_config_cli(
+        monkeypatch, ["--config", str(config_path)], capsys, client=_UnreachableClient
+    )
+    assert code == 2
+    assert "request_timeout" in err
+
+
+def test_dry_run_records_effective_request_timeout(monkeypatch, capsys):
+    code, out, _ = _dry_run_cli(
+        monkeypatch, ["--request-timeout", "75", "--format", "json"], capsys
+    )
+    assert code == 0
+    plan = json.loads(out)
+    assert plan["request_timeout"] == 75.0
+
+
+def test_dry_run_default_request_timeout_shown_in_text(monkeypatch, capsys):
+    code, out, _ = _dry_run_cli(monkeypatch, [], capsys)
+    assert code == 0
+    assert "request_timeout" in out
+    assert "120" in out
+
+
+def test_historical_runconfig_without_request_timeout_still_loads(tmp_path):
+    """RunConfig must accept pre-existing results files that have no
+    request_timeout field."""
+    from callprobe.models import RunConfig
+    legacy = {
+        "model": "qwen2.5:7b",
+        "endpoint": "http://localhost:11434/v1",
+        "suite": "core",
+        "pads": [0],
+        "repeats": 1,
+        "temperature": 0.0,
+        "max_tokens": 2048,
+    }
+    config = RunConfig.model_validate(legacy)
+    assert config.request_timeout is None

@@ -84,6 +84,7 @@ class Sweep:
             "note": NOTE, "dry_run": args.dry_run, "endpoint": args.endpoint,
             "suite": self.suite, "pad": args.pad, "repeats": args.repeats,
             "max_tokens": args.max_tokens, "timeout_seconds": args.timeout,
+            "request_timeout_seconds": args.request_timeout,
             "total_planned_requests": None, "models": [], "leaderboard": None,
             "failed": False, "status": "running",
         }
@@ -102,7 +103,8 @@ class Sweep:
         a = self.args
         base = ["run", f"--model={model}", f"--endpoint={a.endpoint}", f"--pad={a.pad}",
                 f"--repeats={a.repeats}", "--temperature=0", f"--max-tokens={a.max_tokens}",
-                "--concurrency=1", "--retries=0"]
+                "--concurrency=1", "--retries=0",
+                f"--request-timeout={a.request_timeout}"]
         return base + ([f"--suite={self.suite}"] if self.suite else [])
 
     def step(self, entry: dict, name: str, command: list[str]):
@@ -225,6 +227,11 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
     p.add_argument("--repeats", type=int, default=1)
     p.add_argument("--max-tokens", dest="max_tokens", type=int, default=4096)
     p.add_argument("--timeout", type=positive, default=1800.0, help="seconds per step")
+    p.add_argument(
+        "--request-timeout", dest="request_timeout", type=positive, default=120.0,
+        help="HTTP operation timeout in seconds (positive finite float, default 120); "
+             "forwarded to each child `callprobe run`",
+    )
     p.add_argument("--dry-run", dest="dry_run", action="store_true", help="plan only")
 
 

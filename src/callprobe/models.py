@@ -159,6 +159,11 @@ class RunConfig(BaseModel):
     # specific task ids (still in canonical suite order); never used to
     # silently narrow a benchmark run.
     selected_task_ids: list[str] | None = None
+    # HTTP operation timeout in seconds. None in historical runs that
+    # predate the field; a fresh run always records the effective value.
+    # Transport-level only — never sent in the model request payload, so
+    # it changes completion/error behavior, not the scoring rubric.
+    request_timeout: float | None = None
 
 
 class Run(BaseModel):

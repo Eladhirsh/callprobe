@@ -200,6 +200,50 @@ def test_script_entry_point_delegates_to_package():
     assert runpy.run_path(str(script))["main"] is sweep.main
 
 
+def test_default_request_timeout_forwarded_and_recorded(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    code, out, m = run(tmp_path, models=("a",))
+    assert code == 0
+    assert m["request_timeout_seconds"] == 120.0
+    for command, _ in fake.calls:
+        if command[3] == "run":
+            assert "--request-timeout=120.0" in command
+
+
+def test_custom_request_timeout_forwarded_and_recorded(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    code, out, m = run(tmp_path, "--request-timeout", "45", models=("a",))
+    assert code == 0
+    assert m["request_timeout_seconds"] == 45.0
+    forwarded = any(
+        "--request-timeout=45.0" in command
+        for command, _ in fake.calls if command[3] in ("run",) or "--dry-run" in command
+    )
+    assert forwarded
+
+
+def test_request_timeout_separate_from_step_timeout(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    code, out, m = run(
+        tmp_path, "--timeout", "600", "--request-timeout", "30", models=("a",)
+    )
+    assert code == 0
+    assert m["timeout_seconds"] == 600.0
+    assert m["request_timeout_seconds"] == 30.0
+    for _, kwargs in fake.calls:
+        assert kwargs["timeout"] == 600.0
+
+
+@pytest.mark.parametrize("value", ["0", "-1", "nan", "inf"])
+def test_bad_request_timeout_rejected_before_output_created(tmp_path, monkeypatch, value):
+    fake = Fake(monkeypatch)
+    out = tmp_path / "will-not-exist"
+    with pytest.raises(SystemExit):
+        sweep.main(["--models", "a", "--out", str(out), "--request-timeout", value])
+    assert not out.exists()
+    assert not fake.calls
+
+
 def test_manifest_exposes_running_step_before_subprocess_finishes(tmp_path, monkeypatch):
     fake = Fake(monkeypatch)
     observed = []
