@@ -1,0 +1,33 @@
+.x.............x...............x.x...x...........x 50/54
+....
+
+model            qwen3:8b
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         96.3%   96.3%   88.9%   88.9%   (95% CI 77.8-100.0%)
+  type-lenient    96.3%   96.3%   88.9%   88.9%
+
+  tool count sweep
+    +0   distractors   success  88.9%   selection 100.0%   sd  0.0
+    +2   distractors   success  88.9%   selection  94.4%   sd  0.0
+    +4   distractors   success  88.9%   selection  94.4%   sd  0.0
+
+  by category
+    abstain     88.9%  (n=18, 95% CI 66.7-100.0%)
+    args        86.7%  (n=15, 95% CI 60.0-100.0%)
+    depth      100.0%  (n=6, 95% CI 100.0-100.0%)
+    select      86.7%  (n=15, 95% CI 60.0-100.0%)
+
+  cost per success   943 tokens   32.60 s
+
+failures worth reading:
+  [search-by-subject pad=0] q expected 'subject:Quarterly lunch plan', got 'subject:Quarterly lunch plan.'
+  [reply-body-symbols pad=0] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."; mode expected 'send', got 'draft'
+  [unsupported-forward pad=2] called get_message when no tool applied
+  [reply-body-symbols pad=2] mode expected 'send', got 'draft'
+  [search-by-subject pad=4] q expected 'subject:Quarterly lunch plan', got 'subject:Quarterly lunch plan.'
+  [unsupported-forward pad=4] called send_reply when no tool applied
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/09-flat.json

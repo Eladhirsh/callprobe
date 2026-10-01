@@ -1,0 +1,42 @@
+x...........xxxx..............xxxx..x.....x.....xx 50/54
+xx..
+
+model            qwen2.5:7b
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         88.9%   87.0%   72.2%   72.2%   (95% CI 53.7-90.7%)
+  type-lenient    88.9%   87.0%   72.2%   72.2%
+
+  tool count sweep
+    +0   distractors   success  72.2%   selection  88.9%   sd  0.0
+    +2   distractors   success  77.8%   selection  88.9%   sd  0.0
+    +4   distractors   success  66.7%   selection  88.9%   sd  0.0
+
+  by category
+    abstain     66.7%  (n=18, 95% CI 33.3-100.0%)
+    args        53.3%  (n=15, 95% CI 13.3-93.3%)
+    depth      100.0%  (n=6, 95% CI 100.0-100.0%)
+    select      86.7%  (n=15, 95% CI 60.0-100.0%)
+
+  cost per success   804 tokens   3.52 s
+
+failures worth reading:
+  [search-by-sender pad=0] q expected 'from:dana.rivera@example.invalid', got 'from:dana.rivera@example.invalid.'
+  [unsupported-delete pad=0] called send_reply when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-quotes pad=0] text expected 'Please send the "final" draft by 5:00 p.m.; thanks!', got '[Please send the "final" draft by 5:00 p.m.; thanks!]'; mode expected 'send', got 'draft'
+  [reply-body-symbols pad=0] mode expected 'send', got 'draft'
+  [unsupported-delete pad=2] called get_message when no tool applied
+  [unsupported-forward pad=2] called send_reply when no tool applied
+  [reply-body-quotes pad=2] text expected 'Please send the "final" draft by 5:00 p.m.; thanks!', got '[Please send the \\"final\\" draft by 5:00 p.m.; thanks!]'
+  [reply-body-symbols pad=2] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"; mode expected 'send', got 'draft'
+  [search-by-sender pad=4] q expected 'from:dana.rivera@example.invalid', got 'from:dana.rivera@example.invalid.'
+  [reply-send pad=4] schema: (root): 'mode' is a required property; mode expected 'send', got missing
+  [unsupported-delete pad=4] called get_message when no tool applied
+  [unsupported-forward pad=4] called get_message when no tool applied
+  [reply-body-quotes pad=4] text expected 'Please send the "final" draft by 5:00 p.m.; thanks!', got '[Please send the "final" draft by 5:00 p.m.; thanks!]'
+  [reply-body-symbols pad=4] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"; mode expected 'send', got 'draft'
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/01-flat.json

@@ -1,0 +1,44 @@
+.xxx..xxxxxxxxxx....xx..x.xxxxxxxx...xxx..x.xxxxxx 50/54
+xx.x
+
+model            llama3.2:3b
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         66.7%   51.9%   31.5%   31.5%   (95% CI 13.0-51.9%)
+  type-lenient    66.7%   57.4%   35.2%   35.2%
+
+  tool count sweep
+    +0   distractors   success  27.8%   selection  66.7%   sd  0.0
+    +2   distractors   success  38.9%   selection  66.7%   sd  0.0
+    +4   distractors   success  27.8%   selection  66.7%   sd  0.0
+
+  by category
+    abstain      0.0%  (n=18, 95% CI 0.0-0.0%)
+    args        33.3%  (n=15, 95% CI 0.0-73.3%)
+    depth       83.3%  (n=6, 95% CI 66.7-100.0%)
+    select      46.7%  (n=15, 95% CI 6.7-86.7%)
+
+  2 of 54 calls (3.7%) were correct but wrongly typed
+
+  cost per success   1851 tokens   4.06 s
+
+failures worth reading:
+  [search-by-subject pad=0] schema: limit: None is not of type 'integer'; folder should not be present
+  [search-archive-folder pad=0] schema: limit: None is not of type 'integer'; q expected 'invoice', got 'subject:invoice'
+  [search-with-limit pad=0] schema: limit: '5' is not of type 'integer'; limit expected 5, got '5'
+  [reply-send pad=0] text expected 'Confirmed for Tuesday.', got 'Confirmed for Tuesday'
+  [reply-draft-only pad=0] text expected 'Let me check and get back to you.', got 'Let me check and get back to you. '
+  [no-send-chat-only pad=0] called send_reply when no tool applied
+  [get-missing-id pad=0] called get_message when no tool applied
+  [reply-missing-id pad=0] called send_reply when no tool applied
+  [search-missing-criteria pad=0] called search_messages when no tool applied
+  [unsupported-delete pad=0] called get_message when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-quotes pad=0] text expected 'Please send the "final" draft by 5:00 p.m.; thanks!', got '[Please send the “final” draft by 5:00 p.m.; thanks!]'
+  [reply-body-symbols pad=0] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "[Hi Sam,Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"; mode expected 'send', got 'draft'
+  [search-archive-folder pad=2] schema: limit: None is not of type 'integer'; q expected 'invoice', got 'subject:invoice'
+  [search-with-limit pad=2] schema: limit: '5' is not of type 'integer'; limit expected 5, got '5'
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/02-flat.json

@@ -125,3 +125,11 @@ and fragment are rejected), `--python`, `--pad` (default `0`), `--repeats` (defa
 
 Scores are reported as the CLI produced them, with no repair. A few tasks and repeats is a
 small sample: the leaderboard does not show that the model order is robust.
+
+## Development suite revision
+
+After 0.9.0rc1, the two literal-text reply prompts explicitly say “Send a reply”
+to match their expected send mode. Regenerating this example from the development
+version changes its suite hash. Collect a new baseline; do not compare or resume
+it as if it were the archived benchmark suite. Historical results retain their
+original matching snapshots.

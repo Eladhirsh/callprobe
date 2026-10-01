@@ -1,0 +1,45 @@
+xx.x....xxxxxxxxx.xxxx..x.xxxxxxxxx.xx.x....xxxxxx 50/54
+xx..
+
+model            llama3.1:8b
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         61.1%   55.6%   31.5%   31.5%   (95% CI 13.0-51.9%)
+  type-lenient    61.1%   61.1%   35.2%   35.2%
+
+  tool count sweep
+    +0   distractors   success  33.3%   selection  61.1%   sd  0.0
+    +2   distractors   success  22.2%   selection  61.1%   sd  0.0
+    +4   distractors   success  38.9%   selection  61.1%   sd  0.0
+
+  by category
+    abstain      0.0%  (n=18, 95% CI 0.0-0.0%)
+    args        53.3%  (n=15, 95% CI 13.3-93.3%)
+    depth       66.7%  (n=6, 95% CI 33.3-100.0%)
+    select      33.3%  (n=15, 95% CI 0.0-73.3%)
+
+  2 of 54 calls (3.7%) were correct but wrongly typed
+
+  cost per success   1884 tokens   11.68 s
+
+failures worth reading:
+  [search-by-sender pad=0] folder should not be present; limit should not be present
+  [search-by-subject pad=0] folder should not be present
+  [search-with-limit pad=0] schema: limit: '5' is not of type 'integer'; limit expected 5, got '5'
+  [no-send-chat-only pad=0] called send_reply when no tool applied
+  [get-missing-id pad=0] called get_message when no tool applied
+  [reply-missing-id pad=0] called send_reply when no tool applied
+  [search-missing-criteria pad=0] called search_messages when no tool applied
+  [unsupported-delete pad=0] called send_reply when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-quotes pad=0] no tool call produced
+      said: {"name": "send_reply", "parameters": {"message_id": "msg-3001", "text": "[Please send the \\"final\\" draft by 5:00 p.m.; thanks!]", "mode": "draft"}}
+  [reply-body-symbols pad=0] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got '[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]'; mode expected 'send', got 'draft'
+  [correction-search-sender pad=0] folder should not be present; limit should not be present
+  [search-by-sender pad=2] folder should not be present; limit should not be present
+  [search-by-subject pad=2] folder should not be present
+  [search-archive-folder pad=2] limit should not be present
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/07-flat.json

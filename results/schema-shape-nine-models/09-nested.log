@@ -1,0 +1,43 @@
+.xxxxxx.......xxx......x........xxx...x...x......x 50/54
+xxxx
+
+model            qwen3:8b
+endpoint         http://localhost:11434/v1
+tasks scored     52   errors: 2
+  WARNING: 2 of 54 requests errored (3.7%) and are excluded from every rate below
+
+                 selection   schema     args      success
+  overall        100.0%   71.2%   65.4%   65.4%   (95% CI 47.1-82.4%)
+  type-lenient   100.0%   71.2%   65.4%   65.4%
+
+  tool count sweep
+    +0   distractors   success  50.0%   selection 100.0%   sd  0.0
+    +2   distractors   success  77.8%   selection 100.0%   sd  0.0
+    +4   distractors   success  68.8%   selection 100.0%   sd  0.0
+
+  by category
+    abstain    100.0%  (n=17, 95% CI 100.0-100.0%)
+    args        35.7%  (n=14, 95% CI 7.1-71.4%)
+    depth       33.3%  (n=6, 95% CI 0.0-66.7%)
+    select      66.7%  (n=15, 95% CI 46.7-86.7%)
+
+  cost per success   1259 tokens   30.55 s
+
+failures worth reading:
+  [search-by-subject pad=0] schema: (root): Additional properties are not allowed ('q' was unexpected); schema: (root): 'query' is a required property
+  [search-archive-folder pad=0] schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected); schema: (root): 'query' is a required property
+  [search-with-limit pad=0] schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected); schema: (root): 'query' is a required property
+  [get-by-id pad=0] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [get-id-with-punctuation pad=0] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [reply-send pad=0] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [reply-body-quotes pad=0] schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected); schema: (root): 'path' is a required property
+  [reply-body-symbols pad=0] schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected); schema: (root): 'path' is a required property
+  [correction-search-sender pad=0] schema: (root): Additional properties are not allowed ('q' was unexpected); schema: (root): 'query' is a required property
+  [get-id-with-punctuation pad=2] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [reply-body-quotes pad=2] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'draft', 'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]'}
+  [reply-body-symbols pad=2] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}
+  [correction-search-sender pad=2] schema: (root): Additional properties are not allowed ('q' was unexpected); schema: (root): 'query' is a required property
+  [search-archive-folder pad=4] schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected); schema: (root): 'query' is a required property
+  [reply-send pad=4] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/09-nested.json

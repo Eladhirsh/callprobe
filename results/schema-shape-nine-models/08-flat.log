@@ -1,0 +1,42 @@
+...x....xxx..x.x.........xxxx.xxxx.....x..x.xxx..x 50/54
+xx..
+
+model            mistral-nemo:latest
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         74.1%   75.9%   61.1%   59.3%   (95% CI 40.7-77.8%)
+  type-lenient    74.1%   75.9%   61.1%   59.3%
+
+  tool count sweep
+    +0   distractors   success  66.7%   selection  77.8%   sd  0.0
+    +2   distractors   success  55.6%   selection  72.2%   sd  0.0
+    +4   distractors   success  55.6%   selection  72.2%   sd  0.0
+
+  by category
+    abstain     27.8%  (n=18, 95% CI 0.0-61.1%)
+    args        53.3%  (n=15, 95% CI 20.0-80.0%)
+    depth      100.0%  (n=6, 95% CI 100.0-100.0%)
+    select      86.7%  (n=15, 95% CI 60.0-100.0%)
+
+  cost per success   870 tokens   7.50 s
+
+failures worth reading:
+  [search-with-limit pad=0] q expected 'offsite', got 'offsites'
+  [no-send-chat-only pad=0] called get_message when no tool applied
+  [get-missing-id pad=0] called search_messages when no tool applied
+  [reply-missing-id pad=0] called get_message when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-symbols pad=0] mode expected 'send', got 'draft'
+  [reply-draft-only pad=2] produced 2 calls; expected exactly one
+  [no-send-chat-only pad=2] called get_message when no tool applied
+  [get-missing-id pad=2] called get_message when no tool applied
+  [reply-missing-id pad=2] called get_message when no tool applied
+  [unsupported-delete pad=2] called get_message when no tool applied
+  [unsupported-forward pad=2] called send_reply when no tool applied
+  [reply-body-quotes pad=2] mode expected 'send', got 'draft'
+  [reply-body-symbols pad=2] mode expected 'send', got 'draft'
+  [search-with-limit pad=4] limit expected 5, got missing
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/08-flat.json

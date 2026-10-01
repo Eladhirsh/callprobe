@@ -1,0 +1,141 @@
+{
+  "metrics": {
+    "nested": {
+      "observations": 54,
+      "success": 12,
+      "selection_ok": 48,
+      "schema_ok": 12,
+      "args_ok": 12,
+      "error": 0,
+      "truncated": 0
+    },
+    "flat": {
+      "observations": 54,
+      "success": 39,
+      "selection_ok": 48,
+      "schema_ok": 48,
+      "args_ok": 39,
+      "error": 0,
+      "truncated": 0
+    }
+  },
+  "rounds": [
+    {
+      "file": "01-nested.json",
+      "successes": 4
+    },
+    {
+      "file": "02-flat.json",
+      "successes": 13
+    },
+    {
+      "file": "03-flat.json",
+      "successes": 13
+    },
+    {
+      "file": "04-nested.json",
+      "successes": 4
+    },
+    {
+      "file": "05-nested.json",
+      "successes": 4
+    },
+    {
+      "file": "06-flat.json",
+      "successes": 13
+    }
+  ],
+  "tasks": [
+    {
+      "task": "search-by-sender",
+      "nested": 0,
+      "flat": 0
+    },
+    {
+      "task": "search-by-subject",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "search-archive-folder",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "search-with-limit",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "get-by-id",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "get-id-with-punctuation",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "reply-send",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "reply-draft-only",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "no-send-chat-only",
+      "nested": 3,
+      "flat": 3
+    },
+    {
+      "task": "get-missing-id",
+      "nested": 3,
+      "flat": 3
+    },
+    {
+      "task": "reply-missing-id",
+      "nested": 3,
+      "flat": 3
+    },
+    {
+      "task": "search-missing-criteria",
+      "nested": 3,
+      "flat": 3
+    },
+    {
+      "task": "unsupported-delete",
+      "nested": 0,
+      "flat": 0
+    },
+    {
+      "task": "unsupported-forward",
+      "nested": 0,
+      "flat": 0
+    },
+    {
+      "task": "reply-body-quotes",
+      "nested": 0,
+      "flat": 0
+    },
+    {
+      "task": "reply-body-symbols",
+      "nested": 0,
+      "flat": 0
+    },
+    {
+      "task": "correction-search-sender",
+      "nested": 0,
+      "flat": 3
+    },
+    {
+      "task": "correction-reply-target",
+      "nested": 0,
+      "flat": 3
+    }
+  ],
+  "note": "Different suite hashes by design. Descriptive contract experiment, not a matched regression gate. Three temperature-zero repeats are not independent samples."
+}

@@ -132,7 +132,7 @@ tasks:
     bundle: main
     messages:
       - role: user
-        content: 'Reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]'
+        content: 'Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]'
     expect:
       type: call
       tool: send_reply
@@ -144,7 +144,7 @@ tasks:
     bundle: main
     messages:
       - role: user
-        content: "Reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"
+        content: "Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"
     expect:
       type: call
       tool: send_reply

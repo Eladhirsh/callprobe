@@ -1,0 +1,98 @@
+bundles:
+  main:
+  - name: search_messages
+    description: 'Search messages.
+
+
+      The q parameter uses `from:ADDRESS`, `subject:WORDS`, or plain words. Use folder
+      only when the user names a folder, and limit only when the user gives a maximum
+      count.
+
+
+      GET /messages'
+    parameters:
+      type: object
+      properties:
+        query:
+          type: object
+          properties:
+            q:
+              type: string
+              description: Search text, for example from:dana.rivera@example.invalid.
+            folder:
+              type: string
+              enum:
+              - inbox
+              - archive
+            limit:
+              type: integer
+              minimum: 1
+              maximum: 50
+          additionalProperties: false
+          required:
+          - q
+      additionalProperties: false
+      required:
+      - query
+  - name: get_message
+    description: 'Get one message by its exact message ID.
+
+
+      GET /messages/{message_id}'
+    parameters:
+      type: object
+      properties:
+        path:
+          type: object
+          properties:
+            message_id:
+              type: string
+              pattern: ^msg-[A-Za-z0-9._-]+$
+              description: A message ID such as msg-1042.
+          additionalProperties: false
+          required:
+          - message_id
+      additionalProperties: false
+      required:
+      - path
+  - name: send_reply
+    description: 'Create a reply to a known message.
+
+
+      Set mode to draft when the user wants a draft only or says not to send; set
+      mode to send only when the user asks to send. Text is used verbatim.
+
+
+      POST /messages/{message_id}/replies'
+    parameters:
+      type: object
+      properties:
+        path:
+          type: object
+          properties:
+            message_id:
+              type: string
+              pattern: ^msg-[A-Za-z0-9._-]+$
+              description: A message ID such as msg-1042.
+          additionalProperties: false
+          required:
+          - message_id
+        body:
+          type: object
+          additionalProperties: false
+          required:
+          - text
+          - mode
+          properties:
+            text:
+              type: string
+              minLength: 1
+            mode:
+              type: string
+              enum:
+              - draft
+              - send
+      additionalProperties: false
+      required:
+      - path
+      - body

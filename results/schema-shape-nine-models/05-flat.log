@@ -1,0 +1,44 @@
+..x.....xxxx.x.xxx..x.....xxxx...xxxxxx.....xxxx.. 50/54
+.xxx
+
+model            granite3.3:8b
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         63.0%   63.0%   50.0%   50.0%   (95% CI 27.8-70.4%)
+  type-lenient    63.0%   63.0%   50.0%   50.0%
+
+  tool count sweep
+    +0   distractors   success  50.0%   selection  61.1%   sd  0.0
+    +2   distractors   success  55.6%   selection  66.7%   sd  0.0
+    +4   distractors   success  44.4%   selection  61.1%   sd  0.0
+
+  by category
+    abstain     27.8%  (n=18, 95% CI 0.0-61.1%)
+    args        80.0%  (n=15, 95% CI 40.0-100.0%)
+    depth        0.0%  (n=6, 95% CI 0.0-0.0%)
+    select      66.7%  (n=15, 95% CI 33.3-93.3%)
+
+  cost per success   1239 tokens   3.73 s
+
+failures worth reading:
+  [search-archive-folder pad=0] limit should not be present
+  [no-send-chat-only pad=0] called send_reply when no tool applied
+  [get-missing-id pad=0] called send_reply when no tool applied
+  [reply-missing-id pad=0] called send_reply when no tool applied
+  [search-missing-criteria pad=0] called search_messages when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-symbols pad=0] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' – café at 9."; mode expected 'send', got 'draft'
+  [correction-search-sender pad=0] no tool call produced
+      said: No problem, searching for messages from sam.lee@example.invalid now.  Searching for messages from sam.lee@example.invalid.
+  [correction-reply-target pad=0] no tool call produced
+      said: Understood. I will create a draft replying to msg-1042 with the text "Approved." and save it as msg-1043.
+  [search-archive-folder pad=2] limit should not be present
+  [no-send-chat-only pad=2] called get_message when no tool applied
+  [get-missing-id pad=2] called get_message when no tool applied
+  [reply-missing-id pad=2] called send_reply when no tool applied
+  [search-missing-criteria pad=2] called search_messages when no tool applied
+  [reply-body-symbols pad=2] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' – café at 9."; mode expected 'send', got 'draft'
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/05-flat.json

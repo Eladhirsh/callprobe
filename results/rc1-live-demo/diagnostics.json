@@ -1,0 +1,2218 @@
+{
+  "suite": {
+    "name": "suite",
+    "version": 1,
+    "hash": "c3102d23f7c0d40c"
+  },
+  "run": {
+    "model": "qwen2.5:7b",
+    "suite": "results/rc1-live-demo/suite",
+    "started_at": "2026-09-30T20:13:44.041156+00:00",
+    "finished_at": "2026-09-30T20:14:58.322372+00:00"
+  },
+  "task_filter": null,
+  "total_cases": 36,
+  "scored_cases": 36,
+  "request_errors": 0,
+  "failed_cases": 25,
+  "diagnostic_counts": {
+    "unexpected_call": 4,
+    "schema": 21,
+    "argument_value": 21
+  },
+  "argument_shape_summary": {
+    "affected_observations": 21,
+    "unique_tasks": 12,
+    "by_kind": {
+      "nested_move": 21
+    }
+  },
+  "cases": [
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Find messages from dana.rivera@example.invalid."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "from:dana.rivera@example.invalid"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:dana.rivera@example.invalid'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_6winje8i",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid."
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid.\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "from:dana.rivera@example.invalid"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'from:dana.rivera@example.invalid'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('q' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "from:dana.rivera@example.invalid."
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Look for mail with the subject Quarterly lunch plan."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "subject:Quarterly lunch plan"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_oerrxiod",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('q' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "subject:Quarterly lunch plan"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Search my archive folder for the word invoice."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "invoice",
+            "folder": "archive"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_pbptxs50",
+          "name": "search_messages",
+          "arguments": {
+            "q": "invoice",
+            "folder": "archive"
+          },
+          "raw_arguments": "{\"q\":\"invoice\",\"folder\":\"archive\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "invoice",
+            "folder": "archive"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('folder', 'q' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query",
+          "folder": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "invoice",
+            "folder": "archive"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Show at most 5 messages about the offsite."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "offsite",
+            "limit": 5
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'offsite', 'limit': 5}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_7vqxs88o",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":5}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'offsite', 'limit': 5}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('limit', 'q' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query",
+          "limit": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "offsite",
+            "limit": 5
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Open message msg-1042."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "get_message",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-1042"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_9a4g3asd",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-1042"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-1042'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "message_id": "path"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-1042"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Fetch message msg-2024.07_a-19 please."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "get_message",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-2024.07_a-19"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_n2wierrh",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "message_id": "path"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-2024.07_a-19"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Send a reply to msg-1042 saying: Confirmed for Tuesday."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-1042"
+          },
+          "body": {
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_l3ox2mhx",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-1042"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-1042'}, got missing"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "message_id": "path",
+          "text": "body",
+          "mode": "body"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-1042"
+          },
+          "body": {
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Draft a reply to msg-1042 that says: Let me check and get back to you. Draft only, do not send it."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-1042"
+          },
+          "body": {
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_gubl0q7n",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "draft",
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you."
+          },
+          "raw_arguments": "{\"mode\":\"draft\",\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-1042"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-1042'}, got missing"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "mode": "body",
+          "message_id": "path",
+          "text": "body"
+        },
+        "candidate_arguments": {
+          "body": {
+            "mode": "draft",
+            "text": "Let me check and get back to you."
+          },
+          "path": {
+            "message_id": "msg-1042"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Delete message msg-1042 permanently."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called search_messages when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_c7revbi3",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:example.invalid id:msg-1042",
+            "folder": "inbox"
+          },
+          "raw_arguments": "{\"q\":\"from:example.invalid id:msg-1042\",\"folder\":\"inbox\"}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('folder', 'q' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ]
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Forward msg-1042 to sam.lee@example.invalid."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called get_message when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_goktdomz",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        }
+      ]
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Reply to msg-3001 with exactly this text between the brackets: [Please send the \"final\" draft by 5:00 p.m.; thanks!]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3001"
+          },
+          "body": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3001'}, got missing",
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_l3l27u0p",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3001"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-3001'}, got missing"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "message_id": "path",
+          "text": "body",
+          "mode": "body"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-3001"
+          },
+          "body": {
+            "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+            "mode": "send"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3002"
+          },
+          "body": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3002'}, got missing",
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_dsx5w3jt",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "draft",
+            "message_id": "msg-3002"
+          },
+          "raw_arguments": "{\"text\":\"Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' \u2014 caf\u00e9 at 9.\",\"mode\":\"draft\",\"message_id\":\"msg-3002\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3002"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-3002'}, got missing"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "text": "body",
+          "mode": "body",
+          "message_id": "path"
+        },
+        "candidate_arguments": {
+          "body": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "draft"
+          },
+          "path": {
+            "message_id": "msg-3002"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Find messages from dana.rivera@example.invalid.",
+        "Sorry, I meant sam.lee@example.invalid instead."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "from:sam.lee@example.invalid"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_9bp1qzi6",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('q' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "from:sam.lee@example.invalid"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Reply to msg-1042 saying: Approved.",
+        "Draft only, and use msg-1043 instead of msg-1042."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-1043"
+          },
+          "body": {
+            "text": "Approved.",
+            "mode": "draft"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1043'}, got missing",
+        "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_3ipktvkf",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Approved.",
+            "mode": "draft",
+            "message_id": "msg-1043"
+          },
+          "raw_arguments": "{\"text\":\"Approved.\",\"mode\":\"draft\",\"message_id\":\"msg-1043\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-1043"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-1043'}, got missing"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "text": "body",
+          "mode": "body",
+          "message_id": "path"
+        },
+        "candidate_arguments": {
+          "body": {
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "path": {
+            "message_id": "msg-1043"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Find messages from dana.rivera@example.invalid."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "from:dana.rivera@example.invalid"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:dana.rivera@example.invalid'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_qso8v9dq",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid."
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid.\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "from:dana.rivera@example.invalid"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'from:dana.rivera@example.invalid'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('q' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "from:dana.rivera@example.invalid."
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Look for mail with the subject Quarterly lunch plan."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "subject:Quarterly lunch plan"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_lu8bhmlz",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('q' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "subject:Quarterly lunch plan"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Search my archive folder for the word invoice."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "invoice",
+            "folder": "archive"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_bvufqcsn",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "subject:invoice"
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"subject:invoice\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "invoice",
+            "folder": "archive"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('folder', 'q' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "folder": "query",
+          "q": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "folder": "archive",
+            "q": "subject:invoice"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Show at most 5 messages about the offsite."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "offsite",
+            "limit": 5
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'offsite', 'limit': 5}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_j77vrkiu",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":5}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'offsite', 'limit': 5}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('limit', 'q' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query",
+          "limit": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "offsite",
+            "limit": 5
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Fetch message msg-2024.07_a-19 please."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "get_message",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-2024.07_a-19"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_oycxk3c8",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "message_id": "path"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-2024.07_a-19"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Delete message msg-1042 permanently."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called search_messages when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_xbi3g5ep",
+          "name": "search_messages",
+          "arguments": {
+            "q": "msg-1042"
+          },
+          "raw_arguments": "{\"q\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('q' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ]
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Forward msg-1042 to sam.lee@example.invalid."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called send_reply when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_zahffg22",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            },
+            "body": {
+              "mode": "draft",
+              "text": "Forwarded message from original sender."
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"},\"body\":{\"mode\":\"draft\",\"text\":\"Forwarded message from original sender.\"}}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Reply to msg-3001 with exactly this text between the brackets: [Please send the \"final\" draft by 5:00 p.m.; thanks!]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3001"
+          },
+          "body": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3001'}, got missing",
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_prj9rteg",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3001"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'message_id': 'msg-3001'}, got missing"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "message_id": "path",
+          "text": "body",
+          "mode": "body"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-3001"
+          },
+          "body": {
+            "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+            "mode": "draft"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3002"
+          },
+          "body": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('mode', 'text' were unexpected)",
+        "schema: (root): 'body' is a required property",
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_j9tl3g1u",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "draft",
+            "path": {
+              "message_id": "msg-3002"
+            },
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9."
+          },
+          "raw_arguments": "{\"mode\":\"draft\",\"path\":{\"message_id\":\"msg-3002\"},\"text\":\"Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' \u2014 caf\u00e9 at 9.\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3002"
+          },
+          "actual": {
+            "message_id": "msg-3002"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "mode": "body",
+          "text": "body"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-3002"
+          },
+          "body": {
+            "mode": "draft",
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9."
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Find messages from dana.rivera@example.invalid.",
+        "Sorry, I meant sam.lee@example.invalid instead."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_messages",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "q": "from:sam.lee@example.invalid"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_9xsyvyrb",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('q' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "q": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "q": "from:sam.lee@example.invalid"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Reply to msg-1042 saying: Approved.",
+        "Draft only, and use msg-1043 instead of msg-1042."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-1043"
+          },
+          "body": {
+            "text": "Approved.",
+            "mode": "draft"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('mode', 'text' were unexpected)",
+        "schema: (root): 'body' is a required property",
+        "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_qu3tsrlh",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Approved.",
+            "mode": "draft",
+            "path": {
+              "message_id": "msg-1043"
+            }
+          },
+          "raw_arguments": "{\"text\":\"Approved.\",\"mode\":\"draft\",\"path\":{\"message_id\":\"msg-1043\"}}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-1043"
+          },
+          "actual": {
+            "message_id": "msg-1043"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-1043'}, got {'message_id': 'msg-1043'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('mode', 'text' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "text": "body",
+          "mode": "body"
+        },
+        "candidate_arguments": {
+          "path": {
+            "message_id": "msg-1043"
+          },
+          "body": {
+            "text": "Approved.",
+            "mode": "draft"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    }
+  ]
+}

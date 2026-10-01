@@ -1,0 +1,4074 @@
+[
+  {
+    "model": "qwen2.5:7b",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "unexpected_call": 6,
+      "schema": 30,
+      "argument_value": 30
+    },
+    "argument_shape_summary": {
+      "affected_observations": 29,
+      "unique_tasks": 12,
+      "by_kind": {
+        "nested_move": 29
+      }
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "qwen2.5:7b",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "unexpected_call": 6,
+      "schema": 1,
+      "argument_value": 9
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "llama3.2:3b",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "unexpected_call": 18,
+      "schema": 8,
+      "argument_value": 19
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "llama3.2:3b",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "no_call": 5,
+      "unexpected_call": 15,
+      "schema": 7,
+      "argument_value": 14
+    },
+    "argument_shape_summary": {
+      "affected_observations": 1,
+      "unique_tasks": 1,
+      "by_kind": {
+        "scalar_wrap": 1
+      }
+    },
+    "failures": [
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "hermes3:8b",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "no_call": 5,
+      "unexpected_call": 6,
+      "schema": 29,
+      "argument_value": 30
+    },
+    "argument_shape_summary": {
+      "affected_observations": 26,
+      "unique_tasks": 12,
+      "by_kind": {
+        "nested_move": 26
+      }
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "hermes3:8b",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "no_call": 1,
+      "unexpected_call": 7,
+      "schema": 2,
+      "argument_value": 8
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "phi4-mini:latest",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "no_call": 22,
+      "unexpected_call": 1,
+      "schema": 10,
+      "argument_value": 11
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "phi4-mini:latest",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "request_error": 3,
+      "truncated": 2,
+      "no_call": 31,
+      "schema": 3,
+      "argument_value": 2
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "schema"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 2,
+        "diagnostics": [
+          "truncated",
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "request_error"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "request_error"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 4,
+        "diagnostics": [
+          "truncated",
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 4,
+        "diagnostics": [
+          "request_error"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "granite3.3:8b",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "no_call": 8,
+      "unexpected_call": 12,
+      "schema": 1,
+      "argument_value": 5
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "granite3.3:8b",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "no_call": 7,
+      "unexpected_call": 13,
+      "argument_value": 7
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "command-r7b:latest",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "no_call": 35,
+      "schema": 1,
+      "argument_value": 1
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "command-r7b:latest",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "no_call": 36
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "llama3.1:8b",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "truncated": 1,
+      "no_call": 3,
+      "unexpected_call": 17,
+      "schema": 9,
+      "argument_value": 16
+    },
+    "argument_shape_summary": {
+      "affected_observations": 5,
+      "unique_tasks": 2,
+      "by_kind": {
+        "nested_move": 5
+      }
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 2,
+        "diagnostics": [
+          "truncated",
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "llama3.1:8b",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "no_call": 3,
+      "unexpected_call": 18,
+      "schema": 3,
+      "argument_value": 16
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-sender",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-sender",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "search-missing-criteria",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "mistral-nemo:latest",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "unexpected_call": 13,
+      "multiple_calls": 1,
+      "wrong_tool": 1,
+      "argument_value": 8
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 2,
+        "diagnostics": [
+          "multiple_calls"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "wrong_tool",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "mistral-nemo:latest",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "no_call": 1,
+      "unexpected_call": 12,
+      "multiple_calls": 1,
+      "wrong_tool": 2,
+      "argument_value": 11
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "get-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 0,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 0,
+        "diagnostics": [
+          "no_call"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 2,
+        "diagnostics": [
+          "wrong_tool",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-draft-only",
+        "pad": 2,
+        "diagnostics": [
+          "multiple_calls"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "wrong_tool",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "no-send-chat-only",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "get-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-missing-id",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-delete",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "qwen3:8b",
+    "variant": "nested",
+    "diagnostic_counts": {
+      "request_error": 2,
+      "schema": 15,
+      "argument_value": 18
+    },
+    "argument_shape_summary": {
+      "affected_observations": 15,
+      "unique_tasks": 10,
+      "by_kind": {
+        "nested_move": 15
+      }
+    },
+    "failures": [
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-with-limit",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-by-id",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 0,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "get-id-with-punctuation",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 2,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-archive-folder",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-send",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "request_error"
+        ]
+      },
+      {
+        "task": "reply-body-quotes",
+        "pad": 4,
+        "diagnostics": [
+          "request_error"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-search-sender",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      },
+      {
+        "task": "correction-reply-target",
+        "pad": 4,
+        "diagnostics": [
+          "schema",
+          "argument_value"
+        ]
+      }
+    ]
+  },
+  {
+    "model": "qwen3:8b",
+    "variant": "flat",
+    "diagnostic_counts": {
+      "unexpected_call": 2,
+      "argument_value": 4
+    },
+    "argument_shape_summary": {
+      "affected_observations": 0,
+      "unique_tasks": 0,
+      "by_kind": {}
+    },
+    "failures": [
+      {
+        "task": "search-by-subject",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 0,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 2,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      },
+      {
+        "task": "reply-body-symbols",
+        "pad": 2,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "search-by-subject",
+        "pad": 4,
+        "diagnostics": [
+          "argument_value"
+        ]
+      },
+      {
+        "task": "unsupported-forward",
+        "pad": 4,
+        "diagnostics": [
+          "unexpected_call"
+        ]
+      }
+    ]
+  }
+]
