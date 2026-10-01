@@ -1,8 +1,18 @@
 # Changelog
 
+## Unreleased (0.9.0rc2.dev0)
+
+- Add configurable HTTP request timeouts to `run` and `sweep`, including YAML
+  defaults, dry-run plans, and recorded run metadata. The default remains 120
+  seconds; historical files without this field remain readable.
+- Make the two literal-text mail example cases explicitly ask to send a reply,
+  aligning the prompts with their expected send mode. This changes the active
+  example suite hash: generate a fresh suite and baseline. Archived benchmark
+  suites and responses retain their original wording and results.
+
 ## 0.9.0rc1
 
-Release candidate; not yet published.
+Published tester release candidate.
 
 - Add an offline `demo` with recorded evidence, its matching suite, and a
   regression-gate walkthrough. No endpoint or API key is required.

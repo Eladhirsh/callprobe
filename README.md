@@ -9,11 +9,12 @@ the API operations described by your tools.
 
 ## Release candidate: 0.9.0rc1
 
-This branch prepares **0.9.0rc1**; it is not published yet. Test from a checkout
-with `uv tool install . --force`. After publication, install the candidate
-explicitly with `uv tool install callprobe==0.9.0rc1 --force` (or
-`python -m pip install callprobe==0.9.0rc1`). `@latest` continues to select the
-stable release. See [upgrade notes](CHANGELOG.md#090rc1) before reusing baselines.
+**0.9.0rc1 is published.** Install it explicitly with
+`uv tool install callprobe==0.9.0rc1 --force` (or
+`python -m pip install callprobe==0.9.0rc1`). `@latest` selects the stable
+release. See [upgrade notes](CHANGELOG.md#090rc1) before reusing baselines.
+This checkout is **0.9.0rc2.dev0**, an unpublished development version;
+install it with `uv tool install . --force` to test the unreleased changes.
 
 ## Try it
 
@@ -449,6 +450,20 @@ retried with exponential backoff before it's recorded as an error rather
 than a model failure; those retries honor a `Retry-After` header when the
 server sends one.
 
+In the unreleased development version, use `--request-timeout 300` to allow
+longer waits for slow local models, or set `request_timeout: 300` in a YAML
+run config. The default is 120 seconds. Values must be positive and finite.
+This configures HTTPX connect/read/write/pool operation timeouts; it is not
+a total wall-clock deadline for a request or a run. Retries can add more time.
+The effective value is included in dry-run plans and saved run metadata;
+historical files leave it unknown. Changing a transport timeout does not
+change scoring or make otherwise compatible baselines incompatible.
+
+`sweep --request-timeout 300` forwards the same setting to each model run.
+The development GitHub Action exposes the same `request-timeout` input.
+`sweep --timeout` controls the entire subprocess step (default 1800
+seconds); increase that separately when a whole suite needs more time.
+
 `--max-tokens` defaults to 2048. Reasoning models can need more (see the
 truncation section above).
 
@@ -533,7 +548,7 @@ provided in the file or with `--model`.
 
 Accepted keys are `model`, `endpoint`, `suite`, `pads` (an integer list),
 `repeats`, `temperature`, `max_tokens`, `quant`, `notes`, `retries`,
-`concurrency`, and `out`. Unknown fields, duplicate keys, nulls, wrong
+`concurrency`, and `out`; the development version also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
 types, and invalid numeric values are rejected even when a CLI flag would
 override them. `suite` and `out` in YAML resolve relative to the config
 file; paths supplied on the CLI remain relative to your working directory.
