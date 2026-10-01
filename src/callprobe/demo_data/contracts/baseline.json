@@ -1,0 +1,2099 @@
+{
+  "config": {
+    "model": "hermes3:8b",
+    "endpoint": "http://localhost:11434/v1",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/nested",
+    "pads": [
+      0,
+      2,
+      4
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.9.0rc1",
+    "suite_name": "nested",
+    "suite_version": 1,
+    "suite_hash": "c3102d23f7c0d40c",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 3,
+    "task_ids": [
+      "search-by-sender",
+      "search-by-subject",
+      "search-archive-folder",
+      "search-with-limit",
+      "get-by-id",
+      "get-id-with-punctuation",
+      "reply-send",
+      "reply-draft-only",
+      "no-send-chat-only",
+      "get-missing-id",
+      "reply-missing-id",
+      "search-missing-criteria",
+      "unsupported-delete",
+      "unsupported-forward",
+      "reply-body-quotes",
+      "reply-body-symbols",
+      "correction-search-sender",
+      "correction-reply-target"
+    ],
+    "selected_task_ids": null
+  },
+  "started_at": "2026-09-30T20:51:56.826332+00:00",
+  "finished_at": "2026-09-30T20:54:40.792148+00:00",
+  "results": [
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:dana.rivera@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 548,
+      "completion_tokens": 27,
+      "latency_ms": 2233.796458982397,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4csi8d6q",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+      ],
+      "prompt_tokens": 547,
+      "completion_tokens": 31,
+      "latency_ms": 3156.1589170014486,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_teq99nhg",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan",
+            "folder": "inbox"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\",\"folder\":\"inbox\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+      ],
+      "prompt_tokens": 546,
+      "completion_tokens": 26,
+      "latency_ms": 3131.801917043049,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_63zqqacz",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "invoice"
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"invoice\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'offsite', 'limit': 5}, got missing"
+      ],
+      "prompt_tokens": 548,
+      "completion_tokens": 27,
+      "latency_ms": 3373.7819169764407,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4km5awwg",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":5}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing"
+      ],
+      "prompt_tokens": 544,
+      "completion_tokens": 24,
+      "latency_ms": 2763.229042000603,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_cwvwanvp",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+      ],
+      "prompt_tokens": 550,
+      "completion_tokens": 29,
+      "latency_ms": 1807.7759169973433,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4g6soaib",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 552,
+      "completion_tokens": 28,
+      "latency_ms": 1197.2483329591341,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_04xen1vw",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "text": "Confirmed for Tuesday."
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"text\":\"Confirmed for Tuesday.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('arguments' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 565,
+      "completion_tokens": 42,
+      "latency_ms": 3167.126000043936,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_8o1svqe6",
+          "name": "send_reply",
+          "arguments": {
+            "arguments": {
+              "message_id": "msg-1042",
+              "mode": "draft",
+              "text": "Let me check and get back to you."
+            }
+          },
+          "raw_arguments": "{\"arguments\":{\"message_id\":\"msg-1042\",\"mode\":\"draft\",\"text\":\"Let me check and get back to you.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 562,
+      "completion_tokens": 60,
+      "latency_ms": 3294.500333024189,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 557,
+      "completion_tokens": 17,
+      "latency_ms": 1440.9929160028696,
+      "error": null,
+      "response_text": "Sure, I can help with that. Please provide me with the message ID.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 546,
+      "completion_tokens": 35,
+      "latency_ms": 3476.2582919793203,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ychhsgy2",
+          "name": "send_reply",
+          "arguments": {
+            "arguments": {
+              "message_id": "msg-1042",
+              "mode": "send",
+              "text": "Yes"
+            }
+          },
+          "raw_arguments": "{\"arguments\":{\"message_id\":\"msg-1042\",\"mode\":\"send\",\"text\":\"Yes\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 541,
+      "completion_tokens": 27,
+      "latency_ms": 1735.4610839975066,
+      "error": null,
+      "response_text": "Sure, I can help with that. Could you please provide me with the keywords or phrases you'd like me to search for?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 545,
+      "completion_tokens": 30,
+      "latency_ms": 1787.1778749977238,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 549,
+      "completion_tokens": 34,
+      "latency_ms": 3274.3779169977643,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3001'}, got missing",
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 569,
+      "completion_tokens": 51,
+      "latency_ms": 2972.5804170011543,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_jokzk13d",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3002'}, got missing",
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 579,
+      "completion_tokens": 66,
+      "latency_ms": 3151.9791249884292,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_or705k7d",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3002",
+            "text": "Hi Sam,\n\nAgenda: budget & hiring (50% done) \n\n<draft> 'v2' — café at 9.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3002\",\"text\":\"Hi Sam,\\n\\nAgenda: budget \\u0026 hiring (50% done) \\n\\n\\u003cdraft\\u003e 'v2' — café at 9.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 581,
+      "completion_tokens": 26,
+      "latency_ms": 2460.580041981302,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_i68xtev0",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "hermes3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1043'}, got missing",
+        "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 585,
+      "completion_tokens": 36,
+      "latency_ms": 3042.2961250296794,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7208qoo7",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Approved.",
+            "mode": "draft",
+            "message_id": "msg-1043"
+          },
+          "raw_arguments": "{\"text\":\"Approved.\",\"mode\":\"draft\",\"message_id\":\"msg-1043\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "search_messages",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 670,
+      "completion_tokens": 20,
+      "latency_ms": 3376.8095830455422,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+      ],
+      "prompt_tokens": 649,
+      "completion_tokens": 25,
+      "latency_ms": 3723.0280830408446,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_1sh0oqdx",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "search_messages",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 668,
+      "completion_tokens": 19,
+      "latency_ms": 3452.961041999515,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'offsite', 'limit': 5}, got missing"
+      ],
+      "prompt_tokens": 670,
+      "completion_tokens": 27,
+      "latency_ms": 4540.875792037696,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_kqo2m926",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":5}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "get_message",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 649,
+      "completion_tokens": 17,
+      "latency_ms": 2370.3382089734077,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+      ],
+      "prompt_tokens": 652,
+      "completion_tokens": 29,
+      "latency_ms": 2554.599208990112,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_duegv3gg",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 674,
+      "completion_tokens": 38,
+      "latency_ms": 3564.8889580043033,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_qpivv00l",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday."
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 687,
+      "completion_tokens": 43,
+      "latency_ms": 3666.9309999560937,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zc9j2rhd",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 667,
+      "completion_tokens": 61,
+      "latency_ms": 3935.661166033242,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_09ss64ia",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Thank you for reaching out. I appreciate you taking the time to get in touch. However, I'm not able to respond to personal messages at this time. I hope you understand.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"text\":\"Thank you for reaching out. I appreciate you taking the time to get in touch. However, I'm not able to respond to personal messages at this time. I hope you understand.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 659,
+      "completion_tokens": 19,
+      "latency_ms": 2807.610791991465,
+      "error": null,
+      "response_text": "Sure, I can help with that. Could you please provide me with the message ID?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 668,
+      "completion_tokens": 26,
+      "latency_ms": 2303.136708040256,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vgoxtsry",
+          "name": "send_reply",
+          "arguments": {
+            "text": "yes",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"text\":\"yes\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 643,
+      "completion_tokens": 15,
+      "latency_ms": 2360.6723329867236,
+      "error": null,
+      "response_text": "Sure, I can help with that. What are you looking for?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 647,
+      "completion_tokens": 21,
+      "latency_ms": 2061.898874992039,
+      "error": null,
+      "response_text": "{\"arguments\": {\"message_id\": \"msg-1042\"}, \"name\": \"messages_delete\"}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 671,
+      "completion_tokens": 34,
+      "latency_ms": 3270.379583002068,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3001'}, got missing",
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 671,
+      "completion_tokens": 51,
+      "latency_ms": 3903.425958007574,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_e1re2r25",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "message_id": "msg-3001",
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!"
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"message_id\":\"msg-3001\",\"text\":\"Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-3002'}, got missing",
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", 'mode': 'send'}, got {'mode': 'draft', 'text': \"Hi Sam,\\n\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\"}"
+      ],
+      "prompt_tokens": 684,
+      "completion_tokens": 66,
+      "latency_ms": 4152.88754197536,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vti829k6",
+          "name": "send_reply",
+          "arguments": {
+            "body": {
+              "mode": "draft",
+              "text": "Hi Sam,\n\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."
+            },
+            "message_id": "msg-3002"
+          },
+          "raw_arguments": "{\"body\":{\"mode\":\"draft\",\"text\":\"Hi Sam,\\n\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\"},\"message_id\":\"msg-3002\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 683,
+      "completion_tokens": 26,
+      "latency_ms": 2699.248916003853,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_nhypzrle",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "hermes3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1043'}, got missing",
+        "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 687,
+      "completion_tokens": 50,
+      "latency_ms": 3805.1427910104394,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vkjdy3cz",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Draft only, and use msg-1043 instead of msg-1042.",
+            "mode": "draft",
+            "message_id": "msg-1043"
+          },
+          "raw_arguments": "{\"text\":\"Draft only, and use msg-1043 instead of msg-1042.\",\"mode\":\"draft\",\"message_id\":\"msg-1043\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:dana.rivera@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 755,
+      "completion_tokens": 27,
+      "latency_ms": 3426.2925420189276,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_v9r0ania",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+      ],
+      "prompt_tokens": 754,
+      "completion_tokens": 25,
+      "latency_ms": 3403.2496670261025,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7kp3tuk6",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('folder', 'limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+      ],
+      "prompt_tokens": 753,
+      "completion_tokens": 32,
+      "latency_ms": 2701.3102910132147,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_p8esvuwe",
+          "name": "search_messages",
+          "arguments": {
+            "q": "archive",
+            "folder": "archive",
+            "limit": 10
+          },
+          "raw_arguments": "{\"q\":\"archive\",\"folder\":\"archive\",\"limit\":10}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'offsite', 'limit': 5}, got missing"
+      ],
+      "prompt_tokens": 755,
+      "completion_tokens": 27,
+      "latency_ms": 3303.0533750425093,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rev7ajay",
+          "name": "search_messages",
+          "arguments": {
+            "limit": 5,
+            "q": "offsite"
+          },
+          "raw_arguments": "{\"limit\":5,\"q\":\"offsite\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "get_message",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 751,
+      "completion_tokens": 17,
+      "latency_ms": 2748.055333038792,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 757,
+      "completion_tokens": 33,
+      "latency_ms": 3272.3853749921545,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_0afn7gf4",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-2024.07_a-19"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-2024.07_a-19\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 759,
+      "completion_tokens": 28,
+      "latency_ms": 3097.666500019841,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_wuyqptj6",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "text": "Confirmed for Tuesday."
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"text\":\"Confirmed for Tuesday.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 772,
+      "completion_tokens": 43,
+      "latency_ms": 3770.6580419908278,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ot1amo1k",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 769,
+      "completion_tokens": 68,
+      "latency_ms": 4756.5706669702195,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_jxkzrgfq",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Thank you for reaching out. I appreciate you thinking of me, but I'm not able to accept your request at this time. I hope you understand and that you'll have a great day!"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Thank you for reaching out. I appreciate you thinking of me, but I'm not able to accept your request at this time. I hope you understand and that you'll have a great day!\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 764,
+      "completion_tokens": 28,
+      "latency_ms": 3356.894582975656,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_lrloi6l8",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 753,
+      "completion_tokens": 26,
+      "latency_ms": 2188.3275419822894,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_3gpqpz4e",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "text": "Yes"
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"text\":\"Yes\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 748,
+      "completion_tokens": 27,
+      "latency_ms": 2634.141541959252,
+      "error": null,
+      "response_text": "Sure, I can help with that. In which folder should I search? And, do you have a maximum count in mind?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 752,
+      "completion_tokens": 24,
+      "latency_ms": 2621.696709014941,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 756,
+      "completion_tokens": 34,
+      "latency_ms": 2783.584959048312,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3001'}, got missing",
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 776,
+      "completion_tokens": 51,
+      "latency_ms": 3332.131792034488,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_qtwjn8zt",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", 'mode': 'send'}, got {'mode': 'draft', 'text': \"Hi Sam,\\n\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\"}"
+      ],
+      "prompt_tokens": 786,
+      "completion_tokens": 70,
+      "latency_ms": 4778.861832979601,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_dswoqmns",
+          "name": "send_reply",
+          "arguments": {
+            "body": {
+              "mode": "draft",
+              "text": "Hi Sam,\n\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."
+            },
+            "path": {
+              "message_id": "msg-3002"
+            }
+          },
+          "raw_arguments": "{\"body\":{\"mode\":\"draft\",\"text\":\"Hi Sam,\\n\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\"},\"path\":{\"message_id\":\"msg-3002\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "search_messages",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 788,
+      "completion_tokens": 11,
+      "latency_ms": 2813.627000025008,
+      "error": null,
+      "response_text": "Searching for messages from sam.lee@example.invalid.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "hermes3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1043'}, got missing",
+        "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 792,
+      "completion_tokens": 50,
+      "latency_ms": 2848.583667015191,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_uk81dx63",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1043",
+            "text": "Draft only, and use msg-1043 instead of msg-1042.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1043\",\"text\":\"Draft only, and use msg-1043 instead of msg-1042.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    }
+  ]
+}

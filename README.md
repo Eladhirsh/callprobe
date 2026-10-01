@@ -76,6 +76,47 @@ These are [recorded observations](results/github-issues/README.md), not a
 fresh execution or a current model ranking. `demo` needs no network after
 installation. This command is not yet available in the published 0.8.0 package.
 
+### Compare tool contracts (development checkout)
+
+Use `compare-contracts` when testing a schema or tool-description change against
+**the same model and prompts**. This is an informational experiment report;
+`compare --fail-on-regression` still requires the same suite hash.
+
+Try a complete, offline example with historical Hermes3 results:
+
+```bash
+callprobe demo --contracts --out contract-demo
+callprobe compare-contracts contract-demo/baseline.json contract-demo/candidate.json \
+  --suite-a contract-demo/nested --suite-b contract-demo/flat --format markdown
+```
+
+The flat contract improved 27 observations and regressed two, despite its
+higher aggregate success rate (38/54 versus 13/54). These are frozen synthetic
+mail cases, not a MailOps integration test or a general ranking.
+
+For your own contracts, preserve both suite directories and run each with the
+same model, endpoint, padding, repeats, temperature, and token budget:
+
+```bash
+callprobe run --suite nested-suite --model qwen2.5:7b --pad 0 --repeats 3 --out nested.json
+callprobe run --suite flat-suite --model qwen2.5:7b --pad 0 --repeats 3 --out flat.json
+callprobe compare-contracts nested.json flat.json --suite-a nested-suite --suite-b flat-suite --format json
+```
+
+The command verifies each run's suite hash, scoring version, planned coverage,
+case IDs, prompts, expected tool choices, tool order, distractors and recorded
+model settings. It rejects incomplete or targeted runs. It reports errors and
+truncations, excludes request errors on either side from paired scores, and
+lists changed tools/assertions plus every improvement and regression.
+Request-timeout differences are disclosed because they can affect errors.
+Unknown provenance stays unknown; matching a model tag does not verify weights.
+
+**Review changed assertions for equivalent meaning.** The command does not
+prove semantic equivalence or rescore responses. It exits zero for a valid
+report even when regressions exist; there is no gate option. After choosing a
+contract, record a new baseline and use the ordinary same-suite CI gate.
+This command is in `0.9.0rc2.dev0`; it is not in published `0.9.0rc1`.
+
 ## A concrete regression example
 
 On our saved 18-case GitHub API suite, Qwen3 8B passed 11 cases versus

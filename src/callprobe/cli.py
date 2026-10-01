@@ -22,6 +22,8 @@ import yaml
 from . import __version__
 from .client import ChatClient, probe_server_version
 from .compare import category_deltas, flipped_tasks, render_compare, render_compare_markdown
+from .contracts import compare_contracts, render_contracts
+from .contract_demo import generate_contract_demo
 from .demo import INSPECT_TASK, REGRESSED_TASKS, SUITE_DIRNAME, generate_demo_files
 from .examples import EXAMPLES, generate_example_suite, list_examples
 from .explain import explain_run, render_explain_text
@@ -489,7 +491,31 @@ def _init(args: argparse.Namespace) -> int:
     return 0
 
 
+def _contract_demo(args: argparse.Namespace) -> int:
+    out = Path(args.out)
+    groups = generate_contract_demo()
+    for dirname, files in groups.items():
+        _preflight_files(out / dirname, files, args.force)
+    for dirname, files in groups.items():
+        _write_files(out / dirname, files, args.force)
+    print("OFFLINE DEMO: historical Hermes3 results; no model calls. See DEMO.md.")
+    print("13/54 -> 38/54 successes, including 27 improvements and 2 regressions.")
+    paths = [shlex.quote(str(out / name)) for name in ("baseline.json", "candidate.json", "nested", "flat")]
+    print(f"callprobe compare-contracts {paths[0]} {paths[1]} --suite-a {paths[2]} --suite-b {paths[3]}")
+    return 0
+
+
+def _compare_contracts(args: argparse.Namespace) -> int:
+    report = compare_contracts(_read_run(args.a), _read_run(args.b),
+                               load_suite(Path(args.suite_a)), load_suite(Path(args.suite_b)))
+    print(json.dumps(report, indent=2) if args.format == "json"
+          else render_contracts(report, markdown=args.format == "markdown"))
+    return 0
+
+
 def _demo(args: argparse.Namespace) -> int:
+    if args.contracts:
+        return _contract_demo(args)
     out = Path(args.out)
     suite_out = out / SUITE_DIRNAME
     try:
@@ -719,6 +745,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     demo_cmd.add_argument("--out", default="callprobe-demo", help="directory to write the demo to")
     demo_cmd.add_argument("--force", action="store_true", help="overwrite existing generated files")
+    demo_cmd.add_argument("--contracts", action="store_true", help="recorded nested/flat contract comparison demo")
     demo_cmd.set_defaults(func=_demo)
 
     validate_cmd = sub.add_parser(
@@ -739,6 +766,14 @@ def main(argv: list[str] | None = None) -> int:
     compare_cmd.add_argument("--policy", help="YAML CI policy; enables gating")
     compare_cmd.add_argument("--format", choices=["text", "json", "markdown"], default="text")
     compare_cmd.set_defaults(func=_compare)
+
+    contracts_cmd = sub.add_parser("compare-contracts", help="offline informational comparison across tool contracts")
+    contracts_cmd.add_argument("a")
+    contracts_cmd.add_argument("b")
+    contracts_cmd.add_argument("--suite-a", required=True, help="suite snapshot matching run a")
+    contracts_cmd.add_argument("--suite-b", required=True, help="suite snapshot matching run b")
+    contracts_cmd.add_argument("--format", choices=["text", "json", "markdown"], default="text")
+    contracts_cmd.set_defaults(func=_compare_contracts)
 
     explain_cmd = sub.add_parser(
         "explain", help="offline failure diagnostics for a saved run, no model calls"
