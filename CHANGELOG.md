@@ -2,6 +2,13 @@
 
 ## Unreleased (0.9.0rc2.dev0)
 
+- Add offline `compare-contracts` for controlled schema/description experiments:
+  verify matching suite snapshots, prompts, model settings and full coverage;
+  report paired regressions, errors and changed assertions without weakening
+  the existing same-suite CI gate. Scores remain recorded, never rescored.
+- Add `demo --contracts` with frozen Hermes3 nested/flat runs and matching suites.
+  The higher-scoring contract still has two regressions; no endpoint is needed.
+
 - Add configurable HTTP request timeouts to `run` and `sweep`, including YAML
   defaults, dry-run plans, and recorded run metadata. The default remains 120
   seconds; historical files without this field remain readable.

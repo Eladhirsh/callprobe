@@ -75,6 +75,20 @@ jobs:
             echo "expected the offline demo's --fail-on-regression gate to exit 1 (its two recorded regressions), got $demo_gate_exit"
             exit 1
           fi
+      - name: exercise installed offline contract comparison
+        working-directory: /tmp
+        run: |
+          /tmp/callprobe-wheel-env/bin/callprobe demo --contracts --out /tmp/callprobe-contract-demo
+          /tmp/callprobe-wheel-env/bin/callprobe compare-contracts /tmp/callprobe-contract-demo/baseline.json \
+            /tmp/callprobe-contract-demo/candidate.json --suite-a /tmp/callprobe-contract-demo/nested \
+            --suite-b /tmp/callprobe-contract-demo/flat --format json > /tmp/callprobe-contract-report.json
+          /tmp/callprobe-wheel-env/bin/python -c 'import json; r=json.load(open("/tmp/callprobe-contract-report.json")); assert r["informational"] and r["paired"]["scored_pairs"] == 54; assert len(r["improved"]) == 27 and len(r["regressed"]) == 2'
+          set +e
+          /tmp/callprobe-wheel-env/bin/callprobe compare /tmp/callprobe-contract-demo/baseline.json \
+            /tmp/callprobe-contract-demo/candidate.json --fail-on-regression
+          contract_gate_exit=$?
+          set -e
+          test "$contract_gate_exit" -eq 2
       - name: exercise installed CLI with synthetic mail agent
         run: /tmp/callprobe-wheel-env/bin/python scripts/selftest_agent.py --out /tmp/callprobe-mail-selftest
       - name: save self-test evidence
