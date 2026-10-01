@@ -1,0 +1,36 @@
+# Four independent tools for padding. Synthetic; none overlaps the mail operations.
+tools:
+  - name: calendar_create_event
+    description: Create a calendar event with a title and start time.
+    parameters:
+      type: object
+      additionalProperties: false
+      required: [title, start]
+      properties:
+        title: {type: string}
+        start: {type: string, description: ISO 8601 start time.}
+  - name: contacts_lookup
+    description: Look up a saved contact's phone number by display name.
+    parameters:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name: {type: string}
+  - name: reminders_create
+    description: Create a personal reminder that fires at a given time.
+    parameters:
+      type: object
+      additionalProperties: false
+      required: [text, due]
+      properties:
+        text: {type: string}
+        due: {type: string, description: ISO 8601 due time.}
+  - name: documents_search
+    description: Search saved documents and spreadsheets by title.
+    parameters:
+      type: object
+      additionalProperties: false
+      required: [title]
+      properties:
+        title: {type: string}

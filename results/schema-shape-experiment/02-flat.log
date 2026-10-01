@@ -1,0 +1,29 @@
+model            qwen2.5:7b
+endpoint         http://localhost:11434/v1
+tasks scored     18
+
+                 selection   schema     args      success
+  overall         88.9%   88.9%   72.2%   72.2%   (95% CI 50.0-88.9%)
+  type-lenient    88.9%   88.9%   72.2%   72.2%
+
+  tool count sweep
+    +0   distractors   success  72.2%   selection  88.9%   sd  0.0
+
+  by category
+    abstain     66.7%  (n=6, 95% CI 33.3-100.0%)
+    args        60.0%  (n=5, 95% CI 20.0-100.0%)
+    depth      100.0%  (n=2, 95% CI 100.0-100.0%)
+    select      80.0%  (n=5, 95% CI 40.0-100.0%)
+
+  cost per success   655 tokens   1.73 s
+
+failures worth reading:
+  [search-by-sender pad=0] q expected 'from:dana.rivera@example.invalid', got 'from:dana.rivera@example.invalid.'
+  [unsupported-delete pad=0] called send_reply when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-quotes pad=0] text expected 'Please send the "final" draft by 5:00 p.m.; thanks!', got '[Please send the "final" draft by 5:00 p.m.; thanks!]'; mode expected 'send', got 'draft'
+  [reply-body-symbols pad=0] mode expected 'send', got 'draft'
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-experiment/02-flat.json
+x...........xxxx..
+

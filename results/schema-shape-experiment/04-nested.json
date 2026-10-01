@@ -1,0 +1,748 @@
+{
+  "config": {
+    "model": "qwen2.5:7b",
+    "endpoint": "http://localhost:11434/v1",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-experiment/nested",
+    "pads": [
+      0
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.9.0rc1",
+    "suite_name": "nested",
+    "suite_version": 1,
+    "suite_hash": "c3102d23f7c0d40c",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 3,
+    "task_ids": [
+      "search-by-sender",
+      "search-by-subject",
+      "search-archive-folder",
+      "search-with-limit",
+      "get-by-id",
+      "get-id-with-punctuation",
+      "reply-send",
+      "reply-draft-only",
+      "no-send-chat-only",
+      "get-missing-id",
+      "reply-missing-id",
+      "search-missing-criteria",
+      "unsupported-delete",
+      "unsupported-forward",
+      "reply-body-quotes",
+      "reply-body-symbols",
+      "correction-search-sender",
+      "correction-reply-target"
+    ],
+    "selected_task_ids": null
+  },
+  "started_at": "2026-09-30T20:27:30.932732+00:00",
+  "finished_at": "2026-09-30T20:27:59.211794+00:00",
+  "results": [
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:dana.rivera@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 474,
+      "completion_tokens": 28,
+      "latency_ms": 663.5706659872085,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_79d3prff",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid."
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+      ],
+      "prompt_tokens": 473,
+      "completion_tokens": 25,
+      "latency_ms": 598.3210420235991,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_njp02dzv",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+      ],
+      "prompt_tokens": 472,
+      "completion_tokens": 26,
+      "latency_ms": 1225.8052499964833,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_k8yg74mi",
+          "name": "search_messages",
+          "arguments": {
+            "q": "invoice",
+            "folder": "archive"
+          },
+          "raw_arguments": "{\"q\":\"invoice\",\"folder\":\"archive\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'offsite', 'limit': 5}, got missing"
+      ],
+      "prompt_tokens": 474,
+      "completion_tokens": 27,
+      "latency_ms": 633.5654590511695,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_avc2om9d",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":5}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing"
+      ],
+      "prompt_tokens": 472,
+      "completion_tokens": 26,
+      "latency_ms": 611.3204999710433,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_gh5ozfpa",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+      ],
+      "prompt_tokens": 480,
+      "completion_tokens": 33,
+      "latency_ms": 747.315541957505,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_40tn7ytq",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 480,
+      "completion_tokens": 40,
+      "latency_ms": 899.3921669898555,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_9cs92ib6",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing",
+        "body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 493,
+      "completion_tokens": 45,
+      "latency_ms": 1077.1478750393726,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_84k0izvx",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Let me check and get back to you.",
+            "mode": "draft",
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\",\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 490,
+      "completion_tokens": 98,
+      "latency_ms": 2742.6312920288183,
+      "error": null,
+      "response_text": "Sure, here's a polite way to decline the message without sending or saving it:\n\n---\n\nDear [Sender's Name],\n\nThank you for your message. I appreciate your consideration, but I will not be able to [respond to the request/attend the event/etc.] at this time. If you need any further assistance or have o",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 483,
+      "completion_tokens": 20,
+      "latency_ms": 488.09037503087893,
+      "error": null,
+      "response_text": "I need the exact ID of the message you want to open. Could you please provide it?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 472,
+      "completion_tokens": 27,
+      "latency_ms": 640.7095839967951,
+      "error": null,
+      "response_text": "To reply to the email, I need the message ID of the original email. Could you please provide me with the message ID?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 467,
+      "completion_tokens": 48,
+      "latency_ms": 1093.4350829920731,
+      "error": null,
+      "response_text": "Sure, could you please specify what you want to search for? For example, do you want to search by sender, subject, or a specific word? Also, do you want to limit the number of results or specify a folder?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": null,
+      "failures": [
+        "called search_messages when no tool applied"
+      ],
+      "prompt_tokens": 473,
+      "completion_tokens": 163,
+      "latency_ms": 3435.84833398927,
+      "error": null,
+      "response_text": "To delete a message permanently, we typically use the `delete` action, but it seems that's not directly available in the provided tools. Instead, we can mark the message as deleted and then expunge it to ensure it's removed permanently. Let's first mark the message as deleted and then expunge it.\n\nH",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_6tngfw5t",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "inbox",
+            "q": "from:example.invalid id:msg-1042"
+          },
+          "raw_arguments": "{\"folder\":\"inbox\",\"q\":\"from:example.invalid id:msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 477,
+      "completion_tokens": 60,
+      "latency_ms": 1946.8110000016168,
+      "error": null,
+      "response_text": "To forward the message, I first need to retrieve the details of the original message with ID `msg-1042`. Let's start by getting that message.",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_peyxmwwv",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3001'}, got missing",
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 498,
+      "completion_tokens": 55,
+      "latency_ms": 3802.5159999961033,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ue0807p5",
+          "name": "send_reply",
+          "arguments": {
+            "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+            "mode": "send",
+            "message_id": "msg-3001"
+          },
+          "raw_arguments": "{\"text\":\"[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]\",\"mode\":\"send\",\"message_id\":\"msg-3001\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3002'}, got missing",
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 508,
+      "completion_tokens": 65,
+      "latency_ms": 2932.447500003036,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_i3lczafv",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.",
+            "mode": "draft",
+            "message_id": "msg-3002"
+          },
+          "raw_arguments": "{\"text\":\"Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\",\"mode\":\"draft\",\"message_id\":\"msg-3002\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 507,
+      "completion_tokens": 26,
+      "latency_ms": 2035.671708988957,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_jn8quuku",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1043'}, got missing",
+        "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 517,
+      "completion_tokens": 38,
+      "latency_ms": 2690.1534170028754,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_y412fssx",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Approved.",
+            "mode": "draft",
+            "message_id": "msg-1043"
+          },
+          "raw_arguments": "{\"text\":\"Approved.\",\"mode\":\"draft\",\"message_id\":\"msg-1043\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    }
+  ]
+}
