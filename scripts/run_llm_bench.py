@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from didyoureally.adapters import load_trace  # noqa: E402
 from didyoureally.bench import default_cases_dir  # noqa: E402
-from didyoureally.extract import SYSTEM_PROMPT, LLMExtractor, _http_post  # noqa: E402
+from didyoureally.extract import SYSTEM_PROMPT, ExtractionError, LLMExtractor, _http_post  # noqa: E402
 from didyoureally.matcher import PROBLEM_VERDICTS, check  # noqa: E402
 
 PROBLEMS = {v.value for v in PROBLEM_VERDICTS}
@@ -109,6 +109,9 @@ def evaluate(case, base_url, model, *, json_mode=False):
     except (OSError, ValueError, KeyError, TypeError, IndexError) as exc:
         # Provider error messages can contain secrets. Record only the exception type.
         row["error"] = type(exc).__name__
+        if isinstance(exc, ExtractionError):
+            row["error_reason"] = exc.reason
+            row["error_message_index"] = exc.message_index
     row["raw_responses"] = raw
     row["responses"] = responses
     row["seconds"] = round(time.monotonic() - started, 3)

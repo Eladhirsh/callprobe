@@ -243,3 +243,5 @@ report zero problems. Provider error bodies are not printed. A completed check c
 Treat any nonzero exit code as a CI failure, while routing code 3 for retry or reviewed claims.
 
 See the [integration pilot guide](docs/integration-pilot.md) to audit sanitized original captures or run the disposable file application. The original MailOps-format pilot is pending its sanitized export.
+
+Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its one repair attempt. It never repairs claims by copying values from tool results.

@@ -28,6 +28,26 @@ class ExtractionError(ValueError):
         super().__init__(f"Incomplete extraction at message {message_index}: {reason}")
 
 
+# These fixed messages are safe for reports and repair prompts. Never interpolate
+# provider output or rejected argument values into diagnostic text.
+EXTRACTION_HINTS = {
+    "provider_error": "Check the endpoint, model availability, and credentials, then retry.",
+    "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
+    "invalid_claims": "Return a JSON object with a claims array in the documented extraction format.",
+    "source_mismatch": "Copy identifiers only from the TARGET source values. Omit identifiers found only in context, and do not turn descriptive names into IDs.",
+    "invalid_action_group": "Use either args for one action or actions for a group, never both. Each group entry must be one argument object. Parallel scalar lists have ambiguous pairings; use explicit action objects.",
+    "null_argument": "Omit unspecified argument keys entirely. Do not return null placeholders, even for required tool parameters.",
+}
+
+
+class ClaimFormatError(ValueError):
+    """A safe, actionable extraction validation failure."""
+
+    def __init__(self, reason: str):
+        self.reason = reason
+        super().__init__(EXTRACTION_HINTS[reason])
+
+
 class Extractor(Protocol):
     def extract(self, trace: Trace) -> list[Claim]: ...
 
@@ -120,7 +140,7 @@ def _source_value(value: Any, spans: list[dict[str, Any]]) -> Any:
     if isinstance(value, dict) and "span" in value:
         index = value["span"]
         if set(value) != {"span"} or type(index) is not int or not 0 <= index < len(spans):
-            raise ValueError("Argument source span must identify a TARGET span")
+            raise ClaimFormatError("source_mismatch")
         return spans[index]["value"]
     if isinstance(value, list):
         return [_source_value(v, spans) for v in value]
@@ -136,7 +156,7 @@ def _ground_identifiers(args: dict[str, Any], spans: list[dict[str, Any]]) -> No
             continue
         for item in value if isinstance(value, list) else [value]:
             if isinstance(item, str) and item not in values:
-                raise ValueError("Identifier must exactly match a TARGET source span; do not rewrite it")
+                raise ClaimFormatError("source_mismatch")
 
 
 def build_user_prompt(trace: Trace, target_index: int | None = None) -> str:
@@ -193,10 +213,10 @@ def parse_claims(
         if isinstance(item, dict) and "actions" in item:
             actions = item["actions"]
             if "args" in item or not isinstance(actions, list) or not actions or len(actions) > 100:
-                raise ValueError("Action groups need 1 to 100 argument objects and no shared args")
+                raise ClaimFormatError("invalid_action_group")
             for arguments in actions:
                 if not isinstance(arguments, dict):
-                    raise ValueError("Each grouped action needs an argument object")
+                    raise ClaimFormatError("invalid_action_group")
                 expanded_items.append(({**item, "args": arguments}, f"{target_index}:{position}"))
         else:
             expanded_items.append((item, None))
@@ -236,10 +256,10 @@ def parse_claims(
         if require_completed:
             _ground_identifiers(arguments, spans)
         if require_completed and any(value is None for value in arguments.values()):
-            raise ValueError("Do not use null as an unspecified argument placeholder")
+            raise ClaimFormatError("null_argument")
         variants = _argument_variants(arguments, trace.tools[tool].parameters if tool else {})
         if group_id is not None and len(variants) != 1:
-            raise ValueError("Each grouped action must describe one object, not another scalar list")
+            raise ClaimFormatError("invalid_action_group")
         if group_id is None and len(variants) > 1:
             group_id = f"{idx}:expanded:{len(claims)}"
         for args in variants:
@@ -276,7 +296,7 @@ def _argument_variants(args: dict[str, Any], parameters: dict[str, Any]) -> list
                 raise ValueError("Scalar argument lists must contain explicit scalar values")
             expanded.append((key, value))
     if len(expanded) > 1:
-        raise ValueError("Multiple scalar lists have ambiguous pairings; emit separate claims")
+        raise ClaimFormatError("invalid_action_group")
     if expanded:
         key, values = expanded[0]
         return [{**args, key: value} for value in values]
@@ -347,14 +367,17 @@ class LLMExtractor:
                     extracted = parse_claims(
                         content, trace, target_index=message.index, require_completed=True
                     )
-                except ValueError:
+                except ValueError as exc:
+                    reason = exc.reason if isinstance(exc, ClaimFormatError) else "invalid_claims"
                     if attempt:
-                        raise ExtractionError(message.index, "invalid_claims") from None
-                    body["messages"].append({"role": "assistant", "content": content or ""})
+                        raise ExtractionError(message.index, reason) from None
+                    body["messages"].append(
+                        {"role": "assistant", "content": content if isinstance(content, str) else ""}
+                    )
                     body["messages"].append(
                         {
                             "role": "user",
-                            "content": "Your response did not satisfy the extraction format. Return a valid JSON object "
+                            "content": EXTRACTION_HINTS[reason] + " Return a valid JSON object "
                             "with a claims array. Omit text; the application attaches the TARGET. Every item needs "
                             "completed (boolean grammatical classification), tool (an exact available name or null), "
                             "and args (an object with no null placeholders) or actions (separate argument objects). "

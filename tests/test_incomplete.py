@@ -82,3 +82,78 @@ def test_invalid_input_is_distinct_from_incomplete_extraction(tmp_path, capsys):
 def test_empty_benchmark_is_not_a_clean_check(tmp_path, capsys):
     assert main(["bench", "--cases", str(tmp_path)]) == 2
     assert "No benchmark cases" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    "item,reason",
+    [
+        ({"args": {"to": "private@example.com"}}, "source_mismatch"),
+        ({"args": {"to": None}}, "null_argument"),
+        ({"args": {}, "actions": [{}]}, "invalid_action_group"),
+    ],
+)
+def test_specific_repair_is_safe_and_bounded(item, reason):
+    from didyoureally.extract import EXTRACTION_HINTS
+    from didyoureally.report import render_incomplete
+
+    t = Trace.from_dict(
+        {
+            "id": "repair",
+            "tools": [{"name": "send_email"}],
+            "events": [{"type": "message", "role": "assistant", "content": "Sent!"}],
+        }
+    )
+    prompts = []
+
+    def transport(url, headers, body):
+        prompts.append(body["messages"][-1]["content"])
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": json.dumps({"claims": [{"completed": True, "tool": "send_email", **item}]})
+                    }
+                }
+            ]
+        }
+
+    with pytest.raises(ExtractionError) as caught:
+        LLMExtractor(transport=transport).extract(t)
+    assert caught.value.reason == reason
+    assert len(prompts) == 2
+    assert EXTRACTION_HINTS[reason] in prompts[1]
+    assert "private@example.com" not in prompts[1]
+    for as_json in (False, True):
+        output = render_incomplete(t.id, reason, 0, as_json=as_json)
+        assert "private@example.com" not in output
+        assert EXTRACTION_HINTS[reason] in output
+
+
+def test_specific_feedback_allows_repair_without_inventing_arguments():
+    t = Trace.from_dict(
+        {
+            "id": "repair",
+            "tools": [{"name": "send_email"}],
+            "events": [{"type": "message", "role": "assistant", "content": "Sent!"}],
+        }
+    )
+    replies = iter([{"to": "Dana"}, {}])
+
+    def transport(*args):
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {"claims": [{"completed": True, "tool": "send_email", "args": next(replies)}]}
+                        )
+                    }
+                }
+            ]
+        }
+
+    claims = LLMExtractor(transport=transport).extract(t)
+    assert len(claims) == 1 and claims[0].args == {}
+    from didyoureally import check
+
+    assert check(t, claims)[0].verdict.value == "phantom"

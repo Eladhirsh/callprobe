@@ -7,6 +7,7 @@ import os
 import sys
 from typing import Any
 
+from .extract import EXTRACTION_HINTS
 from .matcher import Finding, Verdict
 from .schema import Trace
 
@@ -70,6 +71,7 @@ def render_json(trace: Trace, findings: list[Finding]) -> str:
 
 def render_incomplete(trace_id: str, reason: str, message_index: int | None, *, as_json: bool) -> str:
     """No summary counts: incomplete extraction is not zero findings."""
+    hint = EXTRACTION_HINTS.get(reason, EXTRACTION_HINTS["invalid_claims"])
     if as_json:
         return json.dumps(
             {
@@ -77,10 +79,15 @@ def render_incomplete(trace_id: str, reason: str, message_index: int | None, *, 
                 "status": "incomplete",
                 "summary": None,
                 "findings": [],
-                "error": {"kind": "extraction", "reason": reason, "message_index": message_index},
+                "error": {
+                    "kind": "extraction",
+                    "reason": reason,
+                    "message_index": message_index,
+                    "hint": hint,
+                },
             }
         )
     return (
         f"Trace {trace_id}: Incomplete check ({reason}, message {message_index}). "
-        "No clean result is available. Retry extraction or provide reviewed claims."
+        f"No clean result is available. {hint} You can also provide reviewed claims."
     )
