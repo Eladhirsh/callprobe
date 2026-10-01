@@ -91,12 +91,12 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
 results are lower. The latest local-model comparison is:
 
-| Model | Previous same 80 | Current same 80 | Existing validation | New context validation |
+| Model | Previous 80 | Current 80 | Context regression | Fresh vague claims |
 |---|---|---|---|---|
-| mistral-nemo:latest | 67/80 | 71/80 | 24/24 | 10/16 |
-| qwen2.5:7b | 60/80 | 63/80 | 24/24 | 6/16 |
+| mistral-nemo:latest | 71/80 | 76/80 | 16/16 | 10/16 |
+| qwen2.5:7b | 63/80 | 68/80 | 14/16 | 12/16 |
 
-See the [latest seven-model report](results/source-repair-suite/README.md) for precision, recall, honest false alarms, incomplete checks, and remaining failures. These are small synthetic evaluations, not production accuracy. The new context validation has 16 sessions with eight honest controls; the existing 24-case validation is reused regression evidence. The original MailOps pilot still needs its sanitized export.
+See the [latest seven-model report](results/vague-claims-suite/README.md) for precision, recall, false alarms, incomplete checks, and remaining failures. The fresh vague-claim set has 16 sessions, including 12 honest controls, offers, and failure disclosures. The report also measures empty-argument fidelity, because matching verdicts alone can hide invented details. These small synthetic evaluations do not establish production accuracy. The fresh set exposed missed vague completions and wrong tool mapping, including two Mistral false alarms. Vague-action recognition remains unreliable. The original MailOps pilot still needs its sanitized export.
 
 `dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
 `scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.
@@ -181,6 +181,18 @@ Time arguments accept equivalent clock forms such as `2 pm` and `14:00`. Explici
 claims are checked against currency embedded in an amount. Duplicate benchmark IDs now cause
 an error instead of silently counting the same evidence twice.
 
+### Vague completion claims
+
+For a request such as "Refund order R-82" followed by "All taken care of", context identifies
+`issue_refund`, but the claim has empty arguments. If extraction copies `R-82` from the request,
+the retry keeps the provisional tool name and hides the earlier request. It extracts details only
+from the completion message. It preserves literal details already grounded in the message and
+stops as incomplete if the repair drops them or fails validation.
+
+A backed vague claim means a successful matching action was recorded. It does not establish that
+the requested amount, recipient, or other unstated details were correct. Offers such as "I can take
+care of it" and disclosures such as "That failed" are not completion claims.
+
 ## Model comparison and extraction contracts
 
 Tool definitions can include a JSON Schema `parameters` object in native traces. The OpenAI
@@ -214,7 +226,8 @@ is `scripts/build_model_validation.py`. Both sets remain synthetic and small.
 ### Source-grounded extraction
 
 The extractor copies argument values from source spans in the target assistant message. Python
-checks identifiers against those spans, preserving quoted punctuation and Unicode. Numeric span
+checks every argument value against the target text, including amounts, dates, and nested values.
+Identifier checks additionally preserve quoted punctuation and Unicode. Numeric span
 references remain supported by the parser, but the default prompt requests exact values because
 some models select the wrong numeric index. Each extracted claim retains its source message; no values are copied
 from tool results. Span selection and omitted claims can still be wrong, so this is not a semantic guarantee.
@@ -241,4 +254,4 @@ Treat any nonzero exit code as a CI failure, while routing code 3 for retry or r
 
 See the [integration pilot guide](docs/integration-pilot.md) to audit sanitized original captures or run the disposable file application. The original MailOps-format pilot is pending its sanitized export.
 
-Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its one repair attempt. For source mismatches, that attempt regenerates from the original messages and tool definitions without replaying invented values. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.
+Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its one repair attempt. For source mismatches, that attempt sees the target message, tool definitions, provisional tool names, and literal details already grounded in the target. Earlier conversation values and unsupported arguments are excluded. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.

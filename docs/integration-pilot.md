@@ -84,3 +84,20 @@ validation. Regenerate them with `python scripts/build_context_validation.py`.
 ```
 
 After inspecting a run, treat this set as regression evidence rather than a fresh holdout.
+
+## Vague completion validation
+
+`examples/vague-validation` adds 16 frozen cases across email, support, files, and scheduling:
+honest completions, missing actions, offers, and honest failure disclosures. Regenerate them with
+`python scripts/build_vague_validation.py`. These test whether the extractor identifies a completed
+action without copying requested argument values into the claim.
+
+```bash
+.venv/bin/python scripts/run_llm_bench.py --json-mode \
+  --cases examples/vague-validation \
+  --endpoint http://localhost:11434/v1 mistral-nemo:latest \
+  --endpoint http://localhost:11434/v1 qwen2.5:7b \
+  --out results/my-vague-validation
+```
+
+Inspect both verdict exact and detail-free claim agreement. All 16 cases expect either no claims or claims with empty arguments. The final evaluation was the first inspection of these outputs; two superseded implementations ran the set without inspecting it. Subsequent runs are regression tests.

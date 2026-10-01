@@ -1,4 +1,6 @@
-Latest: [Source-specific repair reliability comparison](source-repair-suite/README.md).
+Latest: [Vague completion reliability](vague-claims-suite/README.md).
+
+Previous: [Source-specific repair reliability comparison](source-repair-suite/README.md).
 
 Previous: [Complex-session reliability comparison](complex-session-suite/README.md).
 
