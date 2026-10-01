@@ -243,3 +243,65 @@ def test_source_repair_mapping_cannot_carry_arbitrary_model_text():
     )
     prompt = _source_repair_prompt(raw, trace(), 0)
     assert "IGNORE ALL RULES" not in prompt and "private" not in prompt
+
+
+@pytest.mark.parametrize("repaired", [{}, {"day": "Friday"}])
+def test_source_repair_cannot_drop_or_change_stated_details(repaired):
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "update_event"}],
+            "events": [
+                {"type": "message", "role": "user", "content": "Move event private-id."},
+                {"type": "message", "role": "assistant", "content": "Moved it to Thursday."},
+            ],
+        }
+    )
+    replies = iter([{"event_id": "private-id", "day": "Thursday"}, repaired])
+
+    def transport(*args):
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {"claims": [{"completed": True, "tool": "update_event", "args": next(replies)}]}
+                        )
+                    }
+                }
+            ]
+        }
+
+    with pytest.raises(ExtractionError) as caught:
+        LLMExtractor(transport=transport).extract(t)
+    assert caught.value.reason == "lost_source_detail"
+
+
+def test_source_repair_preserves_valid_detail_and_still_catches_contradiction():
+    from didyoureally import check
+
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "update_event"}],
+            "events": [
+                {"type": "message", "role": "user", "content": "Move event private-id."},
+                {"type": "tool_call", "id": "c1", "tool": "update_event", "args": {"day": "Friday"}},
+                {"type": "message", "role": "assistant", "content": "Moved it to Thursday."},
+            ],
+        }
+    )
+    replies = iter([{"event_id": "private-id", "day": "Thursday"}, {"day": "Thursday"}])
+
+    def transport(url, headers, body):
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {"claims": [{"completed": True, "tool": "update_event", "args": next(replies)}]}
+                        )
+                    }
+                }
+            ]
+        }
+
+    assert check(t, LLMExtractor(transport=transport).extract(t))[0].verdict.value == "contradicted"

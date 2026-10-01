@@ -34,6 +34,7 @@ EXTRACTION_HINTS = {
     "provider_error": "Check the endpoint, model availability, and credentials, then retry.",
     "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
     "invalid_claims": "Return a JSON object with a claims array in the documented extraction format.",
+    "lost_source_detail": "Repair omitted details explicitly stated in the TARGET. Provide reviewed claims or retry extraction.",
     "source_mismatch": "Copy identifiers only from the TARGET source values. Omit identifiers found only in context, and do not turn descriptive names into IDs.",
     "invalid_action_group": "Use either args for one action or actions for a group, never both. Each group entry must be one argument object. Parallel scalar lists have ambiguous pairings; use explicit action objects.",
     "null_argument": "Omit unspecified argument keys entirely. Do not return null placeholders, even for required tool parameters.",
@@ -316,6 +317,53 @@ def _argument_variants(args: dict[str, Any], parameters: dict[str, Any]) -> list
     return [args]
 
 
+def _literal_in_source(value: Any, values: set[str]) -> bool:
+    if isinstance(value, str):
+        return value in values
+    if isinstance(value, (int, float, bool)):
+        return json.dumps(value) in values
+    if isinstance(value, list):
+        return bool(value) and all(_literal_in_source(item, values) for item in value)
+    return False
+
+
+def _source_anchors(raw: str, trace: Trace, message_index: int) -> list[dict[str, Any]]:
+    """Retain literal target details without carrying context or invented values."""
+    target = next(m for m in trace.assistant_messages() if m.index == message_index)
+    values = {span["value"] for span in source_spans(target.content)}
+    anchors = []
+    for item in _claim_payload(raw)["claims"]:
+        if not isinstance(item, dict) or item.get("completed") is not True:
+            continue
+        tool = item.get("tool")
+        if not isinstance(tool, str) or tool not in trace.tools or not trace.is_side_effect(tool):
+            continue
+        actions = item.get("actions", [item.get("args", {})])
+        if not isinstance(actions, list):
+            continue
+        for args in actions:
+            if not isinstance(args, dict):
+                continue
+            literal = {key: value for key, value in args.items() if _literal_in_source(value, values)}
+            if literal:
+                try:
+                    variants = _argument_variants(literal, trace.tools[tool].parameters)
+                except ValueError:
+                    variants = [literal]  # Ambiguous evidence cannot be silently discarded.
+                anchors.extend({"tool": tool, "args": variant} for variant in variants)
+    return anchors
+
+
+def _preserves_source_details(claims: list[Claim], anchors: list[dict[str, Any]]) -> bool:
+    return all(
+        any(
+            c.tool == anchor["tool"] and all(c.args.get(k) == v for k, v in anchor["args"].items())
+            for c in claims
+        )
+        for anchor in anchors
+    )
+
+
 def _source_repair_prompt(raw: str, trace: Trace, message_index: int) -> str:
     """Keep provisional action names, but hide context values from argument repair.
 
@@ -337,6 +385,9 @@ def _source_repair_prompt(raw: str, trace: Trace, message_index: int) -> str:
         "Repair the extraction using only the TARGET below. Earlier messages and rejected arguments "
         "are intentionally absent. The first extraction provisionally identified these actions from "
         "context (tool names only): " + json.dumps(action_names) + ". "
+        "Preserve these literal details already stated in TARGET: "
+        + json.dumps(_source_anchors(raw, trace, message_index))
+        + ". "
         "Use this mapping for vague confirmations such as Done, without inferring any argument values. "
         "It is provisional: correct it if the TARGET says otherwise. "
         "Extract all completed actions in TARGET. For unspecified details use empty args. "
@@ -393,6 +444,7 @@ class LLMExtractor:
             }
             if self.json_mode:
                 body["response_format"] = {"type": "json_object"}
+            source_anchors = []
             for attempt in range(2):
                 try:
                     resp = self.transport(f"{self.base_url}/chat/completions", headers, body)
@@ -415,11 +467,16 @@ class LLMExtractor:
                     extracted = parse_claims(
                         content, trace, target_index=message.index, require_completed=True
                     )
+                    if source_anchors and not _preserves_source_details(extracted, source_anchors):
+                        raise ExtractionError(message.index, "lost_source_detail")
+                except ExtractionError:
+                    raise
                 except ValueError as exc:
                     reason = exc.reason if isinstance(exc, ClaimFormatError) else "invalid_claims"
                     if attempt:
                         raise ExtractionError(message.index, reason) from None
                     if reason == "source_mismatch":
+                        source_anchors = _source_anchors(content, trace, message.index)
                         body["messages"][1]["content"] = _source_repair_prompt(content, trace, message.index)
                     else:
                         body["messages"].append(
