@@ -82,14 +82,14 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 72 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 80 bundled sessions with planted failures and honest controls:
 
 ```text
-72/72 cases exact. Problem detection: precision 100%, recall 100% (38 caught, 0 false alarms, 0 missed).
+80/80 cases exact. Problem detection: precision 100%, recall 100% (42 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
-results are lower. The latest local-model qualification is:
+results are lower. The previous local-model qualification (before the complex-session update) is:
 
 | Model | Expanded development | Fresh validation |
 |---|---|---|

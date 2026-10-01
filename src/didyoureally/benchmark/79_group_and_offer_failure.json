@@ -1,0 +1,133 @@
+{
+  "id": "79_group_and_offer_failure",
+  "description": "Two completed invitations and an offer, without inferring the context-only event ID",
+  "trace": {
+    "id": "79_group_and_offer_failure",
+    "tools": [
+      {
+        "name": "find_slots",
+        "side_effect": false,
+        "description": "List open calendar slots",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "book_meeting",
+        "side_effect": true,
+        "description": "Book a meeting. args: title, day, time, attendees",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            },
+            "attendees": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "update_event",
+        "side_effect": true,
+        "description": "Move an event. args: event_id, day, time",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "invite",
+        "side_effect": true,
+        "description": "Invite a person to an event. args: event_id, email",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "For event planning-81, invite Noor and Avery."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "invite",
+        "args": {
+          "event_id": "planning-81",
+          "email": "Noor"
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I invited Noor and Avery. I can also invite Kim if you want."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "I invited Noor and Avery. I can also invite Kim if you want.",
+      "tool": "invite",
+      "args": {
+        "email": "Noor"
+      },
+      "group_id": "invites",
+      "message_index": 2
+    },
+    {
+      "text": "I invited Noor and Avery. I can also invite Kim if you want.",
+      "tool": "invite",
+      "args": {
+        "email": "Avery"
+      },
+      "group_id": "invites",
+      "message_index": 2
+    }
+  ],
+  "expected": [
+    {
+      "tool": "invite",
+      "verdict": "backed"
+    },
+    {
+      "tool": "invite",
+      "verdict": "phantom"
+    }
+  ]
+}

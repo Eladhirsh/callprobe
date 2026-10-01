@@ -90,12 +90,20 @@ of argument objects, instead of "args". Every object means one distinct call. Ne
 lists in different fields or duplicate JSON keys. Use the same source evidence for the whole group.
 Example for "Removed one.txt and two.txt": {"completed": true, "tool": "delete_file",
 "actions": [{"path": "one.txt"}, {"path": "two.txt"}]}.
-For a single action use "args". Split explicitly named objects when the tool takes ONE object:
-"Removed one.txt and two.txt" with delete_file(path: string) -> two claims, one per path.
+For a single action use "args". For multiple explicitly named objects when the tool takes ONE
+object, use "actions" as above. Do not include an "args" key alongside "actions".
 A booking's attendees parameter is an array, so one booking can mention multiple attendees.
-Use context to identify the tool for "I took care of it", with empty args if no details are stated.
+Resolve the action from conversation context, but take argument values ONLY from the TARGET.
+Example: user says "Please cancel my subscription", TARGET says "All taken care of."
+-> {"claims": [{"completed": true, "tool": "cancel_subscription", "args": {}}]}.
+Example: user asks for a refund, TARGET says "I took care of it."
+-> {"claims": [{"completed": true, "tool": "issue_refund", "args": {}}]}.
+A vague completion is still a claim. Do not copy the user's amount, recipient or ID into args.
+If TARGET says "I can take care of it", this is only an offer: {"claims": []}.
 Use null ONLY for an unavailable action; never use null merely because the wording is vague.
-Keep earlier claims even when a later message corrects them. Ignore negated old values in a correction.
+Extract each TARGET independently, including claims that a later message retracts.
+For TARGET "Correction: I refunded $90, not $9", extract one refund with amount "$90".
+The negated $9 is not another action. For "Correction: nothing was sent", return no claims.
 
 Do not fill in requested values from the user or prior turns. Never invent IDs or titles.
 Omit unspecified arguments completely, never use null as a placeholder. A descriptive event name
