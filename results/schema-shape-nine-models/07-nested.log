@@ -1,0 +1,45 @@
+x..x..xxxxxx.xxxxx..xx..x.xxxxxxxxxx...x....xxxxxx 50/54
+xx.x
+
+model            llama3.1:8b
+endpoint         http://localhost:11434/v1
+tasks scored     54   truncated: 1
+
+                 selection   schema     args      success
+  overall         63.0%   46.3%   33.3%   33.3%   (95% CI 16.7-50.0%)
+  type-lenient    63.0%   51.9%   38.9%   38.9%
+
+  tool count sweep
+    +0   distractors   success  27.8%   selection  66.7%   sd  0.0
+    +2   distractors   success  27.8%   selection  61.1%   sd  0.0
+    +4   distractors   success  44.4%   selection  61.1%   sd  0.0
+
+  by category
+    abstain      5.6%  (n=18, 95% CI 0.0-16.7%)
+    args        40.0%  (n=15, 95% CI 6.7-73.3%)
+    depth       16.7%  (n=6, 95% CI 0.0-33.3%)
+    select      66.7%  (n=15, 95% CI 33.3-93.3%)
+
+  3 of 54 calls (5.6%) were correct but wrongly typed
+
+  cost per success   2181 tokens   15.31 s
+
+failures worth reading:
+  [search-by-sender pad=0] query expected {'q': 'from:dana.rivera@example.invalid'}, got {'folder': 'inbox', 'limit': 10, 'q': 'from:dana.rivera@example.invalid'}
+  [search-with-limit pad=0] schema: query.limit: '5' is not of type 'integer'; query expected {'q': 'offsite', 'limit': 5}, got {'limit': '5', 'q': 'offsite'}
+  [reply-send pad=0] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+  [reply-draft-only pad=0] schema: (root): Additional properties are not allowed ('mode', 'text' were unexpected); schema: (root): 'path' is a required property
+  [no-send-chat-only pad=0] called send_reply when no tool applied
+  [get-missing-id pad=0] called get_message when no tool applied
+  [reply-missing-id pad=0] called send_reply when no tool applied
+  [search-missing-criteria pad=0] called search_messages when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-quotes pad=0] no tool call produced
+      said: {"name": "send_reply", "parameters": {"body": {"text": "[Please send the \\"final\\" draft by 5:00 p.m.; thanks!]", "mode": "draft"}, "path": {"message_id": "ms
+  [reply-body-symbols pad=0] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': '[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]'}
+  [correction-search-sender pad=0] schema: (root): Additional properties are not allowed ('folder', 'limit', 'q' were unexpected); schema: (root): 'query' is a required property
+  [correction-reply-target pad=0] schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected); schema: (root): 'path' is a required property
+  [search-archive-folder pad=2] query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': 10, 'q': 'invoice'}
+  [search-with-limit pad=2] schema: query.limit: '5' is not of type 'integer'; query expected {'q': 'offsite', 'limit': 5}, got {'limit': '5', 'q': 'offsite'}
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/07-nested.json

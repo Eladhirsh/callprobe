@@ -1,0 +1,49 @@
+xx.xxx.x.....x.xxxxxxxxxxx......xxxxxxxxxxxx...... 50/54
+xxxx
+
+model            phi4-mini:latest
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         57.4%   38.9%   37.0%   37.0%   (95% CI 18.5-57.4%)
+  type-lenient    57.4%   38.9%   37.0%   37.0%
+
+  tool count sweep
+    +0   distractors   success  44.4%   selection  66.7%   sd  0.0
+    +2   distractors   success  33.3%   selection  61.1%   sd  0.0
+    +4   distractors   success  33.3%   selection  44.4%   sd  0.0
+
+  by category
+    abstain     94.4%  (n=18, 95% CI 83.3-100.0%)
+    args        13.3%  (n=15, 95% CI 0.0-26.7%)
+    depth        0.0%  (n=6, 95% CI 0.0-0.0%)
+    select       6.7%  (n=15, 95% CI 0.0-20.0%)
+
+  cost per success   1498 tokens   10.09 s
+
+failures worth reading:
+  [search-by-sender pad=0] schema: (root): 'q' is a required property; schema: (root): Additional properties are not allowed ('parameters', 'type' were unexpected)
+  [search-by-subject pad=0] schema: (root): 'q' is a required property; schema: (root): Additional properties are not allowed ('parameters', 'type' were unexpected)
+  [search-with-limit pad=0] schema: (root): 'q' is a required property; schema: (root): Additional properties are not allowed ('parameters', 'type' were unexpected)
+  [get-by-id pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"get_message","function":{"name":"get_message","arguments":{"message_id":"msg-1042"}}}}]get_message(msg-1042)
+  [get-id-with-punctuation pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"get_message","function":{"name":"get_message","parameters":{"message_id":"msg-2024.07_a-19"}}}}]function get_message(mes
+  [reply-draft-only pad=0] no tool call produced
+      said: Sure, I will draft the reply for you. Just to confirm, you want to reply to message with ID "msg-1042" with the text "Let me check and get back to you." and set
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-symbols pad=0] schema: (root): 'message_id' is a required property; schema: (root): 'text' is a required property
+  [correction-search-sender pad=0] no tool call produced
+      said: No problem. Searching for messages from sam.lee@example.invalid.
+  [correction-reply-target pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"send_reply","function":{"name":"send_reply","description":"Create a reply to a known message.","parameters":{"type":"obj
+  [search-by-sender pad=2] schema: (root): 'q' is a required property; schema: (root): Additional properties are not allowed ('properties', 'required', 'type' were unexpected)
+  [search-by-subject pad=2] schema: (root): 'q' is a required property; schema: (root): Additional properties are not allowed ('parameters', 'type' were unexpected)
+  [search-archive-folder pad=2] no tool call produced
+      said: [{"type":"search_messages","parameters":{"q":"invoice","folder":"archive"}}]On September 15, 2021, at 10:00 AM, create an event titled "Team Meeting" in my cale
+  [search-with-limit pad=2] schema: (root): 'q' is a required property; schema: (root): Additional properties are not allowed ('properties', 'required', 'type' were unexpected)
+  [get-by-id pad=2] no tool call produced
+      said: [{"type":"function","function":{"name":"get_message","description":"Get one message by its exact message ID.\n\nGET /messages/{message_id}","parameters":{"type"
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/04-flat.json

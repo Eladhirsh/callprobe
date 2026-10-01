@@ -1,0 +1,2093 @@
+{
+  "config": {
+    "model": "mistral-nemo:latest",
+    "endpoint": "http://localhost:11434/v1",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/flat",
+    "pads": [
+      0,
+      2,
+      4
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.9.0rc1",
+    "suite_name": "nested",
+    "suite_version": 1,
+    "suite_hash": "f0aa623eb8b663c2",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 3,
+    "task_ids": [
+      "search-by-sender",
+      "search-by-subject",
+      "search-archive-folder",
+      "search-with-limit",
+      "get-by-id",
+      "get-id-with-punctuation",
+      "reply-send",
+      "reply-draft-only",
+      "no-send-chat-only",
+      "get-missing-id",
+      "reply-missing-id",
+      "search-missing-criteria",
+      "unsupported-delete",
+      "unsupported-forward",
+      "reply-body-quotes",
+      "reply-body-symbols",
+      "correction-search-sender",
+      "correction-reply-target"
+    ],
+    "selected_task_ids": null
+  },
+  "started_at": "2026-09-30T21:38:52.594671+00:00",
+  "finished_at": "2026-09-30T21:42:52.655854+00:00",
+  "results": [
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 354,
+      "completion_tokens": 27,
+      "latency_ms": 9635.104916000273,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_53suxfwm",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 353,
+      "completion_tokens": 23,
+      "latency_ms": 8610.992999980226,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_a3snesza",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 352,
+      "completion_tokens": 24,
+      "latency_ms": 3001.9074580050074,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_hpspri0o",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "invoice"
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"invoice\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "q expected 'offsite', got 'offsites'"
+      ],
+      "prompt_tokens": 354,
+      "completion_tokens": 27,
+      "latency_ms": 3579.4531669816934,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rienyv6k",
+          "name": "search_messages",
+          "arguments": {
+            "limit": 5,
+            "q": "offsites"
+          },
+          "raw_arguments": "{\"limit\":5,\"q\":\"offsites\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 352,
+      "completion_tokens": 24,
+      "latency_ms": 4908.492457994726,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_368sr8kc",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 360,
+      "completion_tokens": 31,
+      "latency_ms": 2394.8683330090716,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_q3vv57yk",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 360,
+      "completion_tokens": 39,
+      "latency_ms": 3166.4964159717783,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_xietqrgn",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 373,
+      "completion_tokens": 44,
+      "latency_ms": 3570.848000003025,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_3vd2ltaz",
+          "name": "send_reply",
+          "arguments": {
+            "text": "Let me check and get back to you.",
+            "mode": "draft",
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\",\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 370,
+      "completion_tokens": 24,
+      "latency_ms": 2589.4769580336288,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rual1nu3",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": null,
+      "failures": [
+        "called search_messages when no tool applied"
+      ],
+      "prompt_tokens": 363,
+      "completion_tokens": 20,
+      "latency_ms": 1744.8117079911754,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vjpqat3h",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:ID"
+          },
+          "raw_arguments": "{\"q\":\"subject:ID\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 352,
+      "completion_tokens": 24,
+      "latency_ms": 1624.7815000242554,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_u7u90vxy",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 347,
+      "completion_tokens": 9,
+      "latency_ms": 767.8284580470063,
+      "error": null,
+      "response_text": "Sure, what should I search for?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 353,
+      "completion_tokens": 24,
+      "latency_ms": 2649.6217499952763,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 358,
+      "completion_tokens": 49,
+      "latency_ms": 4101.647124974988,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_erabdo7t",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Forward msg-1042 to sam.lee@example.invalid.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Forward msg-1042 to sam.lee@example.invalid.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 379,
+      "completion_tokens": 52,
+      "latency_ms": 4940.868833975401,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_sgjg1oxy",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 389,
+      "completion_tokens": 65,
+      "latency_ms": 4583.412792009767,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_uszrc8jz",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "draft",
+            "message_id": "msg-3002",
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."
+          },
+          "raw_arguments": "{\"mode\":\"draft\",\"message_id\":\"msg-3002\",\"text\":\"Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 382,
+      "completion_tokens": 25,
+      "latency_ms": 3737.6887919963337,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_90w3ww7s",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "mistral-nemo:latest",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 391,
+      "completion_tokens": 38,
+      "latency_ms": 5043.342999997549,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_5ijqmb1z",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1043",
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1043\",\"text\":\"Approved.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 494,
+      "completion_tokens": 27,
+      "latency_ms": 4608.876415994018,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ssvw9x8m",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 470,
+      "completion_tokens": 23,
+      "latency_ms": 3560.272416973021,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_93b7fgxj",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 492,
+      "completion_tokens": 24,
+      "latency_ms": 2914.136834035162,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_6trew20t",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "invoice"
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"invoice\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 494,
+      "completion_tokens": 25,
+      "latency_ms": 3272.2049999865703,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_yvbblzkq",
+          "name": "search_messages",
+          "arguments": {
+            "limit": 5,
+            "q": "offsite"
+          },
+          "raw_arguments": "{\"limit\":5,\"q\":\"offsite\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 471,
+      "completion_tokens": 26,
+      "latency_ms": 4056.1359159764834,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_3nszq0u7",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 477,
+      "completion_tokens": 31,
+      "latency_ms": 3986.4882080000825,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_srmar8bj",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 500,
+      "completion_tokens": 39,
+      "latency_ms": 5997.617457993329,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_jrau64kz",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "produced 2 calls; expected exactly one"
+      ],
+      "prompt_tokens": 513,
+      "completion_tokens": 65,
+      "latency_ms": 7957.49258302385,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ie0hubhh",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_gwoa3rxl",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 489,
+      "completion_tokens": 24,
+      "latency_ms": 2596.2654589675367,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_usc7y0az",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 480,
+      "completion_tokens": 24,
+      "latency_ms": 10421.580333029851,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_01to76tq",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 492,
+      "completion_tokens": 24,
+      "latency_ms": 3815.0506250094622,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_3g28obkr",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 464,
+      "completion_tokens": 11,
+      "latency_ms": 2877.7148749795742,
+      "error": null,
+      "response_text": "Sure! What would you like to search for?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 470,
+      "completion_tokens": 24,
+      "latency_ms": 2907.9167919699103,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_bvfap89u",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 498,
+      "completion_tokens": 38,
+      "latency_ms": 4861.08929204056,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_cec4rvo7",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "message_id": "msg-1042",
+            "text": "Forwarded message."
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"message_id\":\"msg-1042\",\"text\":\"Forwarded message.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 496,
+      "completion_tokens": 53,
+      "latency_ms": 6310.1767909829505,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rmweiae0",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 508,
+      "completion_tokens": 65,
+      "latency_ms": 7048.381333006546,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_pchq2wg3",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3002",
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3002\",\"text\":\"Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 499,
+      "completion_tokens": 24,
+      "latency_ms": 4814.000625046901,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_edjln7lt",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "mistral-nemo:latest",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 508,
+      "completion_tokens": 38,
+      "latency_ms": 4997.872625011951,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_wcyxt19j",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1043",
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1043\",\"text\":\"Approved.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 590,
+      "completion_tokens": 26,
+      "latency_ms": 5641.238833020907,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_k8pepy7w",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 589,
+      "completion_tokens": 23,
+      "latency_ms": 4714.660666999407,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_sbpmyrqt",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 588,
+      "completion_tokens": 24,
+      "latency_ms": 3593.20379095152,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_w7xf0qy9",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "invoice"
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"invoice\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "limit expected 5, got missing"
+      ],
+      "prompt_tokens": 590,
+      "completion_tokens": 19,
+      "latency_ms": 4299.807792005595,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_s7dva7cv",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite"
+          },
+          "raw_arguments": "{\"q\":\"offsite\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 588,
+      "completion_tokens": 26,
+      "latency_ms": 4514.335333020426,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_wwny1xb0",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 596,
+      "completion_tokens": 31,
+      "latency_ms": 4592.699458997231,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ya80tfun",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "send_reply",
+      "failures": [
+        "called get_message, expected send_reply",
+        "text expected 'Confirmed for Tuesday.', got missing",
+        "mode expected 'send', got missing"
+      ],
+      "prompt_tokens": 596,
+      "completion_tokens": 24,
+      "latency_ms": 4637.530959036667,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7agoqmrp",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 609,
+      "completion_tokens": 45,
+      "latency_ms": 5465.005207981449,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_e2z8ylkm",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "draft",
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you."
+          },
+          "raw_arguments": "{\"mode\":\"draft\",\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 606,
+      "completion_tokens": 24,
+      "latency_ms": 3852.365500002634,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rc8nhksd",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 599,
+      "completion_tokens": 24,
+      "latency_ms": 4135.725374973845,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_9rcduxv4",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 588,
+      "completion_tokens": 24,
+      "latency_ms": 4163.964707986452,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_trj7o6sy",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 583,
+      "completion_tokens": 11,
+      "latency_ms": 2924.594833049923,
+      "error": null,
+      "response_text": "Sure! What would you like to search for?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 589,
+      "completion_tokens": 20,
+      "latency_ms": 3760.2304170140997,
+      "error": null,
+      "response_text": "Are you sure you want to delete the message with ID msg-1042 permanently?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 594,
+      "completion_tokens": 38,
+      "latency_ms": 4887.528209015727,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zoolrz9n",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "forwarded message",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"forwarded message\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "text expected 'Please send the \"final\" draft by 5:00 p.m.; thanks!', got 'Please send the final draft by 5:00 p.m.; thanks!'",
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 615,
+      "completion_tokens": 51,
+      "latency_ms": 4817.526957951486,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_tyj2ptdh",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "Please send the final draft by 5:00 p.m.; thanks!",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"Please send the final draft by 5:00 p.m.; thanks!\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "text expected \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", got 'Hi Sam,\\nAgenda: budget & hiring (50% done)'",
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 625,
+      "completion_tokens": 51,
+      "latency_ms": 6486.894041998312,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_lovafsec",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3002",
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done)",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3002\",\"text\":\"Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done)\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 618,
+      "completion_tokens": 24,
+      "latency_ms": 4329.8664999892935,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7itwv7sx",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "mistral-nemo:latest",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 627,
+      "completion_tokens": 38,
+      "latency_ms": 5441.059792006854,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_km6n0nds",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1043",
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1043\",\"text\":\"Approved.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    }
+  ]
+}

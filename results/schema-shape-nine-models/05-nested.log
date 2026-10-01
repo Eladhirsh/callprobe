@@ -1,0 +1,44 @@
+.x......xxxx.x.xxx.x.x....xxxx...xxx.x......xx.x.. 50/54
+.xxx
+
+model            granite3.3:8b
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         63.0%   61.1%   53.7%   53.7%   (95% CI 31.5-74.1%)
+  type-lenient    63.0%   61.1%   53.7%   53.7%
+
+  tool count sweep
+    +0   distractors   success  50.0%   selection  55.6%   sd  0.0
+    +2   distractors   success  50.0%   selection  66.7%   sd  0.0
+    +4   distractors   success  61.1%   selection  66.7%   sd  0.0
+
+  by category
+    abstain     33.3%  (n=18, 95% CI 5.6-66.7%)
+    args        80.0%  (n=15, 95% CI 40.0-100.0%)
+    depth        0.0%  (n=6, 95% CI 0.0-0.0%)
+    select      73.3%  (n=15, 95% CI 40.0-100.0%)
+
+  cost per success   1260 tokens   4.00 s
+
+failures worth reading:
+  [search-by-subject pad=0] query expected {'q': 'subject:Quarterly lunch plan'}, got {'q': 'Quarterly lunch plan'}
+  [no-send-chat-only pad=0] called get_message when no tool applied
+  [get-missing-id pad=0] called get_message when no tool applied
+  [reply-missing-id pad=0] called send_reply when no tool applied
+  [search-missing-criteria pad=0] called search_messages when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-symbols pad=0] no tool call produced
+  [correction-search-sender pad=0] no tool call produced
+      said: No problem, searching for messages from sam.lee@example.invalid.  Searching for messages from sam.lee@example.invalid.
+  [correction-reply-target pad=0] no tool call produced
+      said: Understood. I will create a draft replying to msg-1042 with the text "Approved." and save it with the ID msg-1043.
+  [search-by-subject pad=2] query expected {'q': 'subject:Quarterly lunch plan'}, got {'folder': 'inbox', 'limit': 10, 'q': 'Quarterly lunch plan'}
+  [search-with-limit pad=2] query expected {'q': 'offsite', 'limit': 5}, got {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}
+  [no-send-chat-only pad=2] called get_message when no tool applied
+  [get-missing-id pad=2] called get_message when no tool applied
+  [reply-missing-id pad=2] called send_reply when no tool applied
+  [search-missing-criteria pad=2] called search_messages when no tool applied
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/05-nested.json

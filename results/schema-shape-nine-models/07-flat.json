@@ -1,0 +1,2177 @@
+{
+  "config": {
+    "model": "llama3.1:8b",
+    "endpoint": "http://localhost:11434/v1",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/flat",
+    "pads": [
+      0,
+      2,
+      4
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.9.0rc1",
+    "suite_name": "nested",
+    "suite_version": 1,
+    "suite_hash": "f0aa623eb8b663c2",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 3,
+    "task_ids": [
+      "search-by-sender",
+      "search-by-subject",
+      "search-archive-folder",
+      "search-with-limit",
+      "get-by-id",
+      "get-id-with-punctuation",
+      "reply-send",
+      "reply-draft-only",
+      "no-send-chat-only",
+      "get-missing-id",
+      "reply-missing-id",
+      "search-missing-criteria",
+      "unsupported-delete",
+      "unsupported-forward",
+      "reply-body-quotes",
+      "reply-body-symbols",
+      "correction-search-sender",
+      "correction-reply-target"
+    ],
+    "selected_task_ids": null
+  },
+  "started_at": "2026-09-30T21:35:33.234270+00:00",
+  "finished_at": "2026-09-30T21:38:52.036465+00:00",
+  "results": [
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present",
+        "limit should not be present"
+      ],
+      "prompt_tokens": 438,
+      "completion_tokens": 36,
+      "latency_ms": 4818.020083010197,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_pxi6f2ho",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid",
+            "folder": "inbox",
+            "limit": 10
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\",\"folder\":\"inbox\",\"limit\":10}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present"
+      ],
+      "prompt_tokens": 437,
+      "completion_tokens": 28,
+      "latency_ms": 2336.9844169938006,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_9ywf6xlr",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan",
+            "folder": "inbox"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\",\"folder\":\"inbox\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 436,
+      "completion_tokens": 23,
+      "latency_ms": 3153.0543340486474,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7dolvib3",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "invoice"
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"invoice\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: limit: '5' is not of type 'integer'",
+        "limit expected 5, got '5'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 438,
+      "completion_tokens": 24,
+      "latency_ms": 2797.036624979228,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7rsozzhd",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": "5"
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":\"5\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 434,
+      "completion_tokens": 21,
+      "latency_ms": 1486.1139580025338,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_na1p0gs0",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 440,
+      "completion_tokens": 26,
+      "latency_ms": 1696.800792007707,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ngdtjjq8",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 442,
+      "completion_tokens": 35,
+      "latency_ms": 1899.657833040692,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_46emanjv",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 455,
+      "completion_tokens": 40,
+      "latency_ms": 7493.256249988917,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_t3e9b1ni",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 452,
+      "completion_tokens": 45,
+      "latency_ms": 6351.308792014606,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2ld389eq",
+          "name": "send_reply",
+          "arguments": {
+            "text": "I appreciate your invitation, but I won't be able to attend.",
+            "mode": "draft",
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"text\":\"I appreciate your invitation, but I won't be able to attend.\",\"mode\":\"draft\",\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 447,
+      "completion_tokens": 21,
+      "latency_ms": 1287.527541979216,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_8l6kn0oo",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 436,
+      "completion_tokens": 33,
+      "latency_ms": 2538.2849170127884,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_irlzc7ul",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "yes",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"yes\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": null,
+      "failures": [
+        "called search_messages when no tool applied"
+      ],
+      "prompt_tokens": 431,
+      "completion_tokens": 25,
+      "latency_ms": 3908.3579999860376,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_5abyq51y",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:ADDRESS",
+            "folder": "inbox"
+          },
+          "raw_arguments": "{\"q\":\"from:ADDRESS\",\"folder\":\"inbox\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 435,
+      "completion_tokens": 38,
+      "latency_ms": 3391.6817079880275,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_mkaew6ki",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "This message is being deleted permanently.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"This message is being deleted permanently.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 439,
+      "completion_tokens": 40,
+      "latency_ms": 4876.5572080155835,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_wl6bj3ck",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Forwarding to sam.lee@example.invalid.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Forwarding to sam.lee@example.invalid.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "send_reply",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 459,
+      "completion_tokens": 50,
+      "latency_ms": 3669.0673329867423,
+      "error": null,
+      "response_text": "{\"name\": \"send_reply\", \"parameters\": {\"message_id\": \"msg-3001\", \"text\": \"[Please send the \\\\\"final\\\\\" draft by 5:00 p.m.; thanks!]\", \"mode\": \"draft\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "text expected \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", got '[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]'",
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 469,
+      "completion_tokens": 68,
+      "latency_ms": 6422.838416008744,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vuqqhw0m",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3002",
+            "text": "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3002\",\"text\":\"[Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e ’v2’ — café at 9.]\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present",
+        "limit should not be present"
+      ],
+      "prompt_tokens": 471,
+      "completion_tokens": 35,
+      "latency_ms": 4758.95245798165,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_d98cv072",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid",
+            "folder": "inbox",
+            "limit": 10
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\",\"folder\":\"inbox\",\"limit\":10}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 475,
+      "completion_tokens": 33,
+      "latency_ms": 2517.98287499696,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_hlncmnm2",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "draft",
+            "message_id": "msg-1043",
+            "text": "Approved."
+          },
+          "raw_arguments": "{\"mode\":\"draft\",\"message_id\":\"msg-1043\",\"text\":\"Approved.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present",
+        "limit should not be present"
+      ],
+      "prompt_tokens": 566,
+      "completion_tokens": 36,
+      "latency_ms": 9528.652999957558,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zwp6ikb7",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid",
+            "folder": "inbox",
+            "limit": 10
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\",\"folder\":\"inbox\",\"limit\":10}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present"
+      ],
+      "prompt_tokens": 544,
+      "completion_tokens": 28,
+      "latency_ms": 2952.6368750375696,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_hngh7kra",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "inbox",
+            "q": "subject:Quarterly lunch plan"
+          },
+          "raw_arguments": "{\"folder\":\"inbox\",\"q\":\"subject:Quarterly lunch plan\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "limit should not be present"
+      ],
+      "prompt_tokens": 564,
+      "completion_tokens": 29,
+      "latency_ms": 3859.439874999225,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_xo8z9l6o",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "invoice",
+            "limit": 10
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"invoice\",\"limit\":10}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: limit: '5' is not of type 'integer'",
+        "limit expected 5, got '5'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 566,
+      "completion_tokens": 24,
+      "latency_ms": 2528.449208009988,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_uct291ho",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": "5"
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":\"5\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 544,
+      "completion_tokens": 21,
+      "latency_ms": 3160.2597910095938,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_dlr4sdpo",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 547,
+      "completion_tokens": 26,
+      "latency_ms": 2688.192125002388,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_kf6ld40k",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "text expected 'Confirmed for Tuesday.', got 'Confirmed for Tuesday'",
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 570,
+      "completion_tokens": 35,
+      "latency_ms": 3350.282665982377,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_xnfpd166",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 583,
+      "completion_tokens": 40,
+      "latency_ms": 4012.9647090216167,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zdrzibhp",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 562,
+      "completion_tokens": 45,
+      "latency_ms": 3428.712499968242,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_0zaaduqs",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "I appreciate your invitation, but I won't be able to attend.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"I appreciate your invitation, but I won't be able to attend.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 554,
+      "completion_tokens": 21,
+      "latency_ms": 3652.6970420381986,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_v81xrssf",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 564,
+      "completion_tokens": 33,
+      "latency_ms": 3008.531540981494,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ed2eezu4",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "message_id": "msg-1042",
+            "text": "yes"
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"message_id\":\"msg-1042\",\"text\":\"yes\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": null,
+      "failures": [
+        "called search_messages when no tool applied"
+      ],
+      "prompt_tokens": 538,
+      "completion_tokens": 25,
+      "latency_ms": 3790.451667038724,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_qzmjyf0t",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:ADDRESS",
+            "folder": "inbox"
+          },
+          "raw_arguments": "{\"q\":\"from:ADDRESS\",\"folder\":\"inbox\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 542,
+      "completion_tokens": 87,
+      "latency_ms": 7141.156750032678,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_mtfbbmg5",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 567,
+      "completion_tokens": 44,
+      "latency_ms": 4787.605124991387,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_pdrrxtj5",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Forwarding msg-1042 to sam.lee@example.invalid.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Forwarding msg-1042 to sam.lee@example.invalid.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "send_reply",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 566,
+      "completion_tokens": 50,
+      "latency_ms": 3899.721874971874,
+      "error": null,
+      "response_text": "{\"name\": \"send_reply\", \"parameters\": {\"message_id\": \"msg-3001\", \"text\": \"[Please send the \\\\\"final\\\\\" draft by 5:00 p.m.; thanks!]\", \"mode\": \"send\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "text expected \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", got '[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]'",
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 579,
+      "completion_tokens": 68,
+      "latency_ms": 5490.464249975048,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_bbhnlitw",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "draft",
+            "message_id": "msg-3002",
+            "text": "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]"
+          },
+          "raw_arguments": "{\"mode\":\"draft\",\"message_id\":\"msg-3002\",\"text\":\"[Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e ’v2’ — café at 9.]\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present",
+        "limit should not be present"
+      ],
+      "prompt_tokens": 578,
+      "completion_tokens": 35,
+      "latency_ms": 3537.5326659996063,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_qhs2u8gv",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "inbox",
+            "limit": 10,
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"folder\":\"inbox\",\"limit\":10,\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 582,
+      "completion_tokens": 33,
+      "latency_ms": 3371.9742089742795,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_h0z626oo",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1043",
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1043\",\"text\":\"Approved.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present",
+        "limit should not be present"
+      ],
+      "prompt_tokens": 655,
+      "completion_tokens": 36,
+      "latency_ms": 3224.4369580294006,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ghm6zfsk",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:dana.rivera@example.invalid",
+            "folder": "inbox",
+            "limit": 10
+          },
+          "raw_arguments": "{\"q\":\"from:dana.rivera@example.invalid\",\"folder\":\"inbox\",\"limit\":10}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "folder should not be present"
+      ],
+      "prompt_tokens": 654,
+      "completion_tokens": 28,
+      "latency_ms": 3098.7634590128437,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_atp9gm9x",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan",
+            "folder": "inbox"
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan\",\"folder\":\"inbox\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 653,
+      "completion_tokens": 23,
+      "latency_ms": 2109.0535830007866,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_x67l1i2r",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "archive",
+            "q": "invoice"
+          },
+          "raw_arguments": "{\"folder\":\"archive\",\"q\":\"invoice\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: limit: '5' is not of type 'integer'",
+        "limit expected 5, got '5'",
+        "folder should not be present"
+      ],
+      "prompt_tokens": 655,
+      "completion_tokens": 30,
+      "latency_ms": 2929.5560420141555,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_kowz475t",
+          "name": "search_messages",
+          "arguments": {
+            "folder": "inbox",
+            "limit": "5",
+            "q": "offsite"
+          },
+          "raw_arguments": "{\"folder\":\"inbox\",\"limit\":\"5\",\"q\":\"offsite\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 651,
+      "completion_tokens": 21,
+      "latency_ms": 2829.0224579977803,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_slvpsc2p",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 657,
+      "completion_tokens": 26,
+      "latency_ms": 2503.684916999191,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_6qg3uno3",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 659,
+      "completion_tokens": 35,
+      "latency_ms": 2978.6527499672957,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_lzo8vrby",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Confirmed for Tuesday.",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Confirmed for Tuesday.\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 672,
+      "completion_tokens": 40,
+      "latency_ms": 3849.2181670153514,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_c83gnz4r",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Let me check and get back to you.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Let me check and get back to you.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 669,
+      "completion_tokens": 48,
+      "latency_ms": 3735.1585419964977,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_0ekaioq8",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "I appreciate your invitation, but I won’t be able to attend.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"I appreciate your invitation, but I won’t be able to attend.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 664,
+      "completion_tokens": 21,
+      "latency_ms": 2882.740000030026,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_93lvp3i4",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 653,
+      "completion_tokens": 33,
+      "latency_ms": 2960.1210830151103,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_qg5mwgdd",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "yes",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"yes\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": null,
+      "failures": [
+        "called search_messages when no tool applied"
+      ],
+      "prompt_tokens": 648,
+      "completion_tokens": 31,
+      "latency_ms": 3029.0595419937745,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_m0l0ljsq",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:ADDRESS",
+            "folder": "inbox",
+            "limit": 10
+          },
+          "raw_arguments": "{\"q\":\"from:ADDRESS\",\"folder\":\"inbox\",\"limit\":10}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 652,
+      "completion_tokens": 40,
+      "latency_ms": 3134.21633298276,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_kq4hz7kj",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "send",
+            "message_id": "msg-1042",
+            "text": "I'd like to delete this message permanently."
+          },
+          "raw_arguments": "{\"mode\":\"send\",\"message_id\":\"msg-1042\",\"text\":\"I'd like to delete this message permanently.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": null,
+      "failures": [
+        "called send_reply when no tool applied"
+      ],
+      "prompt_tokens": 656,
+      "completion_tokens": 44,
+      "latency_ms": 3855.597999994643,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2myoc0mt",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "text": "Forwarding msg-1042 to sam.lee@example.invalid.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"text\":\"Forwarding msg-1042 to sam.lee@example.invalid.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "send_reply",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 676,
+      "completion_tokens": 50,
+      "latency_ms": 4089.021749969106,
+      "error": null,
+      "response_text": "{\"name\": \"send_reply\", \"parameters\": {\"message_id\": \"msg-3001\", \"text\": \"[Please send the \\\\\"final\\\\\" draft by 5:00 p.m.; thanks!]\", \"mode\": \"send\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "text expected \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", got '[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]'",
+        "mode expected 'send', got 'draft'"
+      ],
+      "prompt_tokens": 686,
+      "completion_tokens": 68,
+      "latency_ms": 4677.34820896294,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ta50du14",
+          "name": "send_reply",
+          "arguments": {
+            "text": "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> ’v2’ — café at 9.]",
+            "mode": "draft",
+            "message_id": "msg-3002"
+          },
+          "raw_arguments": "{\"text\":\"[Hi Sam,\\nAgenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e ’v2’ — café at 9.]\",\"mode\":\"draft\",\"message_id\":\"msg-3002\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 688,
+      "completion_tokens": 23,
+      "latency_ms": 3517.3808750114404,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_sbrouguk",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 692,
+      "completion_tokens": 33,
+      "latency_ms": 3561.882540991064,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_anwm6uen",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1043",
+            "text": "Approved.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1043\",\"text\":\"Approved.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    }
+  ]
+}

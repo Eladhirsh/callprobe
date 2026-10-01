@@ -1,0 +1,42 @@
+......x...x.x..x..x.........x....x.x..xx....xxx.x. 50/54
+.x.x
+
+model            hermes3:8b
+endpoint         http://localhost:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         85.2%   81.5%   70.4%   70.4%   (95% CI 55.6-85.2%)
+  type-lenient    85.2%   81.5%   70.4%   70.4%
+
+  tool count sweep
+    +0   distractors   success  77.8%   selection  88.9%   sd  0.0
+    +2   distractors   success  77.8%   selection  88.9%   sd  0.0
+    +4   distractors   success  55.6%   selection  77.8%   sd  0.0
+
+  by category
+    abstain     61.1%  (n=18, 95% CI 33.3-88.9%)
+    args        73.3%  (n=15, 95% CI 33.3-100.0%)
+    depth       66.7%  (n=6, 95% CI 33.3-100.0%)
+    select      80.0%  (n=15, 95% CI 66.7-93.3%)
+
+  cost per success   911 tokens   3.72 s
+
+failures worth reading:
+  [reply-send pad=0] schema: (root): 'mode' is a required property; mode expected 'send', got missing
+  [reply-missing-id pad=0] called send_reply when no tool applied
+  [unsupported-delete pad=0] called send_reply when no tool applied
+  [reply-body-symbols pad=0] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "Hi Sam,\n\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."; mode expected 'send', got 'draft'
+  [search-by-sender pad=2] no tool call produced
+  [reply-missing-id pad=2] called send_reply when no tool applied
+  [reply-body-symbols pad=2] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "Hi Sam,\n\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."; mode expected 'send', got 'draft'
+  [correction-reply-target pad=2] text expected 'Approved.', got 'Draft only, and use msg-1043 instead of msg-1042.'
+  [search-archive-folder pad=4] q expected 'invoice', got 'archive'; limit should not be present
+  [search-with-limit pad=4] schema: (root): 'q' is a required property; schema: (root): Additional properties are not allowed ('arguments' was unexpected)
+  [no-send-chat-only pad=4] called send_reply when no tool applied
+  [get-missing-id pad=4] called get_message when no tool applied
+  [reply-missing-id pad=4] called send_reply when no tool applied
+  [unsupported-delete pad=4] called send_reply when no tool applied
+  [reply-body-symbols pad=4] text expected "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", got "Hi Sam,\n\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."; mode expected 'send', got 'draft'
+
+wrote /Users/eladhirsh/Documents/ChatGPT/callprobe/results/schema-shape-nine-models/03-flat.json
