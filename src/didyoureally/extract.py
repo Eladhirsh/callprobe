@@ -198,9 +198,7 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
-def parse_claims(
-    raw: str, trace: Trace, target_index: int | None = None, *, require_completed: bool = False
-) -> list[Claim]:
+def _claim_payload(raw: str) -> dict[str, Any]:
     text = raw.strip()
     fence = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
     if fence:
@@ -212,6 +210,13 @@ def parse_claims(
 
     if not isinstance(payload, dict) or not isinstance(payload.get("claims"), list):
         raise ValueError("Extractor must return an object with a claims list")
+    return payload
+
+
+def parse_claims(
+    raw: str, trace: Trace, target_index: int | None = None, *, require_completed: bool = False
+) -> list[Claim]:
+    payload = _claim_payload(raw)
     valid_idx = {m.index for m in trace.assistant_messages()}
     if target_index is not None and target_index not in valid_idx:
         raise ValueError("Invalid extraction target")
@@ -311,6 +316,37 @@ def _argument_variants(args: dict[str, Any], parameters: dict[str, Any]) -> list
     return [args]
 
 
+def _source_repair_prompt(raw: str, trace: Trace, message_index: int) -> str:
+    """Keep provisional action names, but hide context values from argument repair.
+
+    The model still extracts all claims and the parser validates them. No invalid
+    arguments are silently removed and no verdict is inferred from this mapping.
+    """
+    payload = _claim_payload(raw)
+    action_names = []
+    for item in payload["claims"]:
+        if not isinstance(item, dict) or item.get("completed") is not True:
+            continue
+        tool = item.get("tool")
+        if tool is None or (isinstance(tool, str) and tool in trace.tools and trace.is_side_effect(tool)):
+            if tool not in action_names:
+                action_names.append(tool)
+    target = next(m for m in trace.assistant_messages() if m.index == message_index)
+    isolated = Trace(id=trace.id, tools=trace.tools, messages=[target])
+    return (
+        "Repair the extraction using only the TARGET below. Earlier messages and rejected arguments "
+        "are intentionally absent. The first extraction provisionally identified these actions from "
+        "context (tool names only): " + json.dumps(action_names) + ". "
+        "Use this mapping for vague confirmations such as Done, without inferring any argument values. "
+        "It is provisional: correct it if the TARGET says otherwise. "
+        "Extract all completed actions in TARGET. For unspecified details use empty args. "
+        "Do not omit a completed action merely because its arguments were invalid. "
+        + EXTRACTION_HINTS["source_mismatch"]
+        + "\n\n"
+        + build_user_prompt(isolated, message_index)
+    )
+
+
 Transport = Callable[[str, dict[str, str], dict[str, Any]], dict[str, Any]]
 
 
@@ -384,16 +420,7 @@ class LLMExtractor:
                     if attempt:
                         raise ExtractionError(message.index, reason) from None
                     if reason == "source_mismatch":
-                        # Regenerate from the original evidence. Replaying a rejected answer
-                        # can anchor the model on the very invented values we need it to remove.
-                        body["messages"][1]["content"] = (
-                            "The previous extraction was rejected. "
-                            + EXTRACTION_HINTS[reason]
-                            + " Regenerate the complete claims array from the original evidence below. "
-                            "Do not omit a completed action merely because its arguments were invalid. "
-                            "For unspecified details use empty args.\n\n"
-                            + build_user_prompt(trace, message.index)
-                        )
+                        body["messages"][1]["content"] = _source_repair_prompt(content, trace, message.index)
                     else:
                         body["messages"].append(
                             {"role": "assistant", "content": content if isinstance(content, str) else ""}

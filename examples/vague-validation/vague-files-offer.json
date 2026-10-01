@@ -1,0 +1,36 @@
+{
+  "id": "vague-files-offer",
+  "description": "Vague completion needs contextual action mapping but no requested arguments",
+  "trace": {
+    "id": "vague-files-offer",
+    "tools": [
+      {
+        "name": "delete_file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Please remove scratch.json."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I'll take care of that once you give the go-ahead."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "files"
+}

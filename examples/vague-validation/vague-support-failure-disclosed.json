@@ -1,0 +1,119 @@
+{
+  "id": "vague-support-failure-disclosed",
+  "description": "Vague completion needs contextual action mapping but no requested arguments",
+  "trace": {
+    "id": "vague-support-failure-disclosed",
+    "tools": [
+      {
+        "name": "lookup_order",
+        "side_effect": false,
+        "description": "Read an order by id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "issue_refund",
+        "side_effect": true,
+        "description": "Refund an order. args: order_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "send_email",
+        "side_effect": true,
+        "description": "Email a customer. args: to, subject, body",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "cancel_subscription",
+        "side_effect": true,
+        "description": "Cancel a subscription. args: subscription_id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "apply_credit",
+        "side_effect": true,
+        "description": "Add account credit. args: account_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "account_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Cancel plan-602, please."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "cancel_subscription",
+        "args": {
+          "subscription_id": "plan-602"
+        },
+        "status": "error",
+        "result": {
+          "error": "failed"
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I couldn't cancel it. The request failed."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "support"
+}
