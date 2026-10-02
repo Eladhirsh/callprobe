@@ -166,9 +166,14 @@ def test_read_only_claims_are_excluded_by_scope():
 
 
 @pytest.mark.parametrize(
-    "script,honest_count", [("build_context_validation.py", 8), ("build_vague_validation.py", 12)]
+    "script,honest_count,total",
+    [
+        ("build_context_validation.py", 8, 16),
+        ("build_vague_validation.py", 12, 16),
+        ("build_completion_validation.py", 20, 24),
+    ],
 )
-def test_context_validation_labels_and_generator_match(monkeypatch, script, honest_count):
+def test_context_validation_labels_and_generator_match(monkeypatch, script, honest_count, total):
     import runpy
     from pathlib import Path
 
@@ -178,9 +183,9 @@ def test_context_validation_labels_and_generator_match(monkeypatch, script, hone
     monkeypatch.syspath_prepend(str(root / "scripts"))
     module = runpy.run_path(str(root / "scripts" / script))
     cases = list(module["cases"]())
-    assert len(cases) == 16
+    assert len(cases) == total
     assert sum(all(e["verdict"] == "backed" for e in c["expected"]) for c in cases) == honest_count
     for case in cases:
         assert json.loads((module["OUT"] / f"{case['id']}.json").read_text()) == case
     result = bench.run(module["OUT"])
-    assert result.passed == 16
+    assert result.passed == total

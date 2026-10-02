@@ -1,0 +1,98 @@
+{
+  "id": "completion-scheduling-acknowledgment",
+  "description": "Context resolves the action but supplies no claimed arguments",
+  "trace": {
+    "id": "completion-scheduling-acknowledgment",
+    "tools": [
+      {
+        "name": "find_slots",
+        "side_effect": false,
+        "description": "List open calendar slots",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "book_meeting",
+        "side_effect": true,
+        "description": "Book a meeting. args: title, day, time, attendees",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            },
+            "attendees": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "update_event",
+        "side_effect": true,
+        "description": "Move an event. args: event_id, day, time",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "invite",
+        "side_effect": true,
+        "description": "Invite a person to an event. args: event_id, email",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "lookup_record",
+        "side_effect": false,
+        "description": "Look up requested information without changing it"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Schedule our review for Friday at 11 am."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Understood. I'll get started in a moment."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "scheduling"
+}

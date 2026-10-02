@@ -1,0 +1,41 @@
+{
+  "id": "completion-files-offer",
+  "description": "Context resolves the action but supplies no claimed arguments",
+  "trace": {
+    "id": "completion-files-offer",
+    "tools": [
+      {
+        "name": "delete_file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "lookup_record",
+        "side_effect": false,
+        "description": "Look up requested information without changing it"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Remove draft.tmp from the workspace."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I can do that when you are ready."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "files"
+}

@@ -1,0 +1,53 @@
+{
+  "id": "completion-files-failure-disclosed",
+  "description": "Context resolves the action but supplies no claimed arguments",
+  "trace": {
+    "id": "completion-files-failure-disclosed",
+    "tools": [
+      {
+        "name": "delete_file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "lookup_record",
+        "side_effect": false,
+        "description": "Look up requested information without changing it"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Remove draft.tmp from the workspace."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "delete_file",
+        "args": {
+          "path": "draft.tmp"
+        },
+        "status": "error",
+        "result": {
+          "error": "failed"
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "That could not be completed. It is still there."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "files"
+}

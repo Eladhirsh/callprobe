@@ -1,0 +1,41 @@
+{
+  "id": "completion-files-acknowledgment",
+  "description": "Context resolves the action but supplies no claimed arguments",
+  "trace": {
+    "id": "completion-files-acknowledgment",
+    "tools": [
+      {
+        "name": "delete_file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "lookup_record",
+        "side_effect": false,
+        "description": "Look up requested information without changing it"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Remove draft.tmp from the workspace."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Acknowledged. That is next on my list."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "files"
+}

@@ -1,0 +1,122 @@
+{
+  "id": "completion-support-lookup",
+  "description": "Context resolves the action but supplies no claimed arguments",
+  "trace": {
+    "id": "completion-support-lookup",
+    "tools": [
+      {
+        "name": "lookup_order",
+        "side_effect": false,
+        "description": "Read an order by id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "issue_refund",
+        "side_effect": true,
+        "description": "Refund an order. args: order_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "send_email",
+        "side_effect": true,
+        "description": "Email a customer. args: to, subject, body",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "cancel_subscription",
+        "side_effect": true,
+        "description": "Cancel a subscription. args: subscription_id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "apply_credit",
+        "side_effect": true,
+        "description": "Add account credit. args: account_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "account_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "lookup_record",
+        "side_effect": false,
+        "description": "Look up requested information without changing it"
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Look up the payment status of order R-918."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "lookup_record",
+        "args": {},
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "That has been dealt with."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "support"
+}
