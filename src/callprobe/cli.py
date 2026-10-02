@@ -18,6 +18,7 @@ import tempfile
 from pathlib import Path
 
 import yaml
+from pydantic import ValidationError
 
 from . import __version__
 from .client import ChatClient, probe_server_version
@@ -60,7 +61,16 @@ DEFAULT_SUITE = None
 
 
 def _read_run(path: str) -> Run:
-    return Run.model_validate_json(Path(path).read_text(encoding="utf-8"))
+    try:
+        return Run.model_validate_json(Path(path).read_text(encoding="utf-8"))
+    except ValidationError as exc:
+        # Pydantic's default display includes input values, which may be raw
+        # model responses or credentials. Keep only locations and error kinds.
+        details = "; ".join(
+            (".".join(str(part) for part in error["loc"]) or "(root)")
+            + " (" + error["type"] + ")" for error in exc.errors()
+        )
+        raise ValueError("invalid saved results: " + details) from None
 
 
 def _write_run(path: str, run: Run) -> None:
@@ -615,10 +625,19 @@ def _report(args: argparse.Namespace) -> int:
         out = Path(args.out)
         if source.resolve() == out.resolve() or (out.exists() and os.path.samefile(source, out)):
             raise ValueError("report output must not overwrite its source results")
-    report = render_junit(_read_run(args.results))
+    run = _read_run(args.results)
+    if args.format == "junit":
+        report = render_junit(run)
+    elif args.format == "json":
+        summary = summarize(run)
+        summary.pop("endpoint", None)
+        report = json.dumps(_json_safe(summary), indent=2)
+    else:
+        report = render_text(run, include_endpoint=False)
     if args.out:
         _write_files(out.parent, {out.name: report + "\n"}, args.force)
-        print(f"wrote JUnit report to {out}", file=sys.stderr)
+        label = {"junit": "JUnit", "json": "JSON", "text": "text"}[args.format]
+        print(f"wrote {label} report to {out}", file=sys.stderr)
     else:
         print(report)
     return 0
@@ -809,10 +828,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     validate_cmd.set_defaults(func=_validate)
 
-    report_cmd = sub.add_parser("report", help="export saved results as an offline JUnit test report")
+    report_cmd = sub.add_parser("report", help="export saved results offline as JUnit, text, or JSON")
     report_cmd.add_argument("results", help="saved results JSON")
-    report_cmd.add_argument("--format", choices=["junit"], default="junit")
-    report_cmd.add_argument("--out", help="output XML path; omit to write XML to stdout")
+    report_cmd.add_argument("--format", choices=["junit", "text", "json"], default="junit")
+    report_cmd.add_argument("--out", help="output report path; omit to write to stdout")
     report_cmd.add_argument("--force", action="store_true", help="replace an existing report, never the source results")
     report_cmd.set_defaults(func=_report)
 

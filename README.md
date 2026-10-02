@@ -1031,6 +1031,30 @@ pipeline; they are not model benchmark results.
 
 MIT
 
+## Read saved summaries (development checkout)
+
+Inspect a recorded run without contacting its model endpoint or rebuilding its
+suite:
+
+```bash
+callprobe report results.json --format text
+callprobe report results.json --format json --out summary.json
+```
+
+These formats use recorded score fields and omit endpoint URLs, raw responses,
+arguments, notes, and server error messages. They report scored observations,
+distinct scored tasks, request errors, truncations, and
+`scored/recorded/planned` coverage. Missing/duplicate/unexpected records are
+marked; old runs without a recorded plan say coverage is unknown. Targeted
+runs remain labeled as debug runs. JSON uses `null` for undefined cost per
+success instead of nonstandard `Infinity`.
+
+This is informational reporting, not a CI gate or a fresh evaluation. Export
+returns `0` on success even when the recorded model failed. Use
+`compare --fail-on-regression` for a matched gate. Existing output files require
+`--force`, and the source results can never be overwritten, including through
+symlinks or hard links. With no `--format`, `report` still exports JUnit XML.
+
 ## Export JUnit reports (development checkout)
 
 Put saved CallProbe observations into your CI test-report viewer without making

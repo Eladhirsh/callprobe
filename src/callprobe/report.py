@@ -64,6 +64,7 @@ def summarize(run: Run) -> dict:
         "n": len(scored),
         "unique_tasks_scored": len({r.task_id for r in scored}),
         "total_requests": len(results),
+        "coverage": _coverage(run),
         "overall": {
             "selection": _rate(scored, "selection_ok"),
             "schema": _rate(scored, "schema_ok"),
@@ -118,16 +119,17 @@ def _ci(bounds: tuple[float, float]) -> str:
     return f"{lo * 100:.1f}-{hi * 100:.1f}%"
 
 
-def render_text(run: Run) -> str:
+def render_text(run: Run, *, include_endpoint: bool = True) -> str:
     s = summarize(run)
     lines = [
         f"model               {s['model']}"
         + (f"  ({s['quantization']})" if s["quantization"] else ""),
-        f"endpoint            {s['endpoint']}",
+        *([f"endpoint            {s['endpoint']}"] if include_endpoint else []),
         f"observations scored {s['n']}"
         + (f"   errors: {s['errors']}" if s["errors"] else "")
         + (f"   truncated: {s['truncated']}" if s["truncated"] else ""),
         f"unique tasks scored {s['unique_tasks_scored']}",
+        f"coverage            {s['coverage']} (scored/recorded/planned)",
     ]
     if s["scope"]["targeted"]:
         lines.append(
