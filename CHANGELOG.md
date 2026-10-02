@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add a Python API to score recorded application completions without an HTTP
+  proxy. It uses the existing rubric, preserves incomplete/targeted coverage,
+  and rejects duplicate or out-of-plan observations before scoring.
+
 - Flag malformed saved coverage plans in text, JSON, and leaderboard summaries.
   Duplicate tasks/pads and invalid targeted selections no longer appear complete;
   recorded scores and legacy unknown-plan support remain unchanged.
