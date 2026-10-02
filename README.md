@@ -22,6 +22,9 @@ Alternatively, use `python -m pip install --upgrade callprobe==0.9.0rc2`.
 [scoring/baseline migration](CHANGELOG.md#upgrade-and-baseline-migration)
 before reusing baselines.
 
+This checkout is the unpublished `0.9.0rc3.dev0`; use `uv tool install . --force`
+to test development features.
+
 ## Try it
 
 Python 3.10+ is required. Install or replace an older pinned installation:
@@ -960,3 +963,37 @@ pipeline; they are not model benchmark results.
 ## License
 
 MIT
+
+## Export JUnit reports (development checkout)
+
+Put saved CallProbe observations into your CI test-report viewer without making
+another model request:
+
+```bash
+callprobe report results.json --format junit --out callprobe-junit.xml
+```
+
+Omit `--out` to write XML to stdout. Existing reports are protected unless you
+pass `--force`; the source results file is always protected, including aliases.
+Export exits zero when it successfully writes a report, regardless of test
+outcomes. Your CI test reporter can interpret the XML; keep using `compare
+--fail-on-regression` for matched baseline gates.
+
+Each `(task, pad, repeat)` becomes a test case. Model failures and truncations
+are failures; endpoint errors are errors. Missing observations add a coverage
+error case, and old results without a recorded plan add an unknown-coverage
+error case. Targeted debug runs are labeled and include a skipped coverage
+notice, so they do not appear to be full benchmark runs.
+
+Reports include model/task names and provenance but omit raw prompts, responses,
+argument values, endpoint URLs, and server error messages. Use `explain` with
+the original results and suite when you need detailed diagnostics. Reports can
+still reveal names you put in task IDs or model labels; review those before
+sharing. Recorded scores are never recomputed.
+
+The Action in this checkout also writes `callprobe-junit.xml` when results are
+available, even when a threshold or regression gate fails. Its `junit-report`
+output contains the path only after export succeeds. Upload it with an
+`if: always()` artifact or test-report step to retain failure evidence.
+
+This feature requires the development checkout; it is not in `0.9.0rc2`.

@@ -40,6 +40,10 @@ inputs:
   request-timeout:
     description: 'HTTP operation timeout in seconds; positive and finite (not an overall job deadline).'
     default: '120'
+outputs:
+  junit-report:
+    description: "Path to the JUnit report, when results were recorded successfully."
+    value: ${{ steps.junit.outputs.path }}
 runs:
   using: 'composite'
   steps:
@@ -74,7 +78,7 @@ runs:
         # Inputs must survive cleanup and output writes, including aliases.
         for source in "$CALLPROBE_BASELINE" "$CALLPROBE_POLICY"; do
           if [ -z "$source" ]; then continue; fi
-          for target in callprobe-results.json callprobe-summary.json callprobe-comparison.json callprobe-comparison.md; do
+          for target in callprobe-results.json callprobe-summary.json callprobe-comparison.json callprobe-comparison.md callprobe-junit.xml; do
             if [ "$source" -ef "$target" ]; then
               echo 'baseline and policy must be separate from generated reports/results' >&2
               exit 2
@@ -85,7 +89,7 @@ runs:
         # reaching a stage never leaves a stale report from a prior
         # invocation behind for the summary step. Never touch the baseline or
         # results inputs.
-        rm -f callprobe-summary.json callprobe-comparison.json callprobe-comparison.md
+        rm -f callprobe-summary.json callprobe-comparison.json callprobe-comparison.md callprobe-junit.xml
         if [ -n "$CALLPROBE_POLICY" ] && [ -z "$CALLPROBE_BASELINE" ]; then
           echo 'policy requires baseline' >&2
           exit 2
@@ -149,6 +153,15 @@ runs:
         fi
         if [ "$comparison_status" -ne 0 ]; then exit "$comparison_status"; fi
         exit "${run_status[0]}"
+
+    - name: Write JUnit report
+      id: junit
+      if: ${{ always() && steps.evaluate.outputs.summary_ready == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        callprobe report callprobe-results.json --format junit --out callprobe-junit.xml --force
+        echo 'path=callprobe-junit.xml' >> "$GITHUB_OUTPUT"
 
     - name: Write step summary
       if: always()
