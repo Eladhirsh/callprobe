@@ -29,6 +29,7 @@ from .examples import EXAMPLES, generate_example_suite, list_examples
 from .explain import explain_run, render_explain_text
 from .gates import evaluate_gate, load_policy, render_gate
 from .init import generate_suite_files
+from .junit import render_junit
 from .loader import load_suite
 from .openapi import generate_openapi_suite, load_openapi_file
 from .models import Run, RunConfig
@@ -607,6 +608,21 @@ def _explain(args: argparse.Namespace) -> int:
     return 0
 
 
+def _report(args: argparse.Namespace) -> int:
+    source = Path(args.results)
+    if args.out:
+        out = Path(args.out)
+        if source.resolve() == out.resolve() or (out.exists() and os.path.samefile(source, out)):
+            raise ValueError("report output must not overwrite its source results")
+    report = render_junit(_read_run(args.results))
+    if args.out:
+        _write_files(out.parent, {out.name: report + "\n"}, args.force)
+        print(f"wrote JUnit report to {out}", file=sys.stderr)
+    else:
+        print(report)
+    return 0
+
+
 def _leaderboard(args: argparse.Namespace) -> int:
     runs = []
     for path in args.results:
@@ -755,6 +771,13 @@ def main(argv: list[str] | None = None) -> int:
         "--suite", default=DEFAULT_SUITE, help="suite directory, defaults to the packaged core suite"
     )
     validate_cmd.set_defaults(func=_validate)
+
+    report_cmd = sub.add_parser("report", help="export saved results as an offline JUnit test report")
+    report_cmd.add_argument("results", help="saved results JSON")
+    report_cmd.add_argument("--format", choices=["junit"], default="junit")
+    report_cmd.add_argument("--out", help="output XML path; omit to write XML to stdout")
+    report_cmd.add_argument("--force", action="store_true", help="replace an existing report, never the source results")
+    report_cmd.set_defaults(func=_report)
 
     compare_cmd = sub.add_parser(
         "compare", help="diff two runs: per-category deltas and which tasks flipped"
