@@ -1103,3 +1103,60 @@ failure makes the sweep fail without discarding its original results.
 `--dry-run --junit` only plans requests and writes no XML.
 
 This feature requires the development checkout; it is not in `0.9.0rc2`.
+
+
+## Score application recordings (development checkout)
+
+Applications can score their captured tool decisions directly in Python without
+an OpenAI-compatible HTTP proxy. Install this checkout into the application's
+Python environment, then create a suite with `callprobe init --example support
+--out support-suite`. For example, this **synthetic recorded decision** exercises
+the adapter without calling a model or executing an order lookup:
+
+```python
+from pathlib import Path
+
+from callprobe.client import Completion
+from callprobe.loader import load_suite
+from callprobe.models import Call, RunConfig
+from callprobe.recordings import RecordedCompletion, score_recordings
+
+suite = load_suite(Path("support-suite"))
+config = RunConfig(
+    model="application-model", endpoint="recorded://local", suite="support-suite",
+    pads=[0], repeats=1, temperature=0.0, max_tokens=4096,
+)
+record = RecordedCompletion(
+    task_id="status-by-id",
+    completion=Completion(calls=[Call(
+        name="get_order", arguments={"path": {"order_id": "ORD-448120"}},
+    )]),
+)
+run = score_recordings(suite, config, [record])
+with Path("recorded-results.json").open("x", encoding="utf-8") as output:
+    output.write(run.model_dump_json(indent=2) + "\n")
+```
+
+Inspect the output with `callprobe report recorded-results.json --format text`.
+Only one of six tasks was supplied, so coverage remains incomplete. Supply every
+planned `(task_id, pad, repeat)` for a complete run; targeted selections remain
+labeled as debug runs. Duplicate and out-of-plan records are rejected before any
+scoring. Missing observations are never invented.
+
+Replace the synthetic `Completion` with your application's captured final model
+decision, retaining **every** tool call, parse failure, finish reason, request
+error, token count, and latency. `Completion(error="...")` represents a failed
+request; an empty error string is also a request error. An empty successful
+`Completion` means the model made no tool call. OpenAI-compatible response bodies
+can be decoded with `callprobe.client.parse_completion(body, latency_ms=...)`;
+malformed response envelopes raise an exception and must not become successful
+empty completions. Other providers need an adapter to the same `Completion`
+fields. This API evaluates one decision, not a whole agent execution trace.
+
+Use the same task messages, tools, padding, and generation settings that produced
+the recordings. For padded runs, `callprobe.runner.build_toolset(suite, task, pad,
+seed=repeat)` supplies the deterministic tool bundle/order. The model and generation
+metadata are caller assertions: CallProbe cannot verify how external recordings
+were produced. Evaluation timestamps describe this scoring pass. Scores use the
+current rubric and suite provenance; this differs from `report`, which only reads
+saved scores. No model request or application tool is executed by this API.
