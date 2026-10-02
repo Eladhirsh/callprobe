@@ -291,6 +291,32 @@ def test_markdown_does_not_wrap_escaped_metadata_in_code_spans():
     assert "&lt;img" in text
 
 
+def test_empty_string_error_is_treated_as_request_error_in_text_compare():
+    a = Run(config=_config(), started_at="now",
+            results=[_result("t1", "select", 0, True, error="")])
+    b = Run(config=_config(), started_at="now",
+            results=[_result("t1", "select", 0, True)])
+    text = render_compare(a, b)
+    # the empty-string error must drop out of the scored denominator and
+    # move into the request-errors tally, exactly like a real error string
+    assert "scored observations: 0 -> 1" in text
+    assert "request errors: 1 -> 0" in text
+    # with no scored observations in a, the pass/fail aggregation cannot
+    # compare t1 at all, so neither flip list contains it
+    assert "pass -> fail (0):" in text
+    assert "fail -> pass (0):" in text
+
+
+def test_empty_string_error_is_treated_as_request_error_in_markdown_compare():
+    a = Run(config=_config(), started_at="now",
+            results=[_result("t1", "select", 0, True, error="")])
+    b = Run(config=_config(), started_at="now",
+            results=[_result("t1", "select", 0, True)])
+    text = render_compare_markdown(a, b)
+    assert "Scored observations: 0 -> 1" in text
+    assert "Request errors: 1 -> 0" in text
+
+
 def test_markdown_records_generation_conditions_without_endpoint_credentials():
     a = Run(config=_config().model_copy(update={"temperature": 0.0, "max_tokens": 1024, "pads": [0],
                           "endpoint": "https://private-secret@example.test/v1"}),

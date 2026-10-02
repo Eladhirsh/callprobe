@@ -152,7 +152,7 @@ def _score_inner(
         finish_reason=completion.finish_reason,
     )
 
-    if completion.error:
+    if completion.error is not None:
         result.failures.append(f"request failed: {completion.error}")
         return result
 

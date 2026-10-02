@@ -94,7 +94,7 @@ def evaluate_gate(baseline: Run, candidate: Run, policy: GatePolicy) -> dict:
             failures.append(f"{label} error rate {error_rate:.1%} exceeds {policy.max_error_rate:.1%}")
 
     pairs = [(before[key], after[key]) for key in sorted(before)
-             if not before[key].error and not after[key].error]
+             if before[key].error is None and after[key].error is None]
     regressions = [
         {"task_id": b.task_id, "pad": b.pad, "repeat": b.repeat}
         for a, b in pairs if a.success and not b.success
@@ -103,7 +103,7 @@ def evaluate_gate(baseline: Run, candidate: Run, policy: GatePolicy) -> dict:
     if policy.fail_on_regression and regressions:
         failures.append(f"{len(regressions)} previously passing case(s) regressed")
     failed_critical = sorted({r.task_id for r in after.values()
-                              if r.task_id in critical and (r.error or not r.success)})
+                              if r.task_id in critical and (r.error is not None or not r.success)})
     if failed_critical:
         failures.append("critical tasks failed: " + ", ".join(failed_critical))
 
@@ -115,7 +115,7 @@ def evaluate_gate(baseline: Run, candidate: Run, policy: GatePolicy) -> dict:
         if policy.max_success_drop is not None and delta < -policy.max_success_drop:
             failures.append(f"success dropped {-delta:.1%}; maximum is {policy.max_success_drop:.1%}")
 
-    scored = [r for r in after.values() if not r.error]
+    scored = [r for r in after.values() if r.error is None]
     if policy.min_success is not None:
         rate = sum(r.success for r in scored) / len(scored) if scored else 0.0
         if not scored or rate < policy.min_success:

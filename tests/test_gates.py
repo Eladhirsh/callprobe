@@ -139,6 +139,26 @@ def test_invalid_policy_does_not_silently_pass(tmp_path, text):
         load_policy(str(path))
 
 
+def test_empty_string_error_counts_toward_error_rate_and_excludes_from_pairs():
+    a, b = make_run(), make_run()
+    # an empty-string error must be treated as a request error, not scored
+    a.results[0].error = ""
+    gate = evaluate_gate(a, b, GatePolicy())
+    assert not gate["passed"]
+    assert "baseline error rate" in gate["failures"][0]
+    assert gate["matched_cases"] == 1  # the empty-error pair is excluded
+
+
+def test_empty_string_error_still_fails_a_critical_task_when_errors_are_allowed():
+    a, b = make_run(), make_run()
+    b.results[0].error = ""
+    policy = GatePolicy(fail_on_regression=False, critical_tasks=["t1"],
+                        max_error_rate=1.0)
+    gate = evaluate_gate(a, b, policy)
+    assert not gate["passed"]
+    assert any("critical tasks failed: t1" in f for f in gate["failures"])
+
+
 def test_cli_gate_json_exit_codes_and_legacy_readability(tmp_path, capsys):
     import json
 

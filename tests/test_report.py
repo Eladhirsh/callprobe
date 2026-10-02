@@ -231,6 +231,31 @@ def test_coverage_does_not_materialize_large_planned_sweeps():
     assert "1/1/1000000000000 INCOMPLETE (999999999999 missing)" in text
 
 
+def test_empty_string_error_is_treated_as_request_error_in_summary():
+    results = [
+        _result(success=True),
+        _result(success=True, error=""),
+    ]
+    run = Run(config=_config(), started_at="now", results=results)
+    s = summarize(run)
+    # the empty-string error must not inflate the scored denominator or
+    # mask itself as a success in the overall rate
+    assert s["n"] == 1
+    assert s["errors"] == 1
+    assert s["total_requests"] == 2
+    assert s["overall"]["success"] == 1.0
+
+
+def test_empty_string_error_is_skipped_by_failure_digest():
+    # an errored record never carries diagnostic weight for the failure
+    # digest, even if its error string is empty
+    results = [
+        _result(success=False, failures=["request failed: "], error=""),
+    ]
+    run = Run(config=_config(), started_at="now", results=results)
+    assert "none" in failure_digest(run)
+
+
 def test_leaderboard_preserves_table_structure_for_external_labels():
     run = Run(config=_config(model="model|<img>\n# title", suite_name="suite\n<script>",
                              suite_version=1), started_at="now", results=[_result()])

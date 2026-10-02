@@ -374,7 +374,7 @@ def _content_tool_json(task: Task, bundle: Bundle | None, result: TaskResult) ->
     if (
         bundle is None
         or task.expect.type != "call"
-        or result.error
+        or result.error is not None
         or result.truncated
         or result.called is not None
         or result.calls
@@ -407,7 +407,7 @@ def classify_case(task: Task, bundle: Bundle | None, result: TaskResult) -> list
     actually evaluated.
     """
     categories: list[str] = []
-    if result.error:
+    if result.error is not None:
         categories.append("request_error")
         return categories
 
@@ -462,7 +462,7 @@ def _hint_eligible(task: Task, result: TaskResult, chosen) -> bool:
     """
     return (
         task.expect.type == "call"
-        and not result.error
+        and result.error is None
         and not result.truncated
         and len(result.calls) == 1
         and chosen is not None
@@ -534,7 +534,7 @@ def _case_report(task: Task, bundle: Bundle | None, result: TaskResult) -> dict:
     if result.response_text and result.called is None:
         case["response_text"] = result.response_text
 
-    if result.error:
+    if result.error is not None:
         case["call_evidence"] = "none"
         case["calls"] = []
         return case
@@ -727,8 +727,11 @@ def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
     if task_id is not None:
         results = [r for r in results if r.task_id == task_id]
 
-    request_errors = sum(1 for r in results if r.error)
-    failing = [r for r in results if not r.success]
+    request_errors = sum(1 for r in results if r.error is not None)
+    # An errored record is a request error regardless of its saved success
+    # bit; show it so a contradictory success=True does not silently claim
+    # a pass. The saved bit itself is not mutated.
+    failing = [r for r in results if not r.success or r.error is not None]
     cases = [
         _case_report(tasks_by_id[r.task_id], suite.bundles.get(tasks_by_id[r.task_id].bundle), r)
         for r in failing

@@ -834,6 +834,24 @@ def test_request_errors_are_not_scored_cases(github_suite):
     assert report['cases'][0]['diagnostics'] == ['request_error']
 
 
+@pytest.mark.parametrize('saved_success', [False, True])
+def test_empty_request_error_cannot_be_explained_as_model_output(github_suite, saved_success):
+    task = _tasks(github_suite)['get-issue-details']
+    result = _base_result(task, error='', success=saved_success,
+                          response_text='{"name": "issues_get_cf0062ad", "arguments": {}}')
+    run = Run(config=_config(github_suite), started_at='now', results=[result])
+    original = run.model_dump()
+    report = explain_run(run, github_suite)
+    assert (report['total_cases'], report['scored_cases'], report['request_errors']) == (1, 0, 1)
+    assert len(report['cases']) == 1
+    case = report['cases'][0]
+    assert case['diagnostics'] == ['request_error']
+    assert case['call_evidence'] == 'none'
+    assert case['calls'] == []
+    assert 'shape_hint' not in case
+    assert run.model_dump() == original
+
+
 def test_permissive_root_is_not_relocated(github_suite):
     tool = _tool(github_suite, _tasks(github_suite)['get-issue-details'].expect.tool).model_copy(deep=True)
     tool.parameters['additionalProperties'] = True

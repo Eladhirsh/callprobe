@@ -136,7 +136,7 @@ def _select_failed_task_ids(suite, saved: Run) -> list[str]:
             "--failed-from: results file references task id(s) not in --suite: "
             + ", ".join(unknown)
         )
-    failed = {r.task_id for r in saved.results if r.error or r.truncated or not r.success}
+    failed = {r.task_id for r in saved.results if r.error is not None or r.truncated or not r.success}
     return [task.id for task in suite.tasks if task.id in failed]
 
 

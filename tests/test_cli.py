@@ -230,17 +230,23 @@ def test_failed_from_selects_failing_tasks_and_dedups_across_pads(monkeypatch, t
     assert [r["task_id"] for r in rerun["results"]] == order
 
 
-def test_failed_from_includes_request_errors(monkeypatch, tmp_path, capsys):
+@pytest.mark.parametrize('error', ['offline', ''])
+def test_failed_from_includes_request_errors(monkeypatch, tmp_path, capsys, error):
     original_complete = _FakeClient.complete
 
     def erroring(self, model, messages, tools, temperature=0.0, max_tokens=512):
-        return Completion(error="offline")
+        return Completion(error=error)
 
     monkeypatch.setattr(_FakeClient, "complete", erroring)
     source = tmp_path / "source.json"
     code, _ = _run_cli(monkeypatch, ["--out", str(source), "--task", _ABSTAIN_ID], capsys)
     assert code == 0
     monkeypatch.setattr(_FakeClient, "complete", original_complete)
+
+    # Legacy/imported records may have an inconsistent saved success bit.
+    saved = json.loads(source.read_text())
+    saved['results'][0]['success'] = True
+    source.write_text(json.dumps(saved))
 
     _CountingFakeClient.calls = 0
     code, out = _run_cli(

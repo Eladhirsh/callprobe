@@ -8,7 +8,7 @@ from .models import Run, TaskResult
 
 
 def _rate(results: list[TaskResult], field: str) -> float:
-    scored = [r for r in results if not r.error]
+    scored = [r for r in results if r.error is None]
     if not scored:
         return 0.0
     return sum(1 for r in scored if getattr(r, field)) / len(scored)
@@ -48,7 +48,7 @@ def _task_verdicts(results: list[TaskResult]) -> dict[str, bool]:
     """
     grouped: dict[str, list[TaskResult]] = defaultdict(list)
     for r in results:
-        if r.error:
+        if r.error is not None:
             continue
         grouped[r.task_id].append(r)
     return {task_id: all(r.success for r in rs) for task_id, rs in grouped.items() if rs}
@@ -75,8 +75,8 @@ def _delta(value: float) -> str:
 
 
 def render_compare(a: Run, b: Run) -> str:
-    scored_a = [r for r in a.results if not r.error]
-    scored_b = [r for r in b.results if not r.error]
+    scored_a = [r for r in a.results if r.error is None]
+    scored_b = [r for r in b.results if r.error is None]
     lines = [
         f"{a.config.model}  ->  {b.config.model}",
         f"scored observations: {len(scored_a)} -> {len(scored_b)}",
@@ -133,8 +133,8 @@ def render_compare_markdown(a: Run, b: Run, gate: dict | None = None) -> str:
     cannot inject Markdown/HTML structure; no raw prompts or arguments are
     included.
     """
-    scored_a = [r for r in a.results if not r.error]
-    scored_b = [r for r in b.results if not r.error]
+    scored_a = [r for r in a.results if r.error is None]
+    scored_b = [r for r in b.results if r.error is None]
 
     lines = [
         "## Comparison",
