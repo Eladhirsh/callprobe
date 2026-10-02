@@ -84,12 +84,12 @@ def summarize(rows):
     }
 
 
-def evaluate(case, base_url, model, *, json_mode=False):
+def evaluate(case, base_url, model, *, json_mode=False, transport=None):
     raw = []
     responses = []
 
     def capture(url, headers, body):
-        response = _http_post(url, headers, body)
+        response = (transport or _http_post)(url, headers, body)
         raw.append(response["choices"][0]["message"]["content"])
         responses.append(
             {

@@ -228,6 +228,9 @@ def test_source_repair_separates_action_mapping_from_context_values():
     assert "secret-context.csv" not in repair and "trace-only.csv" not in repair
     assert '["delete_file"]' in repair and "All taken care of." in repair
     assert claim.message_index == 2
+    from didyoureally.extract import SYSTEM_PROMPT
+
+    assert requests[1]["messages"][0]["content"] == SYSTEM_PROMPT
 
 
 def test_source_repair_mapping_cannot_carry_arbitrary_model_text():
@@ -292,6 +295,9 @@ def test_source_repair_preserves_valid_detail_and_still_catches_contradiction():
     replies = iter([{"event_id": "private-id", "day": "Thursday"}, {"day": "Thursday"}])
 
     def transport(url, headers, body):
+        from didyoureally.extract import SYSTEM_PROMPT
+
+        assert body["messages"][0]["content"] == SYSTEM_PROMPT
         return {
             "choices": [
                 {
@@ -348,3 +354,53 @@ def test_source_detail_guard_retains_stated_units():
     assert _preserves_source_details(
         [Claim("Refunded 40 EUR", "issue_refund", {"amount": "40 EUR"}, 1)], anchors
     )
+
+
+@pytest.mark.parametrize("recovered", [True, False])
+def test_lost_context_mapping_gets_one_bounded_recovery(recovered):
+    from didyoureally.extract import SOURCE_REPAIR_PROMPT
+
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "send_email"}],
+            "events": [
+                {"type": "message", "role": "user", "content": "Email private@example.com."},
+                {"type": "message", "role": "assistant", "content": "All done."},
+            ],
+        }
+    )
+    calls = []
+
+    def transport(url, headers, body):
+        calls.append(json.loads(json.dumps(body)))
+        claims = []
+        if len(calls) == 1:
+            claims = [{"completed": True, "tool": "send_email", "args": {"to": "private@example.com"}}]
+        elif len(calls) == 3 and recovered:
+            claims = [{"completed": True, "tool": "send_email", "args": {}}]
+        return {"choices": [{"message": {"content": json.dumps({"claims": claims})}}]}
+
+    if recovered:
+        from didyoureally import check
+
+        [claim] = LLMExtractor(transport=transport).extract(t)
+        assert claim.tool == "send_email" and claim.args == {}
+        assert check(t, [claim])[0].verdict.value == "phantom"
+    else:
+        with pytest.raises(ExtractionError) as caught:
+            LLMExtractor(transport=transport).extract(t)
+        assert caught.value.reason == "lost_action_mapping"
+    assert len(calls) == 3
+    assert calls[2]["messages"][0]["content"] == SOURCE_REPAIR_PROMPT
+    assert "private@example.com" not in json.dumps(calls[2])
+
+
+def test_initial_empty_extraction_does_not_trigger_mapping_recovery():
+    calls = []
+
+    def transport(url, headers, body):
+        calls.append(body)
+        return {"choices": [{"message": {"content": '{"claims": []}'}}]}
+
+    assert LLMExtractor(transport=transport).extract(trace()) == []
+    assert len(calls) == 1
