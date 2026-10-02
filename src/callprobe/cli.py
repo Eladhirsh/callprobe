@@ -35,6 +35,8 @@ from .junit import render_junit
 from .loader import load_suite
 from .openapi import generate_openapi_suite, load_openapi_file
 from .models import Run, RunConfig
+from .recording_io import read_recordings
+from .recordings import score_recordings
 from .report import failure_digest, render_markdown, render_text, summarize
 from .run_config import load_run_config
 from .runner import prepare_config, run_suite, validate_resume
@@ -619,6 +621,30 @@ def _explain(args: argparse.Namespace) -> int:
     return 0
 
 
+def _replay(args: argparse.Namespace) -> int:
+    source, out = Path(args.recordings), Path(args.out)
+    protected = [source, *[Path(args.suite) / name for name in (
+        "suite.yaml", "tools.yaml", "tasks.yaml", "distractors.yaml",
+    )]]
+    if any(_same_file_target(str(out), str(path)) for path in protected):
+        raise ValueError("replay output must not overwrite source recordings or suite files")
+    _preflight_files(out.parent, {out.name: ""}, args.force)
+    config, recordings = read_recordings(source, suite_label=args.suite)
+    suite = load_suite(args.suite)
+    if validate_suite(suite):
+        raise ValueError("suite validation failed; run callprobe validate --suite first")
+    if config.selected_task_ids is not None and not set(config.selected_task_ids).issubset(
+        task.id for task in suite.tasks
+    ):
+        raise ValueError("recordings select unknown suite tasks")
+    run = score_recordings(suite, config, recordings)
+    _write_files(out.parent, {out.name: run.model_dump_json(indent=2) + "\n"}, args.force)
+    print("OFFLINE REPLAY: scored recorded decisions; no model or tool was called.")
+    print(render_text(run, include_endpoint=False))
+    print(f"wrote {out}", file=sys.stderr)
+    return 0
+
+
 def _report(args: argparse.Namespace) -> int:
     source = Path(args.results)
     if args.out:
@@ -827,6 +853,13 @@ def main(argv: list[str] | None = None) -> int:
         "--suite", default=DEFAULT_SUITE, help="suite directory, defaults to the packaged core suite"
     )
     validate_cmd.set_defaults(func=_validate)
+
+    replay_cmd = sub.add_parser("replay", help="score recorded application decisions offline")
+    replay_cmd.add_argument("recordings", help="version 1 recordings JSON file")
+    replay_cmd.add_argument("--suite", required=True, help="suite used to produce the recordings")
+    replay_cmd.add_argument("--out", required=True, help="output results JSON path")
+    replay_cmd.add_argument("--force", action="store_true", help="replace output, never input evidence")
+    replay_cmd.set_defaults(func=_replay)
 
     report_cmd = sub.add_parser("report", help="export saved results offline as JUnit, text, or JSON")
     report_cmd.add_argument("results", help="saved results JSON")

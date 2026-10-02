@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "config": {
+    "model": "synthetic-recording",
+    "pads": [
+      0
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096
+  },
+  "records": [
+    {
+      "task_id": "status-by-id",
+      "completion": {
+        "calls": [
+          {
+            "name": "get_order",
+            "arguments": {
+              "path": {
+                "order_id": "ORD-448120"
+              }
+            }
+          }
+        ],
+        "finish_reason": "tool_calls"
+      }
+    }
+  ]
+}
