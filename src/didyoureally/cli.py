@@ -13,6 +13,7 @@ from .extract import ExtractionError, GivenClaims, LLMExtractor
 from .matcher import PROBLEM_VERDICTS, Verdict, check
 from .report import render_incomplete, render_json, render_text, use_color
 from .schema import load_json
+from .staged import StagedExtractor
 
 EXIT_OK, EXIT_FINDINGS, EXIT_INPUT, EXIT_INCOMPLETE = 0, 1, 2, 3
 
@@ -31,7 +32,8 @@ def _extractor(args: argparse.Namespace, raw: object):
         return GivenClaims(load_json(args.claims))
     if isinstance(raw, dict) and "claims" in raw and args.extractor == "auto":
         return GivenClaims(raw["claims"])
-    return LLMExtractor(base_url=args.base_url, model=args.model, json_mode=args.json_mode)
+    cls = StagedExtractor if args.extraction_mode == "staged" else LLMExtractor
+    return cls(base_url=args.base_url, model=args.model, json_mode=args.json_mode)
 
 
 def cmd_check(args: argparse.Namespace) -> int:
@@ -74,9 +76,8 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 
 def cmd_bench(args: argparse.Namespace) -> int:
-    extractor = (
-        LLMExtractor(base_url=args.base_url, model=args.model, json_mode=args.json_mode) if args.llm else None
-    )
+    cls = StagedExtractor if args.extraction_mode == "staged" else LLMExtractor
+    extractor = cls(base_url=args.base_url, model=args.model, json_mode=args.json_mode) if args.llm else None
     try:
         result = bench.run(Path(args.cases) if args.cases else None, extractor)
     except ExtractionError as exc:
@@ -100,6 +101,12 @@ def build_parser() -> argparse.ArgumentParser:
     llm = argparse.ArgumentParser(add_help=False)
     llm.add_argument("--base-url", help="OpenAI-compatible endpoint (env DYR_BASE_URL)")
     llm.add_argument("--json-mode", action="store_true", help="Request JSON mode from a compatible endpoint")
+    llm.add_argument(
+        "--extraction-mode",
+        choices=["default", "staged"],
+        default="default",
+        help="LLM extraction strategy; staged is experimental",
+    )
     llm.add_argument("--model", help="Model for claim extraction (env DYR_MODEL)")
 
     c = sub.add_parser("check", parents=[llm], help="Check one or more traces")

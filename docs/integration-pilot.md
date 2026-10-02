@@ -122,3 +122,15 @@ Regenerate with `.venv/bin/python scripts/build_completion_validation.py`. Evalu
 
 These cases were frozen before the first evaluation. After inspecting the outputs, treat them as
 regressions and create new wording for future validation.
+
+
+## Staged extraction validation
+
+`examples/staged-validation` contains 32 frozen sessions across four domains, including phantom
+actions, masked failures, honest completions, offers, acknowledgments, failure disclosures,
+completed lookups, and requests changed from a write to a lookup. Twenty-four are honest controls.
+Regenerate with `.venv/bin/python scripts/build_staged_validation.py`.
+
+Run `scripts/run_llm_bench.py --extraction-mode staged --json-mode` with configured endpoint pairs
+and `--cases examples/staged-validation`. For a direct comparison, repeat with
+`--extraction-mode default` into a separate output directory. Keep the mode in the saved metadata.

@@ -196,6 +196,23 @@ A backed vague claim means a successful matching action was recorded. It does no
 the requested amount, recipient, or other unstated details were correct. Offers such as "I can take
 care of it" and disclosures such as "That failed" are not completion claims.
 
+### Experimental staged extraction
+
+`--extraction-mode staged` separates contextual action identification from argument extraction.
+The first stage includes completed read-only actions, which code excludes from side-effect checks.
+The second stage sees only the target message and resolved tool names. It cannot copy requested
+amounts or recipients from earlier messages. Disagreement between stages produces an incomplete
+check rather than silently dropping the mapped action.
+
+```bash
+dyr check trace.json --extractor llm --extraction-mode staged --json-mode \
+  --base-url http://localhost:11434/v1 --model YOUR_MODEL
+```
+
+This mode is opt-in. Each stage allows one validation retry, so a message can require up to four
+model calls. Read-only actions and nonclaims stop after the first stage. The default extractor
+is unchanged. Evaluate this mode on representative traces before choosing it for a workload.
+
 ## Model comparison and extraction contracts
 
 Tool definitions can include a JSON Schema `parameters` object in native traces. The OpenAI

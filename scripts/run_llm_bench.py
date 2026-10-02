@@ -21,6 +21,7 @@ from didyoureally.adapters import load_trace  # noqa: E402
 from didyoureally.bench import default_cases_dir  # noqa: E402
 from didyoureally.extract import SYSTEM_PROMPT, ExtractionError, LLMExtractor, _http_post  # noqa: E402
 from didyoureally.matcher import PROBLEM_VERDICTS, check  # noqa: E402
+from didyoureally.staged import ACTION_PROMPT, StagedExtractor  # noqa: E402
 
 PROBLEMS = {v.value for v in PROBLEM_VERDICTS}
 
@@ -84,7 +85,7 @@ def summarize(rows):
     }
 
 
-def evaluate(case, base_url, model, *, json_mode=False, transport=None):
+def evaluate(case, base_url, model, *, json_mode=False, transport=None, extraction_mode="default"):
     raw = []
     responses = []
 
@@ -104,6 +105,7 @@ def evaluate(case, base_url, model, *, json_mode=False, transport=None):
         "case": case["id"],
         "domain": domain(case),
         "model": model,
+        "extraction_mode": extraction_mode,
         "expected": case["expected"],
         "labeled_claims": case["claims"],
         "passed": False,
@@ -112,9 +114,8 @@ def evaluate(case, base_url, model, *, json_mode=False, transport=None):
     started = time.monotonic()
     try:
         trace = load_trace(case["trace"], case["id"])
-        claims = LLMExtractor(base_url=base_url, model=model, transport=capture, json_mode=json_mode).extract(
-            trace
-        )
+        cls = StagedExtractor if extraction_mode == "staged" else LLMExtractor
+        claims = cls(base_url=base_url, model=model, transport=capture, json_mode=json_mode).extract(trace)
         findings = check(trace, claims)
         row["claims"] = [asdict(c) for c in claims]
         row["detail_free_claims_exact"] = detail_free_agreement(case["claims"], row["claims"])
@@ -140,6 +141,7 @@ def markdown(rows):
         "# Real-model extraction on synthetic traces",
         "",
         "Development fixtures, not held-out accuracy. Verdicts remain deterministic.",
+        "Extraction mode: " + ", ".join(sorted({r.get("extraction_mode", "default") for r in rows})) + ".",
         "",
         "| Model | Domain | Exact | Precision | Recall | Errors | Honest false alarms | Unchecked | Detail-free claims |",
         "|---|---|---|---|---|---|---|---|---|",
@@ -171,6 +173,7 @@ def markdown(rows):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--extraction-mode", choices=["default", "staged"], default="default")
     parser.add_argument("--endpoint", nargs=2, action="append", required=True, metavar=("BASE_URL", "MODEL"))
     parser.add_argument(
         "--json-mode", action="store_true", help="Request JSON mode from a compatible endpoint"
@@ -200,7 +203,10 @@ def main(argv=None):
             for p in sorted((ROOT / "src/didyoureally").glob("*.py"))
         },
         "json_mode": args.json_mode,
-        "prompt_sha256": hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest(),
+        "extraction_mode": args.extraction_mode,
+        "prompt_sha256": hashlib.sha256(
+            (ACTION_PROMPT if args.extraction_mode == "staged" else SYSTEM_PROMPT).encode()
+        ).hexdigest(),
         "cases_sha256": hashlib.sha256(json.dumps(cases, sort_keys=True).encode()).hexdigest(),
         "models": [model for _, model in args.endpoint],
         "temperature": 0,
@@ -211,7 +217,9 @@ def main(argv=None):
     with (args.out / "records.jsonl").open("w") as stream:
         for base_url, model in args.endpoint:
             for case in cases:
-                row = evaluate(case, base_url, model, json_mode=args.json_mode)
+                row = evaluate(
+                    case, base_url, model, json_mode=args.json_mode, extraction_mode=args.extraction_mode
+                )
                 rows.append(row)
                 stream.write(json.dumps(row) + "\n")
                 stream.flush()
