@@ -373,3 +373,44 @@ def test_action_real_offline_comparison_survives_threshold_failure(tmp_path):
     result = subprocess.run(["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True)
     assert result.returncode == 0, result.stderr
     assert markdown.strip() in (tmp_path / "summary.md").read_text()
+
+
+def test_action_junit_export_survives_failed_gate(tmp_path):
+    import sys
+    import xml.etree.ElementTree as ET
+
+    steps = yaml.safe_load(ACTION.read_text())["runs"]["steps"]
+    step = next(s for s in steps if s['name'] == 'Write JUnit report')
+    assert 'always()' in step['if'] and "summary_ready == 'true'" in step['if']
+    source = ACTION.parent / 'results/github-issues/qwen3-8b.json'
+    (tmp_path / 'callprobe-results.json').write_bytes(source.read_bytes())
+    executable = tmp_path / 'callprobe'
+    executable.write_text('#!/bin/bash\nexec "$TEST_PYTHON" -m callprobe.cli "$@"\n')
+    executable.chmod(0o755)
+    env = {**os.environ, 'TEST_PYTHON': sys.executable,
+           'PATH': f"{tmp_path}:{os.environ['PATH']}", 'PYTHONPATH': str(ACTION.parent / 'src'),
+           'GITHUB_OUTPUT': str(tmp_path / 'outputs')}
+    result = subprocess.run(['bash', '-c', step['run']], cwd=tmp_path, env=env, capture_output=True)
+    assert result.returncode == 0, result.stderr
+    report = ET.parse(tmp_path / 'callprobe-junit.xml')
+    assert len(report.findall('.//testcase')) == 18
+    assert len(report.findall('.//failure')) == 7
+    assert (tmp_path / 'outputs').read_text() == 'path=callprobe-junit.xml\n'
+    # Invalid input must not advertise a report from this invocation.
+    (tmp_path / 'callprobe-results.json').write_text('bad json')
+    (tmp_path / 'outputs').write_text('')
+    result = subprocess.run(['bash', '-c', step['run']], cwd=tmp_path, env=env, capture_output=True)
+    assert result.returncode == 2
+    assert (tmp_path / 'outputs').read_text() == ''
+
+
+@pytest.mark.parametrize('source_name', ['CALLPROBE_BASELINE', 'CALLPROBE_POLICY'])
+def test_action_protects_inputs_named_like_junit_report(tmp_path, source_name):
+    steps = yaml.safe_load(ACTION.read_text())["runs"]["steps"]
+    script = next(s['run'] for s in steps if s['name'] == 'Run callprobe')
+    protected = tmp_path / 'callprobe-junit.xml'
+    protected.write_text('user evidence')
+    env = {**os.environ, 'CALLPROBE_BASELINE': '', 'CALLPROBE_POLICY': '', source_name: str(protected)}
+    result = subprocess.run(['bash', '-c', script], cwd=tmp_path, env=env, capture_output=True)
+    assert result.returncode == 2
+    assert protected.read_text() == 'user evidence'

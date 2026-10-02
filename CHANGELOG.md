@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased (0.9.0rc3.dev0)
+
+- Add offline JUnit export for saved results, with model failures, endpoint errors,
+  incomplete coverage and targeted debug scope represented explicitly. Raw
+  responses and argument/error values are omitted from exported diagnostics.
+
 ## 0.9.0rc2
 
 Published tester prerelease on 2026-10-01.

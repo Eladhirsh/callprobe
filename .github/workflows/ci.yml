@@ -63,6 +63,8 @@ jobs:
             --out /tmp/callprobe-sweep-plan --dry-run
           /tmp/callprobe-wheel-env/bin/python -c 'import json; p=json.load(open("/tmp/callprobe-sweep-plan/manifest.json")); assert p["status"] == "planned" and p["total_planned_requests"] == 36'
           /tmp/callprobe-wheel-env/bin/callprobe demo --out /tmp/callprobe-offline-demo
+          /tmp/callprobe-wheel-env/bin/callprobe report /tmp/callprobe-offline-demo/candidate.json --format junit --out /tmp/callprobe-junit.xml
+          /tmp/callprobe-wheel-env/bin/python -c 'import xml.etree.ElementTree as E; r=E.parse("/tmp/callprobe-junit.xml"); assert len(r.findall(".//testcase")) == 18 and len(r.findall(".//failure")) == 7'
           /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-offline-demo/github-issues-suite
           /tmp/callprobe-wheel-env/bin/callprobe explain /tmp/callprobe-offline-demo/candidate.json \
             --suite /tmp/callprobe-offline-demo/github-issues-suite --task comment-body-punctuation
