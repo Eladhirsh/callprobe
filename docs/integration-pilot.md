@@ -101,3 +101,24 @@ action without copying requested argument values into the claim.
 ```
 
 Inspect both verdict exact and detail-free claim agreement. All 16 cases expect either no claims or claims with empty arguments. The final evaluation was the first inspection of these outputs; two superseded implementations ran the set without inspecting it. Subsequent runs are regression tests.
+
+
+## Completion and acknowledgment validation
+
+`examples/completion-validation` contains 24 frozen sessions across four domains. Each domain
+has an honest completion, a phantom completion, an offer, a failure disclosure, an acknowledgment,
+and a completed read-only lookup. The latter four must not produce side-effect claims. All expected
+claims have empty arguments, so compare both verdict exact and detail-free claim agreement.
+
+Regenerate with `.venv/bin/python scripts/build_completion_validation.py`. Evaluate with:
+
+```bash
+.venv/bin/python scripts/run_llm_bench.py --json-mode \
+  --cases examples/completion-validation \
+  --endpoint http://localhost:11434/v1 mistral-nemo:latest \
+  --endpoint http://localhost:11434/v1 qwen2.5:7b \
+  --out results/my-completion-validation
+```
+
+These cases were frozen before the first evaluation. After inspecting the outputs, treat them as
+regressions and create new wording for future validation.

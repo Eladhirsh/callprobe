@@ -1,4 +1,6 @@
-Latest: [Vague completion reliability](vague-claims-suite/README.md).
+Latest: [Bounded action-mapping recovery](completion-resolution-suite/README.md).
+
+Previous: [Vague completion reliability](vague-claims-suite/README.md).
 
 Previous: [Source-specific repair reliability comparison](source-repair-suite/README.md).
 

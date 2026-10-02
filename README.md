@@ -89,14 +89,14 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
-results are lower. The latest local-model comparison is:
+results are lower. The latest live comparison focuses on vague completions:
 
-| Model | Previous 80 | Current 80 | Context regression | Fresh vague claims |
-|---|---|---|---|---|
-| mistral-nemo:latest | 71/80 | 76/80 | 16/16 | 10/16 |
-| qwen2.5:7b | 63/80 | 68/80 | 14/16 | 12/16 |
+| Model | Previous known vague | Current known vague | Fresh completion cases |
+|---|---|---|---|
+| mistral-nemo:latest | 10/16 | 14/16 | 19/24 |
+| qwen2.5:7b | 12/16 | 12/16 | 19/24 |
 
-See the [latest seven-model report](results/vague-claims-suite/README.md) for precision, recall, false alarms, incomplete checks, and remaining failures. The fresh vague-claim set has 16 sessions, including 12 honest controls, offers, and failure disclosures. The report also measures empty-argument fidelity, because matching verdicts alone can hide invented details. These small synthetic evaluations do not establish production accuracy. The fresh set exposed missed vague completions and wrong tool mapping, including two Mistral false alarms. Vague-action recognition remains unreliable. The original MailOps pilot still needs its sanitized export.
+The [full report](results/completion-resolution-suite/README.md) separates fresh model results from offline replay across seven models. It includes false alarms, incomplete checks, argument fidelity, and rejected experiments. The new set has 24 cases with 20 honest controls across four domains. Known vague cases were used for development. In the fresh set, both models detect only two of four phantom actions; Mistral has two false alarms among 20 honest controls and Qwen has one. Initial action mapping and read-only completion recognition remain unreliable. These are small synthetic evaluations, not production accuracy.
 
 `dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
 `scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.
@@ -185,9 +185,12 @@ an error instead of silently counting the same evidence twice.
 
 For a request such as "Refund order R-82" followed by "All taken care of", context identifies
 `issue_refund`, but the claim has empty arguments. If extraction copies `R-82` from the request,
-the retry keeps the provisional tool name and hides the earlier request. It extracts details only
-from the completion message. It preserves literal details already grounded in the message and
-stops as incomplete if the repair drops them or fails validation.
+the normal source repair hides the earlier request. If that repair still asserts completion but loses the resolved tool and
+there are no grounded argument details, one additional focused recovery attempt can restore the
+mapping. There are at most three model calls for that message. Failure to retain the mapping
+returns an incomplete check with `lost_action_mapping`; the application never inserts a claim
+itself. An empty repair can correctly reclassify an acknowledgment and is accepted without recovery.
+Literal details already grounded in the message must survive repair.
 
 A backed vague claim means a successful matching action was recorded. It does not establish that
 the requested amount, recipient, or other unstated details were correct. Offers such as "I can take
@@ -254,4 +257,4 @@ Treat any nonzero exit code as a CI failure, while routing code 3 for retry or r
 
 See the [integration pilot guide](docs/integration-pilot.md) to audit sanitized original captures or run the disposable file application. The original MailOps-format pilot is pending its sanitized export.
 
-Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its one repair attempt. For source mismatches, that attempt sees the target message, tool definitions, provisional tool names, and literal details already grounded in the target. Earlier conversation values and unsupported arguments are excluded. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.
+Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its normal repair attempt. A lost contextual tool mapping can trigger one additional focused recovery as described above. For source mismatches, that attempt sees the target message, tool definitions, provisional tool names, and literal details already grounded in the target. Earlier conversation values and unsupported arguments are excluded. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.
