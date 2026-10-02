@@ -174,3 +174,27 @@ def test_invalid_saved_fields_do_not_echo_evidence_values(tmp_path, capsys, form
     assert not output.out
     assert 'PRIVATE_INVALID_VALUE' not in output.err
     assert 'config.repeats' in output.err
+
+
+@pytest.mark.parametrize('format', ['text', 'json'])
+@pytest.mark.parametrize('malformed', ['duplicate_tasks', 'duplicate_pads', 'unknown_selection'])
+def test_summary_export_does_not_claim_invalid_plan_is_complete(tmp_path, capsys, format, malformed):
+    data = json.loads(ARCHIVE.read_text())
+    if malformed == 'duplicate_tasks':
+        data['config']['task_ids'].append(data['config']['task_ids'][0])
+    elif malformed == 'duplicate_pads':
+        data['config']['pads'].append(data['config']['pads'][0])
+    else:
+        data['config']['selected_task_ids'] = ['not-in-suite']
+    source = tmp_path / 'invalid-plan.json'
+    source.write_text(json.dumps(data))
+    before = source.read_bytes()
+    assert cli.main(['report', str(source), '--format', format]) == 0
+    output = capsys.readouterr()
+    assert not output.err
+    assert '54/54/? (invalid planned coverage)' in output.out
+    if format == 'json':
+        summary = json.loads(output.out)
+        assert summary['cost']['successes'] == 38
+        assert summary['n'] == 54
+    assert source.read_bytes() == before

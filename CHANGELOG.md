@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Flag malformed saved coverage plans in text, JSON, and leaderboard summaries.
+  Duplicate tasks/pads and invalid targeted selections no longer appear complete;
+  recorded scores and legacy unknown-plan support remain unchanged.
+
 - Add offline `report --format text|json` summaries for saved runs, preserving
   the JUnit default and source/output protections. Summary exports omit endpoint
   URLs and raw evidence; run summaries now show scored/recorded/planned coverage.
