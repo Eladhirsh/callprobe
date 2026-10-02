@@ -194,3 +194,109 @@ def test_version_probe_unavailable_metadata_is_nonfatal(monkeypatch):
         raise httpx.ReadTimeout('metadata unavailable')
     monkeypatch.setattr('callprobe.client.httpx.get', get)
     assert probe_server_version('http://fake/v1') == (None, None)
+
+
+def _with_field(field, value):
+    body = {'choices': [{'message': {}}]}
+    if field == 'finish_reason':
+        body['choices'][0][field] = value
+    elif field == 'usage':
+        body[field] = value
+    elif field == 'arguments':
+        body['choices'][0]['message']['tool_calls'] = [
+            {'function': {'name': 'test_tool', 'arguments': value}},
+        ]
+    else:
+        body['choices'][0]['message'][field] = value
+    return body
+
+
+@pytest.mark.parametrize('field', ['content', 'reasoning', 'reasoning_content',
+                                    'finish_reason', 'usage', 'arguments'])
+@pytest.mark.parametrize('value', [False, 0, []])
+def test_falsey_invalid_provider_values_are_request_errors(field, value):
+    from callprobe.client import parse_completion
+    from callprobe.models import Bundle, Expectation, Task
+    from callprobe.scoring import score
+    body = _with_field(field, value)
+    with pytest.raises(ValueError):
+        parse_completion(body, 0)
+    client = _client(lambda request: httpx.Response(200, json=body))
+    try:
+        completion = client.complete('m', [], [])
+    finally:
+        client.close()
+    assert completion.error.startswith('invalid chat completion response')
+    task = Task(id='abstain', category='abstain', bundle='b', messages=[],
+                expect=Expectation(type='no_call'))
+    result = score(task, Bundle(name='b', tools=[]), completion, model='m', pad=0, repeat=0)
+    assert result.error is not None and not result.success
+
+
+@pytest.mark.parametrize('field', ['content', 'reasoning', 'reasoning_content', 'finish_reason'])
+def test_empty_object_text_is_not_an_abstention(field):
+    from callprobe.client import parse_completion
+    with pytest.raises(ValueError):
+        parse_completion(_with_field(field, {}), 0)
+
+
+def test_invalid_shadowed_reasoning_is_still_rejected():
+    from callprobe.client import parse_completion
+    for first, second in [('valid', False), (False, 'valid')]:
+        body = {'choices': [{'message': {'reasoning': first, 'reasoning_content': second}}]}
+        with pytest.raises(ValueError):
+            parse_completion(body, 0)
+
+
+@pytest.mark.parametrize('value', [None, ''])
+def test_null_and_empty_text_remain_compatible(value):
+    from callprobe.client import parse_completion
+    body = {'choices': [{'message': {'content': value, 'reasoning': value,
+                                     'reasoning_content': value}, 'finish_reason': value}],
+            'usage': None}
+    completion = parse_completion(body, 12.5)
+    assert completion.content == completion.reasoning == completion.finish_reason == ''
+    assert completion.prompt_tokens == completion.completion_tokens == 0
+    assert completion.latency_ms == 12.5 and completion.error is None
+
+
+@pytest.mark.parametrize('primary,secondary,expected', [
+    ('primary', 'secondary', 'primary'), ('', 'secondary', 'secondary'),
+    (None, 'secondary', 'secondary'),
+])
+def test_reasoning_precedence_is_unchanged(primary, secondary, expected):
+    from callprobe.client import parse_completion
+    body = {'choices': [{'message': {'reasoning': primary, 'reasoning_content': secondary}}]}
+    assert parse_completion(body, 0).reasoning == expected
+
+
+@pytest.mark.parametrize('arguments', [None, '', '{}', {}])
+def test_empty_arguments_supported_representations_remain_compatible(arguments):
+    from callprobe.client import parse_completion
+    completion = parse_completion(_with_field('arguments', arguments), 0)
+    assert completion.calls[0].arguments == {}
+    assert completion.calls[0].parse_error is None
+
+
+def test_malformed_json_arguments_still_produce_call_parse_failure():
+    from callprobe.client import parse_completion
+    completion = parse_completion(_with_field('arguments', '{broken'), 0)
+    assert completion.error is None
+    assert completion.calls[0].parse_error
+    assert completion.calls[0].raw_arguments == '{broken'
+
+
+def test_invalid_text_does_not_retry_or_leak_and_next_response_succeeds():
+    responses = iter([_with_field('content', {'PRIVATE_KEY': 'PRIVATE_VALUE'}), OK_BODY])
+    requests = []
+    def handler(request):
+        requests.append(request)
+        return httpx.Response(200, json=next(responses))
+    client = _client(handler)
+    try:
+        completion = client.complete('m', [], [])
+        assert completion.error and 'PRIVATE' not in completion.error
+        assert client.complete('m', [], []).content == 'hi'
+        assert len(requests) == 2
+    finally:
+        client.close()

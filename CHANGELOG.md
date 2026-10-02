@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Reject malformed provider text, usage containers, and argument types even
+  when their values are false or empty. Invalid response envelopes become
+  request errors instead of successful abstentions or empty-argument calls;
+  valid null fields and malformed JSON argument-string scoring are unchanged.
+
 - Add offline `replay` for versioned normalized recordings JSON, with strict
   input validation, protected source/suite files, and atomic output writes.
   A synthetic support example demonstrates partial coverage without a model.

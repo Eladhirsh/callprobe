@@ -175,16 +175,21 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
             or not isinstance(choices[0], dict)
             or not isinstance(choices[0].get("message"), dict)):
         raise ValueError("response must contain a choice with a message")
-    usage = body.get("usage") or {}
-    choices = body.get("choices") or [{}]
-    choice = choices[0] or {}
-    message = choice.get("message") or {}
+    usage = body.get("usage")
+    if usage is None:
+        usage = {}
+    elif not isinstance(usage, dict):
+        raise ValueError("usage must be an object")
+    choice = choices[0]
+    message = choice["message"]
+    # Validate before applying fallbacks: false, zero, and empty containers
+    # are malformed text, not evidence of a successful no-call response.
+    text_values = [message.get(field) for field in ("content", "reasoning", "reasoning_content")]
+    text_values.append(choice.get("finish_reason"))
+    if any(value is not None and not isinstance(value, str) for value in text_values):
+        raise ValueError("message text and finish reason must be strings or null")
     finish_reason = choice.get("finish_reason") or ""
     reasoning = message.get("reasoning") or message.get("reasoning_content") or ""
-    if not all(isinstance(value, str) for value in (
-        message.get("content") or "", finish_reason, reasoning
-    )):
-        raise ValueError("message text and finish reason must be strings")
     if message.get("tool_calls") is not None and not isinstance(message["tool_calls"], list):
         raise ValueError("tool_calls must be an array")
 
@@ -192,6 +197,8 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
     for entry in message.get("tool_calls") or []:
         function = entry.get("function") or {}
         raw_args = function.get("arguments")
+        if raw_args is not None and not isinstance(raw_args, (str, dict)):
+            raise ValueError("tool arguments must be a string, object, or null")
         if isinstance(raw_args, dict):
             calls.append(
                 Call(
