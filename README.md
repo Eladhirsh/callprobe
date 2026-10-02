@@ -200,9 +200,10 @@ care of it" and disclosures such as "That failed" are not completion claims.
 
 `--extraction-mode staged` separates contextual action identification from argument extraction.
 The first stage includes completed read-only actions, which code excludes from side-effect checks.
-The second stage sees only the target message and resolved tool names. It cannot copy requested
-amounts or recipients from earlier messages. Disagreement between stages produces an incomplete
-check rather than silently dropping the mapped action.
+The second stage sees only the target message and fixed action IDs with tool parameter definitions.
+It returns arguments for those IDs; code attaches the resolved tool names. It cannot copy requested
+amounts or recipients from earlier messages. Missing IDs or invalid details produce an incomplete
+check. Completion classification belongs to the first stage, so its mistakes can still reach the matcher.
 
 ```bash
 dyr check trace.json --extractor llm --extraction-mode staged --json-mode \

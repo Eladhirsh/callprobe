@@ -36,6 +36,10 @@ def item(tool="issue_refund", args=None, completed=True):
     return {"completed": completed, "tool": tool, "args": {} if args is None else args}
 
 
+def detail(args=None, action_id=0):
+    return json.dumps({"details": [{"action_id": action_id, "args": {} if args is None else args}]})
+
+
 def run(t, replies):
     calls = []
     stream = iter(replies)
@@ -51,7 +55,7 @@ def run(t, replies):
 
 def test_stages_isolate_context_from_arguments_and_never_expose_call_evidence():
     t = trace()
-    extractor, calls = run(t, [[item()], [item()]])
+    extractor, calls = run(t, [[item()], detail()])
     [claim] = extractor.extract(t)
     assert claim.args == {} and claim.message_index == 2
     assert check(t, [claim])[0].verdict.value == "backed"
@@ -81,12 +85,12 @@ def test_nonclaims_and_read_only_actions_do_not_request_arguments(mapping):
 )
 def test_staged_claims_use_deterministic_verdicts(status, text, args, verdict):
     t = trace(text, status)
-    extractor, _ = run(t, [[item()], [item(args=args)]])
+    extractor, _ = run(t, [[item()], detail(args)])
     assert check(t, extractor.extract(t))[0].verdict.value == verdict
 
 
 def test_argument_invention_fails_after_one_retry():
-    extractor, calls = run(trace(), [[item()], [item(args={"amount": 65})], [item(args={"amount": 65})]])
+    extractor, calls = run(trace(), [[item()], detail({"amount": 65}), detail({"amount": 65})])
     with pytest.raises(ExtractionError) as caught:
         extractor.extract(trace())
     assert caught.value.reason == "source_mismatch"
@@ -103,7 +107,7 @@ def test_mapping_cannot_smuggle_arguments_to_detail_stage():
 
 
 def test_detail_stage_cannot_silently_lose_completed_action():
-    extractor, calls = run(trace(), [[item()], [], []])
+    extractor, calls = run(trace(), [[item()], '{"details": []}', '{"details": []}'])
     with pytest.raises(ExtractionError) as caught:
         extractor.extract(trace())
     assert caught.value.reason == "lost_action_mapping"
@@ -112,9 +116,7 @@ def test_detail_stage_cannot_silently_lose_completed_action():
 
 def test_detail_retry_cannot_drop_stated_amount():
     t = trace("Refunded $40.")
-    extractor, calls = run(
-        t, [[item()], [item(args={"amount": "$40", "order_id": "private-order"})], [item()]]
-    )
+    extractor, calls = run(t, [[item()], detail({"amount": "$40", "order_id": "private-order"}), detail()])
     with pytest.raises(ExtractionError) as caught:
         extractor.extract(t)
     assert caught.value.reason == "lost_source_detail"
@@ -143,10 +145,10 @@ def test_public_cli_staged_check_and_benchmark(tmp_path, monkeypatch, capsys):
     from didyoureally import cli, extract
 
     t = trace("Refunded $40.")
-    replies = iter([[item()], [item(args={"amount": "$40"})]] * 2)
+    replies = iter([json.dumps({"claims": [item()]}), detail({"amount": "$40"})] * 2)
 
     def transport(*args):
-        return {"choices": [{"message": {"content": json.dumps({"claims": next(replies)})}}]}
+        return {"choices": [{"message": {"content": next(replies)}}]}
 
     monkeypatch.setattr(extract, "_http_post", transport)
     path = tmp_path / "trace.json"
@@ -171,3 +173,61 @@ def test_public_cli_staged_check_and_benchmark(tmp_path, monkeypatch, capsys):
         )
     )
     assert cli.main(["bench", "--llm", "--extraction-mode", "staged", "--cases", str(cases)]) == 0
+
+
+@pytest.mark.parametrize(
+    "reply",
+    [
+        detail(action_id=True),
+        detail(action_id=-1),
+        detail(action_id=1),
+        detail(action_id="0"),
+        '{"details": [{"action_id": 0, "args": {}, "tool": null}]}',
+        '{"details": [{"action_id": 0, "args": {}, "completed": false}]}',
+        '{"details": [{"action_id": 0, "action_id": 1, "args": {}}]}',
+        '{"details": [{"action_id": 0, "args": null}]}',
+    ],
+)
+def test_detail_stage_rejects_invalid_identity_and_protocol(reply):
+    extractor, calls = run(trace(), [[item()], reply, reply])
+    with pytest.raises(ExtractionError) as caught:
+        extractor.extract(trace())
+    assert caught.value.reason == "invalid_action_details"
+    assert len(calls) == 3
+
+
+def test_detail_stage_preserves_unavailable_action_identity():
+    t = trace("Escalated the request.")
+    extractor, _ = run(t, [[item(tool=None)], detail()])
+    claims = extractor.extract(t)
+    assert claims[0].tool is None
+    assert check(t, claims)[0].verdict.value == "phantom"
+
+
+def test_fixed_ids_preserve_groups_and_multiple_tools():
+    t = trace("Refunded $40 and $50, then escalated the request.")
+    replies = [
+        [item(), item(tool=None)],
+        json.dumps(
+            {
+                "details": [
+                    {"action_id": 1, "args": {}},
+                    {"action_id": 0, "args": {"amount": "$40"}},
+                    {"action_id": 0, "args": {"amount": "$50"}},
+                ]
+            }
+        ),
+    ]
+    extractor, _ = run(t, replies)
+    claims = extractor.extract(t)
+    assert [c.tool for c in claims] == [None, "issue_refund", "issue_refund"]
+    assert claims[1].group_id == claims[2].group_id
+    assert claims[1].group_id is not None
+    assert [f.verdict.value for f in check(t, claims)] == ["phantom", "contradicted", "phantom"]
+
+
+def test_detail_stage_cannot_omit_one_of_multiple_actions():
+    extractor, _ = run(trace(), [[item(), item(tool=None)], detail(), detail()])
+    with pytest.raises(ExtractionError) as caught:
+        extractor.extract(trace())
+    assert caught.value.reason == "lost_action_mapping"

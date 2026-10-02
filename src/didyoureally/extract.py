@@ -35,6 +35,7 @@ EXTRACTION_HINTS = {
     "provider_error": "Check the endpoint, model availability, and credentials, then retry.",
     "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
     "invalid_action_map": "Return completed action types with exact tool names and empty args objects. Do not extract details in this stage.",
+    "invalid_action_details": "Return a details list containing only action_id and args for each supplied action. Do not rename tools or classify completion in the detail stage.",
     "invalid_claims": "Return a JSON object with a claims array in the documented extraction format.",
     "lost_action_mapping": "Source repair lost a contextual action mapping. Provide reviewed claims or retry extraction.",
     "lost_source_detail": "Repair omitted details explicitly stated in the TARGET. Provide reviewed claims or retry extraction.",

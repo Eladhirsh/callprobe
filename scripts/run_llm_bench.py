@@ -21,7 +21,7 @@ from didyoureally.adapters import load_trace  # noqa: E402
 from didyoureally.bench import default_cases_dir  # noqa: E402
 from didyoureally.extract import SYSTEM_PROMPT, ExtractionError, LLMExtractor, _http_post  # noqa: E402
 from didyoureally.matcher import PROBLEM_VERDICTS, check  # noqa: E402
-from didyoureally.staged import ACTION_PROMPT, StagedExtractor  # noqa: E402
+from didyoureally.staged import ACTION_PROMPT, DETAIL_PROMPT, StagedExtractor  # noqa: E402
 
 PROBLEMS = {v.value for v in PROBLEM_VERDICTS}
 
@@ -207,6 +207,9 @@ def main(argv=None):
         "prompt_sha256": hashlib.sha256(
             (ACTION_PROMPT if args.extraction_mode == "staged" else SYSTEM_PROMPT).encode()
         ).hexdigest(),
+        "detail_prompt_sha256": (
+            hashlib.sha256(DETAIL_PROMPT.encode()).hexdigest() if args.extraction_mode == "staged" else None
+        ),
         "cases_sha256": hashlib.sha256(json.dumps(cases, sort_keys=True).encode()).hexdigest(),
         "models": [model for _, model in args.endpoint],
         "temperature": 0,
