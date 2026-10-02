@@ -18,6 +18,7 @@ import tempfile
 from pathlib import Path
 
 import yaml
+from pydantic import ValidationError
 
 from . import __version__
 from .client import ChatClient, probe_server_version
@@ -60,7 +61,16 @@ DEFAULT_SUITE = None
 
 
 def _read_run(path: str) -> Run:
-    return Run.model_validate_json(Path(path).read_text(encoding="utf-8"))
+    try:
+        return Run.model_validate_json(Path(path).read_text(encoding="utf-8"))
+    except ValidationError as exc:
+        # Pydantic's default display includes input values, which may be raw
+        # model responses or credentials. Keep only locations and error kinds.
+        details = "; ".join(
+            (".".join(str(part) for part in error["loc"]) or "(root)")
+            + " (" + error["type"] + ")" for error in exc.errors()
+        )
+        raise ValueError("invalid saved results: " + details) from None
 
 
 def _write_run(path: str, run: Run) -> None:

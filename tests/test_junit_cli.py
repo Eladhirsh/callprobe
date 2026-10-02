@@ -161,3 +161,16 @@ def test_summary_retains_targeted_scope_and_legacy_unknown_plan(tmp_path, capsys
     source.write_text(json.dumps(data))
     assert cli.main(['report', str(source), '--format', format]) == 0
     assert 'planned unknown' in capsys.readouterr().out
+
+
+@pytest.mark.parametrize('format', ['junit', 'text', 'json'])
+def test_invalid_saved_fields_do_not_echo_evidence_values(tmp_path, capsys, format):
+    data = json.loads(ARCHIVE.read_text())
+    data['config']['repeats'] = 'PRIVATE_INVALID_VALUE'
+    source = tmp_path / 'invalid.json'
+    source.write_text(json.dumps(data))
+    assert cli.main(['report', str(source), '--format', format]) == 2
+    output = capsys.readouterr()
+    assert not output.out
+    assert 'PRIVATE_INVALID_VALUE' not in output.err
+    assert 'config.repeats' in output.err

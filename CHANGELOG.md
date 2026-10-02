@@ -5,6 +5,7 @@
 - Add offline `report --format text|json` summaries for saved runs, preserving
   the JUnit default and source/output protections. Summary exports omit endpoint
   URLs and raw evidence; run summaries now show scored/recorded/planned coverage.
+  Invalid saved-result diagnostics identify fields without echoing their values.
 
 - Speed up confidence intervals for repeated runs by accumulating per-task
   counts before bootstrap sampling. Task-level resampling, fixed seeds, and
