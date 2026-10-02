@@ -6,6 +6,10 @@
   counts before bootstrap sampling. Task-level resampling, fixed seeds, and
   interval values remain identical to the prior row-pooling calculation.
 
+- Reject duplicate and YAML merge keys in CI policies instead of silently
+  replacing thresholds. Policies and run configuration share safe mapping
+  parsing; syntax/type errors report context without configured values.
+
 - Distinguish scored observations from unique scored tasks in run summaries.
   JSON retains `n` and adds `unique_tasks_scored`; repeated/padded observations
   and request errors cannot inflate the distinct-task count.
