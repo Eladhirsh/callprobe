@@ -232,3 +232,67 @@ def test_cli_rejects_huge_partial_file_without_rewriting_inputs(tmp_path, capsys
     assert '1999999999998 missing, 0 unexpected' in output.err
     assert not output.out
     assert source.read_bytes() == original
+
+
+@pytest.mark.parametrize('text', [
+    'max_error_rate: 0\nmax_error_rate: 1\n',
+    'fail_on_regression: true\nfail_on_regression: false\n',
+    'min_category_success:\n  args: 1\n  args: 0\n',
+    'min_success: 1\n"min_success": 0\n',
+])
+def test_duplicate_policy_keys_cannot_silently_weaken_gates(tmp_path, text):
+    path = tmp_path / 'policy.yaml'
+    path.write_text(text)
+    with pytest.raises(ValueError, match='--policy: duplicate key'):
+        load_policy(str(path))
+
+
+@pytest.mark.parametrize('text', [
+    '1: 0.5\n',
+    '<<: {min_success: 1}\nmin_success: 0\n',
+])
+def test_policy_rejects_nonstring_and_merge_keys(tmp_path, text):
+    path = tmp_path / 'policy.yaml'
+    path.write_text(text)
+    with pytest.raises(ValueError, match='mapping keys must be strings'):
+        load_policy(str(path))
+
+
+@pytest.mark.parametrize('text', [
+    'min_success: PRIVATE_VALUE\n',
+    'api_key: PRIVATE_VALUE\n',
+    'min_success: [PRIVATE_VALUE\n',
+    'min_success: !!int PRIVATE_VALUE\n',
+    'min_success: !!bool PRIVATE_VALUE\n',
+    'min_success: !!timestamp PRIVATE_VALUE\n',
+    'min_success: !!python/object:PRIVATE_VALUE {}\n',
+])
+def test_policy_errors_do_not_echo_configured_values(tmp_path, text):
+    path = tmp_path / 'policy.yaml'
+    path.write_text(text)
+    with pytest.raises(ValueError) as exc:
+        load_policy(str(path))
+    assert '--policy:' in str(exc.value)
+    assert 'PRIVATE_VALUE' not in str(exc.value)
+
+
+def test_cli_duplicate_policy_is_invalid_input_not_a_pass(tmp_path, capsys):
+    source = tmp_path / 'run.json'
+    policy = tmp_path / 'policy.yaml'
+    source.write_text(make_run().model_dump_json())
+    policy.write_text('min_success: 1\nmin_success: 0\n')
+    before = source.read_bytes(), policy.read_bytes()
+    assert cli.main(['compare', str(source), str(source), '--policy', str(policy)]) == 2
+    output = capsys.readouterr()
+    assert not output.out and 'duplicate key' in output.err
+    assert (source.read_bytes(), policy.read_bytes()) == before
+
+
+def test_valid_policy_preserves_all_thresholds_and_default_policy(tmp_path):
+    path = tmp_path / 'policy.yaml'
+    path.write_text('fail_on_regression: false\nmax_error_rate: 0.05\n'
+                    'min_category_success: {args: 0.8, abstain: 1}\ncritical_tasks: [t1]\n')
+    policy = load_policy(str(path))
+    assert policy == GatePolicy(fail_on_regression=False, max_error_rate=0.05,
+                               min_category_success={'args': 0.8, 'abstain': 1}, critical_tasks=['t1'])
+    assert load_policy(None) == GatePolicy()

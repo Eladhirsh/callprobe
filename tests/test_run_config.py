@@ -232,3 +232,11 @@ def test_request_timeout_rejects_strings(tmp_path):
 def test_request_timeout_rejects_null(tmp_path):
     with pytest.raises(ValueError, match="request_timeout"):
         load_run_config(str(_write(tmp_path, "model: stub\nrequest_timeout: null\n")))
+
+
+def test_invalid_explicit_yaml_scalar_does_not_echo_value(tmp_path):
+    path = _write(tmp_path, 'repeats: !!int PRIVATE_VALUE\n')
+    with pytest.raises(ValueError) as exc:
+        load_run_config(str(path))
+    assert '--config: invalid YAML syntax' in str(exc.value)
+    assert 'PRIVATE_VALUE' not in str(exc.value)

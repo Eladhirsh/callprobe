@@ -788,7 +788,10 @@ baseline. Success-drop comparisons use only cases with non-error results in
 both files; candidate minimums use all its non-error results. Error limits
 apply to each run separately. With no matched scored cases the gate fails.
 Policies reject unknown fields, unknown task/category targets, and invalid
-rates. `--fail-on-regression` overrides a policy's `false` setting.
+rates. Development builds also reject duplicate keys (including nested category
+thresholds) and YAML merge keys, so a later entry cannot silently weaken a
+threshold. Use explicit unique string keys. `--fail-on-regression` overrides a
+policy's `false` setting.
 
 Exit codes are `0` for a passing gate, `1` for policy violations, and `2` for
 invalid inputs. Without a gate flag, `compare` remains an informational

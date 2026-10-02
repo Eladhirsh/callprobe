@@ -5,10 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated
 
-import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .models import Category, Run
+from .yaml_config import load_config_mapping
 
 Fraction = Annotated[float, Field(ge=0, le=1, allow_inf_nan=False)]
 
@@ -27,10 +27,15 @@ class GatePolicy(BaseModel):
 def load_policy(path: str | None) -> GatePolicy:
     if path is None:
         return GatePolicy()
-    data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        raise ValueError("policy must be a YAML mapping")
-    return GatePolicy.model_validate(data)
+    data = load_config_mapping(Path(path).read_text(encoding="utf-8"), label="--policy")
+    try:
+        return GatePolicy.model_validate(data)
+    except ValidationError as exc:
+        details = '; '.join(
+            '.'.join(str(part) for part in error['loc']) + ': ' + error['msg']
+            for error in exc.errors()
+        )
+        raise ValueError('--policy: ' + details) from None
 
 
 def _index(run: Run, label: str):

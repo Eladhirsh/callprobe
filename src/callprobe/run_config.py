@@ -13,8 +13,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import yaml
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
+
+from .yaml_config import load_config_mapping
 
 # Keys accepted in this version. Anything else (api keys, targeting, resume,
 # gating, format/quiet, ...) is rejected rather than silently ignored.
@@ -118,27 +119,6 @@ class RunFileConfig(BaseModel):
         return list(value)
 
 
-class _StrictLoader(yaml.SafeLoader):
-    """Rejects duplicate mapping keys instead of silently keeping the last one."""
-
-
-def _construct_mapping(loader: yaml.SafeLoader, node: yaml.Node, deep: bool = False) -> dict:
-    mapping: dict = {}
-    for key_node, value_node in node.value:
-        if not isinstance(key_node, yaml.ScalarNode) or key_node.tag != "tag:yaml.org,2002:str":
-            raise ValueError("--config: mapping keys must be strings")
-        key = loader.construct_object(key_node, deep=deep)
-        if key in mapping:
-            raise ValueError(f"--config: duplicate key: {key!r}")
-        mapping[key] = loader.construct_object(value_node, deep=deep)
-    return mapping
-
-
-_StrictLoader.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _construct_mapping
-)
-
-
 def _summarize_errors(exc: ValidationError) -> str:
     """Field names and messages only; never the offending value itself."""
     parts = []
@@ -162,14 +142,7 @@ def load_run_config(path: str) -> tuple[RunFileConfig, Path]:
         raise ValueError(f"--config file not found: {path}") from None
     except IsADirectoryError:
         raise ValueError(f"--config must be a file, not a directory: {path}") from None
-    try:
-        data = yaml.load(text, Loader=_StrictLoader)
-    except yaml.YAMLError as exc:
-        mark = getattr(exc, "problem_mark", None)
-        where = f" at line {mark.line + 1}, column {mark.column + 1}" if mark else ""
-        raise ValueError(f"--config: invalid YAML syntax{where}") from None
-    if data is None or not isinstance(data, dict):
-        raise ValueError("--config: file must contain a YAML mapping")
+    data = load_config_mapping(text, label="--config")
     unknown = sorted(set(data) - ALLOWED_KEYS)
     if unknown:
         raise ValueError("--config: unknown field(s): " + ", ".join(unknown))
