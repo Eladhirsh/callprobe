@@ -797,6 +797,13 @@ thresholds; they do not claim statistical significance for a change.
 
 ## CI mode
 
+Development summaries distinguish **observations scored** (each task/pad/repeat
+result without a request error) from **unique tasks scored** (distinct task IDs
+with at least one scored result). JSON keeps the existing `n` observation count
+and adds `unique_tasks_scored`. A task with only request errors is excluded from
+both; a truncated response remains a scored failure. Repeats are not independent
+new tasks. Historical text output above predates these labels.
+
 `--format json` prints the summary (the same numbers as the text report)
 as machine-readable JSON instead, and `--fail-under FLOAT` exits 1 when
 overall success falls below that fraction:

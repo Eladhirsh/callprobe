@@ -264,3 +264,38 @@ def test_leaderboard_preserves_table_structure_for_external_labels():
     assert "model\\|&lt;img&gt; \\# title" in text
     assert "suite: suite &lt;script&gt; v1" in text
     assert "\n# title" not in text
+
+
+def test_unique_scored_tasks_deduplicate_repeats_and_padding_but_exclude_only_errors():
+    run = Run(config=_config(pads=[0, 2], repeats=2), started_at='now', results=[
+        _result(task_id='repeated', pad=0, repeat=0),
+        _result(task_id='repeated', pad=0, repeat=1),
+        _result(task_id='repeated', pad=2, repeat=0),
+        _result(task_id='only-error', error='', success=True),
+        _result(task_id='truncated', truncated=True, success=False),
+    ])
+    original = run.model_dump()
+    summary = summarize(run)
+    assert summary['n'] == 4 and summary['unique_tasks_scored'] == 2
+    assert summary['total_requests'] == 5 and summary['errors'] == 1
+    assert summary['overall']['success'] == 0.75
+    text = render_text(run)
+    assert 'observations scored 4' in text
+    assert 'unique tasks scored 2' in text
+    assert run.model_dump() == original
+
+
+def test_all_error_results_have_no_unique_scored_tasks():
+    run = Run(config=_config(), started_at='now', results=[_result(error='timeout')])
+    summary = summarize(run)
+    assert summary['n'] == summary['unique_tasks_scored'] == 0
+
+
+def test_archived_live_repeats_count_observations_and_tasks_separately():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1] / 'results/2026-10-02-llamacpp-validation/evidence'
+    for suite, observations, tasks in [('core', 100, 50), ('mail', 54, 18)]:
+        run = Run.model_validate_json((root / suite / '01-result.json').read_text())
+        summary = summarize(run)
+        assert summary['n'] == observations
+        assert summary['unique_tasks_scored'] == tasks

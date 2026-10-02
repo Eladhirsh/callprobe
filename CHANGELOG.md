@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Distinguish scored observations from unique scored tasks in run summaries.
+  JSON retains `n` and adds `unique_tasks_scored`; repeated/padded observations
+  and request errors cannot inflate the distinct-task count.
+
 - Add `callprobe doctor` for suite and endpoint setup diagnostics using model
   discovery and public server metadata only. No generation, downloads, retries,
   redirects, or output files; unavailable catalogs remain inconclusive warnings.

@@ -62,6 +62,7 @@ def summarize(run: Run) -> dict:
         "quantization": run.config.quantization,
         "endpoint": run.config.endpoint,
         "n": len(scored),
+        "unique_tasks_scored": len({r.task_id for r in scored}),
         "total_requests": len(results),
         "overall": {
             "selection": _rate(scored, "selection_ok"),
@@ -120,12 +121,13 @@ def _ci(bounds: tuple[float, float]) -> str:
 def render_text(run: Run) -> str:
     s = summarize(run)
     lines = [
-        f"model            {s['model']}"
+        f"model               {s['model']}"
         + (f"  ({s['quantization']})" if s["quantization"] else ""),
-        f"endpoint         {s['endpoint']}",
-        f"tasks scored     {s['n']}"
+        f"endpoint            {s['endpoint']}",
+        f"observations scored {s['n']}"
         + (f"   errors: {s['errors']}" if s["errors"] else "")
         + (f"   truncated: {s['truncated']}" if s["truncated"] else ""),
+        f"unique tasks scored {s['unique_tasks_scored']}",
     ]
     if s["scope"]["targeted"]:
         lines.append(
