@@ -1,0 +1,359 @@
+{
+  "suite": {
+    "name": "support",
+    "version": 1,
+    "hash": "e8df4b7287151eba"
+  },
+  "run": {
+    "model": "qwen2.5:7b",
+    "suite": "support",
+    "started_at": "2026-10-02T05:28:39.466772+00:00",
+    "finished_at": "2026-10-02T05:28:50.947387+00:00"
+  },
+  "task_filter": null,
+  "total_cases": 6,
+  "scored_cases": 6,
+  "request_errors": 0,
+  "failed_cases": 4,
+  "diagnostic_counts": {
+    "unexpected_call": 1,
+    "schema": 3,
+    "argument_value": 3
+  },
+  "argument_shape_summary": {
+    "affected_observations": 3,
+    "unique_tasks": 3,
+    "by_kind": {
+      "nested_move": 3
+    }
+  },
+  "cases": [
+    {
+      "task_id": "status-by-id",
+      "category": "select",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Check the status of order ORD-448120."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "get_order",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "order_id": "ORD-448120"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "get_order",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('order_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'order_id': 'ORD-448120'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_487t2hio",
+          "name": "get_order",
+          "arguments": {
+            "order_id": "ORD-448120"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-448120\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "order_id": "ORD-448120"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'order_id': 'ORD-448120'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('order_id' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "order_id": "path"
+        },
+        "candidate_arguments": {
+          "path": {
+            "order_id": "ORD-448120"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "search-by-email",
+      "category": "select",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Find the orders belonging to alex@example.com."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_orders",
+        "also_acceptable": [],
+        "args": {
+          "query": {
+            "email": "alex@example.com"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "search_orders",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('email' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'email': 'alex@example.com'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_js6veutn",
+          "name": "search_orders",
+          "arguments": {
+            "email": "alex@example.com"
+          },
+          "raw_arguments": "{\"email\":\"alex@example.com\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "query",
+          "op": "eq",
+          "expected": {
+            "email": "alex@example.com"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "query expected {'email': 'alex@example.com'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('email' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'query' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "email": "query"
+        },
+        "candidate_arguments": {
+          "query": {
+            "email": "alex@example.com"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "refund-dollars-to-cents",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Please refund $12.50 on order ORD-991003 because it arrived damaged."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "issue_refund",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "order_id": "ORD-991003"
+          },
+          "body": {
+            "amount_cents": 1250,
+            "reason": "damaged"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "issue_refund",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "schema: (root): Additional properties are not allowed ('amount_cents', 'order_id', 'reason' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'order_id': 'ORD-991003'}, got missing",
+        "body expected {'amount_cents': 1250, 'reason': 'damaged'}, got missing"
+      ],
+      "diagnostics": [
+        "schema",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_5vv7l16v",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": 1250,
+            "reason": "damaged",
+            "order_id": "ORD-991003"
+          },
+          "raw_arguments": "{\"amount_cents\":1250,\"reason\":\"damaged\",\"order_id\":\"ORD-991003\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "order_id": "ORD-991003"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "path expected {'order_id': 'ORD-991003'}, got missing"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "amount_cents": 1250,
+            "reason": "damaged"
+          },
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'amount_cents': 1250, 'reason': 'damaged'}, got missing"
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('amount_cents', 'order_id', 'reason' were unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'body' is a required property",
+          "expected_type": "object"
+        }
+      ],
+      "shape_hint": {
+        "kind": "nested_move",
+        "moved": {
+          "amount_cents": "body",
+          "reason": "body",
+          "order_id": "path"
+        },
+        "candidate_arguments": {
+          "body": {
+            "amount_cents": 1250,
+            "reason": "damaged"
+          },
+          "path": {
+            "order_id": "ORD-991003"
+          }
+        },
+        "advisory": "advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed"
+      }
+    },
+    {
+      "task_id": "unsupported-address-change",
+      "category": "abstain",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Change the delivery address on ORD-448120 to 10 Main Street, Boston."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "get_order",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called get_order when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "call_dy39ql5d",
+          "name": "get_order",
+          "arguments": {
+            "order_id": "ORD-448120"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-448120\"}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": [
+        {
+          "path": "(root)",
+          "message": "Additional properties are not allowed ('order_id' was unexpected)",
+          "expected_type": "object"
+        },
+        {
+          "path": "(root)",
+          "message": "'path' is a required property",
+          "expected_type": "object"
+        }
+      ]
+    }
+  ]
+}

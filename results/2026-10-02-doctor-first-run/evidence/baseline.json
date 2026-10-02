@@ -1,0 +1,256 @@
+{
+  "config": {
+    "model": "qwen2.5:7b",
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "suite": "support",
+    "pads": [
+      0
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.9.0rc3.dev0",
+    "suite_name": "support",
+    "suite_version": 1,
+    "suite_hash": "e8df4b7287151eba",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 3,
+    "task_ids": [
+      "status-by-id",
+      "search-by-email",
+      "refund-dollars-to-cents",
+      "refund-needs-identifier",
+      "policy-is-not-a-refund",
+      "unsupported-address-change"
+    ],
+    "selected_task_ids": null,
+    "request_timeout": 180.0
+  },
+  "started_at": "2026-10-02T05:28:39.466772+00:00",
+  "finished_at": "2026-10-02T05:28:50.947387+00:00",
+  "results": [
+    {
+      "task_id": "status-by-id",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_order",
+      "expected": "get_order",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('order_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'order_id': 'ORD-448120'}, got missing"
+      ],
+      "prompt_tokens": 434,
+      "completion_tokens": 28,
+      "latency_ms": 2003.2802079804242,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_487t2hio",
+          "name": "get_order",
+          "arguments": {
+            "order_id": "ORD-448120"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-448120\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-email",
+      "category": "select",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_orders",
+      "expected": "search_orders",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('email' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'email': 'alex@example.com'}, got missing"
+      ],
+      "prompt_tokens": 429,
+      "completion_tokens": 22,
+      "latency_ms": 1205.5706250248477,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_js6veutn",
+          "name": "search_orders",
+          "arguments": {
+            "email": "alex@example.com"
+          },
+          "raw_arguments": "{\"email\":\"alex@example.com\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "refund-dollars-to-cents",
+      "category": "args",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('amount_cents', 'order_id', 'reason' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'order_id': 'ORD-991003'}, got missing",
+        "body expected {'amount_cents': 1250, 'reason': 'damaged'}, got missing"
+      ],
+      "prompt_tokens": 443,
+      "completion_tokens": 47,
+      "latency_ms": 1558.7397090275772,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_5vv7l16v",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": 1250,
+            "reason": "damaged",
+            "order_id": "ORD-991003"
+          },
+          "raw_arguments": "{\"amount_cents\":1250,\"reason\":\"damaged\",\"order_id\":\"ORD-991003\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "refund-needs-identifier",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 440,
+      "completion_tokens": 39,
+      "latency_ms": 1539.4183339667507,
+      "error": null,
+      "response_text": "In that case, we'll need some information to locate your order. Could you please provide me with the date of purchase and the product name? This will help me search for your order.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "policy-is-not-a-refund",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 438,
+      "completion_tokens": 63,
+      "latency_ms": 1687.254042015411,
+      "error": null,
+      "response_text": "I can provide you with general information about our refund policy, but I cannot issue a refund without explicit request from the customer. Typically, our refund policy allows for refunds under certain conditions such as damaged items or items not received. If you have any specific questions or need",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-address-change",
+      "category": "abstain",
+      "model": "qwen2.5:7b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_order",
+      "expected": null,
+      "failures": [
+        "called get_order when no tool applied"
+      ],
+      "prompt_tokens": 442,
+      "completion_tokens": 145,
+      "latency_ms": 3471.2383750011213,
+      "error": null,
+      "response_text": "To change the delivery address, we would typically use an API endpoint like `/orders/{order_id}/address` but it seems this is not available in the provided tools. Instead, we can attempt to contact the support team or use an available endpoint to update the order status or communicate with the custo",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_dy39ql5d",
+          "name": "get_order",
+          "arguments": {
+            "order_id": "ORD-448120"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-448120\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    }
+  ]
+}

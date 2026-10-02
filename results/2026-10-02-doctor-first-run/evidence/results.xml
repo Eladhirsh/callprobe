@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="support" tests="6" failures="4" errors="0" skipped="0" time="11.465501">
+    <properties>
+      <property name="model" value="qwen2.5:7b" />
+      <property name="suite_hash" value="e8df4b7287151eba" />
+      <property name="scoring_version" value="3" />
+      <property name="planned_coverage" value="6" />
+      <property name="recorded_coverage" value="6" />
+      <property name="targeted_scope" value="false" />
+    </properties>
+    <testcase name="status-by-id[pad=0,repeat=0]" classname="select" time="2.003280">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="search-by-email[pad=0,repeat=0]" classname="select" time="1.205571">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="refund-dollars-to-cents[pad=0,repeat=0]" classname="args" time="1.558740">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="refund-needs-identifier[pad=0,repeat=0]" classname="abstain" time="1.539418" />
+    <testcase name="policy-is-not-a-refund[pad=0,repeat=0]" classname="abstain" time="1.687254" />
+    <testcase name="unsupported-address-change[pad=0,repeat=0]" classname="abstain" time="3.471238">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+  </testsuite>
+</testsuites>

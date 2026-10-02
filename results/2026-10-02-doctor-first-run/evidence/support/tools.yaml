@@ -1,0 +1,86 @@
+bundles:
+  main:
+  - name: get_order
+    description: 'Get the status and details of an order by its exact order ID.
+
+
+      GET /orders/{order_id}'
+    parameters:
+      type: object
+      properties:
+        path:
+          type: object
+          properties:
+            order_id:
+              type: string
+              pattern: ^ORD-[0-9]{6}$
+              description: An order ID such as ORD-448120.
+          additionalProperties: false
+          required:
+          - order_id
+      additionalProperties: false
+      required:
+      - path
+  - name: search_orders
+    description: 'Find orders belonging to a customer using their email address.
+
+
+      GET /orders'
+    parameters:
+      type: object
+      properties:
+        query:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The customer's full email address.
+          additionalProperties: false
+          required:
+          - email
+      additionalProperties: false
+      required:
+      - query
+  - name: issue_refund
+    description: 'Issue a refund for a known order.
+
+
+      Only issue a refund when the customer explicitly requests it. Amounts are integer
+      US cents.
+
+
+      POST /orders/{order_id}/refunds'
+    parameters:
+      type: object
+      properties:
+        path:
+          type: object
+          properties:
+            order_id:
+              type: string
+              pattern: ^ORD-[0-9]{6}$
+              description: An order ID such as ORD-448120.
+          additionalProperties: false
+          required:
+          - order_id
+        body:
+          type: object
+          additionalProperties: false
+          required:
+          - amount_cents
+          - reason
+          properties:
+            amount_cents:
+              type: integer
+              minimum: 1
+              description: Refund amount in US cents, not dollars.
+            reason:
+              type: string
+              enum:
+              - damaged
+              - not_received
+              - other
+      additionalProperties: false
+      required:
+      - path
+      - body

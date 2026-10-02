@@ -1,0 +1,21 @@
+{
+  "checks": [
+    {
+      "name": "suite",
+      "status": "pass",
+      "message": "6 tasks validated (suite hash e8df4b7287151eba)."
+    },
+    {
+      "name": "models",
+      "status": "pass",
+      "message": "Requested model is listed by the endpoint."
+    }
+  ],
+  "server": {
+    "name": "ollama",
+    "version": "0.34.2"
+  },
+  "model_listed": true,
+  "generation_tested": false,
+  "status": "pass"
+}

@@ -1,0 +1,25 @@
+model            qwen2.5:7b
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     6
+
+                 selection   schema     args      success
+  overall         83.3%   33.3%   33.3%   33.3%   (95% CI 0.0-66.7%)
+  type-lenient    83.3%   33.3%   33.3%   33.3%
+
+  tool count sweep
+    +0   distractors   success  33.3%   selection  83.3%   sd  0.0
+
+  by category
+    abstain     66.7%  (n=3, 95% CI 0.0-100.0%)
+    args         0.0%  (n=1, 95% CI 0.0-0.0%)
+    select       0.0%  (n=2, 95% CI 0.0-0.0%)
+
+  cost per success   1485 tokens   5.73 s
+
+failures worth reading:
+  [status-by-id pad=0] schema: (root): Additional properties are not allowed ('order_id' was unexpected); schema: (root): 'path' is a required property
+  [search-by-email pad=0] schema: (root): Additional properties are not allowed ('email' was unexpected); schema: (root): 'query' is a required property
+  [refund-dollars-to-cents pad=0] schema: (root): Additional properties are not allowed ('amount_cents', 'order_id', 'reason' were unexpected); schema: (root): 'path' is a required property
+  [unsupported-address-change pad=0] called get_order when no tool applied
+
+wrote baseline.json

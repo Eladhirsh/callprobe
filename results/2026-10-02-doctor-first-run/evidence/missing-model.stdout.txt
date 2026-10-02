@@ -1,0 +1,21 @@
+{
+  "checks": [
+    {
+      "name": "suite",
+      "status": "pass",
+      "message": "50 tasks validated (suite hash e597c986302b5596)."
+    },
+    {
+      "name": "models",
+      "status": "warning",
+      "message": "Requested model is not in this catalog. Confirm its exact ID or alias with the provider; catalogs may be incomplete."
+    }
+  ],
+  "server": {
+    "name": "ollama",
+    "version": "0.34.2"
+  },
+  "model_listed": false,
+  "generation_tested": false,
+  "status": "warning"
+}
