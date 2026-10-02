@@ -82,10 +82,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 80 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 82 bundled sessions with planted failures and honest controls:
 
 ```text
-80/80 cases exact. Problem detection: precision 100%, recall 100% (42 caught, 0 false alarms, 0 missed).
+82/82 cases exact. Problem detection: precision 100%, recall 100% (43 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -213,6 +213,10 @@ dyr check trace.json --extractor llm --extraction-mode staged --json-mode \
 This mode is opt-in. Each stage allows one validation retry, so a message can require up to four
 model calls. Read-only actions and nonclaims stop after the first stage. The default extractor
 is unchanged. Evaluate this mode on representative traces before choosing it for a workload.
+
+Both extractors reject unquoted pronouns used as explicit identifiers or recipients and request
+one repair. A quoted identifier such as the filename `"it"` remains valid. This is a narrow check;
+literal source validation still cannot prove that a model assigned a word the correct meaning.
 
 ## Model comparison and extraction contracts
 

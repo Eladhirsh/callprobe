@@ -61,7 +61,12 @@ An array parameter such as attendees stays inside one args object.
 Use the supplied parameter names. Copy argument values ONLY from TARGET source values or literal
 phrases in TARGET. Omit unspecified keys completely, even when the tool schema requires them.
 Do not invent recipients, titles, IDs or other details from tool descriptions or action names.
-Do not treat general words such as "request" or "complete" as argument values.
+Do not treat pronouns or general completion words as argument values. Words like "your", "it",
+"request", "work", and "job" refer to context; they are not literal recipients, file paths or IDs.
+For TARGET "Everything is sorted", return args {} for every supplied action ID, even if the
+tool schema lists required parameters. For TARGET "I've sent it to Robin", only to="Robin" is stated.
+For TARGET "I removed the file", the path is unspecified: args {}. For TARGET 'I removed "draft"',
+path="draft" is explicit. The presence of an action ID does not mean its arguments are stated.
 Keep quoted identifiers, punctuation and Unicode exactly. Preserve currency and units with amounts:
 "40 USD" stays "40 USD", "$12" stays "$12", "20%" stays "20%".
 Do not extract objects mentioned only in offers or denials. In "I invited Jo; I can invite Lee too",

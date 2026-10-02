@@ -231,3 +231,52 @@ def test_detail_stage_cannot_omit_one_of_multiple_actions():
     with pytest.raises(ExtractionError) as caught:
         extractor.extract(trace())
     assert caught.value.reason == "lost_action_mapping"
+
+
+@pytest.mark.parametrize("word", ["your", "you", "it", "them"])
+def test_unresolved_recipient_is_repaired_without_becoming_an_anchor(word):
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "send_email", "side_effect": True}],
+            "events": [{"type": "message", "role": "assistant", "content": f"I sent the receipt to {word}."}],
+        }
+    )
+    extractor, calls = run(t, [[item("send_email")], detail({"to": word}), detail()])
+    [claim] = extractor.extract(t)
+    assert claim.args == {}
+    assert "unquoted pronoun" in calls[-1]["messages"][-1]["content"]
+    assert "Preserve these literal" not in calls[-1]["messages"][-1]["content"]
+
+
+@pytest.mark.parametrize("text", ['I removed "it".', "I removed `it`.", "I removed 'it'."])
+def test_quoted_identifier_that_is_also_a_pronoun_is_preserved(text):
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "delete_file", "side_effect": True}],
+            "events": [{"type": "message", "role": "assistant", "content": text}],
+        }
+    )
+    extractor, calls = run(t, [[item("delete_file")], detail({"path": "it"})])
+    assert extractor.extract(t)[0].args == {"path": "it"}
+    assert len(calls) == 2
+
+
+def test_default_extractor_also_rejects_unresolved_recipient():
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "send_email", "side_effect": True}],
+            "events": [{"type": "message", "role": "assistant", "content": "I sent it to you."}],
+        }
+    )
+    calls = []
+
+    def transport(url, headers, body):
+        calls.append(body)
+        return {
+            "choices": [{"message": {"content": json.dumps({"claims": [item("send_email", {"to": "you"})]})}}]
+        }
+
+    with pytest.raises(ExtractionError) as caught:
+        LLMExtractor(transport=transport).extract(t)
+    assert caught.value.reason == "unresolved_reference"
+    assert len(calls) == 2

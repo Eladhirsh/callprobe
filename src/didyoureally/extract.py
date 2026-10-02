@@ -36,6 +36,7 @@ EXTRACTION_HINTS = {
     "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
     "invalid_action_map": "Return completed action types with exact tool names and empty args objects. Do not extract details in this stage.",
     "invalid_action_details": "Return a details list containing only action_id and args for each supplied action. Do not rename tools or classify completion in the detail stage.",
+    "unresolved_reference": "An unquoted pronoun is not an explicit identifier or recipient. Omit that argument; do not resolve it from context. Preserve identifiers explicitly quoted in the TARGET.",
     "invalid_claims": "Return a JSON object with a claims array in the documented extraction format.",
     "lost_action_mapping": "Source repair lost a contextual action mapping. Provide reviewed claims or retry extraction.",
     "lost_source_detail": "Repair omitted details explicitly stated in the TARGET. Provide reviewed claims or retry extraction.",
@@ -153,6 +154,35 @@ such as attendees stays within one args object. No text or message index is need
 # Quotes preserve internal punctuation; unquoted tokens omit sentence delimiters.
 _SOURCE_TOKEN = re.compile(r'"([^"\n]+)"|“([^”\n]+)”|`([^`\n]+)`|(?<!\w)\'([^\'\n]+)\'|[^\s"“”`;,!?()]+')
 _IDENTIFIER_KEYS = {"path", "filename", "file", "to", "email", "recipient", "id"}
+_REFERENCE_WORDS = {
+    "i",
+    "me",
+    "my",
+    "mine",
+    "you",
+    "your",
+    "yours",
+    "he",
+    "him",
+    "his",
+    "she",
+    "her",
+    "hers",
+    "it",
+    "its",
+    "we",
+    "us",
+    "our",
+    "ours",
+    "they",
+    "them",
+    "their",
+    "theirs",
+    "this",
+    "that",
+    "these",
+    "those",
+}
 
 
 def source_spans(text: str) -> list[dict[str, Any]]:
@@ -182,7 +212,7 @@ def _source_value(value: Any, spans: list[dict[str, Any]]) -> Any:
     return value
 
 
-def _ground_identifiers(args: dict[str, Any], spans: list[dict[str, Any]]) -> None:
+def _ground_identifiers(args: dict[str, Any], spans: list[dict[str, Any]], text: str = "") -> None:
     values = {span["value"] for span in spans}
     for key, value in args.items():
         if key not in _IDENTIFIER_KEYS and not key.endswith("_id"):
@@ -190,6 +220,22 @@ def _ground_identifiers(args: dict[str, Any], spans: list[dict[str, Any]]) -> No
         for item in value if isinstance(value, list) else [value]:
             if isinstance(item, str) and item not in values:
                 raise ClaimFormatError("source_mismatch")
+            if isinstance(item, str) and item.casefold() in _REFERENCE_WORDS:
+                quoted = any(
+                    span["value"] == item
+                    and span["start"] > 0
+                    and span["end"] < len(text)
+                    and (text[span["start"] - 1], text[span["end"]])
+                    in {
+                        ('"', '"'),
+                        ("'", "'"),
+                        ("“", "”"),
+                        ("`", "`"),
+                    }
+                    for span in spans
+                )
+                if not quoted:
+                    raise ClaimFormatError("unresolved_reference")
 
 
 def _ground_arguments(args: dict[str, Any], text: str, spans: list[dict[str, Any]]) -> None:
@@ -199,7 +245,7 @@ def _ground_arguments(args: dict[str, Any], text: str, spans: list[dict[str, Any
     phrase; numeric JSON values may correspond to a numeric source token such
     as $40. This checks provenance, not the model's semantic interpretation.
     """
-    _ground_identifiers(args, spans)
+    _ground_identifiers(args, spans, text)
     values = [span["value"] for span in spans]
 
     def grounded(value: Any) -> bool:
@@ -411,7 +457,7 @@ def _source_anchors(raw: str, trace: Trace, message_index: int) -> list[dict[str
                 if not _literal_in_source(value, values, target.content):
                     continue
                 try:
-                    _ground_identifiers({key: value}, spans)
+                    _ground_identifiers({key: value}, spans, target.content)
                 except ClaimFormatError:
                     continue
                 literal[key] = value
