@@ -1,0 +1,69 @@
+{
+  "started_at": "2026-10-02T05:05:11.534706+00:00",
+  "status": "complete",
+  "planned_observations": 154,
+  "experiments": [
+    {
+      "suite": "core",
+      "command": [
+        "/tmp/callprobe-llamacpp-env/bin/python",
+        "-m",
+        "callprobe.cli",
+        "sweep",
+        "--models",
+        "qwen2.5:7b",
+        "--endpoint",
+        "http://127.0.0.1:18080/v1",
+        "--suite",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/core-suite",
+        "--out",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/core",
+        "--pad",
+        "0",
+        "--repeats",
+        "2",
+        "--max-tokens",
+        "4096",
+        "--request-timeout",
+        "180",
+        "--timeout",
+        "3600",
+        "--junit"
+      ],
+      "status": "complete",
+      "returncode": 0
+    },
+    {
+      "suite": "mail",
+      "command": [
+        "/tmp/callprobe-llamacpp-env/bin/python",
+        "-m",
+        "callprobe.cli",
+        "sweep",
+        "--models",
+        "qwen2.5:7b",
+        "--endpoint",
+        "http://127.0.0.1:18080/v1",
+        "--suite",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail-suite",
+        "--out",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail",
+        "--pad",
+        "0,2,4",
+        "--repeats",
+        "1",
+        "--max-tokens",
+        "4096",
+        "--request-timeout",
+        "180",
+        "--timeout",
+        "3600",
+        "--junit"
+      ],
+      "status": "complete",
+      "returncode": 0
+    }
+  ],
+  "finished_at": "2026-10-02T05:10:58.736621+00:00",
+  "server_configuration_unchanged": true
+}

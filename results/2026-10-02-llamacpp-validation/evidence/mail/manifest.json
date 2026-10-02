@@ -1,0 +1,137 @@
+{
+  "note": "Small-sample results: this leaderboard does not establish a robust model ranking. Scores are as the CLI reported them, with no repair.",
+  "dry_run": false,
+  "endpoint": "http://127.0.0.1:18080/v1",
+  "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail-suite",
+  "pad": "0,2,4",
+  "repeats": 1,
+  "max_tokens": 4096,
+  "timeout_seconds": 3600.0,
+  "request_timeout_seconds": 180.0,
+  "junit": true,
+  "total_planned_requests": 54,
+  "models": [
+    {
+      "slot": "01",
+      "model": "qwen2.5:7b",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-llamacpp-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=qwen2.5:7b",
+            "--endpoint=http://127.0.0.1:18080/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.122,
+          "stdout": "01-dry-run.stdout.txt",
+          "stderr": "01-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-llamacpp-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=qwen2.5:7b",
+            "--endpoint=http://127.0.0.1:18080/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=01-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 121.754,
+          "stdout": "01-run.stdout.txt",
+          "stderr": "01-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-llamacpp-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "01-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.144,
+          "stdout": "01-explain.stdout.txt",
+          "stderr": "01-explain.stderr.txt"
+        },
+        {
+          "name": "report",
+          "command": [
+            "/tmp/callprobe-llamacpp-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "report",
+            "01-result.json",
+            "--format=junit",
+            "--out=01-junit.xml"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.116,
+          "stdout": "01-report.stdout.txt",
+          "stderr": "01-report.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "01-result.json",
+      "result_file": "01-result.json",
+      "junit_file": "01-junit.xml"
+    }
+  ],
+  "leaderboard": {
+    "file": "leaderboard.md",
+    "models": [
+      "qwen2.5:7b"
+    ],
+    "steps": [
+      {
+        "name": "board",
+        "command": [
+          "/tmp/callprobe-llamacpp-env/bin/python",
+          "-m",
+          "callprobe.cli",
+          "leaderboard",
+          "01-result.json"
+        ],
+        "status": "ok",
+        "returncode": 0,
+        "duration_seconds": 0.138,
+        "stdout": "leaderboard-board.stdout.txt",
+        "stderr": "leaderboard-board.stderr.txt"
+      }
+    ]
+  },
+  "failed": false,
+  "status": "complete"
+}

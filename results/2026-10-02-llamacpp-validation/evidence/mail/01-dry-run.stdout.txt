@@ -1,0 +1,30 @@
+{
+  "dry_run": true,
+  "model": "qwen2.5:7b",
+  "suite": {
+    "label": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail-suite",
+    "hash": "2e82c882d93ca06a"
+  },
+  "scope": {
+    "targeted": false,
+    "task_ids": null,
+    "selected_task_count": null,
+    "total_task_count": 18
+  },
+  "pads": [
+    0,
+    2,
+    4
+  ],
+  "repeats": 1,
+  "total_requests": 54,
+  "temperature": 0.0,
+  "max_tokens": 4096,
+  "concurrency": 1,
+  "request_timeout": 180.0,
+  "max_completion_tokens": 221184,
+  "budget_excludes": [
+    "prompt_tokens",
+    "retries"
+  ]
+}

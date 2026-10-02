@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate a second serving backend with 154 live Qwen2.5 observations through
+  llama.cpp, archived with full coverage, suite snapshots, and offline report
+  checks. Both cross-backend regression gates detect case regressions despite
+  higher totals; differing templates/settings preclude a causal ranking.
+
 - Include recorded server name and version in text and Markdown comparisons,
   without exposing endpoint URLs or inferring missing backend identities.
 

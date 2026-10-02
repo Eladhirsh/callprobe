@@ -1,0 +1,66 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.6666666666666666,
+      "success_b": 0.6666666666666666,
+      "success_delta": 0.0,
+      "lenient_a": 0.6666666666666666,
+      "lenient_b": 0.6666666666666666,
+      "lenient_delta": 0.0
+    },
+    "args": {
+      "success_a": 0.26666666666666666,
+      "success_b": 0.6,
+      "success_delta": 0.3333333333333333,
+      "lenient_a": 0.26666666666666666,
+      "lenient_b": 0.6,
+      "lenient_delta": 0.3333333333333333
+    },
+    "depth": {
+      "success_a": 0.0,
+      "success_b": 1.0,
+      "success_delta": 1.0,
+      "lenient_a": 0.0,
+      "lenient_b": 1.0,
+      "lenient_delta": 1.0
+    },
+    "select": {
+      "success_a": 0.13333333333333333,
+      "success_b": 1.0,
+      "success_delta": 0.8666666666666667,
+      "lenient_a": 0.13333333333333333,
+      "lenient_b": 1.0,
+      "lenient_delta": 0.8666666666666667
+    }
+  },
+  "regressed_tasks": [
+    "search-missing-criteria"
+  ],
+  "improved_tasks": [
+    "correction-reply-target",
+    "correction-search-sender",
+    "get-by-id",
+    "get-id-with-punctuation",
+    "reply-draft-only",
+    "reply-send",
+    "search-archive-folder",
+    "search-by-sender",
+    "search-by-subject",
+    "search-with-limit"
+  ],
+  "gate": {
+    "passed": false,
+    "failures": [
+      "1 previously passing case(s) regressed"
+    ],
+    "matched_cases": 54,
+    "success_delta": 0.4444444444444444,
+    "regressions": [
+      {
+        "task_id": "search-missing-criteria",
+        "pad": 4,
+        "repeat": 0
+      }
+    ]
+  }
+}

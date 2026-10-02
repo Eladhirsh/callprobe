@@ -1,0 +1,114 @@
+suite            mail-suite v1 (2e82c882d93ca06a)
+model            qwen2.5:7b
+cases            54   scored: 54   failed: 12
+
+diagnostic counts (cases; a case may carry more than one category)
+  unexpected_call         6   expected no call; the model called a tool anyway
+  argument_value          6   argument values did not match the task's expectation
+
+failed cases
+
+[unsupported-forward pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[reply-body-quotes pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3001'}, 'body': {'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}
+
+[reply-body-symbols pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'text': 'Hi Sam,\nAgenda: budget & hiring (50% done) [v2] — café at 9.', 'mode': 'draft'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3002'}, 'body': {'text': 'Hi Sam,\nAgenda: budget & hiring (50% done) [v2] — café at 9.', 'mode': 'draft'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'text': 'Hi Sam,\nAgenda: budget & hiring (50% done) [v2] — café at 9.', 'mode': 'draft'}
+
+[unsupported-delete pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Delete message msg-1042 permanently.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Forwarded from you: \n\nPlease find the original message below.\n\n---\n', 'mode': 'draft'}}
+
+[reply-body-quotes pad=2 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \\"final\\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3001'}, 'body': {'text': '[Please send the \\"final\\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \\"final\\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}
+
+[reply-body-symbols pad=2 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'text': "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]", 'mode': 'draft'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3002'}, 'body': {'text': "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]", 'mode': 'draft'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'text': "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]", 'mode': 'draft'}
+
+[search-missing-criteria pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Search my mail.
+  expected: no call
+  called: search_messages
+  reason: called search_messages when no tool applied
+  call: search_messages arguments={'query': {'q': 'from:dana.rivera@example.invalid', 'folder': 'inbox'}}
+
+[unsupported-delete pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Delete message msg-1042 permanently.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[reply-body-quotes pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3001'}, 'body': {'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}
+
+[reply-body-symbols pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'text': "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]", 'mode': 'draft'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3002'}, 'body': {'text': "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]", 'mode': 'draft'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'text': "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]", 'mode': 'draft'}
