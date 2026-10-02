@@ -1,0 +1,42 @@
+{
+  "id": "staged-files-offer",
+  "domain": "files",
+  "description": "Completion scope follows the current request without copying requested arguments",
+  "trace": {
+    "id": "staged-files-offer",
+    "tools": [
+      {
+        "name": "delete_file",
+        "description": "Delete a file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "inspect_file",
+        "description": "Read file metadata without changing the file",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Delete cache.old."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I could do that once you confirm."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

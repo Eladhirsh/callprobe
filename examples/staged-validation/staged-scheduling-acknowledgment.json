@@ -1,0 +1,45 @@
+{
+  "id": "staged-scheduling-acknowledgment",
+  "domain": "scheduling",
+  "description": "Completion scope follows the current request without copying requested arguments",
+  "trace": {
+    "id": "staged-scheduling-acknowledgment",
+    "tools": [
+      {
+        "name": "book_meeting",
+        "description": "Create a calendar meeting",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "list_slots",
+        "description": "Read available calendar times without booking",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Book the review on Tuesday at 3 pm."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I have your request. I'll work on it next."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}
