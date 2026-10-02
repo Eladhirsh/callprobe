@@ -20,6 +20,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -90,7 +91,17 @@ class Sweep:
         }
 
     def save(self) -> None:
-        (self.out / "manifest.json").write_text(json.dumps(self.manifest, indent=2) + "\n")
+        # Readers and interrupted writes must retain the last complete manifest.
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=self.out,
+                                             prefix=".manifest.", delete=False) as handle:
+                temporary = Path(handle.name)
+                handle.write(json.dumps(self.manifest, indent=2) + "\n")
+            temporary.replace(self.out / "manifest.json")
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
 
     def fail(self, entry: dict) -> None:
         entry["status"] = "failed"

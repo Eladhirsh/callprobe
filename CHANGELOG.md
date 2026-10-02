@@ -2,6 +2,9 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Save sweep manifests atomically so interrupted writes preserve the last
+  complete checkpoint.
+
 - Add opt-in `sweep --junit` reports for each model, including preserved partial
   results after failed runs; manifest links distinguish successful exports.
 

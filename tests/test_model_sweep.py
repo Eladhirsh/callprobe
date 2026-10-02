@@ -392,3 +392,31 @@ def test_manifest_exposes_running_step_before_subprocess_finishes(tmp_path, monk
     code, _, manifest = run(tmp_path, models=("a",))
     assert code == 0 and observed and set(observed) == {"running"}
     assert manifest["status"] == "complete"
+
+
+def test_manifest_replace_failure_preserves_previous_checkpoint(tmp_path, monkeypatch):
+    previous = b'{"status": "running", "models": []}\n'
+    manifest = tmp_path / 'manifest.json'
+    manifest.write_bytes(previous)
+    instance = object.__new__(sweep.Sweep)
+    instance.out = tmp_path
+    instance.manifest = {'status': 'complete', 'models': [{'model': 'a'}]}
+    replace = Path.replace
+
+    def interrupted_replace(source, target):
+        if target == manifest:
+            # A concurrent reader still sees complete JSON before replacement.
+            assert json.loads(manifest.read_text())['status'] == 'running'
+            assert json.loads(source.read_text())['status'] == 'complete'
+            raise OSError('simulated interrupted manifest replacement')
+        return replace(source, target)
+
+    monkeypatch.setattr(Path, 'replace', interrupted_replace)
+    with pytest.raises(OSError, match='interrupted manifest'):
+        instance.save()
+    assert manifest.read_bytes() == previous
+    assert list(tmp_path.iterdir()) == [manifest]
+    monkeypatch.setattr(Path, 'replace', replace)
+    instance.save()
+    assert json.loads(manifest.read_text()) == instance.manifest
+    assert list(tmp_path.iterdir()) == [manifest]
