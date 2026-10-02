@@ -914,6 +914,24 @@ exist: inspect the proposed arguments, make sure your application adapter
 and the tool contract agree, and rerun with the same suite. Nothing is
 repaired or re-scored automatically.
 
+Multi-repeat runs also gain a `repeat_variation` block grouped by
+`(task_id, pad)`: `groups_examined` counts groups with at least two
+distinct scored repeats, and `mixed_groups` lists each group where the
+scored verdict changed, with `passing_repeat_ids`, `failing_repeat_ids`,
+and `excluded_error_repeat_ids` for request errors that are kept out of
+the counts. Pads are never mixed, `--task` scopes the summary, duplicate
+`(task_id, pad, repeat)` rows raise a clear error rather than averaging
+silently. Repeats vary deterministic tool order, so differences do not
+isolate model randomness; a partial run does not establish stability. For example, the archived October 2026
+granite3.3:8b core run scored 24/50 and 27/50 but moved 11 task verdicts
+across its two repeats; phi4-mini stayed at 11/50 with two mixed groups.
+
+Server provenance is detected when public metadata is available: Ollama via
+`/api/version` and llama.cpp via its build and generation metadata at `/props`.
+Unknown or protected metadata stays unset. Older llama.cpp results without
+server identity may require a fresh run for `--resume`; their recorded scores
+remain readable and are never changed.
+
 ## Status
 
 The suite (version 2) is 50 hand-written tasks: 6 select, 11 abstain, 12

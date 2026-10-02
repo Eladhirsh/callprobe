@@ -946,6 +946,213 @@ def test_content_tool_json_ignores_tool_not_in_bundle(github_suite):
     assert 'content_tool_json' not in report['cases'][0]
 
 
+# ----------------------------------------- repeat-variation diagnostics
+
+
+def _passing_result(task, pad, repeat):
+    return _base_result(task, pad=pad, repeat=repeat,
+                        selection_ok=True, schema_ok=True, args_ok=True, success=True)
+
+
+def _failing_result(task, pad, repeat):
+    # defaults already encode a failure (all flags False, success False)
+    return _base_result(task, pad=pad, repeat=repeat)
+
+
+def test_repeat_variation_flags_mixed_scored_outcomes(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _failing_result(task, pad=0, repeat=1),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    variation = explain_run(run, github_suite)["repeat_variation"]
+    assert variation["groups_examined"] == 1
+    assert len(variation["mixed_groups"]) == 1
+    group = variation["mixed_groups"][0]
+    assert group["task_id"] == task.id
+    assert group["pad"] == 0
+    assert group["passing_repeat_ids"] == [0]
+    assert group["failing_repeat_ids"] == [1]
+    assert "excluded_error_repeat_ids" not in group
+    assert "deterministic" in variation["caveat"]
+
+
+def test_repeat_variation_stable_group_is_examined_not_mixed(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _passing_result(task, pad=0, repeat=1),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    # No failing cases, so render_explain_text would early-return; we check
+    # the JSON object directly for the recorded group count.
+    variation = explain_run(run, github_suite)["repeat_variation"]
+    assert variation["groups_examined"] == 1
+    assert variation["mixed_groups"] == []
+
+
+def test_repeat_variation_never_mixes_pads(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _passing_result(task, pad=0, repeat=1),
+        _failing_result(task, pad=8, repeat=0),
+        _failing_result(task, pad=8, repeat=1),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    variation = explain_run(run, github_suite)["repeat_variation"]
+    # Each (task, pad) group is stable on its own, even though success
+    # differs across pads.
+    assert variation["groups_examined"] == 2
+    assert variation["mixed_groups"] == []
+
+
+def test_repeat_variation_excludes_errors_from_mixed_counts(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    err = _base_result(task, pad=0, repeat=2, error="timeout",
+                       failures=["request failed: timeout"])
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _failing_result(task, pad=0, repeat=1),
+        err,
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    variation = explain_run(run, github_suite)["repeat_variation"]
+    group = variation["mixed_groups"][0]
+    assert group["passing_repeat_ids"] == [0]
+    assert group["failing_repeat_ids"] == [1]
+    assert group["excluded_error_repeat_ids"] == [2]
+
+
+def test_repeat_variation_omitted_for_single_repeat_runs(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    run = Run(config=_config(github_suite), started_at="now",
+              results=[_failing_result(task, pad=0, repeat=0)])
+    assert "repeat_variation" not in explain_run(run, github_suite)
+
+
+def test_repeat_variation_omitted_when_only_errors_cover_the_group(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _base_result(task, pad=0, repeat=0, error="a", failures=["request failed: a"]),
+        _base_result(task, pad=0, repeat=1, error="b", failures=["request failed: b"]),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    # fewer than two scored repeats → nothing examined; stay concise
+    assert "repeat_variation" not in explain_run(run, github_suite)
+
+
+def test_repeat_variation_requires_two_distinct_scored_repeats(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _base_result(task, pad=0, repeat=1, error="timeout",
+                     failures=["request failed: timeout"]),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    assert "repeat_variation" not in explain_run(run, github_suite)
+
+
+def test_repeat_variation_respects_task_filter(github_suite):
+    tasks = _tasks(github_suite)
+    a = tasks["get-issue-details"]
+    b = tasks["post-comment-simple"]
+    results = [
+        _passing_result(a, pad=0, repeat=0),
+        _failing_result(a, pad=0, repeat=1),
+        _passing_result(b, pad=0, repeat=0),
+        _failing_result(b, pad=0, repeat=1),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    full = explain_run(run, github_suite)["repeat_variation"]
+    assert {g["task_id"] for g in full["mixed_groups"]} == {a.id, b.id}
+    scoped = explain_run(run, github_suite, task_id=a.id)["repeat_variation"]
+    assert [g["task_id"] for g in scoped["mixed_groups"]] == [a.id]
+    assert scoped["groups_examined"] == 1
+
+
+def test_repeat_variation_duplicate_observations_raise_value_error(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _failing_result(task, pad=0, repeat=0),  # same (task, pad, repeat)
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    with pytest.raises(ValueError, match="duplicate observation"):
+        explain_run(run, github_suite)
+
+
+def test_repeat_variation_does_not_mutate_run_or_scores(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    r0 = _passing_result(task, pad=0, repeat=0)
+    r1 = _failing_result(task, pad=0, repeat=1)
+    run = Run(config=_config(github_suite), started_at="now", results=[r0, r1])
+    before = run.model_dump_json()
+    explain_run(run, github_suite)
+    assert run.model_dump_json() == before
+    # Flags are untouched: the summary never rescored anything.
+    assert (r0.success, r0.selection_ok, r0.schema_ok, r0.args_ok) == (True, True, True, True)
+    assert (r1.success, r1.selection_ok, r1.schema_ok, r1.args_ok) == (False, False, False, False)
+
+
+def test_repeat_variation_is_rendered_in_text_report(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _failing_result(task, pad=0, repeat=1),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    text = render_explain_text(explain_run(run, github_suite))
+    assert "repeat variation" in text
+    assert "1 mixed (task,pad) group(s) across 1 examined" in text
+    assert "deterministic tool order" in text
+    assert task.id in text
+    assert "passing=[0]" in text and "failing=[1]" in text
+
+
+def test_repeat_variation_text_includes_excluded_error_ids_when_present(github_suite):
+    task = _tasks(github_suite)["get-issue-details"]
+    results = [
+        _passing_result(task, pad=0, repeat=0),
+        _failing_result(task, pad=0, repeat=1),
+        _base_result(task, pad=0, repeat=2, error="timeout",
+                     failures=["request failed: timeout"]),
+    ]
+    run = Run(config=_config(github_suite), started_at="now", results=results)
+    text = render_explain_text(explain_run(run, github_suite))
+    assert "excluded_errors=[2]" in text
+
+
+_ARCHIVED_EVIDENCE = (
+    REPO_ROOT / "results" / "2026-10-01-rc3-model-validation" / "evidence"
+)
+
+
+@pytest.mark.parametrize("result_file,expected_mixed", [
+    ("04-result.json", 11),  # granite3.3:8b core; 24/50 vs 27/50, 11 verdicts moved
+    ("08-result.json", 2),   # phi4-mini core; 11/50 both repeats, 2 verdicts moved
+])
+def test_archived_core_repeat_variation_counts(result_file, expected_mixed):
+    from callprobe.models import Run as _Run
+    results_path = _ARCHIVED_EVIDENCE / "core" / result_file
+    suite = load_suite(str(_ARCHIVED_EVIDENCE / "core-suite"))
+    before = results_path.read_bytes()
+    run = _Run.model_validate_json(results_path.read_text(encoding="utf-8"))
+    report = explain_run(run, suite)
+    variation = report["repeat_variation"]
+    assert len(variation["mixed_groups"]) == expected_mixed
+    # The archived evidence itself must stay byte-identical.
+    assert results_path.read_bytes() == before
+    # Mixed groups come out in deterministic (task_id, pad) order and
+    # never cross pads.
+    keys = [(g["task_id"], g["pad"]) for g in variation["mixed_groups"]]
+    assert keys == sorted(keys)
+    for group in variation["mixed_groups"]:
+        assert group["passing_repeat_ids"] and group["failing_repeat_ids"]
+        assert not set(group["passing_repeat_ids"]) & set(group["failing_repeat_ids"])
+
+
 def test_observed_phi_text_tool_shape_is_advisory_only():
     suite = load_suite(str(Path(__file__).resolve().parents[1] / "src/callprobe/suites/core"))
     # Exact structural form observed in the local Phi-4 Mini run: it names
