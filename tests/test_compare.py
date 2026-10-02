@@ -328,3 +328,31 @@ def test_markdown_records_generation_conditions_without_endpoint_credentials():
     assert "| Maximum output tokens | 1024 | 4096 |" in text
     assert "| Distractor counts | 0 | 0, 8 |" in text
     assert "private-secret" not in text
+
+
+def test_same_model_comparison_identifies_backends_without_exposing_endpoints():
+    a = Run(config=_config(server_name='Ollama', server_version='0.18.0'),
+            started_at='now', results=[])
+    b = Run(config=_config(server_name='llama.cpp', server_version='b11339-81e39ad34'),
+            started_at='now', results=[])
+    a.config.endpoint = 'https://private-secret@example.test/v1?token=hidden'
+    text = render_compare(a, b)
+    markdown = render_compare_markdown(a, b)
+    assert 'server: Ollama -> llama.cpp' in text
+    assert 'server version: 0.18.0 -> b11339-81e39ad34' in text
+    assert '| Server | Ollama | llama.cpp |' in markdown
+    assert '| Server version | 0.18.0 | b11339-81e39ad34 |' in markdown
+    for output in (text, markdown):
+        assert 'private-secret' not in output
+        assert 'hidden' not in output
+        assert 'example.test' not in output
+
+
+def test_comparison_leaves_unknown_server_uninferred_and_escapes_markdown():
+    a = Run(config=_config(), started_at='now', results=[])
+    b = Run(config=_config(server_name='<img>|injected\nrow', server_version='[x](url)'),
+            started_at='now', results=[])
+    assert 'server: unknown ->' in render_compare(a, b)
+    markdown = render_compare_markdown(a, b)
+    assert '| Server | missing | &lt;img&gt;\\|injected row |' in markdown
+    assert '| Server version | missing | \\[x\\]\\(url\\) |' in markdown

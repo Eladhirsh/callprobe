@@ -79,6 +79,8 @@ def render_compare(a: Run, b: Run) -> str:
     scored_b = [r for r in b.results if r.error is None]
     lines = [
         f"{a.config.model}  ->  {b.config.model}",
+        f"server: {a.config.server_name or 'unknown'} -> {b.config.server_name or 'unknown'}",
+        f"server version: {a.config.server_version or 'unknown'} -> {b.config.server_version or 'unknown'}",
         f"scored observations: {len(scored_a)} -> {len(scored_b)}",
         f"request errors: {len(a.results) - len(scored_a)} -> {len(b.results) - len(scored_b)}",
         "",
@@ -152,6 +154,7 @@ def render_compare_markdown(a: Run, b: Run, gate: dict | None = None) -> str:
         "| --- | --- | --- |",
     ]
     for label, field in (
+        ("Server", "server_name"), ("Server version", "server_version"),
         ("Suite hash", "suite_hash"), ("Scoring version", "scoring_version"),
         ("Temperature", "temperature"), ("Maximum output tokens", "max_tokens"),
         ("Distractor counts", "pads"), ("Repeats per case", "repeats"),

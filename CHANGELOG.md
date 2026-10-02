@@ -2,6 +2,9 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Include recorded server name and version in text and Markdown comparisons,
+  without exposing endpoint URLs or inferring missing backend identities.
+
 - Treat every non-null request error, including an empty error message,
   consistently across scoring, reports, comparisons, CI gates, and resume.
   Endpoint failures cannot count as successful abstentions or cached results.
