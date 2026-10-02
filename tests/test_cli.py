@@ -69,7 +69,7 @@ def test_fail_under_fails_when_threshold_not_met(monkeypatch, capsys):
 def test_text_format_unaffected_by_fail_under_flag(monkeypatch, capsys):
     code, out = _run_cli(monkeypatch, ["--fail-under", "0.99"], capsys)
     assert code == 1
-    assert "model            stub" in out  # still the human-readable report
+    assert any(line.split() == ["model", "stub"] for line in out.splitlines())
 
 
 def test_missing_resume_file_is_an_error(monkeypatch, tmp_path, capsys):

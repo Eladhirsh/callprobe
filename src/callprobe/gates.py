@@ -35,14 +35,18 @@ def load_policy(path: str | None) -> GatePolicy:
 
 def _index(run: Run, label: str):
     config = run.config
-    if not config.task_ids or not config.pads or config.repeats < 1:
+    if not config.task_ids or not config.pads:
         raise ValueError(f"{label}: missing planned coverage; create a new run")
-    if (len(set(config.task_ids)) != len(config.task_ids)
-            or len(set(config.pads)) != len(config.pads)
-            or any(p < 0 for p in config.pads)):
+    if (type(config.repeats) is not int or config.repeats < 1
+            or any(type(p) is not int or p < 0 for p in config.pads)
+            or len(set(config.task_ids)) != len(config.task_ids)
+            or len(set(config.pads)) != len(config.pads)):
         raise ValueError(f"{label}: invalid planned coverage")
-    expected = {(task, pad, repeat) for task in config.task_ids
-                for pad in config.pads for repeat in range(config.repeats)}
+    # Imported/partial files can describe enormous planned sweeps. Verify
+    # membership and cardinality without materializing the Cartesian product.
+    tasks, pads = set(config.task_ids), set(config.pads)
+    planned = len(tasks) * len(pads) * config.repeats
+    unexpected = 0
     indexed = {}
     for result in run.results:
         key = (result.task_id, result.pad, result.repeat)
@@ -50,11 +54,15 @@ def _index(run: Run, label: str):
             raise ValueError(f"{label}: duplicate result {key}")
         if result.model != config.model:
             raise ValueError(f"{label}: result model differs from run configuration")
+        if (result.task_id not in tasks or type(result.pad) is not int or result.pad not in pads
+                or type(result.repeat) is not int or not 0 <= result.repeat < config.repeats):
+            unexpected += 1
         indexed[key] = result
-    if set(indexed) != expected:
+    missing = planned - (len(indexed) - unexpected)
+    if missing or unexpected:
         raise ValueError(
             f"{label}: incomplete or unexpected coverage "
-            f"({len(expected - set(indexed))} missing, {len(set(indexed) - expected)} unexpected)"
+            f"({missing} missing, {unexpected} unexpected)"
         )
     return indexed
 

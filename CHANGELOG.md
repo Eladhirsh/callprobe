@@ -2,9 +2,17 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Distinguish scored observations from unique scored tasks in run summaries.
+  JSON retains `n` and adds `unique_tasks_scored`; repeated/padded observations
+  and request errors cannot inflate the distinct-task count.
+
 - Add `callprobe doctor` for suite and endpoint setup diagnostics using model
   discovery and public server metadata only. No generation, downloads, retries,
   redirects, or output files; unavailable catalogs remain inconclusive warnings.
+
+- Validate CI gate coverage by membership and count without expanding planned
+  repeats into memory. Very large incomplete plans fail promptly, with accurate
+  missing/unexpected counts and unchanged complete-run gate behavior.
 
 - Validate a second serving backend with 154 live Qwen2.5 observations through
   llama.cpp, archived with full coverage, suite snapshots, and offline report
