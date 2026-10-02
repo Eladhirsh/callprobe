@@ -67,6 +67,35 @@ Want to help test? [Report your first-run experience](https://github.com/Eladhir
 which endpoint/model you used, whether the walkthrough worked, and one thing
 that confused you. You can also import your own [OpenAPI file](#bring-your-own-tools).
 
+### Check endpoint setup (unreleased 0.9.0rc3.dev0)
+
+With this development checkout installed, check your suite and endpoint before
+starting a benchmark:
+
+```bash
+callprobe doctor --model qwen2.5:7b --suite callprobe-demo
+callprobe doctor --model your-model --endpoint http://localhost:8080/v1 --format json
+```
+
+`doctor` validates the suite locally, then uses `GET /models` to check endpoint
+access and look for the exact model ID. It may also read public server metadata.
+It never generates tokens, downloads models, executes tools, follows redirects,
+or writes files. Authentication uses `--api-key`, `API_KEY`, or `OPENAI_API_KEY`,
+in that order; response bodies, endpoint URLs, and credentials are omitted from
+endpoint diagnostics. `--timeout` sets a positive HTTP operation timeout
+(default 5 seconds), not a total command deadline.
+
+A missing model or unsupported model-listing route is a warning: some providers
+accept aliases or restrict their catalogs. A catalog match verifies discovery,
+not tool-calling support or model quality. Run a small suite to test those.
+Exit codes are `0` for completed checks (possibly with warnings), `1` for endpoint
+failures, and `2` for invalid local input or suites. JSON includes `status`,
+individual `checks`, `model_listed`, and `generation_tested: false`.
+
+Pass the endpoint/model/suite explicitly; `doctor` does not load `--config`.
+Use `run --config FILE --dry-run` to validate experiment settings and preview
+coverage without endpoint access.
+
 ### Try the workflow offline (0.9.0rc1)
 
 With 0.9.0rc1 or later installed, try recorded results

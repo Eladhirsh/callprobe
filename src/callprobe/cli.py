@@ -25,6 +25,7 @@ from .compare import category_deltas, flipped_tasks, render_compare, render_comp
 from .contracts import compare_contracts, render_contracts
 from .contract_demo import generate_contract_demo
 from .demo import INSPECT_TASK, REGRESSED_TASKS, SUITE_DIRNAME, generate_demo_files
+from .doctor import check_endpoint, render_doctor, validate_endpoint
 from .examples import EXAMPLES, generate_example_suite, list_examples
 from .explain import explain_run, render_explain_text
 from .gates import evaluate_gate, load_policy, render_gate
@@ -653,6 +654,33 @@ def _leaderboard(args: argparse.Namespace) -> int:
     return 0
 
 
+def _doctor(args: argparse.Namespace) -> int:
+    # Validate local input before any endpoint access.
+    validate_endpoint(args.endpoint, args.timeout)
+    if not args.model.strip():
+        raise ValueError('model must not be blank')
+    suite, _ = _resolve_suite(args.suite)
+    problems = validate_suite(suite)
+    if not suite.tasks:
+        problems.append('suite contains no active tasks')
+    suite_check = {'name': 'suite', 'status': 'fail' if problems else 'pass',
+                   'message': '; '.join(problems) if problems else
+                   f'{len(suite.tasks)} tasks validated (suite hash {suite.hash}).'}
+    if problems:
+        report = {'checks': [suite_check], 'model_listed': None,
+                  'server': {'name': None, 'version': None}, 'generation_tested': False}
+        code = 2
+    else:
+        api_key = args.api_key or os.getenv('API_KEY') or os.getenv('OPENAI_API_KEY')
+        report = check_endpoint(args.endpoint, args.model, api_key=api_key, timeout=args.timeout)
+        report['checks'].insert(0, suite_check)
+        code = int(any(check['status'] == 'fail' for check in report['checks']))
+    report['status'] = ('fail' if code else 'warning' if any(
+        check['status'] == 'warning' for check in report['checks']) else 'pass')
+    print(json.dumps(report, indent=2) if args.format == 'json' else render_doctor(report))
+    return code
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="callprobe")
     parser.add_argument(
@@ -730,6 +758,15 @@ def main(argv: list[str] | None = None) -> int:
              "current pads/repeats/model settings (not the saved observations)",
     )
     run_cmd.set_defaults(func=_run)
+
+    doctor_cmd = sub.add_parser('doctor', help='check suite and endpoint setup without model generation')
+    doctor_cmd.add_argument('--model', required=True, help='exact model ID or alias to check in the catalog')
+    doctor_cmd.add_argument('--endpoint', default=RUN_DEFAULTS['endpoint'], help='OpenAI-compatible API base URL')
+    doctor_cmd.add_argument('--api-key', default=None, help='defaults to API_KEY, then OPENAI_API_KEY')
+    doctor_cmd.add_argument('--suite', default=DEFAULT_SUITE, help='suite directory, defaults to packaged core')
+    doctor_cmd.add_argument('--timeout', type=float, default=5.0, help='positive finite HTTP operation timeout in seconds')
+    doctor_cmd.add_argument('--format', choices=['text', 'json'], default='text')
+    doctor_cmd.set_defaults(func=_doctor)
 
     init_cmd = sub.add_parser(
         "init", help="scaffold a suite from an OpenAI-format tools.json, a local OpenAPI file, "
