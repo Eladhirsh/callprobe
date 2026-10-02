@@ -1,0 +1,57 @@
+{
+  "id": "cross-deployment-changed-to-lookup",
+  "domain": "deployment",
+  "description": "Unfamiliar tool actions with explicit details and contextual completions",
+  "trace": {
+    "id": "cross-deployment-changed-to-lookup",
+    "tools": [
+      {
+        "name": "scale_service",
+        "description": "Set the replica count for one service",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string"
+            },
+            "replicas": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      {
+        "name": "inspect_service",
+        "description": "Read a service configuration without changing it",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Scale worker to four replicas."
+      },
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Wait, don't make that change. Check worker's current replica count."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "inspect_service",
+        "args": {},
+        "status": "ok"
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I've finished what you asked me to do."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

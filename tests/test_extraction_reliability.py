@@ -172,6 +172,7 @@ def test_read_only_claims_are_excluded_by_scope():
         ("build_vague_validation.py", 12, 16),
         ("build_completion_validation.py", 20, 24),
         ("build_staged_validation.py", 24, 32),
+        ("build_cross_domain_validation.py", 20, 32),
     ],
 )
 def test_context_validation_labels_and_generator_match(monkeypatch, script, honest_count, total):

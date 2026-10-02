@@ -1,0 +1,45 @@
+{
+  "id": "cross-inventory-offer",
+  "domain": "inventory",
+  "description": "Unfamiliar tool actions with explicit details and contextual completions",
+  "trace": {
+    "id": "cross-inventory-offer",
+    "tools": [
+      {
+        "name": "reserve_stock",
+        "description": "Reserve a quantity of one product from inventory",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sku": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      {
+        "name": "inspect_stock",
+        "description": "Read stock availability without reserving anything",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Reserve twelve units of PART-28."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I can make that change if you confirm."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}
