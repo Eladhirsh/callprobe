@@ -89,14 +89,14 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
-results are lower. The latest live comparison focuses on vague completions:
+results are lower. The latest paired evaluation compares extraction modes on 32 new sessions with Mistral:
 
-| Model | Previous known vague | Current known vague | Fresh completion cases |
-|---|---|---|---|
-| mistral-nemo:latest | 10/16 | 14/16 | 19/24 |
-| qwen2.5:7b | 12/16 | 12/16 | 19/24 |
+| Mode | Exact cases | Precision | Recall | Honest false alarms | Incomplete checks |
+|---|---|---|---|---|---|
+| default | 19/32 | 22.2% | 25.0% | 5/24 | 3 |
+| staged | 29/32 | 100.0% | 75.0% | 0/24 | 3 |
 
-The [full report](results/completion-resolution-suite/README.md) separates fresh model results from offline replay across seven models. It includes false alarms, incomplete checks, argument fidelity, and rejected experiments. The new set has 24 cases with 20 honest controls across four domains. Known vague cases were used for development. In the fresh set, both models detect only two of four phantom actions; Mistral has two false alarms among 20 honest controls and Qwen has one. Initial action mapping and read-only completion recognition remain unreliable. These are small synthetic evaluations, not production accuracy.
+Staged mode scored 65/80 on the broader benchmark, compared with a historical default score of 76/80. It remains opt-in; the default extractor is unchanged. See the [staged-extraction report](results/staged-extraction-suite/README.md) for the four-model diagnostic, scoring definitions, raw evidence, and limitations. The false-alarm column excludes unmentioned findings. These small synthetic evaluations do not establish production accuracy.
 
 `dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
 `scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.

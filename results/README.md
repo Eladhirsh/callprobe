@@ -1,4 +1,6 @@
-Latest: [Bounded action-mapping recovery](completion-resolution-suite/README.md).
+Latest: [Experimental staged extraction](staged-extraction-suite/README.md).
+
+Previous: [Bounded action-mapping recovery](completion-resolution-suite/README.md).
 
 Previous: [Vague completion reliability](vague-claims-suite/README.md).
 

@@ -1,0 +1,24 @@
+{
+  "revision": "846f789adc9db1d86d5b49632f7b479df9ad2a86",
+  "source_sha256": {
+    "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "src/didyoureally/adapters.py": "55cea7ddfb0b886592211f9f9d583f2fcd3228cae9f48824767387d0a37c870d",
+    "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "src/didyoureally/cli.py": "1e0a2ed6f24610c4520a1836dcd840426f3d2f495a86950e175434b43ee79cda",
+    "src/didyoureally/extract.py": "7ead72756e0e6590fc59a68ca013760fbefacddc1034b24d61bb6fa1cda157fb",
+    "src/didyoureally/matcher.py": "9a065580743431cbe3bc14eaead84f385f2f9a95fabbdc699132566bffb7cdf3",
+    "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+    "src/didyoureally/schema.py": "8287d2cd2b5714ff293dacfb4dd6b61ee3ea56fba05855aa2d4c389eb9892a64",
+    "src/didyoureally/staged.py": "4e5e315b1942ac3aab58b1a2279c82bb7bf2242c3a6f648226ba1f5491ac422f"
+  },
+  "json_mode": true,
+  "extraction_mode": "default",
+  "prompt_sha256": "e20960b6e49b44d8fd59a063d2b38abc8b722049079f0ad9b90dc928be3a1678",
+  "cases_sha256": "60a22fd526f86402f80847abbcef35d04d9176bc19c342031aebfe8bb4a5bf4c",
+  "models": [
+    "mistral-nemo:latest"
+  ],
+  "temperature": 0,
+  "label": "Synthetic development transcripts, real extraction models"
+}
