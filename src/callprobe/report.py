@@ -196,11 +196,30 @@ def _coverage(run: Run) -> str:
     """
     scored = sum(1 for r in run.results if r.error is None)
     cfg = run.config
-    task_ids = cfg.selected_task_ids if cfg.selected_task_ids is not None else cfg.task_ids
+    invalid = f"{scored}/{len(run.results)}/? (invalid planned coverage)"
+
+    # Known full plans are validated even for targeted runs: a duplicate task
+    # id or pad would silently shrink the planned Cartesian product and let a
+    # broken plan report as complete.
+    if cfg.task_ids is not None and len(set(cfg.task_ids)) != len(cfg.task_ids):
+        return invalid
+    if cfg.pads and len(set(cfg.pads)) != len(cfg.pads):
+        return invalid
+
+    selected = cfg.selected_task_ids
+    if selected is not None:
+        if not selected or len(set(selected)) != len(selected):
+            return invalid
+        if cfg.task_ids is not None and not set(selected).issubset(cfg.task_ids):
+            return invalid
+        task_ids = selected
+    else:
+        task_ids = cfg.task_ids
+
     if not task_ids:
         return f"{scored}/{len(run.results)}/? (planned unknown)"
     if not cfg.pads or cfg.repeats < 1 or any(p < 0 for p in cfg.pads):
-        return f"{scored}/{len(run.results)}/? (invalid planned coverage)"
+        return invalid
     tasks, pads = set(task_ids), set(cfg.pads)
     planned = len(tasks) * len(pads) * cfg.repeats
     seen = [(r.task_id, r.pad, r.repeat) for r in run.results]

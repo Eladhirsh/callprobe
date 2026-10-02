@@ -1045,8 +1045,10 @@ These formats use recorded score fields and omit endpoint URLs, raw responses,
 arguments, notes, and server error messages. They report scored observations,
 distinct scored tasks, request errors, truncations, and
 `scored/recorded/planned` coverage. Missing/duplicate/unexpected records are
-marked; old runs without a recorded plan say coverage is unknown. Targeted
-runs remain labeled as debug runs. JSON uses `null` for undefined cost per
+marked; old runs without a recorded plan say coverage is unknown. Malformed
+plans, including duplicate tasks/pads or invalid targeted selections, say
+`invalid planned coverage` instead of appearing complete. Targeted runs remain
+labeled as debug runs. JSON uses `null` for undefined cost per
 success instead of nonstandard `Infinity`.
 
 This is informational reporting, not a CI gate or a fresh evaluation. Export

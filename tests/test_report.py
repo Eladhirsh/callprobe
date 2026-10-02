@@ -291,6 +291,118 @@ def test_all_error_results_have_no_unique_scored_tasks():
     assert summary['n'] == summary['unique_tasks_scored'] == 0
 
 
+def test_leaderboard_duplicate_task_ids_mark_plan_invalid():
+    # Deduplicating silently would make the planned Cartesian product shrink
+    # and let a broken suite config report as complete.
+    config = _config(task_ids=["t1", "t1"], pads=[0], repeats=1)
+    run = Run(config=config, started_at="now", results=[_result()])
+    cell = _cells(render_markdown([run]))[-3]
+    assert cell == "1/1/? (invalid planned coverage)"
+
+
+def test_leaderboard_duplicate_task_ids_invalid_even_for_targeted_run():
+    # The known full plan is still validated when a targeted selection runs
+    # against it; the selection cannot paper over a broken suite config.
+    config = _config(task_ids=["t1", "t1"], selected_task_ids=["t1"], pads=[0], repeats=1)
+    run = Run(config=config, started_at="now", results=[_result()])
+    assert "1/1/? (invalid planned coverage)" in render_text(run)
+
+
+def test_leaderboard_duplicate_selected_task_ids_mark_plan_invalid():
+    config = _config(task_ids=["t1", "t2"], selected_task_ids=["t1", "t1"],
+                     pads=[0], repeats=1)
+    run = Run(config=config, started_at="now", results=[_result()])
+    cell = _cells(render_markdown([run]))[-3]
+    assert cell == "1/1/? (invalid planned coverage)"
+
+
+def test_leaderboard_duplicate_pads_mark_plan_invalid():
+    config = _config(task_ids=["t1"], pads=[0, 0], repeats=1)
+    run = Run(config=config, started_at="now", results=[_result()])
+    cell = _cells(render_markdown([run]))[-3]
+    assert cell == "1/1/? (invalid planned coverage)"
+
+
+def test_leaderboard_empty_selected_task_ids_marks_plan_invalid():
+    # An empty explicit selection is a declared targeted run with no plan,
+    # not a legacy run with an absent field; it must not fall back to the
+    # full suite or report as complete.
+    config = _config(task_ids=["t1"], selected_task_ids=[], pads=[0], repeats=1)
+    run = Run(config=config, started_at="now", results=[_result()])
+    cell = _cells(render_markdown([run]))[-3]
+    assert cell == "1/1/? (invalid planned coverage)"
+
+
+def test_leaderboard_selection_outside_full_task_list_marks_plan_invalid():
+    config = _config(task_ids=["t1", "t2"], selected_task_ids=["t1", "zz"],
+                     pads=[0], repeats=1)
+    run = Run(config=config, started_at="now",
+              results=[_result(), _result(task_id="zz")])
+    cell = _cells(render_markdown([run]))[-3]
+    assert cell == "2/2/? (invalid planned coverage)"
+
+
+def test_leaderboard_invalid_pads_or_repeats_still_flag_plan_invalid():
+    # Existing diagnostic — preserved alongside the new ones.
+    run = Run(config=_config(task_ids=["t1"], pads=[-1], repeats=1),
+              started_at="now", results=[_result()])
+    assert "1/1/? (invalid planned coverage)" in render_text(run)
+    run = Run(config=_config(task_ids=["t1"], pads=[0], repeats=0),
+              started_at="now", results=[_result()])
+    assert "1/1/? (invalid planned coverage)" in render_text(run)
+
+
+def test_summarize_targeted_run_without_full_task_list_computes_plan():
+    # The full task list may be absent in imported or trimmed records; a
+    # self-contained targeted selection is still a valid plan on its own.
+    config = _config(selected_task_ids=["t1", "t2"], pads=[0], repeats=1)
+    results = [_result(task_id="t1"), _result(task_id="t2")]
+    run = Run(config=config, started_at="now", results=results)
+    s = summarize(run)
+    assert s["coverage"] == "2/2/2"
+    assert s["scope"] == {"targeted": True, "selected_task_count": 2,
+                          "total_task_count": 0}
+
+
+def test_summarize_targeted_run_preserves_valid_coverage_metrics():
+    # A valid targeted run with the full suite also recorded still reports a
+    # complete plan against the selection, not the whole suite.
+    config = _config(task_ids=["t1", "t2", "t3"], selected_task_ids=["t1", "t2"],
+                     pads=[0, 4], repeats=1)
+    results = [_result(task_id=t, pad=p) for t in ("t1", "t2") for p in (0, 4)]
+    s = summarize(Run(config=config, started_at="now", results=results))
+    assert s["coverage"] == "4/4/4"
+    assert s["overall"]["success"] == 1.0
+
+
+def test_coverage_renderers_do_not_mutate_run():
+    # The report pipeline is read-only — summaries and renders must not
+    # rewrite the Run that callers still hold.
+    config = _config(task_ids=["t1", "t2"], selected_task_ids=["t1"],
+                     pads=[0, 4], repeats=2)
+    run = Run(config=config, started_at="now", results=[
+        _result(task_id="t1", pad=0, repeat=0),
+        _result(task_id="t1", pad=4, repeat=1, success=False, truncated=True),
+    ])
+    original = run.model_dump()
+    summarize(run)
+    render_text(run)
+    render_markdown([run])
+    assert run.model_dump() == original
+
+
+def test_coverage_invalid_plan_leaves_other_summary_fields_untouched():
+    # Rejecting the planned coverage must not disturb any scored field.
+    config = _config(task_ids=["t1", "t1"], pads=[0], repeats=1)
+    results = [_result(task_id="t1", success=True),
+               _result(task_id="t1", success=False, truncated=True)]
+    s = summarize(Run(config=config, started_at="now", results=results))
+    assert s["coverage"] == "2/2/? (invalid planned coverage)"
+    assert s["n"] == 2
+    assert s["overall"]["success"] == 0.5
+    assert s["truncated"] == 1
+
+
 def test_archived_live_repeats_count_observations_and_tasks_separately():
     from pathlib import Path
     root = Path(__file__).resolve().parents[1] / 'results/2026-10-02-llamacpp-validation/evidence'
