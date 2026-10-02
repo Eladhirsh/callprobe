@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add offline `report --format text|json` summaries for saved runs, preserving
+  the JUnit default and source/output protections. Summary exports omit endpoint
+  URLs and raw evidence; run summaries now show scored/recorded/planned coverage.
+
 - Speed up confidence intervals for repeated runs by accumulating per-task
   counts before bootstrap sampling. Task-level resampling, fixed seeds, and
   interval values remain identical to the prior row-pooling calculation.
