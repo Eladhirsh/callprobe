@@ -1,0 +1,23 @@
+{
+  "openapi_version": "3.0.3",
+  "operations": [
+    {
+      "tool": "get_order",
+      "method": "GET",
+      "path": "/orders/{order_id}"
+    },
+    {
+      "tool": "search_orders",
+      "method": "GET",
+      "path": "/orders"
+    },
+    {
+      "tool": "issue_refund",
+      "method": "POST",
+      "path": "/orders/{order_id}/refunds"
+    }
+  ],
+  "skipped": [],
+  "filtered_operations": 0,
+  "warnings": []
+}

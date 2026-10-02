@@ -89,7 +89,7 @@ class ScriptedServer:
 
     def __init__(self, tasks: list[dict]):
         self.tasks = {message_key(t["messages"]): t for t in tasks}
-        self.accepted = self.rejected = 0
+        self.accepted = self.rejected = self.discovery_requests = 0
         self.lock = threading.Lock()
         outer = self
 
@@ -108,6 +108,10 @@ class ScriptedServer:
                 self.wfile.write(data)
 
             def do_GET(self):  # e.g. the CLI's /api/version probe
+                with outer.lock:
+                    outer.discovery_requests += 1
+                if self.path == '/v1/models':
+                    return self._send(200, {'data': [{'id': model} for model in MODELS]})
                 self._send(404, {"error": "not found"})
 
             def do_POST(self):
@@ -226,7 +230,7 @@ class Agent:
         got = [(r["task_id"], r["pad"], r["repeat"]) for r in results]
         self.check(f"{label}: coverage is exactly {len(want)} observations",
                    len(got) == len(set(got)) == len(want) and set(got) == want, f"{len(got)} rows")
-        errors = [r for r in results if r["error"]]
+        errors = [r for r in results if r["error"] is not None]
         self.check(f"{label}: no request errors", not errors, f"{len(errors)} errors")
         return results
 
@@ -259,7 +263,16 @@ class Agent:
             plan = json.loads(out)
             self.check("dry-run plans 162 requests", plan["total_requests"] == OBSERVATIONS
                        and plan["dry_run"] is True, str(plan.get("total_requests")))
-            self.check("dry-run made no requests", server.accepted == server.rejected == 0)
+            self.check("dry-run made no requests", server.accepted == server.rejected == server.discovery_requests == 0)
+
+            out, _ = self.step('doctor', ['doctor', '--model', 'synthetic-baseline',
+                                         '--endpoint', endpoint, '--suite', 'suite', '--format', 'json'])
+            setup = json.loads(out)
+            self.check('doctor confirms catalog discovery without claiming generation',
+                       setup['status'] == 'pass' and setup['model_listed'] is True
+                       and setup['generation_tested'] is False)
+            self.check('doctor made discovery requests but no completions',
+                       server.discovery_requests > 0 and server.accepted == server.rejected == 0)
 
             self.step("run-baseline", self.run_args("synthetic-baseline", endpoint,
                                                     "--out", "baseline.json"), timeout=RUN_TIMEOUT)

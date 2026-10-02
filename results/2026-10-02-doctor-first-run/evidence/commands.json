@@ -1,0 +1,151 @@
+[
+  {
+    "name": "version",
+    "args": [
+      "--version"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "init",
+    "args": [
+      "init",
+      "--example",
+      "support",
+      "--out",
+      "support"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "validate",
+    "args": [
+      "validate",
+      "--suite",
+      "support"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "doctor",
+    "args": [
+      "doctor",
+      "--suite",
+      "support",
+      "--model",
+      "qwen2.5:7b",
+      "--endpoint",
+      "http://127.0.0.1:11434/v1",
+      "--format",
+      "json"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "missing-model",
+    "args": [
+      "doctor",
+      "--model",
+      "callprobe-deliberately-absent-model",
+      "--endpoint",
+      "http://127.0.0.1:11434/v1",
+      "--format",
+      "json"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "unsafe-url",
+    "args": [
+      "doctor",
+      "--model",
+      "qwen2.5:7b",
+      "--endpoint",
+      "http://redacted:do-not-echo@localhost:11434/v1"
+    ],
+    "returncode": 2
+  },
+  {
+    "name": "dry-run",
+    "args": [
+      "run",
+      "--suite",
+      "support",
+      "--model",
+      "qwen2.5:7b",
+      "--endpoint",
+      "http://127.0.0.1:11434/v1",
+      "--pad",
+      "0",
+      "--repeats",
+      "1",
+      "--max-tokens",
+      "4096",
+      "--retries",
+      "0",
+      "--request-timeout",
+      "180",
+      "--dry-run",
+      "--format",
+      "json"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "run",
+    "args": [
+      "run",
+      "--suite",
+      "support",
+      "--model",
+      "qwen2.5:7b",
+      "--endpoint",
+      "http://127.0.0.1:11434/v1",
+      "--pad",
+      "0",
+      "--repeats",
+      "1",
+      "--max-tokens",
+      "4096",
+      "--retries",
+      "0",
+      "--request-timeout",
+      "180",
+      "--out",
+      "baseline.json"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "explain",
+    "args": [
+      "explain",
+      "baseline.json",
+      "--suite",
+      "support",
+      "--format",
+      "json"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "junit",
+    "args": [
+      "report",
+      "baseline.json",
+      "--out",
+      "results.xml"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "self-compare",
+    "args": [
+      "compare",
+      "baseline.json",
+      "baseline.json",
+      "--fail-on-regression"
+    ],
+    "returncode": 0
+  }
+]

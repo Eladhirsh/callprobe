@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add `callprobe doctor` for suite and endpoint setup diagnostics using model
+  discovery and public server metadata only. No generation, downloads, retries,
+  redirects, or output files; unavailable catalogs remain inconclusive warnings.
+
 - Validate a second serving backend with 154 live Qwen2.5 observations through
   llama.cpp, archived with full coverage, suite snapshots, and offline report
   checks. Both cross-backend regression gates detect case regressions despite

@@ -1,0 +1,18 @@
+qwen2.5:7b  ->  qwen2.5:7b
+server: ollama -> ollama
+server version: 0.34.2 -> 0.34.2
+scored observations: 6 -> 6
+request errors: 0 -> 0
+
+category    success a  success b    delta    lenient a  lenient b    delta
+abstain         66.7%      66.7%    +0.0%        66.7%      66.7%    +0.0%
+args             0.0%       0.0%    +0.0%         0.0%       0.0%    +0.0%
+select           0.0%       0.0%    +0.0%         0.0%       0.0%    +0.0%
+
+pass -> fail (0):
+  none
+
+fail -> pass (0):
+  none
+
+CI gate: PASS
