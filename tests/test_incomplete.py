@@ -373,7 +373,7 @@ def test_lost_context_mapping_gets_one_bounded_recovery(recovered):
 
     def transport(url, headers, body):
         calls.append(json.loads(json.dumps(body)))
-        claims = []
+        claims = [{"completed": True, "tool": None, "args": {}}]
         if len(calls) == 1:
             claims = [{"completed": True, "tool": "send_email", "args": {"to": "private@example.com"}}]
         elif len(calls) == 3 and recovered:
@@ -404,3 +404,28 @@ def test_initial_empty_extraction_does_not_trigger_mapping_recovery():
 
     assert LLMExtractor(transport=transport).extract(trace()) == []
     assert len(calls) == 1
+
+
+def test_empty_source_repair_can_correct_an_acknowledgment_without_recovery():
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "send_email"}],
+            "events": [
+                {"type": "message", "role": "user", "content": "Email private@example.com."},
+                {"type": "message", "role": "assistant", "content": "Let me handle that."},
+            ],
+        }
+    )
+    calls = []
+
+    def transport(url, headers, body):
+        calls.append(body)
+        claims = (
+            [{"completed": True, "tool": "send_email", "args": {"to": "private@example.com"}}]
+            if len(calls) == 1
+            else []
+        )
+        return {"choices": [{"message": {"content": json.dumps({"claims": claims})}}]}
+
+    assert LLMExtractor(transport=transport).extract(t) == []
+    assert len(calls) == 2

@@ -40,7 +40,7 @@ def test_replay_stops_before_consuming_later_message_reply_for_recovery(replay_m
         json.dumps(
             {"claims": [{"completed": True, "tool": "send_email", "args": {"to": "private@example.com"}}]}
         ),
-        '{"claims": []}',
+        '{"claims": [{"completed": true, "tool": null, "args": {}}]}',
         "must not consume",
     ]
     saved = {"model": "model", "raw_responses": replies, "responses": [{}] * 3}

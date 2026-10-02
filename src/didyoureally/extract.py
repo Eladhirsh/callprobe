@@ -585,10 +585,15 @@ class LLMExtractor:
                             }
                         )
                     continue
-                if mapped_tools and not source_anchors and not mapped_tools <= {c.tool for c in extracted}:
+                if (
+                    mapped_tools
+                    and not source_anchors
+                    and any(c.tool is None for c in extracted)
+                    and not mapped_tools <= {c.tool for c in extracted}
+                ):
                     if attempt == 1:
-                        # Recover only a mapping lost by source repair. Initial empty
-                        # extractions and successful repairs keep their existing behavior.
+                        # Recover only a still-asserted completion whose tool became unknown.
+                        # An empty repair may correctly reclassify a plan or acknowledgment.
                         body["messages"][0]["content"] = SOURCE_REPAIR_PROMPT
                         continue
                     raise ExtractionError(message.index, "lost_action_mapping")
