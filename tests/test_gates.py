@@ -176,3 +176,59 @@ def test_cli_gate_json_exit_codes_and_legacy_readability(tmp_path, capsys):
     assert cli.main(["compare", str(a), str(b), "--fail-on-regression"]) == 2
     assert "scoring_version" in capsys.readouterr().err
     assert cli.main(["compare", str(a), str(b)]) == 0
+
+
+def test_huge_incomplete_plan_is_rejected_without_expanding_repeats(monkeypatch):
+    from callprobe import gates
+
+    def no_expansion(*args):
+        pytest.fail('coverage validation expanded the planned repeat range')
+
+    monkeypatch.setattr(gates, 'range', no_expansion, raising=False)
+    a, b = make_run(), make_run()
+    a.config.repeats = 10**12
+    with pytest.raises(ValueError, match='1999999999998 missing, 0 unexpected'):
+        evaluate_gate(a, b, GatePolicy())
+
+
+@pytest.mark.parametrize('field,value', [('task_id', 'unknown'), ('pad', 8), ('repeat', 1),
+                                          ('repeat', -1), ('repeat', True), ('pad', False)])
+def test_matching_row_count_cannot_hide_out_of_plan_observations(field, value):
+    a, b = make_run(), make_run()
+    setattr(b.results[0], field, value)
+    with pytest.raises(ValueError, match='1 missing, 1 unexpected'):
+        evaluate_gate(a, b, GatePolicy())
+
+
+@pytest.mark.parametrize('field,value', [('repeats', True), ('repeats', 1.0),
+                                         ('repeats', 0), ('pads', [False]), ('pads', [0.0])])
+def test_malformed_in_memory_plan_rejected(field, value):
+    a, b = make_run(), make_run()
+    setattr(b.config, field, value)
+    with pytest.raises(ValueError, match='invalid planned coverage'):
+        evaluate_gate(a, b, GatePolicy())
+
+
+def test_gate_accepts_complete_multi_pad_repeat_coverage_in_any_order():
+    a = make_run()
+    a.config.pads = [0, 2]
+    a.config.repeats = 3
+    a.results = [row.model_copy(update={'pad': pad, 'repeat': repeat})
+                 for row in a.results for pad in a.config.pads for repeat in range(3)]
+    b = a.model_copy(deep=True)
+    b.results.reverse()
+    gate = evaluate_gate(a, b, GatePolicy())
+    assert gate['passed'] and gate['matched_cases'] == 12
+
+
+def test_cli_rejects_huge_partial_file_without_rewriting_inputs(tmp_path, capsys):
+    a = make_run()
+    a.config.repeats = 10**12
+    source = tmp_path / 'partial.json'
+    source.write_text(a.model_dump_json())
+    original = source.read_bytes()
+    assert cli.main(['compare', str(source), str(source), '--fail-on-regression']) == 2
+    output = capsys.readouterr()
+    assert '1999999999998 missing, 0 unexpected' in output.err
+    assert not output.out
+    assert source.read_bytes() == original
