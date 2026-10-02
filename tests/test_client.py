@@ -143,3 +143,54 @@ def test_version_probe_does_not_record_malformed_metadata(monkeypatch, version):
                         httpx.Response(200, json={"version": version},
                                        request=httpx.Request("GET", "http://fake/api/version")))
     assert probe_server_version("http://fake/v1") == (None, None)
+
+
+def test_version_probe_prefers_ollama_and_stops(monkeypatch):
+    from callprobe.client import probe_server_version
+    urls = []
+    def get(url, **kwargs):
+        urls.append(url)
+        return httpx.Response(200, json={'version': '0.34.2'}, request=httpx.Request('GET', url))
+    monkeypatch.setattr('callprobe.client.httpx.get', get)
+    assert probe_server_version('http://localhost:11434/v1') == ('ollama', '0.34.2')
+    assert urls == ['http://localhost:11434/api/version']
+
+
+def test_version_probe_recognizes_llama_cpp_properties(monkeypatch):
+    from callprobe.client import probe_server_version
+    urls = []
+    def get(url, **kwargs):
+        urls.append(url)
+        assert kwargs['timeout'] == 0.25
+        body = {'build_info': 'b11339-81e39ad34', 'default_generation_settings': {},
+                'chat_template': '{{ messages }}', 'total_slots': 1,
+                'model_path': '/private/model.gguf'}
+        return httpx.Response(404 if url.endswith('/api/version') else 200,
+                              json=body, request=httpx.Request('GET', url))
+    monkeypatch.setattr('callprobe.client.httpx.get', get)
+    assert probe_server_version('http://localhost:18080/v1', timeout=0.25) == ('llama.cpp', 'b11339-81e39ad34')
+    assert urls == ['http://localhost:18080/api/version', 'http://localhost:18080/props']
+
+
+@pytest.mark.parametrize('change', [
+    {'build_info': 'an arbitrary server'}, {'build_info': None}, {'build_info': 42},
+    {'default_generation_settings': []}, {'chat_template': None},
+    {'total_slots': True}, {'total_slots': 0}, {'total_slots': '1'},
+])
+def test_version_probe_does_not_guess_from_invalid_llama_properties(monkeypatch, change):
+    from callprobe.client import probe_server_version
+    props = {'build_info': 'b11339-81e39ad34', 'default_generation_settings': {},
+             'chat_template': '{{ messages }}', 'total_slots': 1, **change}
+    def get(url, **kwargs):
+        return httpx.Response(200, json={} if url.endswith('/api/version') else props,
+                              request=httpx.Request('GET', url))
+    monkeypatch.setattr('callprobe.client.httpx.get', get)
+    assert probe_server_version('http://fake/v1') == (None, None)
+
+
+def test_version_probe_unavailable_metadata_is_nonfatal(monkeypatch):
+    from callprobe.client import probe_server_version
+    def get(url, **kwargs):
+        raise httpx.ReadTimeout('metadata unavailable')
+    monkeypatch.setattr('callprobe.client.httpx.get', get)
+    assert probe_server_version('http://fake/v1') == (None, None)

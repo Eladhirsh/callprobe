@@ -1,0 +1,772 @@
+{
+  "suite": {
+    "name": "mail-suite",
+    "version": 1,
+    "hash": "2e82c882d93ca06a"
+  },
+  "run": {
+    "model": "qwen2.5:7b",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/mail-suite",
+    "started_at": "2026-10-02T05:08:56.691035+00:00",
+    "finished_at": "2026-10-02T05:10:58.245986+00:00"
+  },
+  "task_filter": null,
+  "total_cases": 54,
+  "scored_cases": 54,
+  "request_errors": 0,
+  "failed_cases": 12,
+  "diagnostic_counts": {
+    "unexpected_call": 6,
+    "argument_value": 6
+  },
+  "argument_shape_summary": {
+    "affected_observations": 0,
+    "unique_tasks": 0,
+    "by_kind": {}
+  },
+  "cases": [
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Forward msg-1042 to sam.lee@example.invalid."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called get_message when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "cSW0NhVwi3Msij3dgAvYnuPJjEO5sOda",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Send a reply to msg-3001 with exactly this text between the brackets: [Please send the \"final\" draft by 5:00 p.m.; thanks!]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3001"
+          },
+          "body": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \"final\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "FetT0VUH6tNDHxrd83HSq5F6DyobY44W",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3001"
+            },
+            "body": {
+              "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+              "mode": "send"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-3001\"}, \"body\": {\"text\": \"[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]\", \"mode\": \"send\"}}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3001"
+          },
+          "actual": {
+            "message_id": "msg-3001"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "actual": {
+            "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+            "mode": "send"
+          },
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \"final\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}"
+        }
+      ]
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3002"
+          },
+          "body": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got {'text': 'Hi Sam,\\nAgenda: budget & hiring (50% done) [v2] \u2014 caf\u00e9 at 9.', 'mode': 'draft'}"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "PZaJNUQhAAIVcid1mgH1k0plmWyYafpD",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3002"
+            },
+            "body": {
+              "text": "Hi Sam,\nAgenda: budget & hiring (50% done) [v2] \u2014 caf\u00e9 at 9.",
+              "mode": "draft"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-3002\"}, \"body\": {\"text\": \"Hi Sam,\\nAgenda: budget & hiring (50% done) [v2] \u2014 caf\u00e9 at 9.\", \"mode\": \"draft\"}}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3002"
+          },
+          "actual": {
+            "message_id": "msg-3002"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          },
+          "actual": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) [v2] \u2014 caf\u00e9 at 9.",
+            "mode": "draft"
+          },
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got {'text': 'Hi Sam,\\nAgenda: budget & hiring (50% done) [v2] \u2014 caf\u00e9 at 9.', 'mode': 'draft'}"
+        }
+      ]
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Delete message msg-1042 permanently."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called get_message when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "O4IV4qtPWgmfkFpJnVIl1MmG4pP3Q20T",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Forward msg-1042 to sam.lee@example.invalid."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called send_reply when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "WUHxfgccW9XKxQjwc3WJsxsB4dQh8GaV",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            },
+            "body": {
+              "text": "Forwarded from you: \n\nPlease find the original message below.\n\n---\n",
+              "mode": "draft"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-1042\"}, \"body\": {\"text\": \"Forwarded from you: \\n\\nPlease find the original message below.\\n\\n---\\n\", \"mode\": \"draft\"}}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Send a reply to msg-3001 with exactly this text between the brackets: [Please send the \"final\" draft by 5:00 p.m.; thanks!]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3001"
+          },
+          "body": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \\\\\"final\\\\\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "8JurdjXEjeL1ArFRyrbfoB5VsdCInsM1",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3001"
+            },
+            "body": {
+              "text": "[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]",
+              "mode": "send"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-3001\"}, \"body\": {\"text\": \"[Please send the \\\\\\\"final\\\\\\\" draft by 5:00 p.m.; thanks!]\", \"mode\": \"send\"}}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3001"
+          },
+          "actual": {
+            "message_id": "msg-3001"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "actual": {
+            "text": "[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]",
+            "mode": "send"
+          },
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \\\\\"final\\\\\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}"
+        }
+      ]
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "pad": 2,
+      "repeat": 0,
+      "prompts": [
+        "Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3002"
+          },
+          "body": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got {'text': \"[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]\", 'mode': 'draft'}"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "Dn84yBPLgt8EagJXO5vaEc9dIwUdxV57",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3002"
+            },
+            "body": {
+              "text": "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]",
+              "mode": "draft"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-3002\"}, \"body\": {\"text\": \"[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]\", \"mode\": \"draft\"}}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3002"
+          },
+          "actual": {
+            "message_id": "msg-3002"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          },
+          "actual": {
+            "text": "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]",
+            "mode": "draft"
+          },
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got {'text': \"[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]\", 'mode': 'draft'}"
+        }
+      ]
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "pad": 4,
+      "repeat": 0,
+      "prompts": [
+        "Search my mail."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "search_messages",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called search_messages when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "NzIpbjXhkfvoQgFk8LrdXqeMUVsFxg0a",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "q": "from:dana.rivera@example.invalid",
+              "folder": "inbox"
+            }
+          },
+          "raw_arguments": "{\"query\": {\"q\": \"from:dana.rivera@example.invalid\", \"folder\": \"inbox\"}}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "pad": 4,
+      "repeat": 0,
+      "prompts": [
+        "Delete message msg-1042 permanently."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called get_message when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "orK9b18LJ9WCqtssSCeCZF8ODbe2QTBm",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "pad": 4,
+      "repeat": 0,
+      "prompts": [
+        "Forward msg-1042 to sam.lee@example.invalid."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "get_message",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called get_message when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "MXXLTUwiO0YlPkhl1Pqz79Jvqh8Dva9P",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "pad": 4,
+      "repeat": 0,
+      "prompts": [
+        "Send a reply to msg-3001 with exactly this text between the brackets: [Please send the \"final\" draft by 5:00 p.m.; thanks!]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3001"
+          },
+          "body": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \"final\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "r0A2AFd0XfumFzzzwuGDsKQylkdwWwTJ",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3001"
+            },
+            "body": {
+              "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+              "mode": "send"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-3001\"}, \"body\": {\"text\": \"[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]\", \"mode\": \"send\"}}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3001"
+          },
+          "actual": {
+            "message_id": "msg-3001"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "actual": {
+            "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]",
+            "mode": "send"
+          },
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'text': '[Please send the \"final\" draft by 5:00 p.m.; thanks!]', 'mode': 'send'}"
+        }
+      ]
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "pad": 4,
+      "repeat": 0,
+      "prompts": [
+        "Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "send_reply",
+        "also_acceptable": [],
+        "args": {
+          "path": {
+            "message_id": "msg-3002"
+          },
+          "body": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          }
+        },
+        "arg_checks": []
+      },
+      "called": "send_reply",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got {'text': \"[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]\", 'mode': 'draft'}"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "28jesbl8JM6WXPdWcKpQRbGNhPLShczr",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3002"
+            },
+            "body": {
+              "text": "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]",
+              "mode": "draft"
+            }
+          },
+          "raw_arguments": "{\"path\": {\"message_id\": \"msg-3002\"}, \"body\": {\"text\": \"[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]\", \"mode\": \"draft\"}}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "path",
+          "op": "eq",
+          "expected": {
+            "message_id": "msg-3002"
+          },
+          "actual": {
+            "message_id": "msg-3002"
+          },
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}"
+        },
+        {
+          "path": "body",
+          "op": "eq",
+          "expected": {
+            "text": "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.",
+            "mode": "send"
+          },
+          "actual": {
+            "text": "[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]",
+            "mode": "draft"
+          },
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.\", 'mode': 'send'}, got {'text': \"[Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' \u2014 caf\u00e9 at 9.]\", 'mode': 'draft'}"
+        }
+      ]
+    }
+  ]
+}

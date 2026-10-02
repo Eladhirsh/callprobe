@@ -1,0 +1,4 @@
+planned requests: 54 across 1 model(s)
+01: running qwen2.5:7b
+01: ok
+Small-sample results: this leaderboard does not establish a robust model ranking. Scores are as the CLI reported them, with no repair.

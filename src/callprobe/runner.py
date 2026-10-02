@@ -172,7 +172,7 @@ def run_suite(
     resumed: dict[tuple[str, int, int], TaskResult] = {}
     if resume is not None:
         # Request errors are not completed observations; retry them on resume.
-        resumed = {(r.task_id, r.pad, r.repeat): r for r in resume.results if not r.error}
+        resumed = {(r.task_id, r.pad, r.repeat): r for r in resume.results if r.error is None}
 
     results: list[TaskResult | None] = [None] * len(items)
 

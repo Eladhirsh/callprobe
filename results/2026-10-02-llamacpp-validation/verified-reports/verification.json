@@ -1,0 +1,39 @@
+{
+  "verified": true,
+  "raw_sha256": {
+    "2026-10-02-llamacpp-validation/evidence/core/01-result.json": "337f831195cc528bf3cd473c9e491cea3723e1e77ada0fa6b0ac5d0d2bc803e2",
+    "2026-10-02-llamacpp-validation/evidence/mail/01-result.json": "2e44be90f23a7abab958722d142d423d85b8c0c7f61a72f45ae4e5247ef8cbf0",
+    "2026-10-01-rc3-model-validation/evidence/core/01-result.json": "015bd4c26c9feff38bc2f96985b8163cabf4fc97bcd921e2bd5437d648d2ec87",
+    "2026-10-01-rc3-model-validation/evidence/mail/01-result.json": "0c3ce5395f8d66ccc2cd671f5dfce0a7878150a247329268adbf0a4d6441e035"
+  },
+  "suites": {
+    "core": {
+      "observations": 100,
+      "passes": 82,
+      "request_errors": 0,
+      "truncated": 0,
+      "passes_by_pad": {
+        "0": 82
+      },
+      "mixed_repeat_groups": 4,
+      "baseline_passes": 79,
+      "regressed_observations": 6,
+      "success_delta": 0.03
+    },
+    "mail": {
+      "observations": 54,
+      "passes": 42,
+      "request_errors": 0,
+      "truncated": 0,
+      "passes_by_pad": {
+        "0": 15,
+        "2": 14,
+        "4": 13
+      },
+      "mixed_repeat_groups": 0,
+      "baseline_passes": 18,
+      "regressed_observations": 1,
+      "success_delta": 0.4444444444444444
+    }
+  }
+}

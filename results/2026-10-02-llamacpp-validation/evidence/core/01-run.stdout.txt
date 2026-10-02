@@ -1,0 +1,39 @@
+model            qwen2.5:7b
+endpoint         http://127.0.0.1:18080/v1
+tasks scored     100
+
+                 selection   schema     args      success
+  overall         94.0%   97.0%   86.0%   82.0%   (95% CI 72.0-91.0%)
+  type-lenient    94.0%   97.0%   86.0%   82.0%
+
+  tool count sweep
+    +0   distractors   success  82.0%   selection  94.0%   sd  0.0
+
+  by category
+    abstain     90.9%  (n=22, 95% CI 77.3-100.0%)
+    args        75.0%  (n=24, 95% CI 50.0-100.0%)
+    depth       81.8%  (n=22, 95% CI 63.6-100.0%)
+    select     100.0%  (n=12, 95% CI 100.0-100.0%)
+    sequence    70.0%  (n=20, 95% CI 40.0-100.0%)
+
+  cost per success   1024 tokens   2.72 s
+
+failures worth reading:
+  [args-partial-refund pad=0] amount_cents eq 4225, got 425
+  [args-relative-dates pad=0] start_date matches '2026-09-1[2345]', got '2026-09-11'
+  [sequence-availability-first pad=0] called book_meeting, expected find_availability
+  [abstain-no-such-capability pad=0] called get_order_status when no tool applied
+  [args-explicit-datetime pad=0] start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-12T14:00:00-04:00'
+  [sequence-address-before-status pad=0] produced 2 calls; expected exactly one
+  [depth-file-share-after-detour pad=0] file_id expected 'file_881020', got '881020'
+  [depth-escalation-after-repeated-question pad=0] no tool call produced
+      said: I understand your frustration. Let's escalate this to a human agent for further assistance. Could you please provide me with a brief context so the agent can he
+  [sequence-search-before-refund pad=0] called issue_refund, expected search_orders; email expected 'noa@example.com', got missing
+  [args-partial-refund pad=0] amount_cents eq 4225, got 425
+  [args-relative-dates pad=0] start_date matches '2026-09-1[2345]', got '2026-09-11'
+  [sequence-availability-first pad=0] produced 2 calls; expected exactly one
+  [abstain-reschedule-unsupported pad=0] called find_availability when no tool applied
+  [args-explicit-datetime pad=0] start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-12T14:00:00-04:00'
+  [sequence-address-before-status pad=0] produced 2 calls; expected exactly one
+
+wrote 01-result.json

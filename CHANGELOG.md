@@ -2,6 +2,28 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate a second serving backend with 154 live Qwen2.5 observations through
+  llama.cpp, archived with full coverage, suite snapshots, and offline report
+  checks. Both cross-backend regression gates detect case regressions despite
+  higher totals; differing templates/settings preclude a causal ranking.
+
+- Include recorded server name and version in text and Markdown comparisons,
+  without exposing endpoint URLs or inferring missing backend identities.
+
+- Treat every non-null request error, including an empty error message,
+  consistently across scoring, reports, comparisons, CI gates, and resume.
+  Endpoint failures cannot count as successful abstentions or cached results.
+
+- Recognize llama.cpp build metadata for run provenance and resume checks;
+  unknown or protected server metadata remains unset.
+
+- Add `repeat_variation` to `callprobe explain` (JSON and text) that groups
+  observed records by `(task_id, pad)` and reports mixed-outcome groups with
+  passing/failing repeat ids and any excluded request-error repeats. Pads are
+  never mixed, `--task` scopes the summary, duplicate `(task,pad,repeat)` rows
+  are rejected, and the caveat explains that tool-order changes prevent
+  isolating model randomness.
+
 - Archive 1,386 live observations across nine local model configurations, with
   repeated core cases, mail padding sweeps, and verified offline CI reports.
 

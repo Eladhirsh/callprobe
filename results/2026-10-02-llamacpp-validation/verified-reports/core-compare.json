@@ -1,0 +1,95 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.9090909090909091,
+      "success_b": 0.9090909090909091,
+      "success_delta": 0.0,
+      "lenient_a": 0.9090909090909091,
+      "lenient_b": 0.9090909090909091,
+      "lenient_delta": 0.0
+    },
+    "args": {
+      "success_a": 0.7083333333333334,
+      "success_b": 0.75,
+      "success_delta": 0.04166666666666663,
+      "lenient_a": 0.7083333333333334,
+      "lenient_b": 0.75,
+      "lenient_delta": 0.04166666666666663
+    },
+    "depth": {
+      "success_a": 0.7727272727272727,
+      "success_b": 0.8181818181818182,
+      "success_delta": 0.045454545454545525,
+      "lenient_a": 0.7727272727272727,
+      "lenient_b": 0.8181818181818182,
+      "lenient_delta": 0.045454545454545525
+    },
+    "select": {
+      "success_a": 0.9166666666666666,
+      "success_b": 1.0,
+      "success_delta": 0.08333333333333337,
+      "lenient_a": 0.9166666666666666,
+      "lenient_b": 1.0,
+      "lenient_delta": 0.08333333333333337
+    },
+    "sequence": {
+      "success_a": 0.7,
+      "success_b": 0.7,
+      "success_delta": 0.0,
+      "lenient_a": 0.7,
+      "lenient_b": 0.7,
+      "lenient_delta": 0.0
+    }
+  },
+  "regressed_tasks": [
+    "abstain-reschedule-unsupported",
+    "depth-escalation-after-repeated-question"
+  ],
+  "improved_tasks": [
+    "abstain-availability-no-calendar",
+    "args-country-name-to-iso",
+    "depth-reason-stated-earlier",
+    "select-status-direct",
+    "sequence-cancel-before-rebook"
+  ],
+  "gate": {
+    "passed": false,
+    "failures": [
+      "6 previously passing case(s) regressed"
+    ],
+    "matched_cases": 100,
+    "success_delta": 0.03,
+    "regressions": [
+      {
+        "task_id": "abstain-no-such-capability",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-reschedule-unsupported",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "depth-escalation-after-repeated-question",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "depth-file-share-after-detour",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-availability-first",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-search-before-refund",
+        "pad": 0,
+        "repeat": 1
+      }
+    ]
+  }
+}

@@ -304,3 +304,20 @@ def test_exact_large_integer_strings_are_preserved_without_float_round_trip(suit
 
     text = "1" * 30  # far beyond float64 precision; a float round trip would corrupt it
     assert _coerce_scalar(text, "integer") == int(text)
+
+
+def test_empty_string_error_in_completion_fails_early_rather_than_scoring_a_no_call(suite):
+    """An endpoint that reports an empty-string error must not be treated as
+    a silent no-call: an abstention task would otherwise score as a success,
+    hiding a transport failure as model behavior."""
+    from callprobe.client import Completion
+    from callprobe.scoring import score
+
+    task = next(t for t in suite.tasks if t.id == "abstain-missing-identifier")
+    bundle, _ = build_toolset(suite, task, pad=0, seed=0)
+    completion = Completion(error="")
+    result = score(task, bundle, completion, model="stub", pad=0, repeat=0)
+    assert result.error == ""
+    assert not result.success
+    assert not result.success_lenient
+    assert result.failures == ["request failed: "]

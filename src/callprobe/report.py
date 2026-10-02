@@ -25,7 +25,7 @@ def summarize(run: Run) -> dict:
     results = run.results
     # A request error (timeout, 429, 5xx after retries) is a fact about the
     # endpoint, not the model. It must not lower a success rate.
-    scored = [r for r in results if not r.error]
+    scored = [r for r in results if r.error is None]
     errors = len(results) - len(scored)
 
     by_pad: dict[int, list[TaskResult]] = defaultdict(list)
@@ -190,7 +190,7 @@ def _coverage(run: Run) -> str:
     Identity is (task, pad, repeat). Planned comes only from the config (the
     selected subset for a targeted run); it is never inferred from results.
     """
-    scored = sum(1 for r in run.results if not r.error)
+    scored = sum(1 for r in run.results if r.error is None)
     cfg = run.config
     task_ids = cfg.selected_task_ids if cfg.selected_task_ids is not None else cfg.task_ids
     if not task_ids:
@@ -276,7 +276,7 @@ def failure_digest(run: Run, limit: int = 15) -> str:
     lines = ["failures worth reading:"]
     shown = 0
     for r in run.results:
-        if r.success or not r.failures or r.error:
+        if r.success or not r.failures or r.error is not None:
             continue
         lines.append(f"  [{r.task_id} pad={r.pad}] " + "; ".join(r.failures[:2]))
         if r.called is None and r.response_text:

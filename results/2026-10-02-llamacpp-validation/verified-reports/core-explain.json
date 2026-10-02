@@ -1,0 +1,1469 @@
+{
+  "suite": {
+    "name": "core",
+    "version": 2,
+    "hash": "e597c986302b5596"
+  },
+  "run": {
+    "model": "qwen2.5:7b",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-02-llamacpp-validation/evidence/core-suite",
+    "started_at": "2026-10-02T05:05:12.726135+00:00",
+    "finished_at": "2026-10-02T05:08:55.779804+00:00"
+  },
+  "task_filter": null,
+  "total_cases": 100,
+  "scored_cases": 100,
+  "request_errors": 0,
+  "failed_cases": 18,
+  "diagnostic_counts": {
+    "no_call": 1,
+    "unexpected_call": 2,
+    "multiple_calls": 3,
+    "wrong_tool": 3,
+    "argument_value": 11
+  },
+  "argument_shape_summary": {
+    "affected_observations": 0,
+    "unique_tasks": 0,
+    "by_kind": {}
+  },
+  "cases": [
+    {
+      "task_id": "args-partial-refund",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Order ORD-991003 came to $84.50 and one of the two mugs was cracked. Refund me for just the broken one, they were the same price.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "issue_refund",
+        "also_acceptable": [],
+        "args": {
+          "order_id": "ORD-991003",
+          "reason": "damaged"
+        },
+        "arg_checks": [
+          {
+            "path": "amount_cents",
+            "op": "eq",
+            "value": 4225,
+            "note": "half of 8450"
+          }
+        ]
+      },
+      "called": "issue_refund",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "amount_cents eq 4225, got 425"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "YL8DFArhc6IRzXsmBnJlci7jg3KjcxRp",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-991003",
+            "reason": "damaged",
+            "amount_cents": 425
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-991003\", \"reason\": \"damaged\", \"amount_cents\": 425}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "order_id",
+          "op": "eq",
+          "expected": "ORD-991003",
+          "actual": "ORD-991003",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "order_id expected 'ORD-991003', got 'ORD-991003'"
+        },
+        {
+          "path": "reason",
+          "op": "eq",
+          "expected": "damaged",
+          "actual": "damaged",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "reason expected 'damaged', got 'damaged'"
+        },
+        {
+          "path": "amount_cents",
+          "op": "eq",
+          "expected": 4225,
+          "actual": 425,
+          "present": true,
+          "note": "half of 8450",
+          "ok": false,
+          "detail": "amount_cents eq 4225, got 425"
+        }
+      ]
+    },
+    {
+      "task_id": "args-relative-dates",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Find me a free hour on my calendar cal_main sometime next week."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "find_availability",
+        "also_acceptable": [],
+        "args": {
+          "calendar_id": "cal_main",
+          "duration_minutes": 60
+        },
+        "arg_checks": [
+          {
+            "path": "start_date",
+            "op": "matches",
+            "value": "2026-09-1[2345]",
+            "note": null
+          },
+          {
+            "path": "end_date",
+            "op": "matches",
+            "value": "2026-09-(1[89]|20)",
+            "note": null
+          }
+        ]
+      },
+      "called": "find_availability",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "start_date matches '2026-09-1[2345]', got '2026-09-11'"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "UJ90ags3mQZSxNCYYrJiNbrfeUhvDazA",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_date": "2026-09-11",
+            "end_date": "2026-09-18",
+            "duration_minutes": 60
+          },
+          "raw_arguments": "{\"calendar_id\": \"cal_main\", \"start_date\": \"2026-09-11\", \"end_date\": \"2026-09-18\", \"duration_minutes\": 60}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "calendar_id",
+          "op": "eq",
+          "expected": "cal_main",
+          "actual": "cal_main",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "calendar_id expected 'cal_main', got 'cal_main'"
+        },
+        {
+          "path": "duration_minutes",
+          "op": "eq",
+          "expected": 60,
+          "actual": 60,
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "duration_minutes expected 60, got 60"
+        },
+        {
+          "path": "start_date",
+          "op": "matches",
+          "expected": "2026-09-1[2345]",
+          "actual": "2026-09-11",
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "start_date matches '2026-09-1[2345]', got '2026-09-11'"
+        },
+        {
+          "path": "end_date",
+          "op": "matches",
+          "expected": "2026-09-(1[89]|20)",
+          "actual": "2026-09-18",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "end_date matches '2026-09-(1[89]|20)', got '2026-09-18'"
+        }
+      ]
+    },
+    {
+      "task_id": "sequence-availability-first",
+      "category": "sequence",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Book a 30 minute sync with priya@example.com on calendar cal_main on the first free slot this Thursday. Call it Weekly sync.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "find_availability",
+        "also_acceptable": [],
+        "args": {
+          "calendar_id": "cal_main",
+          "duration_minutes": 30
+        },
+        "arg_checks": []
+      },
+      "called": "book_meeting",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called book_meeting, expected find_availability"
+      ],
+      "diagnostics": [
+        "wrong_tool"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "PgCDsyjplipafn4Y6m9l4yd5Xcot3Ci5",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_time": "2026-09-14T09:00:00+05:30",
+            "duration_minutes": 30,
+            "attendees": [
+              "priya@example.com"
+            ],
+            "title": "Weekly sync"
+          },
+          "raw_arguments": "{\"calendar_id\": \"cal_main\", \"start_time\": \"2026-09-14T09:00:00+05:30\", \"duration_minutes\": 30, \"attendees\": [\"priya@example.com\"], \"title\": \"Weekly sync\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "calendar_id",
+          "op": "eq",
+          "expected": "cal_main",
+          "actual": "cal_main",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "calendar_id expected 'cal_main', got 'cal_main'"
+        },
+        {
+          "path": "duration_minutes",
+          "op": "eq",
+          "expected": 30,
+          "actual": 30,
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "duration_minutes expected 30, got 30"
+        }
+      ]
+    },
+    {
+      "task_id": "abstain-no-such-capability",
+      "category": "abstain",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Please cancel order ORD-620114 before it ships."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "get_order_status",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called get_order_status when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "Owm1jwFWvOOOHRJ6AZ182ntjMOFO9ogW",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-620114"
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-620114\"}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "args-explicit-datetime",
+      "category": "args",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Book 45 minutes on cal_main this Wednesday at 2pm with omer@example.com and tal@example.com. Title it Design review.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "book_meeting",
+        "also_acceptable": [],
+        "args": {
+          "calendar_id": "cal_main",
+          "duration_minutes": 45,
+          "title": "Design review"
+        },
+        "arg_checks": [
+          {
+            "path": "start_time",
+            "op": "matches",
+            "value": "2026-09-09T14:00(:00)?-04:00",
+            "note": null
+          },
+          {
+            "path": "attendees.0",
+            "op": "exists",
+            "value": null,
+            "note": null
+          },
+          {
+            "path": "attendees.1",
+            "op": "exists",
+            "value": null,
+            "note": null
+          }
+        ]
+      },
+      "called": "book_meeting",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-12T14:00:00-04:00'"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "Ou1OBfee1wxPSqMl4P0VBF2MvDTSGH70",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_time": "2026-09-12T14:00:00-04:00",
+            "duration_minutes": 45,
+            "attendees": [
+              "omer@example.com",
+              "tal@example.com"
+            ],
+            "title": "Design review"
+          },
+          "raw_arguments": "{\"calendar_id\": \"cal_main\", \"start_time\": \"2026-09-12T14:00:00-04:00\", \"duration_minutes\": 45, \"attendees\": [\"omer@example.com\", \"tal@example.com\"], \"title\": \"Design review\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "calendar_id",
+          "op": "eq",
+          "expected": "cal_main",
+          "actual": "cal_main",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "calendar_id expected 'cal_main', got 'cal_main'"
+        },
+        {
+          "path": "duration_minutes",
+          "op": "eq",
+          "expected": 45,
+          "actual": 45,
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "duration_minutes expected 45, got 45"
+        },
+        {
+          "path": "title",
+          "op": "eq",
+          "expected": "Design review",
+          "actual": "Design review",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "title expected 'Design review', got 'Design review'"
+        },
+        {
+          "path": "start_time",
+          "op": "matches",
+          "expected": "2026-09-09T14:00(:00)?-04:00",
+          "actual": "2026-09-12T14:00:00-04:00",
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-12T14:00:00-04:00'"
+        },
+        {
+          "path": "attendees.0",
+          "op": "exists",
+          "expected": null,
+          "actual": "omer@example.com",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "attendees.0 missing"
+        },
+        {
+          "path": "attendees.1",
+          "op": "exists",
+          "expected": null,
+          "actual": "tal@example.com",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "attendees.1 missing"
+        }
+      ]
+    },
+    {
+      "task_id": "sequence-address-before-status",
+      "category": "sequence",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "update_shipping_address",
+        "also_acceptable": [],
+        "args": {
+          "order_id": "ORD-505050"
+        },
+        "arg_checks": [
+          {
+            "path": "address.country",
+            "op": "eq",
+            "value": "IL",
+            "note": null
+          }
+        ]
+      },
+      "called": "update_shipping_address",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "produced 2 calls; expected exactly one"
+      ],
+      "diagnostics": [
+        "multiple_calls"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "Q6lRTnJff1npaFqt9IyLJm11sLQ1ZDOx",
+          "name": "update_shipping_address",
+          "arguments": {
+            "order_id": "ORD-505050",
+            "address": {
+              "line1": "9 Alon Street",
+              "city": "Tel Aviv",
+              "postal_code": "6100000",
+              "country": "IL"
+            }
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-505050\", \"address\": {\"line1\": \"9 Alon Street\", \"city\": \"Tel Aviv\", \"postal_code\": \"6100000\", \"country\": \"IL\"}}",
+          "parse_error": null
+        },
+        {
+          "id": "TQytlpQwuZQM52vLHu2uNN5M9ZzWQaSe",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-505050"
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-505050\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "order_id",
+          "op": "eq",
+          "expected": "ORD-505050",
+          "actual": "ORD-505050",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "order_id expected 'ORD-505050', got 'ORD-505050'"
+        },
+        {
+          "path": "address.country",
+          "op": "eq",
+          "expected": "IL",
+          "actual": "IL",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "address.country eq 'IL', got 'IL'"
+        }
+      ]
+    },
+    {
+      "task_id": "depth-file-share-after-detour",
+      "category": "depth",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "I've got file_881020 open, it's the shared Q3 numbers.",
+        "Actually, remind me, what folder is that file even in?",
+        "Never mind, forget the folder question. Just share the file with dor@example.com so she can edit it.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "share_file",
+        "also_acceptable": [],
+        "args": {
+          "file_id": "file_881020",
+          "email": "dor@example.com",
+          "role": "editor"
+        },
+        "arg_checks": []
+      },
+      "called": "share_file",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "file_id expected 'file_881020', got '881020'"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "Wt790ygRk6AzGj1OPWjObJLnfNXPH9b2",
+          "name": "share_file",
+          "arguments": {
+            "file_id": "881020",
+            "email": "dor@example.com",
+            "role": "editor"
+          },
+          "raw_arguments": "{\"file_id\": \"881020\", \"email\": \"dor@example.com\", \"role\": \"editor\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "file_id",
+          "op": "eq",
+          "expected": "file_881020",
+          "actual": "881020",
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "file_id expected 'file_881020', got '881020'"
+        },
+        {
+          "path": "email",
+          "op": "eq",
+          "expected": "dor@example.com",
+          "actual": "dor@example.com",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "email expected 'dor@example.com', got 'dor@example.com'"
+        },
+        {
+          "path": "role",
+          "op": "eq",
+          "expected": "editor",
+          "actual": "editor",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "role expected 'editor', got 'editor'"
+        }
+      ]
+    },
+    {
+      "task_id": "depth-escalation-after-repeated-question",
+      "category": "depth",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "Where is ORD-660011?",
+        "That's what you told me three days ago. I want to speak to someone."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "escalate_to_human",
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": [
+          {
+            "path": "summary",
+            "op": "exists",
+            "value": null,
+            "note": null
+          }
+        ]
+      },
+      "called": null,
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "no tool call produced"
+      ],
+      "diagnostics": [
+        "no_call"
+      ],
+      "response_text": "I understand your frustration. Let's escalate this to a human agent for further assistance. Could you please provide me with a brief context so the agent can help you better?\n\nSummary: The order ORD-660011 is still processing, and the customer is dissatisfied with the delay.\nUrgency: High",
+      "call_evidence": "none",
+      "calls": []
+    },
+    {
+      "task_id": "sequence-search-before-refund",
+      "category": "sequence",
+      "pad": 0,
+      "repeat": 0,
+      "prompts": [
+        "I don't have my order number, but refund the shampoo order for noa@example.com, it leaked everywhere.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_orders",
+        "also_acceptable": [],
+        "args": {
+          "email": "noa@example.com"
+        },
+        "arg_checks": []
+      },
+      "called": "issue_refund",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called issue_refund, expected search_orders",
+        "email expected 'noa@example.com', got missing"
+      ],
+      "diagnostics": [
+        "wrong_tool",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "54mZBpI4QXLfZ9MLuKEf1FVv8jCkukWy",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-123456",
+            "reason": "damaged",
+            "amount_cents": 1200
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-123456\", \"reason\": \"damaged\", \"amount_cents\": 1200}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "email",
+          "op": "eq",
+          "expected": "noa@example.com",
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "email expected 'noa@example.com', got missing"
+        }
+      ]
+    },
+    {
+      "task_id": "args-partial-refund",
+      "category": "args",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "Order ORD-991003 came to $84.50 and one of the two mugs was cracked. Refund me for just the broken one, they were the same price.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "issue_refund",
+        "also_acceptable": [],
+        "args": {
+          "order_id": "ORD-991003",
+          "reason": "damaged"
+        },
+        "arg_checks": [
+          {
+            "path": "amount_cents",
+            "op": "eq",
+            "value": 4225,
+            "note": "half of 8450"
+          }
+        ]
+      },
+      "called": "issue_refund",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "amount_cents eq 4225, got 425"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "NYkya06CKcGuc7roBBdgMvjrZPdYknVy",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-991003",
+            "reason": "damaged",
+            "amount_cents": 425
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-991003\", \"reason\": \"damaged\", \"amount_cents\": 425}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "order_id",
+          "op": "eq",
+          "expected": "ORD-991003",
+          "actual": "ORD-991003",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "order_id expected 'ORD-991003', got 'ORD-991003'"
+        },
+        {
+          "path": "reason",
+          "op": "eq",
+          "expected": "damaged",
+          "actual": "damaged",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "reason expected 'damaged', got 'damaged'"
+        },
+        {
+          "path": "amount_cents",
+          "op": "eq",
+          "expected": 4225,
+          "actual": 425,
+          "present": true,
+          "note": "half of 8450",
+          "ok": false,
+          "detail": "amount_cents eq 4225, got 425"
+        }
+      ]
+    },
+    {
+      "task_id": "args-relative-dates",
+      "category": "args",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "Find me a free hour on my calendar cal_main sometime next week."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "find_availability",
+        "also_acceptable": [],
+        "args": {
+          "calendar_id": "cal_main",
+          "duration_minutes": 60
+        },
+        "arg_checks": [
+          {
+            "path": "start_date",
+            "op": "matches",
+            "value": "2026-09-1[2345]",
+            "note": null
+          },
+          {
+            "path": "end_date",
+            "op": "matches",
+            "value": "2026-09-(1[89]|20)",
+            "note": null
+          }
+        ]
+      },
+      "called": "find_availability",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "start_date matches '2026-09-1[2345]', got '2026-09-11'"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "WeixJoIgBly9sSJ2tmcSirGVaZIYIaH0",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_date": "2026-09-11",
+            "end_date": "2026-09-18",
+            "duration_minutes": 60
+          },
+          "raw_arguments": "{\"calendar_id\": \"cal_main\", \"start_date\": \"2026-09-11\", \"end_date\": \"2026-09-18\", \"duration_minutes\": 60}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "calendar_id",
+          "op": "eq",
+          "expected": "cal_main",
+          "actual": "cal_main",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "calendar_id expected 'cal_main', got 'cal_main'"
+        },
+        {
+          "path": "duration_minutes",
+          "op": "eq",
+          "expected": 60,
+          "actual": 60,
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "duration_minutes expected 60, got 60"
+        },
+        {
+          "path": "start_date",
+          "op": "matches",
+          "expected": "2026-09-1[2345]",
+          "actual": "2026-09-11",
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "start_date matches '2026-09-1[2345]', got '2026-09-11'"
+        },
+        {
+          "path": "end_date",
+          "op": "matches",
+          "expected": "2026-09-(1[89]|20)",
+          "actual": "2026-09-18",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "end_date matches '2026-09-(1[89]|20)', got '2026-09-18'"
+        }
+      ]
+    },
+    {
+      "task_id": "sequence-availability-first",
+      "category": "sequence",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "Book a 30 minute sync with priya@example.com on calendar cal_main on the first free slot this Thursday. Call it Weekly sync.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "find_availability",
+        "also_acceptable": [],
+        "args": {
+          "calendar_id": "cal_main",
+          "duration_minutes": 30
+        },
+        "arg_checks": []
+      },
+      "called": "find_availability",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "produced 2 calls; expected exactly one"
+      ],
+      "diagnostics": [
+        "multiple_calls"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "CwdblLXfcjvPwS1KTYtvtc8Mdba6bXET",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_date": "2026-09-07",
+            "end_date": "2026-09-07",
+            "duration_minutes": 30
+          },
+          "raw_arguments": "{\"calendar_id\": \"cal_main\", \"start_date\": \"2026-09-07\", \"end_date\": \"2026-09-07\", \"duration_minutes\": 30}",
+          "parse_error": null
+        },
+        {
+          "id": "2C7CYfvRyFt3GbAVPRDKDCD9b9W0SZA8",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_time": "2026-09-07T10:00:00+00:00",
+            "duration_minutes": 30,
+            "attendees": [
+              "priya@example.com"
+            ],
+            "title": "Weekly sync"
+          },
+          "raw_arguments": "{\"calendar_id\": \"cal_main\", \"start_time\": \"2026-09-07T10:00:00+00:00\", \"duration_minutes\": 30, \"attendees\": [\"priya@example.com\"], \"title\": \"Weekly sync\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "calendar_id",
+          "op": "eq",
+          "expected": "cal_main",
+          "actual": "cal_main",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "calendar_id expected 'cal_main', got 'cal_main'"
+        },
+        {
+          "path": "duration_minutes",
+          "op": "eq",
+          "expected": 30,
+          "actual": 30,
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "duration_minutes expected 30, got 30"
+        }
+      ]
+    },
+    {
+      "task_id": "abstain-reschedule-unsupported",
+      "category": "abstain",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "Move my 3pm on Thursday to 4pm instead."
+      ],
+      "expected": {
+        "type": "no_call",
+        "tool": null,
+        "also_acceptable": [],
+        "args": {},
+        "arg_checks": []
+      },
+      "called": "find_availability",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called find_availability when no tool applied"
+      ],
+      "diagnostics": [
+        "unexpected_call"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "nouxY5SmV6sDUrft2mmAKFQiaPE6iu1Y",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "my_work_calendar",
+            "start_date": "2023-04-20",
+            "end_date": "2023-04-20",
+            "duration_minutes": 60
+          },
+          "raw_arguments": "{\"calendar_id\": \"my_work_calendar\", \"start_date\": \"2023-04-20\", \"end_date\": \"2023-04-20\", \"duration_minutes\": 60}",
+          "parse_error": null
+        }
+      ],
+      "schema_errors": []
+    },
+    {
+      "task_id": "args-explicit-datetime",
+      "category": "args",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "Book 45 minutes on cal_main this Wednesday at 2pm with omer@example.com and tal@example.com. Title it Design review.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "book_meeting",
+        "also_acceptable": [],
+        "args": {
+          "calendar_id": "cal_main",
+          "duration_minutes": 45,
+          "title": "Design review"
+        },
+        "arg_checks": [
+          {
+            "path": "start_time",
+            "op": "matches",
+            "value": "2026-09-09T14:00(:00)?-04:00",
+            "note": null
+          },
+          {
+            "path": "attendees.0",
+            "op": "exists",
+            "value": null,
+            "note": null
+          },
+          {
+            "path": "attendees.1",
+            "op": "exists",
+            "value": null,
+            "note": null
+          }
+        ]
+      },
+      "called": "book_meeting",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-12T14:00:00-04:00'"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "cpIoIgCL1qttkYEEvAdiVC2yRfTLDSbo",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_time": "2026-09-12T14:00:00-04:00",
+            "duration_minutes": 45,
+            "attendees": [
+              "omer@example.com",
+              "tal@example.com"
+            ],
+            "title": "Design review"
+          },
+          "raw_arguments": "{\"calendar_id\": \"cal_main\", \"start_time\": \"2026-09-12T14:00:00-04:00\", \"duration_minutes\": 45, \"attendees\": [\"omer@example.com\", \"tal@example.com\"], \"title\": \"Design review\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "calendar_id",
+          "op": "eq",
+          "expected": "cal_main",
+          "actual": "cal_main",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "calendar_id expected 'cal_main', got 'cal_main'"
+        },
+        {
+          "path": "duration_minutes",
+          "op": "eq",
+          "expected": 45,
+          "actual": 45,
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "duration_minutes expected 45, got 45"
+        },
+        {
+          "path": "title",
+          "op": "eq",
+          "expected": "Design review",
+          "actual": "Design review",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "title expected 'Design review', got 'Design review'"
+        },
+        {
+          "path": "start_time",
+          "op": "matches",
+          "expected": "2026-09-09T14:00(:00)?-04:00",
+          "actual": "2026-09-12T14:00:00-04:00",
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-12T14:00:00-04:00'"
+        },
+        {
+          "path": "attendees.0",
+          "op": "exists",
+          "expected": null,
+          "actual": "omer@example.com",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "attendees.0 missing"
+        },
+        {
+          "path": "attendees.1",
+          "op": "exists",
+          "expected": null,
+          "actual": "tal@example.com",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "attendees.1 missing"
+        }
+      ]
+    },
+    {
+      "task_id": "sequence-address-before-status",
+      "category": "sequence",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "update_shipping_address",
+        "also_acceptable": [],
+        "args": {
+          "order_id": "ORD-505050"
+        },
+        "arg_checks": [
+          {
+            "path": "address.country",
+            "op": "eq",
+            "value": "IL",
+            "note": null
+          }
+        ]
+      },
+      "called": "update_shipping_address",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "produced 2 calls; expected exactly one"
+      ],
+      "diagnostics": [
+        "multiple_calls"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "8KmOY87QFtZ4WuvJGdOSmItnzpsnk5F0",
+          "name": "update_shipping_address",
+          "arguments": {
+            "order_id": "ORD-505050",
+            "address": {
+              "line1": "9 Alon Street",
+              "city": "Tel Aviv",
+              "postal_code": "6100000",
+              "country": "IL"
+            }
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-505050\", \"address\": {\"line1\": \"9 Alon Street\", \"city\": \"Tel Aviv\", \"postal_code\": \"6100000\", \"country\": \"IL\"}}",
+          "parse_error": null
+        },
+        {
+          "id": "VnmTzES493T0uDF8jlXSecmJjnW9g78J",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-505050"
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-505050\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "order_id",
+          "op": "eq",
+          "expected": "ORD-505050",
+          "actual": "ORD-505050",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "order_id expected 'ORD-505050', got 'ORD-505050'"
+        },
+        {
+          "path": "address.country",
+          "op": "eq",
+          "expected": "IL",
+          "actual": "IL",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "address.country eq 'IL', got 'IL'"
+        }
+      ]
+    },
+    {
+      "task_id": "depth-file-share-after-detour",
+      "category": "depth",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "I've got file_881020 open, it's the shared Q3 numbers.",
+        "Actually, remind me, what folder is that file even in?",
+        "Never mind, forget the folder question. Just share the file with dor@example.com so she can edit it.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "share_file",
+        "also_acceptable": [],
+        "args": {
+          "file_id": "file_881020",
+          "email": "dor@example.com",
+          "role": "editor"
+        },
+        "arg_checks": []
+      },
+      "called": "share_file",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "file_id expected 'file_881020', got '881020'"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "8R8KIpJCeDsiXTSRh67juqXDKlTud3e2",
+          "name": "share_file",
+          "arguments": {
+            "file_id": "881020",
+            "email": "dor@example.com",
+            "role": "editor"
+          },
+          "raw_arguments": "{\"file_id\": \"881020\", \"email\": \"dor@example.com\", \"role\": \"editor\"}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "file_id",
+          "op": "eq",
+          "expected": "file_881020",
+          "actual": "881020",
+          "present": true,
+          "note": null,
+          "ok": false,
+          "detail": "file_id expected 'file_881020', got '881020'"
+        },
+        {
+          "path": "email",
+          "op": "eq",
+          "expected": "dor@example.com",
+          "actual": "dor@example.com",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "email expected 'dor@example.com', got 'dor@example.com'"
+        },
+        {
+          "path": "role",
+          "op": "eq",
+          "expected": "editor",
+          "actual": "editor",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "role expected 'editor', got 'editor'"
+        }
+      ]
+    },
+    {
+      "task_id": "depth-refund-amount-after-clarification",
+      "category": "depth",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "One of the two lamps on ORD-340221 showed up broken, they were $30 each so a $60 order.\n",
+        "Just the broken one."
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "issue_refund",
+        "also_acceptable": [],
+        "args": {
+          "order_id": "ORD-340221",
+          "reason": "damaged"
+        },
+        "arg_checks": [
+          {
+            "path": "amount_cents",
+            "op": "eq",
+            "value": 3000,
+            "note": "one lamp of two at $30 each"
+          }
+        ]
+      },
+      "called": "issue_refund",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "amount_cents eq 3000, got 6000"
+      ],
+      "diagnostics": [
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "Yl8u7Nu59U9bmPKQyR5pzMiesdPtxPaM",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-340221",
+            "reason": "damaged",
+            "amount_cents": 6000
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-340221\", \"reason\": \"damaged\", \"amount_cents\": 6000}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "order_id",
+          "op": "eq",
+          "expected": "ORD-340221",
+          "actual": "ORD-340221",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "order_id expected 'ORD-340221', got 'ORD-340221'"
+        },
+        {
+          "path": "reason",
+          "op": "eq",
+          "expected": "damaged",
+          "actual": "damaged",
+          "present": true,
+          "note": null,
+          "ok": true,
+          "detail": "reason expected 'damaged', got 'damaged'"
+        },
+        {
+          "path": "amount_cents",
+          "op": "eq",
+          "expected": 3000,
+          "actual": 6000,
+          "present": true,
+          "note": "one lamp of two at $30 each",
+          "ok": false,
+          "detail": "amount_cents eq 3000, got 6000"
+        }
+      ]
+    },
+    {
+      "task_id": "sequence-search-before-refund",
+      "category": "sequence",
+      "pad": 0,
+      "repeat": 1,
+      "prompts": [
+        "I don't have my order number, but refund the shampoo order for noa@example.com, it leaked everywhere.\n"
+      ],
+      "expected": {
+        "type": "call",
+        "tool": "search_orders",
+        "also_acceptable": [],
+        "args": {
+          "email": "noa@example.com"
+        },
+        "arg_checks": []
+      },
+      "called": "issue_refund",
+      "truncated": false,
+      "error": null,
+      "reasons": [
+        "called issue_refund, expected search_orders",
+        "email expected 'noa@example.com', got missing"
+      ],
+      "diagnostics": [
+        "wrong_tool",
+        "argument_value"
+      ],
+      "call_evidence": "full",
+      "calls": [
+        {
+          "id": "9L8hsLcCcTxfcll4qopguZZaFGs83JqW",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-123456",
+            "reason": "damaged",
+            "amount_cents": 1200
+          },
+          "raw_arguments": "{\"order_id\": \"ORD-123456\", \"reason\": \"damaged\", \"amount_cents\": 1200}",
+          "parse_error": null
+        }
+      ],
+      "argument_assertions": [
+        {
+          "path": "email",
+          "op": "eq",
+          "expected": "noa@example.com",
+          "actual": null,
+          "present": false,
+          "note": null,
+          "ok": false,
+          "detail": "email expected 'noa@example.com', got missing"
+        }
+      ]
+    }
+  ],
+  "repeat_variation": {
+    "groups_examined": 50,
+    "mixed_groups": [
+      {
+        "task_id": "abstain-no-such-capability",
+        "pad": 0,
+        "passing_repeat_ids": [
+          1
+        ],
+        "failing_repeat_ids": [
+          0
+        ]
+      },
+      {
+        "task_id": "abstain-reschedule-unsupported",
+        "pad": 0,
+        "passing_repeat_ids": [
+          0
+        ],
+        "failing_repeat_ids": [
+          1
+        ]
+      },
+      {
+        "task_id": "depth-escalation-after-repeated-question",
+        "pad": 0,
+        "passing_repeat_ids": [
+          1
+        ],
+        "failing_repeat_ids": [
+          0
+        ]
+      },
+      {
+        "task_id": "depth-refund-amount-after-clarification",
+        "pad": 0,
+        "passing_repeat_ids": [
+          0
+        ],
+        "failing_repeat_ids": [
+          1
+        ]
+      }
+    ],
+    "caveat": "describes only observed repeats; repeats vary deterministic tool order, so differences do not isolate model randomness; a partial run does not establish stability or complete coverage"
+  }
+}

@@ -374,7 +374,7 @@ def _content_tool_json(task: Task, bundle: Bundle | None, result: TaskResult) ->
     if (
         bundle is None
         or task.expect.type != "call"
-        or result.error
+        or result.error is not None
         or result.truncated
         or result.called is not None
         or result.calls
@@ -407,7 +407,7 @@ def classify_case(task: Task, bundle: Bundle | None, result: TaskResult) -> list
     actually evaluated.
     """
     categories: list[str] = []
-    if result.error:
+    if result.error is not None:
         categories.append("request_error")
         return categories
 
@@ -462,7 +462,7 @@ def _hint_eligible(task: Task, result: TaskResult, chosen) -> bool:
     """
     return (
         task.expect.type == "call"
-        and not result.error
+        and result.error is None
         and not result.truncated
         and len(result.calls) == 1
         and chosen is not None
@@ -534,7 +534,7 @@ def _case_report(task: Task, bundle: Bundle | None, result: TaskResult) -> dict:
     if result.response_text and result.called is None:
         case["response_text"] = result.response_text
 
-    if result.error:
+    if result.error is not None:
         case["call_evidence"] = "none"
         case["calls"] = []
         return case
@@ -616,6 +616,71 @@ def check_suite_matches(run: Run, suite: Suite) -> None:
         )
 
 
+_REPEAT_VARIATION_CAVEAT = (
+    "describes only observed repeats; repeats vary deterministic tool order, "
+    "so differences do not isolate model randomness; a partial run does not "
+    "establish stability or complete coverage"
+)
+
+
+def _repeat_variation_summary(results: list[TaskResult]) -> dict | None:
+    """Group recorded observations by (task_id, pad) and flag groups
+    where at least two distinct scored repeats disagree on success.
+
+    Only observations with `error is None` are treated as scored; the
+    original error observations never inflate pass/fail counts and are
+    surfaced as `excluded_error_repeat_ids` when the surrounding group
+    is mixed. Returns None when no group has at least two distinct
+    scored repeats, so single-repeat runs stay concise.
+    Raises `ValueError` on a duplicate `(task_id, pad, repeat)` row:
+    averaging over duplicates would silently inflate the evidence.
+    """
+    seen: set[tuple[str, int, int]] = set()
+    for r in results:
+        key = (r.task_id, r.pad, r.repeat)
+        if key in seen:
+            raise ValueError(
+                f"duplicate observation for task_id={r.task_id!r} pad={r.pad} "
+                f"repeat={r.repeat}; repeat-variation analysis refuses to "
+                "average silently over duplicated rows"
+            )
+        seen.add(key)
+
+    groups: dict[tuple[str, int], list] = defaultdict(list)
+    for r in results:
+        groups[(r.task_id, r.pad)].append(r)
+
+    groups_examined = 0
+    mixed: list[dict] = []
+    for (task_id, pad), items in sorted(groups.items()):
+        scored = [r for r in items if r.error is None]
+        errored = [r for r in items if r.error is not None]
+        if len({r.repeat for r in scored}) < 2:
+            continue
+        groups_examined += 1
+        passing = sorted({r.repeat for r in scored if r.success})
+        failing = sorted({r.repeat for r in scored if not r.success})
+        if not (passing and failing):
+            continue
+        entry: dict[str, Any] = {
+            "task_id": task_id,
+            "pad": pad,
+            "passing_repeat_ids": passing,
+            "failing_repeat_ids": failing,
+        }
+        if errored:
+            entry["excluded_error_repeat_ids"] = sorted({r.repeat for r in errored})
+        mixed.append(entry)
+
+    if groups_examined == 0:
+        return None
+    return {
+        "groups_examined": groups_examined,
+        "mixed_groups": mixed,
+        "caveat": _REPEAT_VARIATION_CAVEAT,
+    }
+
+
 def _argument_shape_summary(cases: list[dict]) -> dict:
     """Aggregate the existing per-case shape hints; nothing is inferred.
 
@@ -662,8 +727,11 @@ def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
     if task_id is not None:
         results = [r for r in results if r.task_id == task_id]
 
-    request_errors = sum(1 for r in results if r.error)
-    failing = [r for r in results if not r.success]
+    request_errors = sum(1 for r in results if r.error is not None)
+    # An errored record is a request error regardless of its saved success
+    # bit; show it so a contradictory success=True does not silently claim
+    # a pass. The saved bit itself is not mutated.
+    failing = [r for r in results if not r.success or r.error is not None]
     cases = [
         _case_report(tasks_by_id[r.task_id], suite.bundles.get(tasks_by_id[r.task_id].bundle), r)
         for r in failing
@@ -698,6 +766,9 @@ def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
         "argument_shape_summary": _argument_shape_summary(cases),
         "cases": cases,
     }
+    repeat_variation = _repeat_variation_summary(results)
+    if repeat_variation is not None:
+        report["repeat_variation"] = repeat_variation
     if task_id is not None:
         report["task_has_results"] = len(results) > 0
         report["task_passed"] = len(results) > 0 and len(cases) == 0
@@ -757,6 +828,24 @@ def render_explain_text(report: dict) -> str:
         lines.append("  - inspect each case's proposed arguments below; values may still be wrong")
         lines.append("  - make sure the application adapter and the tool contract agree on argument shape")
         lines.append("  - rerun with the same suite to measure any change")
+
+    variation = report.get("repeat_variation")
+    if variation is not None:
+        lines.append("")
+        lines.append(
+            f"repeat variation: {len(variation['mixed_groups'])} mixed "
+            f"(task,pad) group(s) across {variation['groups_examined']} examined "
+            "(observed only; repeats vary deterministic tool order and do not isolate randomness)"
+        )
+        for group in variation["mixed_groups"]:
+            suffix = ""
+            if "excluded_error_repeat_ids" in group:
+                suffix = f"  excluded_errors={group['excluded_error_repeat_ids']}"
+            lines.append(
+                f"  [{group['task_id']} pad={group['pad']}] "
+                f"passing={group['passing_repeat_ids']} "
+                f"failing={group['failing_repeat_ids']}" + suffix
+            )
 
     lines.append("")
     lines.append("failed cases")

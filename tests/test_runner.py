@@ -155,6 +155,16 @@ def test_resume_retries_errors_and_preserves_start(suite):
     assert resumed.started_at == "original start"
 
 
+def test_resume_retries_empty_string_errors_and_does_not_reuse_them(suite):
+    first = run_suite(suite, _CountingClient(), _config())
+    # an empty-string error must be a request error, not a completed observation
+    first.results[0].error = ""
+    client = _CountingClient()
+    resumed = run_suite(suite, client, _config(), resume=first)
+    assert client.calls == 1
+    assert resumed.results[0].error is None
+
+
 def test_resume_rejects_duplicate_results(suite):
     first = run_suite(suite, _CountingClient(), _config())
     first.results.append(first.results[0])

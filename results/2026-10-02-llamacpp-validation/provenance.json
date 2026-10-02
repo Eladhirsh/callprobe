@@ -1,0 +1,27 @@
+{
+  "source_commit": "fd122735604bfb38a18da941ecad2bc2c624bcad",
+  "wheel_sha256": "e63c21aa4e9a837de86c0603486c2b2de37ea7792b423c098978c5b50dc83497",
+  "backend": "llama.cpp",
+  "backend_build": "b11339-81e39ad34",
+  "backend_release": "https://github.com/ggml-org/llama.cpp/releases/tag/b11339",
+  "backend_archive_sha256": "7d1363995edf703ba299f9bc37146c99467f3fa56e7997337bc78a9249073eac",
+  "model_gguf_sha256": "2bada8a7450677000f678be90653b85d364de7db25eb5ea54136ada5f3933730",
+  "model_alias": "qwen2.5:7b",
+  "server_flags": [
+    "--alias",
+    "qwen2.5:7b",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18080",
+    "--ctx-size",
+    "8192",
+    "--parallel",
+    "1",
+    "--n-gpu-layers",
+    "99",
+    "--jinja",
+    "--offline"
+  ],
+  "note": "Existing Ollama GGUF reused read-only. No model download or tool execution. Backend defaults and templates differ from Ollama; this is integration evidence, not a controlled model ranking."
+}
