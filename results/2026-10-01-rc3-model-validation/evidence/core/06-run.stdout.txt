@@ -1,0 +1,43 @@
+model            mistral-nemo:latest
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     100
+
+                 selection   schema     args      success
+  overall         69.0%   75.0%   64.0%   60.0%   (95% CI 47.0-72.0%)
+  type-lenient    69.0%   75.0%   64.0%   60.0%
+
+  tool count sweep
+    +0   distractors   success  60.0%   selection  69.0%   sd  2.0
+
+  by category
+    abstain     54.5%  (n=22, 95% CI 27.3-81.8%)
+    args        62.5%  (n=24, 95% CI 37.5-83.3%)
+    depth       36.4%  (n=22, 95% CI 9.1-63.6%)
+    select      91.7%  (n=12, 95% CI 75.0-100.0%)
+    sequence    70.0%  (n=20, 95% CI 40.0-95.0%)
+
+  cost per success   867 tokens   4.67 s
+
+failures worth reading:
+  [select-escalate-explicit pad=0] no tool call produced
+      said: I'm sorry to hear that. May I ask why you want to speak to a human agent? So I can connect you to the appropriate team.
+  [args-enum-mapping pad=0] called get_order_status, expected issue_refund; reason expected 'wrong_item', got missing
+  [args-relative-dates pad=0] start_date matches '2026-09-1[2345]', got '2026-09-10'; end_date matches '2026-09-(1[89]|20)', got '2026-09-14'
+  [abstain-status-no-identifier pad=0] called get_order_status when no tool applied
+  [abstain-no-such-capability pad=0] called escalate_to_human when no tool applied
+  [abstain-reschedule-unsupported pad=0] called cancel_meeting when no tool applied
+  [abstain-cancel-without-id pad=0] called find_availability when no tool applied
+  [args-country-name-to-iso pad=0] address.postal_code eq 'WC1B 3JA', got '3JA'
+  [args-filtered-search pad=0] status expected 'shipped', got 'delivered'
+  [args-explicit-datetime pad=0] called find_availability, expected book_meeting; title expected 'Design review', got missing
+  [depth-reason-stated-earlier pad=0] no tool call produced
+      said: Okay, I'll refund the whole order. May I know the reason for the refund?
+  [sequence-address-before-status pad=0] produced 2 calls; expected exactly one
+  [depth-file-share-after-detour pad=0] no tool call produced
+      said: Okay, sharing file_881020 with dor@example.com for editing. Is this correct?
+  [depth-file-corrected-id pad=0] no tool call produced
+      said: No problem, let me delete file_100002.
+  [depth-file-permanent-carried-forward pad=0] no tool call produced
+      said: Okay, I'll delete the file `file_552210`. Is this a permanent deletion or should it be sent to the trash?
+
+wrote 06-result.json

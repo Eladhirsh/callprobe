@@ -1,0 +1,23 @@
+{
+  "openapi_version": "3.0.3",
+  "operations": [
+    {
+      "tool": "search_messages",
+      "method": "GET",
+      "path": "/messages"
+    },
+    {
+      "tool": "get_message",
+      "method": "GET",
+      "path": "/messages/{message_id}"
+    },
+    {
+      "tool": "send_reply",
+      "method": "POST",
+      "path": "/messages/{message_id}/replies"
+    }
+  ],
+  "skipped": [],
+  "filtered_operations": 0,
+  "warnings": []
+}

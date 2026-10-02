@@ -1,0 +1,40 @@
+model            llama3.1:8b
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     100
+
+                 selection   schema     args      success
+  overall         70.0%   35.0%   44.0%   31.0%   (95% CI 20.0-42.0%)
+  type-lenient    70.0%   64.0%   59.0%   51.0%
+
+  tool count sweep
+    +0   distractors   success  31.0%   selection  70.0%   sd  1.0
+
+  by category
+    abstain     22.7%  (n=22, 95% CI 0.0-45.5%)
+    args        25.0%  (n=24, 95% CI 4.2-45.8%)
+    depth       54.5%  (n=22, 95% CI 27.3-81.8%)
+    select      41.7%  (n=12, 95% CI 8.3-75.0%)
+    sequence    15.0%  (n=20, 95% CI 5.0-30.0%)
+
+  20 of 100 calls (20.0%) were correct but wrongly typed
+
+  cost per success   1912 tokens   6.77 s
+
+failures worth reading:
+  [select-search-not-status pad=0] schema: limit: '10' is not of type 'integer'; passes once string values are cast to their schema types
+  [abstain-policy-question pad=0] called issue_refund when no tool applied
+  [abstain-missing-identifier pad=0] called issue_refund when no tool applied
+  [args-partial-refund pad=0] schema: amount_cents: '4250' is not of type 'integer'; amount_cents eq 4225, got '4250'
+  [args-relative-dates pad=0] schema: duration_minutes: '60' is not of type 'integer'; duration_minutes expected 60, got '60'
+  [sequence-availability-first pad=0] called book_meeting, expected find_availability; schema: attendees: '["priya@example.com"]' is not of type 'array'
+  [abstain-status-no-identifier pad=0] called get_order_status when no tool applied
+  [abstain-no-such-capability pad=0] called update_shipping_address when no tool applied
+  [abstain-change-email-on-file pad=0] called update_shipping_address when no tool applied
+  [abstain-shipping-quote pad=0] called search_orders when no tool applied
+  [abstain-availability-no-calendar pad=0] called find_availability when no tool applied
+  [abstain-reschedule-unsupported pad=0] called book_meeting when no tool applied
+  [abstain-cancel-without-id pad=0] called cancel_meeting when no tool applied
+  [args-full-refund-omits-amount pad=0] schema: amount_cents: '0' is not of type 'integer'; amount_cents should not be present
+  [args-dollars-to-cents pad=0] schema: amount_cents: '1299' is not of type 'integer'; amount_cents eq 1299, got '1299'
+
+wrote 05-result.json

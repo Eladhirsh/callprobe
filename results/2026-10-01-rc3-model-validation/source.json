@@ -1,0 +1,12 @@
+{
+  "tested_source_commit": "75e226577534c7ac45129331aea81c131cdb089e",
+  "wheel_sha256": "be7aaa21231e236a84f54bec75e14882b2e7930a805ca410661615ae3952c2bd",
+  "version": "0.9.0rc3.dev0",
+  "note": "Live requests use a fixed installed wheel, not the concurrently edited checkout. No tools are executed.",
+  "installed_sweep_check": {
+    "source_commit": "5abfd231d4004ec3bf7cb238ae9dc1d5e3c603ee",
+    "wheel_sha256": "8b43eae0bab6df56c30e61d39abca00f456369908e5389f479dce04fb130a41d",
+    "note": "Final feature wheel tested with a scripted HTTP endpoint; separate from the frozen wheel used for live model requests."
+  },
+  "offline_report_verification_source_commit": "5abfd231d4004ec3bf7cb238ae9dc1d5e3c603ee"
+}

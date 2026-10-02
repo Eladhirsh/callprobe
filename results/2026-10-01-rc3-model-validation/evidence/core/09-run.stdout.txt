@@ -1,0 +1,40 @@
+model            qwen3:8b
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     100   truncated: 1
+
+                 selection   schema     args      success
+  overall         95.0%   96.0%   88.0%   85.0%   (95% CI 76.0-93.0%)
+  type-lenient    95.0%   96.0%   88.0%   85.0%
+
+  tool count sweep
+    +0   distractors   success  85.0%   selection  95.0%   sd  1.0
+
+  by category
+    abstain     90.9%  (n=22, 95% CI 72.7-100.0%)
+    args        87.5%  (n=24, 95% CI 66.7-100.0%)
+    depth       81.8%  (n=22, 95% CI 59.1-100.0%)
+    select      91.7%  (n=12, 95% CI 75.0-100.0%)
+    sequence    75.0%  (n=20, 95% CI 50.0-100.0%)
+
+  cost per success   1153 tokens   17.39 s
+
+failures worth reading:
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called issue_refund when no tool applied
+  [args-country-name-to-iso pad=0] address.country eq 'GB', got 'UK'
+  [depth-reason-stated-earlier pad=0] amount_cents should not be present
+  [sequence-address-before-status pad=0] produced 2 calls; expected exactly one
+  [depth-file-share-after-detour pad=0] file_id expected 'file_881020', got '881020'
+  [sequence-list-before-delete pad=0] called search_files, expected list_files; folder_id expected 'folder_temp_uploads', got missing
+  [sequence-cancel-before-rebook pad=0] produced 2 calls; expected exactly one
+  [args-relative-dates pad=0] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  [abstain-no-such-capability pad=0] called get_order_status when no tool applied
+  [select-address-change pad=0] no tool call produced
+      said: The order has not shipped yet, so we can update the shipping address. Please provide your new address details so I can make the change.
+  [sequence-address-before-status pad=0] produced 2 calls; expected exactly one
+  [depth-file-share-after-detour pad=0] file_id expected 'file_881020', got '881020'
+  [depth-file-move-after-distraction pad=0] file_id expected 'file_330071', got '330071'
+  [sequence-cancel-before-rebook pad=0] truncated on the token limit before any call, raise --max-tokens
+      said: Okay, let's break down the user's request. They want to cancel the meeting with ID mtg_1200 and then schedule a new 30-minute slot on cal_main for Priya and Ome
+
+wrote 09-result.json

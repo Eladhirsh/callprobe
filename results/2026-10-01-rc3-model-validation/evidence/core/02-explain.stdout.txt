@@ -1,0 +1,840 @@
+suite            core v2 (e597c986302b5596)
+model            llama3.2:3b
+cases            100   scored: 100   failed: 69
+
+diagnostic counts (cases; a case may carry more than one category)
+  no_call                 7   expected a call; the model produced none
+  unexpected_call        20   expected no call; the model called a tool anyway
+  multiple_calls          2   produced more than one call
+  wrong_tool             12   called a tool other than the expected/acceptable one
+  schema                 34   arguments failed the tool's JSON Schema
+  argument_value         32   argument values did not match the task's expectation
+
+failed cases
+
+[abstain-policy-question pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: What is your return policy for opened electronics?
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-123456'}
+
+[abstain-missing-identifier pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Can you refund my order? It arrived broken.
+  expected: no call
+  called: issue_refund
+  reason: called issue_refund when no tool applied
+  call: issue_refund arguments={'amount_cents': None, 'order_id': 'ORD-000000', 'reason': 'damaged'}
+    schema error at amount_cents: None is not of type 'integer' (expected type: integer)
+
+[abstain-chitchat pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Thanks, that's all I needed. Have a good weekend.
+  expected: no call
+  called: find_availability
+  reason: called find_availability when no tool applied
+  call: find_availability arguments={'end_date': '2023-03-31', 'duration_minutes': 30, 'calendar_id': '1234567890', 'start_date': '2023-03-01'}
+
+[args-partial-refund pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Order ORD-991003 came to $84.50 and one of the two mugs was cracked. Refund me for just the broken one, they were the same price.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-991003', 'reason': 'damaged'}
+    check amount_cents eq 4225
+  called: issue_refund
+  reason: amount_cents eq 4225, got 8405
+  call: issue_refund arguments={'order_id': 'ORD-991003', 'reason': 'damaged', 'amount_cents': 8405}
+    assertion [ok] order_id expected 'ORD-991003', got 'ORD-991003'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents eq 4225, got 8405 (half of 8450)
+
+[args-enum-mapping pad=0 repeat=0] category=args  diagnostics=schema
+  prompt: I ordered a blue jacket on ORD-100200 and received a red one. Please refund it.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-100200', 'reason': 'wrong_item'}
+  called: issue_refund
+  reason: schema: amount_cents: 0 is less than the minimum of 1
+  call: issue_refund arguments={'amount_cents': 0, 'order_id': 'ORD-100200', 'reason': 'wrong_item'}
+    assertion [ok] order_id expected 'ORD-100200', got 'ORD-100200'
+    assertion [ok] reason expected 'wrong_item', got 'wrong_item'
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[args-nested-address pad=0 repeat=0] category=args  diagnostics=no_call
+  prompt: Please send ORD-772341 to my new place instead: 55 Riverside Drive, apartment 12B, New York NY 10024, United States.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-772341'}
+    check address.postal_code eq '10024'
+    check address.country eq 'US'
+    check address.city eq 'New York'
+    check address.line1 contains 'Riverside'
+  called: None
+  reason: no tool call produced
+  said: {"name":"update_shipping_address","parameters":{"order_id":"ORD-772341","address":{"line1":"55 Riverside Drive","line2":"apartment 12B","city":"New York","regio
+
+[args-relative-dates pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Find me a free hour on my calendar cal_main sometime next week.
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 60}
+    check start_date matches '2026-09-1[2345]'
+    check end_date matches '2026-09-(1[89]|20)'
+  called: find_availability
+  reason: schema: duration_minutes: '60' is not of type 'integer'
+  reason: duration_minutes expected 60, got '60'
+  reason: end_date matches '2026-09-(1[89]|20)', got '2026-09-17'
+  call: find_availability arguments={'duration_minutes': '60', 'start_date': '2026-09-13', 'end_date': '2026-09-17', 'calendar_id': 'cal_main'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [FAIL] duration_minutes expected 60, got '60'
+    assertion [ok] start_date matches '2026-09-1[2345]', got '2026-09-13'
+    assertion [FAIL] end_date matches '2026-09-(1[89]|20)', got '2026-09-17'
+    schema error at duration_minutes: '60' is not of type 'integer' (expected type: integer)
+
+[sequence-availability-first pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: Book a 30 minute sync with priya@example.com on calendar cal_main on the first free slot this Thursday. Call it Weekly sync.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 30}
+  called: book_meeting
+  reason: called book_meeting, expected find_availability
+  reason: schema: attendees: "['priya@example.com']" is not of type 'array'
+  reason: schema: duration_minutes: '30' is not of type 'integer'
+  reason: duration_minutes expected 30, got '30'
+  call: book_meeting arguments={'attendees': "['priya@example.com']", 'calendar_id': 'cal_main', 'duration_minutes': '30', 'start_time': '2026-09-08T10:00:00+02:00', 'title': 'Weekly sync'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [FAIL] duration_minutes expected 30, got '30'
+    schema error at attendees: "['priya@example.com']" is not of type 'array' (expected type: array)
+    schema error at duration_minutes: '30' is not of type 'integer' (expected type: integer)
+
+[abstain-status-no-identifier pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Has my package gone out yet?
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-000000'}
+
+[abstain-change-email-on-file pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Can you update the email address on my account to elad@example.com?
+  expected: no call
+  called: search_orders
+  reason: called search_orders when no tool applied
+  call: search_orders arguments={'email': 'elad@example.com', 'limit': None, 'status': None}
+    schema error at limit: None is not of type 'integer' (expected type: integer)
+    schema error at status: None is not of type 'string' (expected type: string)
+    schema error at status: None is not one of ['any', 'pending', 'shipped', 'delivered', 'cancelled'] (expected type: string)
+
+[abstain-shipping-quote pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: How much would it cost to ship a 2kg box to 10024?
+  expected: no call
+  called: search_orders
+  reason: called search_orders when no tool applied
+  call: search_orders arguments={'email': '10024', 'limit': '1', 'status': 'any'}
+    schema error at limit: '1' is not of type 'integer' (expected type: integer)
+
+[abstain-availability-no-calendar pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Am I free for an hour on Tuesday afternoon?
+  expected: no call
+  called: find_availability
+  reason: called find_availability when no tool applied
+  call: find_availability arguments={'calendar_id': 'your_calendar_id', 'duration_minutes': 60, 'start_date': '2023-03-14', 'end_date': '2023-03-14'}
+
+[abstain-reschedule-unsupported pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Move my 3pm on Thursday to 4pm instead.
+  expected: no call
+  called: book_meeting
+  reason: called book_meeting when no tool applied
+  call: book_meeting arguments={'attendees': '', 'calendar_id': '', 'duration_minutes': 60, 'start_time': '2023-11-16T15:00:00+02:00', 'title': ''}
+    schema error at attendees: '' is not of type 'array' (expected type: array)
+
+[abstain-cancel-without-id pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Cancel my standup tomorrow morning please.
+  expected: no call
+  called: book_meeting
+  reason: called book_meeting when no tool applied
+  call: book_meeting arguments={'attendees': '[]', 'calendar_id': '', 'duration_minutes': '30', 'start_time': '2024-03-27T10:00:00+02:00', 'title': 'Standup Meeting'}
+    schema error at attendees: '[]' is not of type 'array' (expected type: array)
+    schema error at duration_minutes: '30' is not of type 'integer' (expected type: integer)
+
+[abstain-gratitude-midconversation pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Where is ORD-118820?
+  prompt: Perfect, thank you.
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-118820'}
+
+[args-full-refund-omits-amount pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: ORD-450917 turned up three weeks after the delivery date. Refund the whole thing.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-450917', 'reason': 'late'}
+    check amount_cents absent None
+  called: issue_refund
+  reason: schema: amount_cents: 0 is less than the minimum of 1
+  reason: amount_cents should not be present
+  call: issue_refund arguments={'order_id': 'ORD-450917', 'reason': 'late', 'amount_cents': 0}
+    assertion [ok] order_id expected 'ORD-450917', got 'ORD-450917'
+    assertion [ok] reason expected 'late', got 'late'
+    assertion [FAIL] amount_cents should not be present (omit to refund in full)
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[args-country-name-to-iso pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Redirect ORD-310884 to 14 Bedford Square, London, WC1B 3JA, United Kingdom.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-310884'}
+    check address.country eq 'GB'
+    check address.postal_code eq 'WC1B 3JA'
+    check address.city eq 'London'
+  called: update_shipping_address
+  reason: schema: address: '{"line1": "14 Bedford Square", "line2": "", "city": "London", "region": "WC1B 3JA", "postal_code": "", "country": "United Kingdom"}' is not of type 'object'
+  reason: address.country missing
+  reason: address.postal_code missing
+  reason: address.city missing
+  call: update_shipping_address arguments={'order_id': 'ORD-310884', 'address': '{"line1": "14 Bedford Square", "line2": "", "city": "London", "region": "WC1B 3JA", "postal_code": "", "country": "United Kingdom"}'}
+    assertion [ok] order_id expected 'ORD-310884', got 'ORD-310884'
+    assertion [FAIL] address.country missing
+    assertion [FAIL] address.postal_code missing
+    assertion [FAIL] address.city missing
+    schema error at address: '{"line1": "14 Bedford Square", "line2": "", "city": "London", "region": "WC1B 3JA", "postal_code": "", "country": "United Kingdom"}' is not of type 'object' (expected type: object)
+
+[args-filtered-search pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Show me the three most recent orders on noa@example.com that have already shipped.
+
+  expected: call search_orders
+    args {'email': 'noa@example.com', 'status': 'shipped', 'limit': 3}
+  called: search_orders
+  reason: schema: limit: '3' is not of type 'integer'
+  reason: limit expected 3, got '3'
+  reason: passes once string values are cast to their schema types
+  call: search_orders arguments={'email': 'noa@example.com', 'limit': '3', 'status': 'shipped'}
+    assertion [ok] email expected 'noa@example.com', got 'noa@example.com'
+    assertion [ok] status expected 'shipped', got 'shipped'
+    assertion [FAIL] limit expected 3, got '3'
+    schema error at limit: '3' is not of type 'integer' (expected type: integer)
+
+[args-explicit-datetime pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Book 45 minutes on cal_main this Wednesday at 2pm with omer@example.com and tal@example.com. Title it Design review.
+
+  expected: call book_meeting
+    args {'calendar_id': 'cal_main', 'duration_minutes': 45, 'title': 'Design review'}
+    check start_time matches '2026-09-09T14:00(:00)?-04:00'
+    check attendees.0 exists None
+    check attendees.1 exists None
+  called: book_meeting
+  reason: schema: attendees: "['omer@example.com', 'tal@example.com']" is not of type 'array'
+  reason: start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-08T14:00:00-04:00'
+  reason: attendees.0 missing
+  reason: attendees.1 missing
+  call: book_meeting arguments={'calendar_id': 'cal_main', 'attendees': "['omer@example.com', 'tal@example.com']", 'duration_minutes': 45, 'start_time': '2026-09-08T14:00:00-04:00', 'title': 'Design review'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 45, got 45
+    assertion [ok] title expected 'Design review', got 'Design review'
+    assertion [FAIL] start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-08T14:00:00-04:00'
+    assertion [FAIL] attendees.0 missing
+    assertion [FAIL] attendees.1 missing
+    schema error at attendees: "['omer@example.com', 'tal@example.com']" is not of type 'array' (expected type: array)
+
+[select-address-change pad=0 repeat=0] category=select  diagnostics=no_call
+  prompt: ORD-905512 has not shipped yet and I moved last weekend. I need it going somewhere else.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-905512'}
+  called: None
+  reason: no tool call produced
+  said: {"name":"update_shipping_address","parameters":{"order_id":"ORD-905512","address":{"line1":"","city":"","region":"","postal_code":"","country":""}}
+
+[select-cancel-with-id pad=0 repeat=0] category=select  diagnostics=schema
+  prompt: Drop meeting mtg_2210 from the calendar.
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_2210'}
+  called: cancel_meeting
+  reason: schema: notify_attendees: None is not of type 'boolean'
+  call: cancel_meeting arguments={'meeting_id': 'mtg_2210', 'notify_attendees': None}
+    assertion [ok] meeting_id expected 'mtg_2210', got 'mtg_2210'
+    schema error at notify_attendees: None is not of type 'boolean' (expected type: boolean)
+
+[select-availability-not-booking pad=0 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: What thirty minute slots are open on cal_ops between the 14th and the 18th? Do not book anything yet.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_ops', 'duration_minutes': 30, 'start_date': '2026-09-14', 'end_date': '2026-09-18'}
+  called: find_availability
+  reason: schema: duration_minutes: '30' is not of type 'integer'
+  reason: duration_minutes expected 30, got '30'
+  reason: passes once string values are cast to their schema types
+  call: find_availability arguments={'duration_minutes': '30', 'start_date': '2026-09-14', 'end_date': '2026-09-18', 'calendar_id': 'cal_ops'}
+    assertion [ok] calendar_id expected 'cal_ops', got 'cal_ops'
+    assertion [FAIL] duration_minutes expected 30, got '30'
+    assertion [ok] start_date expected '2026-09-14', got '2026-09-14'
+    assertion [ok] end_date expected '2026-09-18', got '2026-09-18'
+    schema error at duration_minutes: '30' is not of type 'integer' (expected type: integer)
+
+[depth-reason-stated-earlier pad=0 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: The blender on ORD-664200 arrived with a cracked jug.
+  prompt: A refund for the whole order, please.
+  expected: call issue_refund
+    args {'order_id': 'ORD-664200', 'reason': 'damaged'}
+    check amount_cents absent None
+  called: issue_refund
+  reason: schema: amount_cents: 0 is less than the minimum of 1
+  reason: amount_cents should not be present
+  call: issue_refund arguments={'amount_cents': 0, 'order_id': 'ORD-664200', 'reason': 'damaged'}
+    assertion [ok] order_id expected 'ORD-664200', got 'ORD-664200'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents should not be present
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[sequence-address-before-status pad=0 repeat=0] category=sequence  diagnostics=no_call
+  prompt: First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-505050'}
+    check address.country eq 'IL'
+  called: None
+  reason: no tool call produced
+  said: {"name":"update_shipping_address","parameters":{"order_id":"ORD-505050","address":{"line1":"9 Alon Street","city":"Tel Aviv","postal_code":"6100000","region":"I
+
+[depth-file-corrected-id pad=0 repeat=0] category=depth  diagnostics=schema
+  prompt: Can you delete file_100001? It's a duplicate upload.
+  prompt: Sorry, wrong id, I meant file_100002.
+  expected: call delete_file
+    args {'file_id': 'file_100002'}
+  called: delete_file
+  reason: schema: permanent: None is not of type 'boolean'
+  call: delete_file arguments={'permanent': None, 'file_id': 'file_100002'}
+    assertion [ok] file_id expected 'file_100002', got 'file_100002'
+    schema error at permanent: None is not of type 'boolean' (expected type: boolean)
+
+[depth-file-permanent-carried-forward pad=0 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: file_552210 has last year's numbers in it by mistake, and I don't want it sitting in the trash where someone could restore it.
+
+  prompt: Yes, get rid of it.
+  expected: call delete_file
+    args {'file_id': 'file_552210', 'permanent': True}
+  called: delete_file
+  reason: schema: permanent: None is not of type 'boolean'
+  reason: permanent expected True, got None
+  call: delete_file arguments={'file_id': 'file_552210', 'permanent': None}
+    assertion [ok] file_id expected 'file_552210', got 'file_552210'
+    assertion [FAIL] permanent expected True, got None
+    schema error at permanent: None is not of type 'boolean' (expected type: boolean)
+
+[depth-meeting-id-corrected pad=0 repeat=0] category=depth  diagnostics=schema
+  prompt: Cancel meeting mtg_7734.
+  prompt: Wait, that's the wrong one. I meant mtg_7735.
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_7735'}
+  called: cancel_meeting
+  reason: schema: notify_attendees: None is not of type 'boolean'
+  call: cancel_meeting arguments={'meeting_id': 'mtg_7735', 'notify_attendees': None}
+    assertion [ok] meeting_id expected 'mtg_7735', got 'mtg_7735'
+    schema error at notify_attendees: None is not of type 'boolean' (expected type: boolean)
+
+[sequence-search-before-move pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Move the quarterly report into folder_archive_2026, I don't have the file id handy.
+
+  expected: call search_files
+    check query exists None
+  called: move_file
+  reason: called move_file, expected search_files
+  reason: query missing
+  call: move_file arguments={'destination_folder_id': 'folder_archive_2026', 'file_id': 'quarterly report'}
+    assertion [FAIL] query missing
+
+[sequence-list-before-delete pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: Go through folder_temp_uploads and get rid of everything in it, I don't remember what's in there.
+
+  expected: call list_files
+    args {'folder_id': 'folder_temp_uploads'}
+  called: search_files
+  reason: called search_files, expected list_files
+  reason: schema: limit: 0 is less than the minimum of 1
+  reason: schema: modified_after: '' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+  reason: folder_id expected 'folder_temp_uploads', got missing
+  call: search_files arguments={'query': 'folder_temp_uploads', 'limit': 0, 'modified_after': ''}
+    assertion [FAIL] folder_id expected 'folder_temp_uploads', got missing
+    schema error at limit: 0 is less than the minimum of 1 (expected type: integer)
+    schema error at modified_after: '' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' (expected type: string)
+
+[sequence-search-before-share pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: Share the file named onboarding_checklist with maya@example.com as a viewer, I don't know its id.
+
+  expected: call search_files
+    check query contains 'onboarding'
+  called: share_file
+  reason: called share_file, expected search_files
+  reason: schema: file_id: None is not of type 'string'
+  reason: query missing
+  call: share_file arguments={'file_id': None, 'email': 'maya@example.com', 'role': 'viewer'}
+    assertion [FAIL] query missing
+    schema error at file_id: None is not of type 'string' (expected type: string)
+
+[sequence-list-before-share-all pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: Everything in folder_bids_2026 needs to go to legal@example.com as a viewer, I don't have individual file ids.
+
+  expected: call list_files
+    args {'folder_id': 'folder_bids_2026'}
+  called: search_files
+  reason: called search_files, expected list_files
+  reason: schema: modified_after: '' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+  reason: folder_id expected 'folder_bids_2026', got missing
+  call: search_files arguments={'limit': 100, 'modified_after': '', 'query': 'legal@example.com viewer'}
+    assertion [FAIL] folder_id expected 'folder_bids_2026', got missing
+    schema error at modified_after: '' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' (expected type: string)
+
+[sequence-availability-before-checkin pad=0 repeat=0] category=sequence  diagnostics=schema, argument_value
+  prompt: Set up a 20 minute check-in with dana@example.com sometime tomorrow afternoon on cal_main, whatever's open.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 20}
+  called: find_availability
+  reason: schema: duration_minutes: '20' is not of type 'integer'
+  reason: duration_minutes expected 20, got '20'
+  reason: passes once string values are cast to their schema types
+  call: find_availability arguments={'end_date': '2026-09-08', 'calendar_id': 'cal_main', 'duration_minutes': '20', 'start_date': '2026-09-08'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [FAIL] duration_minutes expected 20, got '20'
+    schema error at duration_minutes: '20' is not of type 'integer' (expected type: integer)
+
+[sequence-cancel-before-rebook pad=0 repeat=0] category=sequence  diagnostics=multiple_calls
+  prompt: Cancel meeting mtg_1200, and then set up a new 30 minute slot on cal_main whenever's free for priya@example.com and omer@example.com.
+
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_1200'}
+  called: cancel_meeting
+  reason: produced 2 calls; expected exactly one
+  call: cancel_meeting arguments={'meeting_id': 'mtg_1200', 'notify_attendees': False}
+  call: book_meeting arguments={'title': '', 'attendees': ['priya@example.com', 'omer@example.com'], 'calendar_id': 'cal_main', 'duration_minutes': 30, 'start_time': 'TBD'}
+    assertion [ok] meeting_id expected 'mtg_1200', got 'mtg_1200'
+
+[sequence-search-before-refund pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: I don't have my order number, but refund the shampoo order for noa@example.com, it leaked everywhere.
+
+  expected: call search_orders
+    args {'email': 'noa@example.com'}
+  called: issue_refund
+  reason: called issue_refund, expected search_orders
+  reason: schema: (root): Additional properties are not allowed ('customer' was unexpected)
+  reason: schema: amount_cents: None is not of type 'integer'
+  reason: schema: order_id: None is not of type 'string'
+  reason: email expected 'noa@example.com', got missing
+  call: issue_refund arguments={'amount_cents': None, 'order_id': None, 'reason': 'wrong_item', 'customer': 'noa@example.com'}
+    assertion [FAIL] email expected 'noa@example.com', got missing
+    schema error at (root): Additional properties are not allowed ('customer' was unexpected) (expected type: object)
+    schema error at amount_cents: None is not of type 'integer' (expected type: integer)
+    schema error at order_id: None is not of type 'string' (expected type: string)
+
+[sequence-status-before-conditional-escalation pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Check on ORD-770044 for me, and if it's still not moving after two weeks like last time, get me a person.
+
+  expected: call get_order_status
+    args {'order_id': 'ORD-770044'}
+  called: escalate_to_human
+  reason: called escalate_to_human, expected get_order_status
+  reason: order_id expected 'ORD-770044', got missing
+  call: escalate_to_human arguments={'summary': "Check on ORD-770044 for you, and if it's still not moving after two weeks like last time, get you a person.", 'urgency': 'high'}
+    assertion [FAIL] order_id expected 'ORD-770044', got missing
+
+[abstain-policy-question pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: What is your return policy for opened electronics?
+  expected: no call
+  called: search_orders
+  reason: called search_orders when no tool applied
+  call: search_orders arguments={'email': '', 'limit': 10, 'status': 'cancelled'}
+
+[abstain-missing-identifier pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Can you refund my order? It arrived broken.
+  expected: no call
+  called: issue_refund
+  reason: called issue_refund when no tool applied
+  call: issue_refund arguments={'order_id': 'ORD-000000', 'reason': 'damaged', 'amount_cents': 0}
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[abstain-chitchat pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Thanks, that's all I needed. Have a good weekend.
+  expected: no call
+  called: find_availability
+  reason: called find_availability when no tool applied
+  call: find_availability arguments={'calendar_id': '1234567890', 'start_date': '2023-03-01', 'end_date': '2023-03-31', 'duration_minutes': 30}
+
+[args-partial-refund pad=0 repeat=1] category=args  diagnostics=argument_value
+  prompt: Order ORD-991003 came to $84.50 and one of the two mugs was cracked. Refund me for just the broken one, they were the same price.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-991003', 'reason': 'damaged'}
+    check amount_cents eq 4225
+  called: issue_refund
+  reason: amount_cents eq 4225, got 8405
+  call: issue_refund arguments={'amount_cents': 8405, 'order_id': 'ORD-991003', 'reason': 'damaged'}
+    assertion [ok] order_id expected 'ORD-991003', got 'ORD-991003'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents eq 4225, got 8405 (half of 8450)
+
+[args-enum-mapping pad=0 repeat=1] category=args  diagnostics=schema
+  prompt: I ordered a blue jacket on ORD-100200 and received a red one. Please refund it.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-100200', 'reason': 'wrong_item'}
+  called: issue_refund
+  reason: schema: amount_cents: 0 is less than the minimum of 1
+  call: issue_refund arguments={'amount_cents': 0, 'order_id': 'ORD-100200', 'reason': 'wrong_item'}
+    assertion [ok] order_id expected 'ORD-100200', got 'ORD-100200'
+    assertion [ok] reason expected 'wrong_item', got 'wrong_item'
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[args-nested-address pad=0 repeat=1] category=args  diagnostics=no_call
+  prompt: Please send ORD-772341 to my new place instead: 55 Riverside Drive, apartment 12B, New York NY 10024, United States.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-772341'}
+    check address.postal_code eq '10024'
+    check address.country eq 'US'
+    check address.city eq 'New York'
+    check address.line1 contains 'Riverside'
+  called: None
+  reason: no tool call produced
+  said: {"name":"update_shipping_address","parameters":{"order_id":"ORD-772341","address":{"line1":"55 Riverside Drive","line2":"apartment 12B","city":"New York","regio
+
+[args-relative-dates pad=0 repeat=1] category=args  diagnostics=schema, argument_value
+  prompt: Find me a free hour on my calendar cal_main sometime next week.
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 60}
+    check start_date matches '2026-09-1[2345]'
+    check end_date matches '2026-09-(1[89]|20)'
+  called: find_availability
+  reason: schema: duration_minutes: '60' is not of type 'integer'
+  reason: duration_minutes expected 60, got '60'
+  reason: end_date matches '2026-09-(1[89]|20)', got '2026-09-17'
+  call: find_availability arguments={'duration_minutes': '60', 'start_date': '2026-09-13', 'end_date': '2026-09-17', 'calendar_id': 'cal_main'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [FAIL] duration_minutes expected 60, got '60'
+    assertion [ok] start_date matches '2026-09-1[2345]', got '2026-09-13'
+    assertion [FAIL] end_date matches '2026-09-(1[89]|20)', got '2026-09-17'
+    schema error at duration_minutes: '60' is not of type 'integer' (expected type: integer)
+
+[sequence-availability-first pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: Book a 30 minute sync with priya@example.com on calendar cal_main on the first free slot this Thursday. Call it Weekly sync.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 30}
+  called: book_meeting
+  reason: called book_meeting, expected find_availability
+  reason: schema: attendees: "['priya@example.com']" is not of type 'array'
+  reason: schema: duration_minutes: '30' is not of type 'integer'
+  reason: duration_minutes expected 30, got '30'
+  call: book_meeting arguments={'attendees': "['priya@example.com']", 'calendar_id': 'cal_main', 'duration_minutes': '30', 'start_time': '2026-09-08T10:00:00+02:00', 'title': 'Weekly sync'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [FAIL] duration_minutes expected 30, got '30'
+    schema error at attendees: "['priya@example.com']" is not of type 'array' (expected type: array)
+    schema error at duration_minutes: '30' is not of type 'integer' (expected type: integer)
+
+[abstain-status-no-identifier pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Has my package gone out yet?
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-000000'}
+
+[abstain-no-such-capability pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Please cancel order ORD-620114 before it ships.
+  expected: no call
+  called: issue_refund
+  reason: called issue_refund when no tool applied
+  call: issue_refund arguments={'amount_cents': None, 'order_id': 'ORD-620114', 'reason': 'before it ships'}
+    schema error at amount_cents: None is not of type 'integer' (expected type: integer)
+    schema error at reason: 'before it ships' is not one of ['damaged', 'late', 'wrong_item', 'changed_mind', 'other'] (expected type: string)
+
+[abstain-shipping-quote pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: How much would it cost to ship a 2kg box to 10024?
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-123456'}
+
+[abstain-availability-no-calendar pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Am I free for an hour on Tuesday afternoon?
+  expected: no call
+  called: find_availability
+  reason: called find_availability when no tool applied
+  call: find_availability arguments={'calendar_id': 'your_calendar_id', 'duration_minutes': 60, 'start_date': '2023-12-12', 'end_date': '2023-12-12'}
+
+[abstain-reschedule-unsupported pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Move my 3pm on Thursday to 4pm instead.
+  expected: no call
+  called: find_availability
+  reason: called find_availability when no tool applied
+  call: find_availability arguments={'calendar_id': 'your_calendar_id', 'duration_minutes': 60, 'start_date': '2023-12-07', 'end_date': '2023-12-07'}
+
+[abstain-cancel-without-id pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Cancel my standup tomorrow morning please.
+  expected: no call
+  called: book_meeting
+  reason: called book_meeting when no tool applied
+  call: book_meeting arguments={'attendees': '[]', 'calendar_id': '', 'duration_minutes': '30', 'start_time': '2024-03-27T10:00:00+02:00', 'title': 'Standup Meeting'}
+    schema error at attendees: '[]' is not of type 'array' (expected type: array)
+    schema error at duration_minutes: '30' is not of type 'integer' (expected type: integer)
+
+[abstain-gratitude-midconversation pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Where is ORD-118820?
+  prompt: Perfect, thank you.
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-118820'}
+
+[args-full-refund-omits-amount pad=0 repeat=1] category=args  diagnostics=schema, argument_value
+  prompt: ORD-450917 turned up three weeks after the delivery date. Refund the whole thing.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-450917', 'reason': 'late'}
+    check amount_cents absent None
+  called: issue_refund
+  reason: schema: amount_cents: 0 is less than the minimum of 1
+  reason: amount_cents should not be present
+  call: issue_refund arguments={'amount_cents': 0, 'order_id': 'ORD-450917', 'reason': 'late'}
+    assertion [ok] order_id expected 'ORD-450917', got 'ORD-450917'
+    assertion [ok] reason expected 'late', got 'late'
+    assertion [FAIL] amount_cents should not be present (omit to refund in full)
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[args-country-name-to-iso pad=0 repeat=1] category=args  diagnostics=schema, argument_value
+  prompt: Redirect ORD-310884 to 14 Bedford Square, London, WC1B 3JA, United Kingdom.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-310884'}
+    check address.country eq 'GB'
+    check address.postal_code eq 'WC1B 3JA'
+    check address.city eq 'London'
+  called: update_shipping_address
+  reason: schema: address: '{"line1": "14 Bedford Square", "city": "London", "postal_code": "WC1B 3JA", "region": "United Kingdom", "country": "GB"}' is not of type 'object'
+  reason: address.country missing
+  reason: address.postal_code missing
+  reason: address.city missing
+  reason: passes once string values are cast to their schema types
+  call: update_shipping_address arguments={'order_id': 'ORD-310884', 'address': '{"line1": "14 Bedford Square", "city": "London", "postal_code": "WC1B 3JA", "region": "United Kingdom", "country": "GB"}'}
+    assertion [ok] order_id expected 'ORD-310884', got 'ORD-310884'
+    assertion [FAIL] address.country missing
+    assertion [FAIL] address.postal_code missing
+    assertion [FAIL] address.city missing
+    schema error at address: '{"line1": "14 Bedford Square", "city": "London", "postal_code": "WC1B 3JA", "region": "United Kingdom", "country": "GB"}' is not of type 'object' (expected type: object)
+
+[args-filtered-search pad=0 repeat=1] category=args  diagnostics=schema, argument_value
+  prompt: Show me the three most recent orders on noa@example.com that have already shipped.
+
+  expected: call search_orders
+    args {'email': 'noa@example.com', 'status': 'shipped', 'limit': 3}
+  called: search_orders
+  reason: schema: limit: '3' is not of type 'integer'
+  reason: limit expected 3, got '3'
+  reason: passes once string values are cast to their schema types
+  call: search_orders arguments={'status': 'shipped', 'email': 'noa@example.com', 'limit': '3'}
+    assertion [ok] email expected 'noa@example.com', got 'noa@example.com'
+    assertion [ok] status expected 'shipped', got 'shipped'
+    assertion [FAIL] limit expected 3, got '3'
+    schema error at limit: '3' is not of type 'integer' (expected type: integer)
+
+[args-explicit-datetime pad=0 repeat=1] category=args  diagnostics=schema, argument_value
+  prompt: Book 45 minutes on cal_main this Wednesday at 2pm with omer@example.com and tal@example.com. Title it Design review.
+
+  expected: call book_meeting
+    args {'calendar_id': 'cal_main', 'duration_minutes': 45, 'title': 'Design review'}
+    check start_time matches '2026-09-09T14:00(:00)?-04:00'
+    check attendees.0 exists None
+    check attendees.1 exists None
+  called: book_meeting
+  reason: schema: attendees: "['omer@example.com', 'tal@example.com']" is not of type 'array'
+  reason: start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-08T13:00:00-04:00'
+  reason: attendees.0 missing
+  reason: attendees.1 missing
+  call: book_meeting arguments={'calendar_id': 'cal_main', 'duration_minutes': 45, 'start_time': '2026-09-08T13:00:00-04:00', 'title': 'Design review', 'attendees': "['omer@example.com', 'tal@example.com']"}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 45, got 45
+    assertion [ok] title expected 'Design review', got 'Design review'
+    assertion [FAIL] start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-08T13:00:00-04:00'
+    assertion [FAIL] attendees.0 missing
+    assertion [FAIL] attendees.1 missing
+    schema error at attendees: "['omer@example.com', 'tal@example.com']" is not of type 'array' (expected type: array)
+
+[select-address-change pad=0 repeat=1] category=select  diagnostics=no_call
+  prompt: ORD-905512 has not shipped yet and I moved last weekend. I need it going somewhere else.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-905512'}
+  called: None
+  reason: no tool call produced
+  said: {"name":"update_shipping_address","parameters":{"order_id":"ORD-905512","address":{"line1":"","city":"","region":"","postal_code":"","country":""}}
+
+[select-availability-not-booking pad=0 repeat=1] category=select  diagnostics=schema, argument_value
+  prompt: What thirty minute slots are open on cal_ops between the 14th and the 18th? Do not book anything yet.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_ops', 'duration_minutes': 30, 'start_date': '2026-09-14', 'end_date': '2026-09-18'}
+  called: find_availability
+  reason: schema: duration_minutes: '30' is not of type 'integer'
+  reason: duration_minutes expected 30, got '30'
+  reason: start_date expected '2026-09-14', got '2022-09-14'
+  reason: end_date expected '2026-09-18', got '2022-09-18'
+  call: find_availability arguments={'calendar_id': 'cal_ops', 'duration_minutes': '30', 'start_date': '2022-09-14', 'end_date': '2022-09-18'}
+    assertion [ok] calendar_id expected 'cal_ops', got 'cal_ops'
+    assertion [FAIL] duration_minutes expected 30, got '30'
+    assertion [FAIL] start_date expected '2026-09-14', got '2022-09-14'
+    assertion [FAIL] end_date expected '2026-09-18', got '2022-09-18'
+    schema error at duration_minutes: '30' is not of type 'integer' (expected type: integer)
+
+[depth-reason-stated-earlier pad=0 repeat=1] category=depth  diagnostics=schema, argument_value
+  prompt: The blender on ORD-664200 arrived with a cracked jug.
+  prompt: A refund for the whole order, please.
+  expected: call issue_refund
+    args {'order_id': 'ORD-664200', 'reason': 'damaged'}
+    check amount_cents absent None
+  called: issue_refund
+  reason: schema: amount_cents: 0 is less than the minimum of 1
+  reason: amount_cents should not be present
+  call: issue_refund arguments={'amount_cents': 0, 'order_id': 'ORD-664200', 'reason': 'damaged'}
+    assertion [ok] order_id expected 'ORD-664200', got 'ORD-664200'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents should not be present
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[sequence-address-before-status pad=0 repeat=1] category=sequence  diagnostics=no_call
+  prompt: First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-505050'}
+    check address.country eq 'IL'
+  called: None
+  reason: no tool call produced
+  said: {"name":"update_shipping_address","parameters":{"order_id":"ORD-505050","address":{"line1":"9 Alon Street","city":"Tel Aviv","postal_code":"6100000","region":"I
+
+[depth-file-corrected-id pad=0 repeat=1] category=depth  diagnostics=schema
+  prompt: Can you delete file_100001? It's a duplicate upload.
+  prompt: Sorry, wrong id, I meant file_100002.
+  expected: call delete_file
+    args {'file_id': 'file_100002'}
+  called: delete_file
+  reason: schema: permanent: None is not of type 'boolean'
+  call: delete_file arguments={'file_id': 'file_100002', 'permanent': None}
+    assertion [ok] file_id expected 'file_100002', got 'file_100002'
+    schema error at permanent: None is not of type 'boolean' (expected type: boolean)
+
+[depth-file-permanent-carried-forward pad=0 repeat=1] category=depth  diagnostics=schema, argument_value
+  prompt: file_552210 has last year's numbers in it by mistake, and I don't want it sitting in the trash where someone could restore it.
+
+  prompt: Yes, get rid of it.
+  expected: call delete_file
+    args {'file_id': 'file_552210', 'permanent': True}
+  called: delete_file
+  reason: schema: permanent: None is not of type 'boolean'
+  reason: permanent expected True, got None
+  call: delete_file arguments={'file_id': 'file_552210', 'permanent': None}
+    assertion [ok] file_id expected 'file_552210', got 'file_552210'
+    assertion [FAIL] permanent expected True, got None
+    schema error at permanent: None is not of type 'boolean' (expected type: boolean)
+
+[depth-meeting-id-corrected pad=0 repeat=1] category=depth  diagnostics=schema
+  prompt: Cancel meeting mtg_7734.
+  prompt: Wait, that's the wrong one. I meant mtg_7735.
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_7735'}
+  called: cancel_meeting
+  reason: schema: notify_attendees: None is not of type 'boolean'
+  call: cancel_meeting arguments={'meeting_id': 'mtg_7735', 'notify_attendees': None}
+    assertion [ok] meeting_id expected 'mtg_7735', got 'mtg_7735'
+    schema error at notify_attendees: None is not of type 'boolean' (expected type: boolean)
+
+[sequence-search-before-move pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Move the quarterly report into folder_archive_2026, I don't have the file id handy.
+
+  expected: call search_files
+    check query exists None
+  called: move_file
+  reason: called move_file, expected search_files
+  reason: query missing
+  call: move_file arguments={'file_id': '', 'destination_folder_id': 'folder_archive_2026'}
+    assertion [FAIL] query missing
+
+[sequence-list-before-delete pad=0 repeat=1] category=sequence  diagnostics=schema
+  prompt: Go through folder_temp_uploads and get rid of everything in it, I don't remember what's in there.
+
+  expected: call list_files
+    args {'folder_id': 'folder_temp_uploads'}
+  called: list_files
+  reason: schema: limit: 1000 is greater than the maximum of 100
+  call: list_files arguments={'folder_id': 'folder_temp_uploads', 'limit': 1000}
+    assertion [ok] folder_id expected 'folder_temp_uploads', got 'folder_temp_uploads'
+    schema error at limit: 1000 is greater than the maximum of 100 (expected type: integer)
+
+[sequence-search-before-share pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: Share the file named onboarding_checklist with maya@example.com as a viewer, I don't know its id.
+
+  expected: call search_files
+    check query contains 'onboarding'
+  called: share_file
+  reason: called share_file, expected search_files
+  reason: schema: file_id: None is not of type 'string'
+  reason: query missing
+  call: share_file arguments={'email': 'maya@example.com', 'role': 'viewer', 'file_id': None}
+    assertion [FAIL] query missing
+    schema error at file_id: None is not of type 'string' (expected type: string)
+
+[sequence-list-before-share-all pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Everything in folder_bids_2026 needs to go to legal@example.com as a viewer, I don't have individual file ids.
+
+  expected: call list_files
+    args {'folder_id': 'folder_bids_2026'}
+  called: share_file
+  reason: called share_file, expected list_files
+  reason: folder_id expected 'folder_bids_2026', got missing
+  call: share_file arguments={'role': 'viewer', 'file_id': '', 'email': 'legal@example.com'}
+    assertion [FAIL] folder_id expected 'folder_bids_2026', got missing
+
+[sequence-availability-before-checkin pad=0 repeat=1] category=sequence  diagnostics=schema, argument_value
+  prompt: Set up a 20 minute check-in with dana@example.com sometime tomorrow afternoon on cal_main, whatever's open.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 20}
+  called: find_availability
+  reason: schema: duration_minutes: '20' is not of type 'integer'
+  reason: duration_minutes expected 20, got '20'
+  reason: passes once string values are cast to their schema types
+  call: find_availability arguments={'duration_minutes': '20', 'start_date': '2026-09-08', 'end_date': '2026-09-08', 'calendar_id': 'cal_main'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [FAIL] duration_minutes expected 20, got '20'
+    schema error at duration_minutes: '20' is not of type 'integer' (expected type: integer)
+
+[sequence-cancel-before-rebook pad=0 repeat=1] category=sequence  diagnostics=multiple_calls
+  prompt: Cancel meeting mtg_1200, and then set up a new 30 minute slot on cal_main whenever's free for priya@example.com and omer@example.com.
+
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_1200'}
+  called: cancel_meeting
+  reason: produced 2 calls; expected exactly one
+  call: cancel_meeting arguments={'notify_attendees': False, 'meeting_id': 'mtg_1200'}
+  call: book_meeting arguments={'attendees': ['priya@example.com', 'omer@example.com'], 'calendar_id': 'cal_main', 'duration_minutes': 30, 'start_time': '', 'title': '', 'start_date': '', 'end_date': ''}
+    assertion [ok] meeting_id expected 'mtg_1200', got 'mtg_1200'
+
+[sequence-search-before-refund pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: I don't have my order number, but refund the shampoo order for noa@example.com, it leaked everywhere.
+
+  expected: call search_orders
+    args {'email': 'noa@example.com'}
+  called: issue_refund
+  reason: called issue_refund, expected search_orders
+  reason: schema: (root): Additional properties are not allowed ('customer' was unexpected)
+  reason: schema: amount_cents: None is not of type 'integer'
+  reason: schema: order_id: 'null' does not match '^ORD-[0-9]{6}$'
+  reason: email expected 'noa@example.com', got missing
+  call: issue_refund arguments={'amount_cents': None, 'order_id': 'null', 'reason': 'damaged', 'customer': 'noa@example.com'}
+    assertion [FAIL] email expected 'noa@example.com', got missing
+    schema error at (root): Additional properties are not allowed ('customer' was unexpected) (expected type: object)
+    schema error at amount_cents: None is not of type 'integer' (expected type: integer)
+    schema error at order_id: 'null' does not match '^ORD-[0-9]{6}$' (expected type: string)
+
+[sequence-status-before-conditional-escalation pad=0 repeat=1] category=sequence  diagnostics=no_call
+  prompt: Check on ORD-770044 for me, and if it's still not moving after two weeks like last time, get me a person.
+
+  expected: call get_order_status
+    args {'order_id': 'ORD-770044'}
+  called: None
+  reason: no tool call produced
+  said: {"name":"escalate_to_human","parameters":{"summary":"Check on ORD-770044 for you, and if it\'s still not moving after two weeks like last time, get you a person

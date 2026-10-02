@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="core" tests="100" failures="78" errors="0" skipped="0" time="761.055683">
+    <properties>
+      <property name="model" value="command-r7b:latest" />
+      <property name="suite_hash" value="e597c986302b5596" />
+      <property name="scoring_version" value="3" />
+      <property name="planned_coverage" value="100" />
+      <property name="recorded_coverage" value="100" />
+      <property name="targeted_scope" value="false" />
+    </properties>
+    <testcase name="select-status-direct[pad=0,repeat=0]" classname="select" time="7.978484">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-search-not-status[pad=0,repeat=0]" classname="select" time="11.495444">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-escalate-explicit[pad=0,repeat=0]" classname="select" time="7.000991">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="abstain-policy-question[pad=0,repeat=0]" classname="abstain" time="9.191940" />
+    <testcase name="abstain-missing-identifier[pad=0,repeat=0]" classname="abstain" time="8.751125" />
+    <testcase name="abstain-chitchat[pad=0,repeat=0]" classname="abstain" time="5.799495" />
+    <testcase name="args-partial-refund[pad=0,repeat=0]" classname="args" time="6.292885">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-enum-mapping[pad=0,repeat=0]" classname="args" time="8.447864">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-nested-address[pad=0,repeat=0]" classname="args" time="7.533479">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-relative-dates[pad=0,repeat=0]" classname="args" time="6.666588">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-late-reference[pad=0,repeat=0]" classname="depth" time="13.768465">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-availability-first[pad=0,repeat=0]" classname="sequence" time="10.345884">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="abstain-status-no-identifier[pad=0,repeat=0]" classname="abstain" time="6.154000" />
+    <testcase name="abstain-no-such-capability[pad=0,repeat=0]" classname="abstain" time="6.304847" />
+    <testcase name="abstain-change-email-on-file[pad=0,repeat=0]" classname="abstain" time="5.997541" />
+    <testcase name="abstain-shipping-quote[pad=0,repeat=0]" classname="abstain" time="6.274384" />
+    <testcase name="abstain-availability-no-calendar[pad=0,repeat=0]" classname="abstain" time="6.366817" />
+    <testcase name="abstain-reschedule-unsupported[pad=0,repeat=0]" classname="abstain" time="2.949705" />
+    <testcase name="abstain-cancel-without-id[pad=0,repeat=0]" classname="abstain" time="6.620733" />
+    <testcase name="abstain-gratitude-midconversation[pad=0,repeat=0]" classname="abstain" time="6.604388" />
+    <testcase name="args-full-refund-omits-amount[pad=0,repeat=0]" classname="args" time="6.720055">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-dollars-to-cents[pad=0,repeat=0]" classname="args" time="9.023985">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-country-name-to-iso[pad=0,repeat=0]" classname="args" time="7.643489">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-filtered-search[pad=0,repeat=0]" classname="args" time="7.407099">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-duration-in-words[pad=0,repeat=0]" classname="args" time="7.459472">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-explicit-datetime[pad=0,repeat=0]" classname="args" time="12.143048">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-boolean-from-instruction[pad=0,repeat=0]" classname="args" time="6.522030">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-escalation-urgency[pad=0,repeat=0]" classname="args" time="7.709545">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-address-change[pad=0,repeat=0]" classname="select" time="5.494771">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-cancel-with-id[pad=0,repeat=0]" classname="select" time="4.165215">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-availability-not-booking[pad=0,repeat=0]" classname="select" time="5.247820">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-corrected-identifier[pad=0,repeat=0]" classname="depth" time="5.540094">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-reason-stated-earlier[pad=0,repeat=0]" classname="depth" time="5.664963">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-address-before-status[pad=0,repeat=0]" classname="sequence" time="5.657931">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-share-after-detour[pad=0,repeat=0]" classname="depth" time="15.436193">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-corrected-id[pad=0,repeat=0]" classname="depth" time="5.991799">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-permanent-carried-forward[pad=0,repeat=0]" classname="depth" time="6.263949">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-move-after-distraction[pad=0,repeat=0]" classname="depth" time="6.419160">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-meeting-id-corrected[pad=0,repeat=0]" classname="depth" time="8.062312">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-notify-preference-earlier[pad=0,repeat=0]" classname="depth" time="6.973366">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-refund-amount-after-clarification[pad=0,repeat=0]" classname="depth" time="8.861260">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-escalation-after-repeated-question[pad=0,repeat=0]" classname="depth" time="8.575543">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-move[pad=0,repeat=0]" classname="sequence" time="8.555714">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-list-before-delete[pad=0,repeat=0]" classname="sequence" time="8.253663">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-share[pad=0,repeat=0]" classname="sequence" time="8.109947">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-list-before-share-all[pad=0,repeat=0]" classname="sequence" time="7.835154">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-availability-before-checkin[pad=0,repeat=0]" classname="sequence" time="7.710166">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-cancel-before-rebook[pad=0,repeat=0]" classname="sequence" time="16.304788">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-refund[pad=0,repeat=0]" classname="sequence" time="8.167424">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-status-before-conditional-escalation[pad=0,repeat=0]" classname="sequence" time="9.765206">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-status-direct[pad=0,repeat=1]" classname="select" time="7.043374">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-search-not-status[pad=0,repeat=1]" classname="select" time="6.293200">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-escalate-explicit[pad=0,repeat=1]" classname="select" time="7.482733">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="abstain-policy-question[pad=0,repeat=1]" classname="abstain" time="8.789529" />
+    <testcase name="abstain-missing-identifier[pad=0,repeat=1]" classname="abstain" time="6.767993" />
+    <testcase name="abstain-chitchat[pad=0,repeat=1]" classname="abstain" time="5.591094" />
+    <testcase name="args-partial-refund[pad=0,repeat=1]" classname="args" time="6.972515">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-enum-mapping[pad=0,repeat=1]" classname="args" time="5.169329">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-nested-address[pad=0,repeat=1]" classname="args" time="6.311136">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-relative-dates[pad=0,repeat=1]" classname="args" time="6.791771">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-late-reference[pad=0,repeat=1]" classname="depth" time="6.982891">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-availability-first[pad=0,repeat=1]" classname="sequence" time="11.546205">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="abstain-status-no-identifier[pad=0,repeat=1]" classname="abstain" time="6.065207" />
+    <testcase name="abstain-no-such-capability[pad=0,repeat=1]" classname="abstain" time="12.974291" />
+    <testcase name="abstain-change-email-on-file[pad=0,repeat=1]" classname="abstain" time="9.561808" />
+    <testcase name="abstain-shipping-quote[pad=0,repeat=1]" classname="abstain" time="6.971502" />
+    <testcase name="abstain-availability-no-calendar[pad=0,repeat=1]" classname="abstain" time="6.509633" />
+    <testcase name="abstain-reschedule-unsupported[pad=0,repeat=1]" classname="abstain" time="3.745102" />
+    <testcase name="abstain-cancel-without-id[pad=0,repeat=1]" classname="abstain" time="5.362206" />
+    <testcase name="abstain-gratitude-midconversation[pad=0,repeat=1]" classname="abstain" time="7.324567" />
+    <testcase name="args-full-refund-omits-amount[pad=0,repeat=1]" classname="args" time="10.862946">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-dollars-to-cents[pad=0,repeat=1]" classname="args" time="8.556228">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-country-name-to-iso[pad=0,repeat=1]" classname="args" time="8.049596">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-filtered-search[pad=0,repeat=1]" classname="args" time="8.073432">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-duration-in-words[pad=0,repeat=1]" classname="args" time="6.442289">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-explicit-datetime[pad=0,repeat=1]" classname="args" time="11.589437">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-boolean-from-instruction[pad=0,repeat=1]" classname="args" time="6.793993">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="args-escalation-urgency[pad=0,repeat=1]" classname="args" time="6.933034">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-address-change[pad=0,repeat=1]" classname="select" time="6.597242">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-cancel-with-id[pad=0,repeat=1]" classname="select" time="6.358484">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-availability-not-booking[pad=0,repeat=1]" classname="select" time="6.290001">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-corrected-identifier[pad=0,repeat=1]" classname="depth" time="6.086448">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-reason-stated-earlier[pad=0,repeat=1]" classname="depth" time="12.900576">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-address-before-status[pad=0,repeat=1]" classname="sequence" time="7.435377">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-share-after-detour[pad=0,repeat=1]" classname="depth" time="6.868407">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-corrected-id[pad=0,repeat=1]" classname="depth" time="6.271864">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-permanent-carried-forward[pad=0,repeat=1]" classname="depth" time="6.711514">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-file-move-after-distraction[pad=0,repeat=1]" classname="depth" time="5.986717">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-meeting-id-corrected[pad=0,repeat=1]" classname="depth" time="5.914369">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-notify-preference-earlier[pad=0,repeat=1]" classname="depth" time="6.010682">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-refund-amount-after-clarification[pad=0,repeat=1]" classname="depth" time="7.774825">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="depth-escalation-after-repeated-question[pad=0,repeat=1]" classname="depth" time="8.733893">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-move[pad=0,repeat=1]" classname="sequence" time="7.280429">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-list-before-delete[pad=0,repeat=1]" classname="sequence" time="6.288581">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-share[pad=0,repeat=1]" classname="sequence" time="7.172358">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-list-before-share-all[pad=0,repeat=1]" classname="sequence" time="6.688165">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-availability-before-checkin[pad=0,repeat=1]" classname="sequence" time="7.743797">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-cancel-before-rebook[pad=0,repeat=1]" classname="sequence" time="9.633156">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-refund[pad=0,repeat=1]" classname="sequence" time="6.988040">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="sequence-status-before-conditional-escalation[pad=0,repeat=1]" classname="sequence" time="9.533497">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+  </testsuite>
+</testsuites>

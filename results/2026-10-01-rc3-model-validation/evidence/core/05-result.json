@@ -1,0 +1,4207 @@
+{
+  "config": {
+    "model": "llama3.1:8b",
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/core-suite",
+    "pads": [
+      0
+    ],
+    "repeats": 2,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.9.0rc3.dev0",
+    "suite_name": "core",
+    "suite_version": 2,
+    "suite_hash": "e597c986302b5596",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 3,
+    "task_ids": [
+      "select-status-direct",
+      "select-search-not-status",
+      "select-escalate-explicit",
+      "abstain-policy-question",
+      "abstain-missing-identifier",
+      "abstain-chitchat",
+      "args-partial-refund",
+      "args-enum-mapping",
+      "args-nested-address",
+      "args-relative-dates",
+      "depth-late-reference",
+      "sequence-availability-first",
+      "abstain-status-no-identifier",
+      "abstain-no-such-capability",
+      "abstain-change-email-on-file",
+      "abstain-shipping-quote",
+      "abstain-availability-no-calendar",
+      "abstain-reschedule-unsupported",
+      "abstain-cancel-without-id",
+      "abstain-gratitude-midconversation",
+      "args-full-refund-omits-amount",
+      "args-dollars-to-cents",
+      "args-country-name-to-iso",
+      "args-filtered-search",
+      "args-duration-in-words",
+      "args-explicit-datetime",
+      "args-boolean-from-instruction",
+      "args-escalation-urgency",
+      "select-address-change",
+      "select-cancel-with-id",
+      "select-availability-not-booking",
+      "depth-corrected-identifier",
+      "depth-reason-stated-earlier",
+      "sequence-address-before-status",
+      "depth-file-share-after-detour",
+      "depth-file-corrected-id",
+      "depth-file-permanent-carried-forward",
+      "depth-file-move-after-distraction",
+      "depth-meeting-id-corrected",
+      "depth-notify-preference-earlier",
+      "depth-refund-amount-after-clarification",
+      "depth-escalation-after-repeated-question",
+      "sequence-search-before-move",
+      "sequence-list-before-delete",
+      "sequence-search-before-share",
+      "sequence-list-before-share-all",
+      "sequence-availability-before-checkin",
+      "sequence-cancel-before-rebook",
+      "sequence-search-before-refund",
+      "sequence-status-before-conditional-escalation"
+    ],
+    "selected_task_ids": null,
+    "request_timeout": 180.0
+  },
+  "started_at": "2026-10-02T03:19:36.826559+00:00",
+  "finished_at": "2026-10-02T03:23:06.867950+00:00",
+  "results": [
+    {
+      "task_id": "select-status-direct",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": "get_order_status",
+      "failures": [],
+      "prompt_tokens": 601,
+      "completion_tokens": 22,
+      "latency_ms": 4841.827582975384,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_8ofu63uq",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-448120"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-448120\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-search-not-status",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "search_orders",
+      "expected": "search_orders",
+      "failures": [
+        "schema: limit: '10' is not of type 'integer'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 617,
+      "completion_tokens": 31,
+      "latency_ms": 1809.4975000130944,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_9b3698xd",
+          "name": "search_orders",
+          "arguments": {
+            "email": "dana@example.com",
+            "status": "any",
+            "limit": "10"
+          },
+          "raw_arguments": "{\"email\":\"dana@example.com\",\"status\":\"any\",\"limit\":\"10\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-escalate-explicit",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "escalate_to_human",
+      "expected": "escalate_to_human",
+      "failures": [],
+      "prompt_tokens": 605,
+      "completion_tokens": 34,
+      "latency_ms": 1879.555041959975,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_uvovue3o",
+          "name": "escalate_to_human",
+          "arguments": {
+            "summary": "Customer wants to speak to a human agent immediately.",
+            "urgency": "high"
+          },
+          "raw_arguments": "{\"summary\":\"Customer wants to speak to a human agent immediately.\",\"urgency\":\"high\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "abstain-policy-question",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": null,
+      "failures": [
+        "called issue_refund when no tool applied"
+      ],
+      "prompt_tokens": 601,
+      "completion_tokens": 37,
+      "latency_ms": 1961.8896250030957,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rqnpq2qs",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-123456",
+            "reason": "damaged",
+            "amount_cents": 0
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-123456\",\"reason\":\"damaged\",\"amount_cents\":0}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-missing-identifier",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": null,
+      "failures": [
+        "called issue_refund when no tool applied"
+      ],
+      "prompt_tokens": 602,
+      "completion_tokens": 29,
+      "latency_ms": 1496.5729999821633,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4kp75q5c",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-000000",
+            "reason": "damaged"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-000000\",\"reason\":\"damaged\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-chitchat",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 386,
+      "completion_tokens": 12,
+      "latency_ms": 915.3468330041505,
+      "error": null,
+      "response_text": "{\"name\": \"None\", \"parameters\": {}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-partial-refund",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: '4250' is not of type 'integer'",
+        "amount_cents eq 4225, got '4250'"
+      ],
+      "prompt_tokens": 628,
+      "completion_tokens": 38,
+      "latency_ms": 1843.1612910353579,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2feslwso",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": "4250",
+            "reason": "damaged",
+            "order_id": "ORD-991003"
+          },
+          "raw_arguments": "{\"amount_cents\":\"4250\",\"reason\":\"damaged\",\"order_id\":\"ORD-991003\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-enum-mapping",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [],
+      "prompt_tokens": 612,
+      "completion_tokens": 29,
+      "latency_ms": 1586.3169999793172,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_8mfog7s4",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-100200",
+            "reason": "wrong_item"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-100200\",\"reason\":\"wrong_item\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-nested-address",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": "update_shipping_address",
+      "failures": [],
+      "prompt_tokens": 624,
+      "completion_tokens": 73,
+      "latency_ms": 2384.341166995,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_skbbcpfj",
+          "name": "update_shipping_address",
+          "arguments": {
+            "order_id": "ORD-772341",
+            "address": {
+              "city": "New York",
+              "country": "US",
+              "line1": "55 Riverside Drive",
+              "line2": "apartment 12B",
+              "postal_code": "10024",
+              "region": "NY"
+            }
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-772341\",\"address\":{\"city\":\"New York\",\"country\":\"US\",\"line1\":\"55 Riverside Drive\",\"line2\":\"apartment 12B\",\"postal_code\":\"10024\",\"region\":\"NY\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-relative-dates",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "find_availability",
+      "expected": "find_availability",
+      "failures": [
+        "schema: duration_minutes: '60' is not of type 'integer'",
+        "duration_minutes expected 60, got '60'",
+        "start_date matches '2026-09-1[2345]', got '2026-09-07'",
+        "end_date matches '2026-09-(1[89]|20)', got '2026-09-14'"
+      ],
+      "prompt_tokens": 409,
+      "completion_tokens": 51,
+      "latency_ms": 2121.151249972172,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_n080wcj4",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "duration_minutes": "60",
+            "start_date": "2026-09-07",
+            "end_date": "2026-09-14"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_main\",\"duration_minutes\":\"60\",\"start_date\":\"2026-09-07\",\"end_date\":\"2026-09-14\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-late-reference",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": "get_order_status",
+      "failures": [],
+      "prompt_tokens": 690,
+      "completion_tokens": 22,
+      "latency_ms": 2481.1540000373498,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_j5xcs84h",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-330045"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-330045\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-availability-first",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "book_meeting",
+      "expected": "find_availability",
+      "failures": [
+        "called book_meeting, expected find_availability",
+        "schema: attendees: '[\"priya@example.com\"]' is not of type 'array'"
+      ],
+      "prompt_tokens": 411,
+      "completion_tokens": 88,
+      "latency_ms": 2902.7000829810277,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_8lw2mctw",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_time": "find_availability(calendar_id=\"cal_main\", start_date=\"2026-09-07\", end_date=\"2026-09-08\", duration_minutes=30).start_time",
+            "duration_minutes": 30,
+            "attendees": "[\"priya@example.com\"]",
+            "title": "Weekly sync"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_main\",\"start_time\":\"find_availability(calendar_id=\\\"cal_main\\\", start_date=\\\"2026-09-07\\\", end_date=\\\"2026-09-08\\\", duration_minutes=30).start_time\",\"duration_minutes\":30,\"attendees\":\"[\\\"priya@example.com\\\"]\",\"title\":\"Weekly sync\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "abstain-status-no-identifier",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": null,
+      "failures": [
+        "called get_order_status when no tool applied"
+      ],
+      "prompt_tokens": 599,
+      "completion_tokens": 22,
+      "latency_ms": 1848.698833025992,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_uu12n9iz",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-000000"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-000000\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-no-such-capability",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": null,
+      "failures": [
+        "called update_shipping_address when no tool applied"
+      ],
+      "prompt_tokens": 603,
+      "completion_tokens": 53,
+      "latency_ms": 2264.729333051946,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_s0ffpsva",
+          "name": "update_shipping_address",
+          "arguments": {
+            "order_id": "ORD-620114",
+            "address": {
+              "city": "",
+              "country": "",
+              "line1": "",
+              "line2": "",
+              "postal_code": "",
+              "region": ""
+            }
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-620114\",\"address\":{\"city\":\"\",\"country\":\"\",\"line1\":\"\",\"line2\":\"\",\"postal_code\":\"\",\"region\":\"\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-change-email-on-file",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": null,
+      "failures": [
+        "called update_shipping_address when no tool applied"
+      ],
+      "prompt_tokens": 607,
+      "completion_tokens": 53,
+      "latency_ms": 2171.065207978245,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_twpebdnx",
+          "name": "update_shipping_address",
+          "arguments": {
+            "address": {
+              "city": "",
+              "country": "",
+              "line1": "",
+              "line2": "",
+              "postal_code": "",
+              "region": ""
+            },
+            "order_id": "ORD-000000"
+          },
+          "raw_arguments": "{\"address\":{\"city\":\"\",\"country\":\"\",\"line1\":\"\",\"line2\":\"\",\"postal_code\":\"\",\"region\":\"\"},\"order_id\":\"ORD-000000\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-shipping-quote",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_orders",
+      "expected": null,
+      "failures": [
+        "called search_orders when no tool applied"
+      ],
+      "prompt_tokens": 609,
+      "completion_tokens": 31,
+      "latency_ms": 1551.141459029168,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_5bbppklb",
+          "name": "search_orders",
+          "arguments": {
+            "email": "customer@example.com",
+            "status": "any",
+            "limit": 1
+          },
+          "raw_arguments": "{\"email\":\"customer@example.com\",\"status\":\"any\",\"limit\":1}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-availability-no-calendar",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "find_availability",
+      "expected": null,
+      "failures": [
+        "called find_availability when no tool applied"
+      ],
+      "prompt_tokens": 383,
+      "completion_tokens": 51,
+      "latency_ms": 1844.856332987547,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_a5v4y8lm",
+          "name": "find_availability",
+          "arguments": {
+            "end_date": "2024-03-14",
+            "duration_minutes": 60,
+            "calendar_id": "user_calendar",
+            "start_date": "2024-03-14"
+          },
+          "raw_arguments": "{\"end_date\":\"2024-03-14\",\"duration_minutes\":60,\"calendar_id\":\"user_calendar\",\"start_date\":\"2024-03-14\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-reschedule-unsupported",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "book_meeting",
+      "expected": null,
+      "failures": [
+        "called book_meeting when no tool applied"
+      ],
+      "prompt_tokens": 386,
+      "completion_tokens": 68,
+      "latency_ms": 2002.9413750162348,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_84dhidjc",
+          "name": "book_meeting",
+          "arguments": {
+            "title": "Your Meeting",
+            "calendar_id": "your_calendar_id",
+            "start_time": "2024-03-07T16:00:00+08:00",
+            "duration_minutes": "60",
+            "attendees": "['your_email@example.com']"
+          },
+          "raw_arguments": "{\"title\":\"Your Meeting\",\"calendar_id\":\"your_calendar_id\",\"start_time\":\"2024-03-07T16:00:00+08:00\",\"duration_minutes\":\"60\",\"attendees\":\"['your_email@example.com']\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-cancel-without-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "cancel_meeting",
+      "expected": null,
+      "failures": [
+        "called cancel_meeting when no tool applied"
+      ],
+      "prompt_tokens": 381,
+      "completion_tokens": 30,
+      "latency_ms": 1461.9827499845996,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_fwimkv6s",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "standup tomorrow morning",
+            "notify_attendees": true
+          },
+          "raw_arguments": "{\"meeting_id\":\"standup tomorrow morning\",\"notify_attendees\":true}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-gratitude-midconversation",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 622,
+      "completion_tokens": 45,
+      "latency_ms": 2504.791874962393,
+      "error": null,
+      "response_text": "There is no function call that matches the given prompt. The prompt seems to be a response to a previous conversation, but it does not contain a specific question or request that can be fulfilled by one of the provided functions.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-full-refund-omits-amount",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: '0' is not of type 'integer'",
+        "amount_cents should not be present"
+      ],
+      "prompt_tokens": 611,
+      "completion_tokens": 36,
+      "latency_ms": 1852.7041670167819,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_1viv4spy",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": "0",
+            "reason": "late",
+            "order_id": "ORD-450917"
+          },
+          "raw_arguments": "{\"amount_cents\":\"0\",\"reason\":\"late\",\"order_id\":\"ORD-450917\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-dollars-to-cents",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: '1299' is not of type 'integer'",
+        "amount_cents eq 1299, got '1299'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 622,
+      "completion_tokens": 39,
+      "latency_ms": 1969.5241659646854,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_tldxsbzm",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-771230",
+            "reason": "changed_mind",
+            "amount_cents": "1299"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-771230\",\"reason\":\"changed_mind\",\"amount_cents\":\"1299\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-country-name-to-iso",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": "update_shipping_address",
+      "failures": [
+        "address.postal_code eq 'WC1B 3JA', got ''"
+      ],
+      "prompt_tokens": 615,
+      "completion_tokens": 68,
+      "latency_ms": 2530.294624972157,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rvaq96po",
+          "name": "update_shipping_address",
+          "arguments": {
+            "address": {
+              "city": "London",
+              "country": "GB",
+              "line1": "14 Bedford Square",
+              "line2": "",
+              "postal_code": "",
+              "region": "WC1B 3JA"
+            },
+            "order_id": "ORD-310884"
+          },
+          "raw_arguments": "{\"address\":{\"city\":\"London\",\"country\":\"GB\",\"line1\":\"14 Bedford Square\",\"line2\":\"\",\"postal_code\":\"\",\"region\":\"WC1B 3JA\"},\"order_id\":\"ORD-310884\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-filtered-search",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "search_orders",
+      "expected": "search_orders",
+      "failures": [
+        "schema: limit: '3' is not of type 'integer'",
+        "limit expected 3, got '3'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 609,
+      "completion_tokens": 33,
+      "latency_ms": 802.8587920125574,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_s49la8m9",
+          "name": "search_orders",
+          "arguments": {
+            "email": "noa@example.com",
+            "status": "shipped",
+            "limit": "3"
+          },
+          "raw_arguments": "{\"email\":\"noa@example.com\",\"status\":\"shipped\",\"limit\":\"3\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-duration-in-words",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "find_availability",
+      "expected": "find_availability",
+      "failures": [
+        "schema: duration_minutes: '90' is not of type 'integer'",
+        "duration_minutes expected 90, got '90'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 407,
+      "completion_tokens": 51,
+      "latency_ms": 2470.7105419947766,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_cdkt1t9k",
+          "name": "find_availability",
+          "arguments": {
+            "duration_minutes": "90",
+            "start_date": "2026-09-09",
+            "end_date": "2026-09-11",
+            "calendar_id": "cal_design"
+          },
+          "raw_arguments": "{\"duration_minutes\":\"90\",\"start_date\":\"2026-09-09\",\"end_date\":\"2026-09-11\",\"calendar_id\":\"cal_design\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-explicit-datetime",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "book_meeting",
+      "expected": "book_meeting",
+      "failures": [
+        "schema: attendees: \"['omer@example.com', 'tal@example.com']\" is not of type 'array'",
+        "schema: duration_minutes: '45' is not of type 'integer'",
+        "duration_minutes expected 45, got '45'",
+        "start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-07T14:00:00-04:00'",
+        "attendees.0 missing",
+        "attendees.1 missing"
+      ],
+      "prompt_tokens": 432,
+      "completion_tokens": 71,
+      "latency_ms": 2942.309625039343,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_j9bqi2tt",
+          "name": "book_meeting",
+          "arguments": {
+            "start_time": "2026-09-07T14:00:00-04:00",
+            "attendees": "['omer@example.com', 'tal@example.com']",
+            "title": "Design review",
+            "calendar_id": "cal_main",
+            "duration_minutes": "45"
+          },
+          "raw_arguments": "{\"start_time\":\"2026-09-07T14:00:00-04:00\",\"attendees\":\"['omer@example.com', 'tal@example.com']\",\"title\":\"Design review\",\"calendar_id\":\"cal_main\",\"duration_minutes\":\"45\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-boolean-from-instruction",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "schema: notify_attendees: 'False' is not of type 'boolean'",
+        "notify_attendees expected False, got 'False'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 389,
+      "completion_tokens": 32,
+      "latency_ms": 1252.2212080075406,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_e1nw3v4n",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_4471",
+            "notify_attendees": "False"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_4471\",\"notify_attendees\":\"False\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-escalation-urgency",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "escalate_to_human",
+      "expected": "escalate_to_human",
+      "failures": [],
+      "prompt_tokens": 616,
+      "completion_tokens": 44,
+      "latency_ms": 2040.0468750158325,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_gmej0d7f",
+          "name": "escalate_to_human",
+          "arguments": {
+            "summary": "Customer has asked to speak to a person for the fourth time, and their wedding is on Saturday.",
+            "urgency": "high"
+          },
+          "raw_arguments": "{\"summary\":\"Customer has asked to speak to a person for the fourth time, and their wedding is on Saturday.\",\"urgency\":\"high\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-address-change",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "update_shipping_address",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 613,
+      "completion_tokens": 77,
+      "latency_ms": 2560.4390000225976,
+      "error": null,
+      "response_text": "{\"name\": \"update_shipping_address\", \"parameters\": {\"order_id\": \"ORD-905512\", \"address\": {\"line1\": \"new address line 1\", \"line2\": \"new address line 2\", \"city\": \"new city\", \"region\": \"new region\", \"postal_code\": \"new postal code\", \"country\": \"new country\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "select-cancel-with-id",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "schema: notify_attendees: 'false' is not of type 'boolean'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 384,
+      "completion_tokens": 32,
+      "latency_ms": 1947.1335830166936,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ch6746oi",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_2210",
+            "notify_attendees": "false"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_2210\",\"notify_attendees\":\"false\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-availability-not-booking",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "find_availability",
+      "expected": "find_availability",
+      "failures": [
+        "schema: duration_minutes: '30' is not of type 'integer'",
+        "duration_minutes expected 30, got '30'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 409,
+      "completion_tokens": 51,
+      "latency_ms": 2344.5212499937043,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_wg6x4q0f",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_ops",
+            "duration_minutes": "30",
+            "end_date": "2026-09-18",
+            "start_date": "2026-09-14"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_ops\",\"duration_minutes\":\"30\",\"end_date\":\"2026-09-18\",\"start_date\":\"2026-09-14\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-corrected-identifier",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": "get_order_status",
+      "failures": [],
+      "prompt_tokens": 630,
+      "completion_tokens": 22,
+      "latency_ms": 2658.9212500257418,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_lrbb4t7c",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-222222"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-222222\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-reason-stated-earlier",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: None is not of type 'integer'",
+        "amount_cents should not be present"
+      ],
+      "prompt_tokens": 639,
+      "completion_tokens": 36,
+      "latency_ms": 2338.1129169720225,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_iestwjo7",
+          "name": "issue_refund",
+          "arguments": {
+            "reason": "damaged",
+            "amount_cents": null,
+            "order_id": "ORD-664200"
+          },
+          "raw_arguments": "{\"reason\":\"damaged\",\"amount_cents\":null,\"order_id\":\"ORD-664200\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-address-before-status",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": "update_shipping_address",
+      "failures": [
+        "produced 2 calls; expected exactly one"
+      ],
+      "prompt_tokens": 627,
+      "completion_tokens": 88,
+      "latency_ms": 3290.762624994386,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_gi2g8llj",
+          "name": "update_shipping_address",
+          "arguments": {
+            "address": {
+              "city": "Tel Aviv",
+              "country": "IL",
+              "line1": "9 Alon Street",
+              "line2": "",
+              "postal_code": "6100000",
+              "region": ""
+            },
+            "order_id": "ORD-505050"
+          },
+          "raw_arguments": "{\"address\":{\"city\":\"Tel Aviv\",\"country\":\"IL\",\"line1\":\"9 Alon Street\",\"line2\":\"\",\"postal_code\":\"6100000\",\"region\":\"\"},\"order_id\":\"ORD-505050\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_faspbgdp",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-505050"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-505050\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "depth-file-share-after-detour",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "share_file",
+      "expected": "share_file",
+      "failures": [],
+      "prompt_tokens": 618,
+      "completion_tokens": 36,
+      "latency_ms": 2762.3497919994406,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ucrw9k8m",
+          "name": "share_file",
+          "arguments": {
+            "email": "dor@example.com",
+            "file_id": "file_881020",
+            "role": "editor"
+          },
+          "raw_arguments": "{\"email\":\"dor@example.com\",\"file_id\":\"file_881020\",\"role\":\"editor\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-file-corrected-id",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "delete_file",
+      "expected": "delete_file",
+      "failures": [
+        "schema: permanent: 'false' is not of type 'boolean'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 568,
+      "completion_tokens": 27,
+      "latency_ms": 2087.7338749705814,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rrrzcgip",
+          "name": "delete_file",
+          "arguments": {
+            "file_id": "file_100002",
+            "permanent": "false"
+          },
+          "raw_arguments": "{\"file_id\":\"file_100002\",\"permanent\":\"false\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-file-permanent-carried-forward",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "delete_file",
+      "expected": "delete_file",
+      "failures": [
+        "schema: permanent: 'true' is not of type 'boolean'",
+        "file_id expected 'file_552210', got '552210'",
+        "permanent expected True, got 'true'"
+      ],
+      "prompt_tokens": 586,
+      "completion_tokens": 25,
+      "latency_ms": 2291.5762499906123,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_f6osrgw1",
+          "name": "delete_file",
+          "arguments": {
+            "file_id": "552210",
+            "permanent": "true"
+          },
+          "raw_arguments": "{\"file_id\":\"552210\",\"permanent\":\"true\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-file-move-after-distraction",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "move_file",
+      "expected": "move_file",
+      "failures": [],
+      "prompt_tokens": 611,
+      "completion_tokens": 33,
+      "latency_ms": 2248.7907499889843,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_yrcpq7c5",
+          "name": "move_file",
+          "arguments": {
+            "destination_folder_id": "folder_archive_2026",
+            "file_id": "file_330071"
+          },
+          "raw_arguments": "{\"destination_folder_id\":\"folder_archive_2026\",\"file_id\":\"file_330071\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-meeting-id-corrected",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [],
+      "prompt_tokens": 412,
+      "completion_tokens": 31,
+      "latency_ms": 1660.529792017769,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2y9hox15",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_7735",
+            "notify_attendees": true
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_7735\",\"notify_attendees\":true}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-notify-preference-earlier",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "schema: notify_attendees: 'False' is not of type 'boolean'",
+        "notify_attendees expected False, got 'False'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 426,
+      "completion_tokens": 32,
+      "latency_ms": 1766.6748340125196,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_xii7j5kq",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_9012",
+            "notify_attendees": "False"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_9012\",\"notify_attendees\":\"False\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-refund-amount-after-clarification",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [],
+      "prompt_tokens": 655,
+      "completion_tokens": 38,
+      "latency_ms": 2685.828124987893,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_t3432v0y",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": 3000,
+            "reason": "damaged",
+            "order_id": "ORD-340221"
+          },
+          "raw_arguments": "{\"amount_cents\":3000,\"reason\":\"damaged\",\"order_id\":\"ORD-340221\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-escalation-after-repeated-question",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "escalate_to_human",
+      "expected": "escalate_to_human",
+      "failures": [],
+      "prompt_tokens": 636,
+      "completion_tokens": 44,
+      "latency_ms": 2643.3872500201687,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_0o0q39eu",
+          "name": "escalate_to_human",
+          "arguments": {
+            "summary": "Customer wants to speak to a human agent after being told the status of an order three days ago.",
+            "urgency": "high"
+          },
+          "raw_arguments": "{\"summary\":\"Customer wants to speak to a human agent after being told the status of an order three days ago.\",\"urgency\":\"high\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-search-before-move",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_files",
+      "expected": "search_files",
+      "failures": [],
+      "prompt_tokens": 547,
+      "completion_tokens": 25,
+      "latency_ms": 1887.3454999993555,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ks8zu3vv",
+          "name": "search_files",
+          "arguments": {
+            "query": "quarterly report",
+            "limit": 1
+          },
+          "raw_arguments": "{\"query\":\"quarterly report\",\"limit\":1}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-list-before-delete",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "search_files",
+      "expected": "list_files",
+      "failures": [
+        "called search_files, expected list_files",
+        "schema: limit: '1000' is not of type 'integer'",
+        "folder_id expected 'folder_temp_uploads', got missing"
+      ],
+      "prompt_tokens": 550,
+      "completion_tokens": 29,
+      "latency_ms": 1909.4561250531115,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_o94grzdp",
+          "name": "search_files",
+          "arguments": {
+            "query": "folder:folder_temp_uploads",
+            "limit": "1000"
+          },
+          "raw_arguments": "{\"query\":\"folder:folder_temp_uploads\",\"limit\":\"1000\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-search-before-share",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "share_file",
+      "expected": "search_files",
+      "failures": [
+        "called share_file, expected search_files",
+        "schema: (root): Additional properties are not allowed ('parameters' was unexpected)",
+        "query missing"
+      ],
+      "prompt_tokens": 551,
+      "completion_tokens": 46,
+      "latency_ms": 1649.05504102353,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_0cz5f4sa",
+          "name": "share_file",
+          "arguments": {
+            "email": "maya@example.com",
+            "role": "viewer",
+            "file_id": "search_files",
+            "parameters": {
+              "query": "onboarding_checklist"
+            }
+          },
+          "raw_arguments": "{\"email\":\"maya@example.com\",\"role\":\"viewer\",\"file_id\":\"search_files\",\"parameters\":{\"query\":\"onboarding_checklist\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-list-before-share-all",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "search_files",
+      "expected": "list_files",
+      "failures": [
+        "called search_files, expected list_files",
+        "produced 3 calls; expected exactly one",
+        "schema: limit: '1000' is not of type 'integer'",
+        "folder_id expected 'folder_bids_2026', got missing"
+      ],
+      "prompt_tokens": 554,
+      "completion_tokens": 208,
+      "latency_ms": 6259.082541975658,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_o79poaoa",
+          "name": "search_files",
+          "arguments": {
+            "query": "folder_id:folder_bids_2026",
+            "limit": "1000",
+            "modified_after": "1900-01-01"
+          },
+          "raw_arguments": "{\"query\":\"folder_id:folder_bids_2026\",\"limit\":\"1000\",\"modified_after\":\"1900-01-01\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_5rsd5o22",
+          "name": "share_file",
+          "arguments": {
+            "file_id": "file_id_found",
+            "role": "viewer",
+            "email": "legal@example.com"
+          },
+          "raw_arguments": "{\"file_id\":\"file_id_found\",\"role\":\"viewer\",\"email\":\"legal@example.com\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_dvngas5n",
+          "name": "search_files",
+          "arguments": {
+            "query": "folder_id:folder_bids_2026 AND email:legal@example.com AND role:viewer",
+            "limit": "1000",
+            "modified_after": "1900-01-01"
+          },
+          "raw_arguments": "{\"query\":\"folder_id:folder_bids_2026 AND email:legal@example.com AND role:viewer\",\"limit\":\"1000\",\"modified_after\":\"1900-01-01\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "sequence-availability-before-checkin",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "book_meeting",
+      "expected": "find_availability",
+      "failures": [
+        "called book_meeting, expected find_availability",
+        "schema: attendees: \"['dana@example.com']\" is not of type 'array'",
+        "schema: duration_minutes: '20' is not of type 'integer'",
+        "duration_minutes expected 20, got '20'"
+      ],
+      "prompt_tokens": 407,
+      "completion_tokens": 66,
+      "latency_ms": 2107.8432080103084,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_joe2gx6f",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_time": "2026-09-08T14:00:00+00:00",
+            "duration_minutes": "20",
+            "attendees": "['dana@example.com']",
+            "title": "Check-in"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_main\",\"start_time\":\"2026-09-08T14:00:00+00:00\",\"duration_minutes\":\"20\",\"attendees\":\"['dana@example.com']\",\"title\":\"Check-in\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-cancel-before-rebook",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "produced 3 calls; expected exactly one",
+        "schema: notify_attendees: 'true' is not of type 'boolean'"
+      ],
+      "prompt_tokens": 408,
+      "completion_tokens": 153,
+      "latency_ms": 3766.331665974576,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_3auzynml",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_1200",
+            "notify_attendees": "true"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_1200\",\"notify_attendees\":\"true\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_q7mteb7h",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "duration_minutes": "30",
+            "start_date": "2024-01-01",
+            "end_date": "2024-01-31"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_main\",\"duration_minutes\":\"30\",\"start_date\":\"2024-01-01\",\"end_date\":\"2024-01-31\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_v5y367vx",
+          "name": "book_meeting",
+          "arguments": {
+            "title": "New Meeting",
+            "calendar_id": "cal_main",
+            "duration_minutes": "30",
+            "start_time": "2024-01-01T10:00:00+00:00",
+            "attendees": "['priya@example.com', 'omer@example.com']"
+          },
+          "raw_arguments": "{\"title\":\"New Meeting\",\"calendar_id\":\"cal_main\",\"duration_minutes\":\"30\",\"start_time\":\"2024-01-01T10:00:00+00:00\",\"attendees\":\"['priya@example.com', 'omer@example.com']\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "sequence-search-before-refund",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "search_orders",
+      "failures": [
+        "called issue_refund, expected search_orders",
+        "schema: (root): Additional properties are not allowed ('parameters' was unexpected)",
+        "schema: order_id: 'search_orders' does not match '^ORD-[0-9]{6}$'",
+        "email expected 'noa@example.com', got missing"
+      ],
+      "prompt_tokens": 615,
+      "completion_tokens": 52,
+      "latency_ms": 2491.695415985305,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_44eo2pia",
+          "name": "issue_refund",
+          "arguments": {
+            "reason": "damaged",
+            "order_id": "search_orders",
+            "parameters": {
+              "email": "noa@example.com",
+              "limit": "1",
+              "status": "any"
+            }
+          },
+          "raw_arguments": "{\"reason\":\"damaged\",\"order_id\":\"search_orders\",\"parameters\":{\"email\":\"noa@example.com\",\"limit\":\"1\",\"status\":\"any\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-status-before-conditional-escalation",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "get_order_status",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 620,
+      "completion_tokens": 68,
+      "latency_ms": 2823.6330000218004,
+      "error": null,
+      "response_text": "{\"name\": \"get_order_status\", \"parameters\": {\"order_id\": \"ORD-770044}} \n\n{\"name\": \"escalate_to_human\", \"parameters\": {\"summary\": \"Customer is concerned about the status of their order ORD-770044, which has been stuck for two weeks.\", \"urgency\": \"high\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "select-status-direct",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": "get_order_status",
+      "failures": [],
+      "prompt_tokens": 601,
+      "completion_tokens": 22,
+      "latency_ms": 1629.313708981499,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_z5yv01o6",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-448120"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-448120\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-search-not-status",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_orders",
+      "expected": "search_orders",
+      "failures": [],
+      "prompt_tokens": 617,
+      "completion_tokens": 31,
+      "latency_ms": 1634.207165974658,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_cd7y6mm2",
+          "name": "search_orders",
+          "arguments": {
+            "email": "dana@example.com",
+            "status": "any",
+            "limit": 1
+          },
+          "raw_arguments": "{\"email\":\"dana@example.com\",\"status\":\"any\",\"limit\":1}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-escalate-explicit",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "escalate_to_human",
+      "expected": "escalate_to_human",
+      "failures": [],
+      "prompt_tokens": 605,
+      "completion_tokens": 34,
+      "latency_ms": 1674.7936659958214,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ptrv45ns",
+          "name": "escalate_to_human",
+          "arguments": {
+            "summary": "Customer wants to speak to a human agent immediately.",
+            "urgency": "high"
+          },
+          "raw_arguments": "{\"summary\":\"Customer wants to speak to a human agent immediately.\",\"urgency\":\"high\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "abstain-policy-question",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "escalate_to_human",
+      "expected": null,
+      "failures": [
+        "called escalate_to_human when no tool applied"
+      ],
+      "prompt_tokens": 601,
+      "completion_tokens": 34,
+      "latency_ms": 1675.1554579823278,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_e7qbfxvq",
+          "name": "escalate_to_human",
+          "arguments": {
+            "summary": "Customer inquires about return policy for opened electronics",
+            "urgency": "normal"
+          },
+          "raw_arguments": "{\"summary\":\"Customer inquires about return policy for opened electronics\",\"urgency\":\"normal\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-missing-identifier",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": null,
+      "failures": [
+        "called issue_refund when no tool applied"
+      ],
+      "prompt_tokens": 602,
+      "completion_tokens": 29,
+      "latency_ms": 1914.5784580032341,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2znpknrv",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-000000",
+            "reason": "damaged"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-000000\",\"reason\":\"damaged\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-chitchat",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 386,
+      "completion_tokens": 12,
+      "latency_ms": 375.1079589710571,
+      "error": null,
+      "response_text": "{\"name\": \"None\", \"parameters\": {}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-partial-refund",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: '4250' is not of type 'integer'",
+        "amount_cents eq 4225, got '4250'"
+      ],
+      "prompt_tokens": 628,
+      "completion_tokens": 38,
+      "latency_ms": 2113.022417004686,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zbmijvcd",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": "4250",
+            "reason": "damaged",
+            "order_id": "ORD-991003"
+          },
+          "raw_arguments": "{\"amount_cents\":\"4250\",\"reason\":\"damaged\",\"order_id\":\"ORD-991003\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-enum-mapping",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [],
+      "prompt_tokens": 612,
+      "completion_tokens": 29,
+      "latency_ms": 758.5410830215551,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vkjomd7x",
+          "name": "issue_refund",
+          "arguments": {
+            "reason": "wrong_item",
+            "order_id": "ORD-100200"
+          },
+          "raw_arguments": "{\"reason\":\"wrong_item\",\"order_id\":\"ORD-100200\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-nested-address",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "update_shipping_address",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 624,
+      "completion_tokens": 72,
+      "latency_ms": 2837.0114589924924,
+      "error": null,
+      "response_text": "{\"name\": \"update_shipping_address\", \"parameters\": {\"order_id\": \"ORD-772341\", \"address\": {\"line1\": \"55 Riverside Drive\", \"line2\": \"apartment 12B\", \"city\": \"New York\", \"region\": \"NY\", \"postal_code\": \"10024\", \"country\": \"US\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "args-relative-dates",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "find_availability",
+      "expected": "find_availability",
+      "failures": [
+        "schema: duration_minutes: '60' is not of type 'integer'",
+        "duration_minutes expected 60, got '60'",
+        "start_date matches '2026-09-1[2345]', got '2026-09-07'",
+        "end_date matches '2026-09-(1[89]|20)', got '2026-09-14'"
+      ],
+      "prompt_tokens": 409,
+      "completion_tokens": 51,
+      "latency_ms": 1183.8289580191486,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2p3l47jf",
+          "name": "find_availability",
+          "arguments": {
+            "duration_minutes": "60",
+            "start_date": "2026-09-07",
+            "end_date": "2026-09-14",
+            "calendar_id": "cal_main"
+          },
+          "raw_arguments": "{\"duration_minutes\":\"60\",\"start_date\":\"2026-09-07\",\"end_date\":\"2026-09-14\",\"calendar_id\":\"cal_main\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-late-reference",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": "get_order_status",
+      "failures": [],
+      "prompt_tokens": 690,
+      "completion_tokens": 22,
+      "latency_ms": 1682.6734999776818,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_tjz8cqon",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-330045"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-330045\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-availability-first",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "find_availability",
+      "expected": "find_availability",
+      "failures": [
+        "schema: duration_minutes: '30' is not of type 'integer'",
+        "duration_minutes expected 30, got '30'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 411,
+      "completion_tokens": 51,
+      "latency_ms": 1322.0031659584492,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_r6jp5qid",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "duration_minutes": "30",
+            "start_date": "2026-09-08",
+            "end_date": "2026-09-08"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_main\",\"duration_minutes\":\"30\",\"start_date\":\"2026-09-08\",\"end_date\":\"2026-09-08\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "abstain-status-no-identifier",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": null,
+      "failures": [
+        "called get_order_status when no tool applied"
+      ],
+      "prompt_tokens": 599,
+      "completion_tokens": 22,
+      "latency_ms": 1416.2843329831958,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_dxvxto9a",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-000000"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-000000\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-no-such-capability",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 603,
+      "completion_tokens": 28,
+      "latency_ms": 1638.8681659591384,
+      "error": null,
+      "response_text": "{\"name\": \"update_order_status\", \"parameters\": {\"order_id\": \"ORD-620114\", \"status\": \"cancelled\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "abstain-change-email-on-file",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": null,
+      "failures": [
+        "called update_shipping_address when no tool applied"
+      ],
+      "prompt_tokens": 607,
+      "completion_tokens": 50,
+      "latency_ms": 2111.1308750114404,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_loydl1nk",
+          "name": "update_shipping_address",
+          "arguments": {
+            "order_id": "account",
+            "address": {
+              "city": "",
+              "country": "",
+              "line1": "",
+              "line2": "",
+              "postal_code": "",
+              "region": ""
+            }
+          },
+          "raw_arguments": "{\"order_id\":\"account\",\"address\":{\"city\":\"\",\"country\":\"\",\"line1\":\"\",\"line2\":\"\",\"postal_code\":\"\",\"region\":\"\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-shipping-quote",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": null,
+      "failures": [
+        "called get_order_status when no tool applied"
+      ],
+      "prompt_tokens": 609,
+      "completion_tokens": 22,
+      "latency_ms": 1605.7885000482202,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2muqr2lo",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-000000"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-000000\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-availability-no-calendar",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "find_availability",
+      "expected": null,
+      "failures": [
+        "called find_availability when no tool applied"
+      ],
+      "prompt_tokens": 383,
+      "completion_tokens": 51,
+      "latency_ms": 1639.5303339813836,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rga6z3rs",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "user_calendar",
+            "start_date": "2024-03-14",
+            "end_date": "2024-03-14",
+            "duration_minutes": 60
+          },
+          "raw_arguments": "{\"calendar_id\":\"user_calendar\",\"start_date\":\"2024-03-14\",\"end_date\":\"2024-03-14\",\"duration_minutes\":60}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-reschedule-unsupported",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "cancel_meeting",
+      "expected": null,
+      "failures": [
+        "called cancel_meeting when no tool applied"
+      ],
+      "prompt_tokens": 386,
+      "completion_tokens": 102,
+      "latency_ms": 2424.2209999938495,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_aevrrwjj",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "meeting_id_of_3pm_meeting",
+            "notify_attendees": "true"
+          },
+          "raw_arguments": "{\"meeting_id\":\"meeting_id_of_3pm_meeting\",\"notify_attendees\":\"true\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_lbjr3z9x",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "calendar_id",
+            "start_time": "2024-03-07T16:00:00",
+            "duration_minutes": "60",
+            "attendees": "['attendee1', 'attendee2']",
+            "title": "Meeting Title"
+          },
+          "raw_arguments": "{\"calendar_id\":\"calendar_id\",\"start_time\":\"2024-03-07T16:00:00\",\"duration_minutes\":\"60\",\"attendees\":\"['attendee1', 'attendee2']\",\"title\":\"Meeting Title\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-cancel-without-id",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "cancel_meeting",
+      "expected": null,
+      "failures": [
+        "called cancel_meeting when no tool applied"
+      ],
+      "prompt_tokens": 381,
+      "completion_tokens": 30,
+      "latency_ms": 1328.4459999995306,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7antkm6y",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "standup tomorrow morning",
+            "notify_attendees": true
+          },
+          "raw_arguments": "{\"meeting_id\":\"standup tomorrow morning\",\"notify_attendees\":true}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "abstain-gratitude-midconversation",
+      "category": "abstain",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 622,
+      "completion_tokens": 33,
+      "latency_ms": 2362.719999975525,
+      "error": null,
+      "response_text": "There is no function call that matches the given prompt. The prompt \"Perfect, thank you\" does not seem to be related to any of the provided functions.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-full-refund-omits-amount",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: 0 is less than the minimum of 1",
+        "amount_cents should not be present"
+      ],
+      "prompt_tokens": 611,
+      "completion_tokens": 36,
+      "latency_ms": 1647.2008339478634,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_5nus2392",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-450917",
+            "reason": "late",
+            "amount_cents": 0
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-450917\",\"reason\":\"late\",\"amount_cents\":0}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-dollars-to-cents",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [],
+      "prompt_tokens": 622,
+      "completion_tokens": 39,
+      "latency_ms": 1746.3941659661941,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vk7rz8sc",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": 1299,
+            "reason": "changed_mind",
+            "order_id": "ORD-771230"
+          },
+          "raw_arguments": "{\"amount_cents\":1299,\"reason\":\"changed_mind\",\"order_id\":\"ORD-771230\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-country-name-to-iso",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": "update_shipping_address",
+      "failures": [
+        "address.country eq 'GB', got 'UK'",
+        "address.postal_code eq 'WC1B 3JA', got ''"
+      ],
+      "prompt_tokens": 615,
+      "completion_tokens": 68,
+      "latency_ms": 2448.891374981031,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_pa1rh4g7",
+          "name": "update_shipping_address",
+          "arguments": {
+            "address": {
+              "city": "London",
+              "country": "UK",
+              "line1": "14 Bedford Square",
+              "line2": "",
+              "postal_code": "",
+              "region": "WC1B 3JA"
+            },
+            "order_id": "ORD-310884"
+          },
+          "raw_arguments": "{\"address\":{\"city\":\"London\",\"country\":\"UK\",\"line1\":\"14 Bedford Square\",\"line2\":\"\",\"postal_code\":\"\",\"region\":\"WC1B 3JA\"},\"order_id\":\"ORD-310884\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-filtered-search",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "search_orders",
+      "expected": "search_orders",
+      "failures": [
+        "schema: limit: '3' is not of type 'integer'",
+        "limit expected 3, got '3'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 609,
+      "completion_tokens": 33,
+      "latency_ms": 1653.93208299065,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_bag212ys",
+          "name": "search_orders",
+          "arguments": {
+            "email": "noa@example.com",
+            "limit": "3",
+            "status": "shipped"
+          },
+          "raw_arguments": "{\"email\":\"noa@example.com\",\"limit\":\"3\",\"status\":\"shipped\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-duration-in-words",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "find_availability",
+      "expected": "find_availability",
+      "failures": [
+        "schema: duration_minutes: '90' is not of type 'integer'",
+        "duration_minutes expected 90, got '90'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 407,
+      "completion_tokens": 51,
+      "latency_ms": 1904.935291968286,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_kkfb2ezs",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_design",
+            "duration_minutes": "90",
+            "start_date": "2026-09-09",
+            "end_date": "2026-09-11"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_design\",\"duration_minutes\":\"90\",\"start_date\":\"2026-09-09\",\"end_date\":\"2026-09-11\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-explicit-datetime",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "book_meeting",
+      "expected": "book_meeting",
+      "failures": [
+        "schema: attendees: \"['omer@example.com', 'tal@example.com']\" is not of type 'array'",
+        "schema: duration_minutes: '45' is not of type 'integer'",
+        "duration_minutes expected 45, got '45'",
+        "start_time matches '2026-09-09T14:00(:00)?-04:00', got '2023-09-07T14:00:00-04:00'",
+        "attendees.0 missing",
+        "attendees.1 missing"
+      ],
+      "prompt_tokens": 432,
+      "completion_tokens": 71,
+      "latency_ms": 2524.7018339578062,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ocqzthxk",
+          "name": "book_meeting",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "start_time": "2023-09-07T14:00:00-04:00",
+            "duration_minutes": "45",
+            "attendees": "['omer@example.com', 'tal@example.com']",
+            "title": "Design review"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_main\",\"start_time\":\"2023-09-07T14:00:00-04:00\",\"duration_minutes\":\"45\",\"attendees\":\"['omer@example.com', 'tal@example.com']\",\"title\":\"Design review\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-boolean-from-instruction",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "schema: notify_attendees: 'False' is not of type 'boolean'",
+        "notify_attendees expected False, got 'False'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 389,
+      "completion_tokens": 32,
+      "latency_ms": 837.6818749820814,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_uqlv01oc",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_4471",
+            "notify_attendees": "False"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_4471\",\"notify_attendees\":\"False\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "args-escalation-urgency",
+      "category": "args",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "escalate_to_human",
+      "expected": "escalate_to_human",
+      "failures": [],
+      "prompt_tokens": 616,
+      "completion_tokens": 45,
+      "latency_ms": 2019.503625051584,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_9wvqen2a",
+          "name": "escalate_to_human",
+          "arguments": {
+            "summary": "Customer has asked to speak to a human agent for the fourth time, and their wedding is on Saturday.",
+            "urgency": "high"
+          },
+          "raw_arguments": "{\"summary\":\"Customer has asked to speak to a human agent for the fourth time, and their wedding is on Saturday.\",\"urgency\":\"high\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-address-change",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "update_shipping_address",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 613,
+      "completion_tokens": 77,
+      "latency_ms": 2700.7507079979405,
+      "error": null,
+      "response_text": "{\"name\": \"update_shipping_address\", \"parameters\": {\"order_id\": \"ORD-905512\", \"address\": {\"line1\": \"new address line 1\", \"line2\": \"new address line 2\", \"city\": \"new city\", \"region\": \"new region\", \"postal_code\": \"new postal code\", \"country\": \"new country\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "select-cancel-with-id",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "schema: notify_attendees: 'true' is not of type 'boolean'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 384,
+      "completion_tokens": 32,
+      "latency_ms": 1304.3502920190804,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_eplya06b",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_2210",
+            "notify_attendees": "true"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_2210\",\"notify_attendees\":\"true\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "select-availability-not-booking",
+      "category": "select",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "find_availability",
+      "expected": "find_availability",
+      "failures": [
+        "schema: duration_minutes: '30' is not of type 'integer'",
+        "duration_minutes expected 30, got '30'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 409,
+      "completion_tokens": 51,
+      "latency_ms": 2052.508541964926,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4g8vrsbs",
+          "name": "find_availability",
+          "arguments": {
+            "duration_minutes": "30",
+            "end_date": "2026-09-18",
+            "start_date": "2026-09-14",
+            "calendar_id": "cal_ops"
+          },
+          "raw_arguments": "{\"duration_minutes\":\"30\",\"end_date\":\"2026-09-18\",\"start_date\":\"2026-09-14\",\"calendar_id\":\"cal_ops\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-corrected-identifier",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_order_status",
+      "expected": "get_order_status",
+      "failures": [],
+      "prompt_tokens": 630,
+      "completion_tokens": 22,
+      "latency_ms": 1661.4942500018515,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_dxemdx5w",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-222222"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-222222\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-reason-stated-earlier",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: None is not of type 'integer'",
+        "reason expected 'damaged', got 'changed_mind'",
+        "amount_cents should not be present"
+      ],
+      "prompt_tokens": 639,
+      "completion_tokens": 37,
+      "latency_ms": 2517.42099999683,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_xkqummk6",
+          "name": "issue_refund",
+          "arguments": {
+            "amount_cents": null,
+            "reason": "changed_mind",
+            "order_id": "ORD-664200"
+          },
+          "raw_arguments": "{\"amount_cents\":null,\"reason\":\"changed_mind\",\"order_id\":\"ORD-664200\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-address-before-status",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "update_shipping_address",
+      "expected": "update_shipping_address",
+      "failures": [
+        "produced 2 calls; expected exactly one"
+      ],
+      "prompt_tokens": 627,
+      "completion_tokens": 88,
+      "latency_ms": 3238.5462499805726,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7zo17m9s",
+          "name": "update_shipping_address",
+          "arguments": {
+            "order_id": "ORD-505050",
+            "address": {
+              "city": "Tel Aviv",
+              "country": "IL",
+              "line1": "9 Alon Street",
+              "line2": "",
+              "postal_code": "6100000",
+              "region": ""
+            }
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-505050\",\"address\":{\"city\":\"Tel Aviv\",\"country\":\"IL\",\"line1\":\"9 Alon Street\",\"line2\":\"\",\"postal_code\":\"6100000\",\"region\":\"\"}}",
+          "parse_error": null
+        },
+        {
+          "id": "call_kmrcmprh",
+          "name": "get_order_status",
+          "arguments": {
+            "order_id": "ORD-505050"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-505050\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "depth-file-share-after-detour",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "share_file",
+      "expected": "share_file",
+      "failures": [],
+      "prompt_tokens": 618,
+      "completion_tokens": 36,
+      "latency_ms": 2156.426957983058,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2iwaf815",
+          "name": "share_file",
+          "arguments": {
+            "file_id": "file_881020",
+            "email": "dor@example.com",
+            "role": "editor"
+          },
+          "raw_arguments": "{\"file_id\":\"file_881020\",\"email\":\"dor@example.com\",\"role\":\"editor\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-file-corrected-id",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "delete_file",
+      "expected": "delete_file",
+      "failures": [
+        "schema: permanent: 'false' is not of type 'boolean'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 568,
+      "completion_tokens": 27,
+      "latency_ms": 2118.4128749882802,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_pvgztfme",
+          "name": "delete_file",
+          "arguments": {
+            "file_id": "file_100002",
+            "permanent": "false"
+          },
+          "raw_arguments": "{\"file_id\":\"file_100002\",\"permanent\":\"false\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-file-permanent-carried-forward",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "delete_file",
+      "expected": "delete_file",
+      "failures": [
+        "schema: permanent: 'true' is not of type 'boolean'",
+        "file_id expected 'file_552210', got '552210'",
+        "permanent expected True, got 'true'"
+      ],
+      "prompt_tokens": 586,
+      "completion_tokens": 25,
+      "latency_ms": 1765.7947079860605,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_fk7viokr",
+          "name": "delete_file",
+          "arguments": {
+            "file_id": "552210",
+            "permanent": "true"
+          },
+          "raw_arguments": "{\"file_id\":\"552210\",\"permanent\":\"true\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-file-move-after-distraction",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "move_file",
+      "expected": "move_file",
+      "failures": [],
+      "prompt_tokens": 611,
+      "completion_tokens": 33,
+      "latency_ms": 2052.9273329884745,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ey2oqn65",
+          "name": "move_file",
+          "arguments": {
+            "destination_folder_id": "folder_archive_2026",
+            "file_id": "file_330071"
+          },
+          "raw_arguments": "{\"destination_folder_id\":\"folder_archive_2026\",\"file_id\":\"file_330071\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-meeting-id-corrected",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "schema: notify_attendees: 'true' is not of type 'boolean'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 412,
+      "completion_tokens": 32,
+      "latency_ms": 1492.6337919896469,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_tch1yc90",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_7735",
+            "notify_attendees": "true"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_7735\",\"notify_attendees\":\"true\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-notify-preference-earlier",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "schema: notify_attendees: 'false' is not of type 'boolean'",
+        "notify_attendees expected False, got 'false'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 426,
+      "completion_tokens": 32,
+      "latency_ms": 1523.9997080061585,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_axzgwdq7",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_9012",
+            "notify_attendees": "false"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_9012\",\"notify_attendees\":\"false\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-refund-amount-after-clarification",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "issue_refund",
+      "expected": "issue_refund",
+      "failures": [
+        "schema: amount_cents: '3000' is not of type 'integer'",
+        "amount_cents eq 3000, got '3000'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 655,
+      "completion_tokens": 38,
+      "latency_ms": 2551.867250003852,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_hrrgp0jl",
+          "name": "issue_refund",
+          "arguments": {
+            "order_id": "ORD-340221",
+            "amount_cents": "3000",
+            "reason": "damaged"
+          },
+          "raw_arguments": "{\"order_id\":\"ORD-340221\",\"amount_cents\":\"3000\",\"reason\":\"damaged\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "depth-escalation-after-repeated-question",
+      "category": "depth",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "escalate_to_human",
+      "expected": "escalate_to_human",
+      "failures": [],
+      "prompt_tokens": 636,
+      "completion_tokens": 42,
+      "latency_ms": 2567.381208005827,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_roezucae",
+          "name": "escalate_to_human",
+          "arguments": {
+            "summary": "Customer wants to speak to a human agent after being told the same information three days ago.",
+            "urgency": "high"
+          },
+          "raw_arguments": "{\"summary\":\"Customer wants to speak to a human agent after being told the same information three days ago.\",\"urgency\":\"high\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-search-before-move",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": true,
+      "called": "search_files",
+      "expected": "search_files",
+      "failures": [
+        "schema: limit: '1' is not of type 'integer'",
+        "passes once string values are cast to their schema types"
+      ],
+      "prompt_tokens": 547,
+      "completion_tokens": 25,
+      "latency_ms": 1800.422833999619,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_mwqqvhud",
+          "name": "search_files",
+          "arguments": {
+            "query": "quarterly report",
+            "limit": "1"
+          },
+          "raw_arguments": "{\"query\":\"quarterly report\",\"limit\":\"1\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-list-before-delete",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "search_files",
+      "expected": "list_files",
+      "failures": [
+        "called search_files, expected list_files",
+        "schema: limit: '1000' is not of type 'integer'",
+        "schema: modified_after: '' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'",
+        "folder_id expected 'folder_temp_uploads', got missing"
+      ],
+      "prompt_tokens": 550,
+      "completion_tokens": 27,
+      "latency_ms": 2030.6345419958234,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_t9dy4uxo",
+          "name": "search_files",
+          "arguments": {
+            "query": "",
+            "modified_after": "",
+            "limit": "1000"
+          },
+          "raw_arguments": "{\"query\":\"\",\"modified_after\":\"\",\"limit\":\"1000\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-search-before-share",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_files",
+      "expected": "search_files",
+      "failures": [],
+      "prompt_tokens": 551,
+      "completion_tokens": 26,
+      "latency_ms": 1279.8445840016939,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_vsz2r445",
+          "name": "search_files",
+          "arguments": {
+            "query": "onboarding_checklist",
+            "limit": 1
+          },
+          "raw_arguments": "{\"query\":\"onboarding_checklist\",\"limit\":1}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-list-before-share-all",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "list_files",
+      "expected": "list_files",
+      "failures": [
+        "schema: limit: '1000' is not of type 'integer'"
+      ],
+      "prompt_tokens": 554,
+      "completion_tokens": 63,
+      "latency_ms": 2504.9524159985594,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ssmdfh6c",
+          "name": "list_files",
+          "arguments": {
+            "folder_id": "folder_bids_2026",
+            "file_type": "any",
+            "limit": "1000"
+          },
+          "raw_arguments": "{\"folder_id\":\"folder_bids_2026\",\"file_type\":\"any\",\"limit\":\"1000\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-availability-before-checkin",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "book_meeting",
+      "expected": "find_availability",
+      "failures": [
+        "called book_meeting, expected find_availability",
+        "schema: attendees: \"['dana@example.com']\" is not of type 'array'",
+        "schema: duration_minutes: '20' is not of type 'integer'",
+        "duration_minutes expected 20, got '20'"
+      ],
+      "prompt_tokens": 407,
+      "completion_tokens": 66,
+      "latency_ms": 2350.044417020399,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_mft6qupz",
+          "name": "book_meeting",
+          "arguments": {
+            "title": "Check-in",
+            "calendar_id": "cal_main",
+            "start_time": "2026-09-08T14:00:00+00:00",
+            "duration_minutes": "20",
+            "attendees": "['dana@example.com']"
+          },
+          "raw_arguments": "{\"title\":\"Check-in\",\"calendar_id\":\"cal_main\",\"start_time\":\"2026-09-08T14:00:00+00:00\",\"duration_minutes\":\"20\",\"attendees\":\"['dana@example.com']\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-cancel-before-rebook",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": true,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": false,
+      "type_coerced": true,
+      "called": "cancel_meeting",
+      "expected": "cancel_meeting",
+      "failures": [
+        "produced 3 calls; expected exactly one",
+        "schema: notify_attendees: 'true' is not of type 'boolean'"
+      ],
+      "prompt_tokens": 408,
+      "completion_tokens": 155,
+      "latency_ms": 3831.897957948968,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_5x9yd8uu",
+          "name": "cancel_meeting",
+          "arguments": {
+            "meeting_id": "mtg_1200",
+            "notify_attendees": "true"
+          },
+          "raw_arguments": "{\"meeting_id\":\"mtg_1200\",\"notify_attendees\":\"true\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_8q1z6e75",
+          "name": "find_availability",
+          "arguments": {
+            "calendar_id": "cal_main",
+            "duration_minutes": "30",
+            "end_date": "2024-01-01",
+            "start_date": "2024-01-01"
+          },
+          "raw_arguments": "{\"calendar_id\":\"cal_main\",\"duration_minutes\":\"30\",\"end_date\":\"2024-01-01\",\"start_date\":\"2024-01-01\"}",
+          "parse_error": null
+        },
+        {
+          "id": "call_avg5op6l",
+          "name": "book_meeting",
+          "arguments": {
+            "start_time": "2024-01-01T14:00:00+08:00",
+            "attendees": "['priya@example.com', 'omer@example.com']",
+            "title": "New Meeting",
+            "calendar_id": "cal_main",
+            "duration_minutes": "30"
+          },
+          "raw_arguments": "{\"start_time\":\"2024-01-01T14:00:00+08:00\",\"attendees\":\"['priya@example.com', 'omer@example.com']\",\"title\":\"New Meeting\",\"calendar_id\":\"cal_main\",\"duration_minutes\":\"30\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "sequence-search-before-refund",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_orders",
+      "expected": "search_orders",
+      "failures": [],
+      "prompt_tokens": 615,
+      "completion_tokens": 26,
+      "latency_ms": 1779.2124589905143,
+      "error": null,
+      "response_text": "",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_tug3rwc1",
+          "name": "search_orders",
+          "arguments": {
+            "email": "noa@example.com",
+            "status": "any"
+          },
+          "raw_arguments": "{\"email\":\"noa@example.com\",\"status\":\"any\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "sequence-status-before-conditional-escalation",
+      "category": "sequence",
+      "model": "llama3.1:8b",
+      "pad": 0,
+      "repeat": 1,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": null,
+      "expected": "get_order_status",
+      "failures": [
+        "no tool call produced"
+      ],
+      "prompt_tokens": 620,
+      "completion_tokens": 61,
+      "latency_ms": 2550.678457948379,
+      "error": null,
+      "response_text": "{\"name\": \"get_order_status\", \"parameters\": {\"order_id\": \"ORD-770044}} \n\n{\"name\": \"escalate_to_human\", \"parameters\": {\"summary\": \"ORD-770044 is still not moving after two weeks, please assist.\", \"urgency\": \"high\"}}",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": false
+    }
+  ]
+}

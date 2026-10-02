@@ -1,0 +1,41 @@
+model            llama3.2:3b
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         68.5%   55.6%   37.0%   37.0%   (95% CI 18.5-57.4%)
+  type-lenient    68.5%   61.1%   40.7%   40.7%
+
+  tool count sweep
+    +0   distractors   success  27.8%   selection  66.7%   sd  0.0
+    +2   distractors   success  38.9%   selection  66.7%   sd  0.0
+    +4   distractors   success  44.4%   selection  72.2%   sd  0.0
+
+  by category
+    abstain     16.7%  (n=18, 95% CI 0.0-38.9%)
+    args        26.7%  (n=15, 95% CI 0.0-66.7%)
+    depth       66.7%  (n=6, 95% CI 33.3-100.0%)
+    select      60.0%  (n=15, 95% CI 20.0-100.0%)
+
+  2 of 54 calls (3.7%) were correct but wrongly typed
+
+  cost per success   1732 tokens   3.23 s
+
+failures worth reading:
+  [search-archive-folder pad=0] schema: query.limit: None is not of type 'integer'; query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+  [search-with-limit pad=0] query expected {'q': 'offsite', 'limit': 5}, got {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}
+  [reply-send pad=0] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+  [reply-draft-only pad=0] body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got {'mode': 'draft', 'text': 'Let me check and get back to you. Draft only, do not send it.'}
+  [no-send-chat-only pad=0] called send_reply when no tool applied
+  [get-missing-id pad=0] called get_message when no tool applied
+  [reply-missing-id pad=0] called send_reply when no tool applied
+  [search-missing-criteria pad=0] called search_messages when no tool applied
+  [unsupported-delete pad=0] called get_message when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-quotes pad=0] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}
+  [reply-body-symbols pad=0] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "[Hi Sam,Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"}
+  [correction-search-sender pad=0] schema: query: '{"q":"from:sam.lee@example.invalid"}' is not of type 'object'; query expected {'q': 'from:sam.lee@example.invalid'}, got '{"q":"from:sam.lee@example.invalid"}'
+  [search-archive-folder pad=2] schema: query.limit: None is not of type 'integer'; query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+  [search-with-limit pad=2] query expected {'q': 'offsite', 'limit': 5}, got {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}
+
+wrote 02-result.json

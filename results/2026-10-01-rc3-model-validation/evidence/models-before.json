@@ -1,0 +1,65 @@
+{
+  "command-r7b:latest": {
+    "name": "command-r7b:latest",
+    "digest": "ff4e9696ef9f19b62e3f7d7261c95dcc9bb15a7c0398493366d851119fe2e1ef",
+    "size": 5057031198,
+    "quantization": "Q4_K_M",
+    "parameter_size": "8.0B"
+  },
+  "llama3.2:3b": {
+    "name": "llama3.2:3b",
+    "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+    "size": 2019393189,
+    "quantization": "Q4_K_M",
+    "parameter_size": "3.2B"
+  },
+  "hermes3:8b": {
+    "name": "hermes3:8b",
+    "digest": "4f6b83f30b62bc3d0cf9be09266db222805ee815c8fd7d8b38f863f655be78b7",
+    "size": 4661227243,
+    "quantization": "Q4_0",
+    "parameter_size": "8.0B"
+  },
+  "phi4-mini:latest": {
+    "name": "phi4-mini:latest",
+    "digest": "78fad5d182a7c33065e153a5f8ba210754207ba9d91973f57dffa7f487363753",
+    "size": 2491876774,
+    "quantization": "Q4_K_M",
+    "parameter_size": "3.8B"
+  },
+  "granite3.3:8b": {
+    "name": "granite3.3:8b",
+    "digest": "fd429f23b90980ed1bef53b990894e7b0199331f6ae90c5650240a7d5b70f1f7",
+    "size": 4942891653,
+    "quantization": "Q4_K_M",
+    "parameter_size": "8.2B"
+  },
+  "mistral-nemo:latest": {
+    "name": "mistral-nemo:latest",
+    "digest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
+    "size": 7071713227,
+    "quantization": "Q4_0",
+    "parameter_size": "12.2B"
+  },
+  "qwen2.5:7b": {
+    "name": "qwen2.5:7b",
+    "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+    "size": 4683087332,
+    "quantization": "Q4_K_M",
+    "parameter_size": "7.6B"
+  },
+  "qwen3:8b": {
+    "name": "qwen3:8b",
+    "digest": "500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41",
+    "size": 5225388164,
+    "quantization": "Q4_K_M",
+    "parameter_size": "8.2B"
+  },
+  "llama3.1:8b": {
+    "name": "llama3.1:8b",
+    "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+    "size": 4920753328,
+    "quantization": "Q4_K_M",
+    "parameter_size": "8.0B"
+  }
+}

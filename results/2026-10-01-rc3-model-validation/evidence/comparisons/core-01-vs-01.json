@@ -1,0 +1,53 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.9090909090909091,
+      "success_b": 0.9090909090909091,
+      "success_delta": 0.0,
+      "lenient_a": 0.9090909090909091,
+      "lenient_b": 0.9090909090909091,
+      "lenient_delta": 0.0
+    },
+    "args": {
+      "success_a": 0.7083333333333334,
+      "success_b": 0.7083333333333334,
+      "success_delta": 0.0,
+      "lenient_a": 0.7083333333333334,
+      "lenient_b": 0.7083333333333334,
+      "lenient_delta": 0.0
+    },
+    "depth": {
+      "success_a": 0.7727272727272727,
+      "success_b": 0.7727272727272727,
+      "success_delta": 0.0,
+      "lenient_a": 0.7727272727272727,
+      "lenient_b": 0.7727272727272727,
+      "lenient_delta": 0.0
+    },
+    "select": {
+      "success_a": 0.9166666666666666,
+      "success_b": 0.9166666666666666,
+      "success_delta": 0.0,
+      "lenient_a": 0.9166666666666666,
+      "lenient_b": 0.9166666666666666,
+      "lenient_delta": 0.0
+    },
+    "sequence": {
+      "success_a": 0.7,
+      "success_b": 0.7,
+      "success_delta": 0.0,
+      "lenient_a": 0.7,
+      "lenient_b": 0.7,
+      "lenient_delta": 0.0
+    }
+  },
+  "regressed_tasks": [],
+  "improved_tasks": [],
+  "gate": {
+    "passed": true,
+    "failures": [],
+    "matched_cases": 100,
+    "success_delta": 0.0,
+    "regressions": []
+  }
+}

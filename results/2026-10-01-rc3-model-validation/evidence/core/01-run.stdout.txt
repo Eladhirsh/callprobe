@@ -1,0 +1,39 @@
+model            qwen2.5:7b
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     100
+
+                 selection   schema     args      success
+  overall         95.0%   94.0%   84.0%   79.0%   (95% CI 68.0-89.0%)
+  type-lenient    95.0%   94.0%   84.0%   79.0%
+
+  tool count sweep
+    +0   distractors   success  79.0%   selection  95.0%   sd  3.0
+
+  by category
+    abstain     90.9%  (n=22, 95% CI 77.3-100.0%)
+    args        70.8%  (n=24, 95% CI 41.7-91.7%)
+    depth       77.3%  (n=22, 95% CI 54.5-95.5%)
+    select      91.7%  (n=12, 95% CI 75.0-100.0%)
+    sequence    70.0%  (n=20, 95% CI 45.0-95.0%)
+
+  cost per success   748 tokens   7.23 s
+
+failures worth reading:
+  [select-status-direct pad=0] no tool call produced
+      said: I'll check the status of your order for you. Could you please provide me with your email address associated with this order? If you don't have it handy, it's al
+  [args-partial-refund pad=0] amount_cents eq 4225, got 4250
+  [args-relative-dates pad=0] start_date matches '2026-09-1[2345]', got '2026-09-11'
+  [sequence-availability-first pad=0] called book_meeting, expected find_availability
+  [args-country-name-to-iso pad=0] address.country eq 'GB', got 'UK'; address.postal_code eq 'WC1B 3JA', got '3JA'
+  [args-explicit-datetime pad=0] start_time matches '2026-09-09T14:00(:00)?-04:00', got '2026-09-13T14:00:00-04:00'
+  [depth-reason-stated-earlier pad=0] schema: amount_cents: None is not of type 'integer'; amount_cents should not be present
+  [sequence-address-before-status pad=0] produced 2 calls; expected exactly one
+  [depth-file-share-after-detour pad=0] file_id expected 'file_881020', got '881020'
+  [depth-refund-amount-after-clarification pad=0] amount_cents eq 3000, got 6000
+  [sequence-cancel-before-rebook pad=0] produced 3 calls; expected exactly one
+  [sequence-search-before-refund pad=0] called issue_refund, expected search_orders; schema: amount_cents: None is not of type 'integer'
+  [args-partial-refund pad=0] amount_cents eq 4225, got 4250
+  [args-relative-dates pad=0] start_date matches '2026-09-1[2345]', got '2026-09-11'
+  [abstain-no-such-capability pad=0] called get_order_status when no tool applied
+
+wrote 01-result.json

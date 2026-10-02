@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="core" tests="100" failures="21" errors="0" skipped="0" time="571.544951">
+    <properties>
+      <property name="model" value="qwen2.5:7b" />
+      <property name="suite_hash" value="e597c986302b5596" />
+      <property name="scoring_version" value="3" />
+      <property name="planned_coverage" value="100" />
+      <property name="recorded_coverage" value="100" />
+      <property name="targeted_scope" value="false" />
+    </properties>
+    <testcase name="select-status-direct[pad=0,repeat=0]" classname="select" time="2.580524">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="select-search-not-status[pad=0,repeat=0]" classname="select" time="1.982322" />
+    <testcase name="select-escalate-explicit[pad=0,repeat=0]" classname="select" time="2.061357" />
+    <testcase name="abstain-policy-question[pad=0,repeat=0]" classname="abstain" time="2.969781" />
+    <testcase name="abstain-missing-identifier[pad=0,repeat=0]" classname="abstain" time="1.946588" />
+    <testcase name="abstain-chitchat[pad=0,repeat=0]" classname="abstain" time="1.285650" />
+    <testcase name="args-partial-refund[pad=0,repeat=0]" classname="args" time="2.345826">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="args-enum-mapping[pad=0,repeat=0]" classname="args" time="1.805735" />
+    <testcase name="args-nested-address[pad=0,repeat=0]" classname="args" time="2.790451" />
+    <testcase name="args-relative-dates[pad=0,repeat=0]" classname="args" time="2.283457">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="depth-late-reference[pad=0,repeat=0]" classname="depth" time="1.702091" />
+    <testcase name="sequence-availability-first[pad=0,repeat=0]" classname="sequence" time="2.717292">
+      <failure type="selection" message="selection check failed" />
+    </testcase>
+    <testcase name="abstain-status-no-identifier[pad=0,repeat=0]" classname="abstain" time="2.554039" />
+    <testcase name="abstain-no-such-capability[pad=0,repeat=0]" classname="abstain" time="3.316148" />
+    <testcase name="abstain-change-email-on-file[pad=0,repeat=0]" classname="abstain" time="2.647097" />
+    <testcase name="abstain-shipping-quote[pad=0,repeat=0]" classname="abstain" time="3.933764" />
+    <testcase name="abstain-availability-no-calendar[pad=0,repeat=0]" classname="abstain" time="2.036665" />
+    <testcase name="abstain-reschedule-unsupported[pad=0,repeat=0]" classname="abstain" time="2.630365" />
+    <testcase name="abstain-cancel-without-id[pad=0,repeat=0]" classname="abstain" time="2.803574" />
+    <testcase name="abstain-gratitude-midconversation[pad=0,repeat=0]" classname="abstain" time="1.553107" />
+    <testcase name="args-full-refund-omits-amount[pad=0,repeat=0]" classname="args" time="2.108074" />
+    <testcase name="args-dollars-to-cents[pad=0,repeat=0]" classname="args" time="2.178116" />
+    <testcase name="args-country-name-to-iso[pad=0,repeat=0]" classname="args" time="2.691902">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="args-filtered-search[pad=0,repeat=0]" classname="args" time="0.847278" />
+    <testcase name="args-duration-in-words[pad=0,repeat=0]" classname="args" time="2.246700" />
+    <testcase name="args-explicit-datetime[pad=0,repeat=0]" classname="args" time="2.890926">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="args-boolean-from-instruction[pad=0,repeat=0]" classname="args" time="1.343083" />
+    <testcase name="args-escalation-urgency[pad=0,repeat=0]" classname="args" time="1.638960" />
+    <testcase name="select-address-change[pad=0,repeat=0]" classname="select" time="2.707031" />
+    <testcase name="select-cancel-with-id[pad=0,repeat=0]" classname="select" time="1.640320" />
+    <testcase name="select-availability-not-booking[pad=0,repeat=0]" classname="select" time="2.379777" />
+    <testcase name="depth-corrected-identifier[pad=0,repeat=0]" classname="depth" time="1.608777" />
+    <testcase name="depth-reason-stated-earlier[pad=0,repeat=0]" classname="depth" time="2.079559">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="sequence-address-before-status[pad=0,repeat=0]" classname="sequence" time="2.894793">
+      <failure type="call_count" message="call count check failed" />
+    </testcase>
+    <testcase name="depth-file-share-after-detour[pad=0,repeat=0]" classname="depth" time="2.102033">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="depth-file-corrected-id[pad=0,repeat=0]" classname="depth" time="1.844049" />
+    <testcase name="depth-file-permanent-carried-forward[pad=0,repeat=0]" classname="depth" time="1.697460" />
+    <testcase name="depth-file-move-after-distraction[pad=0,repeat=0]" classname="depth" time="1.783832" />
+    <testcase name="depth-meeting-id-corrected[pad=0,repeat=0]" classname="depth" time="0.902679" />
+    <testcase name="depth-notify-preference-earlier[pad=0,repeat=0]" classname="depth" time="0.941161" />
+    <testcase name="depth-refund-amount-after-clarification[pad=0,repeat=0]" classname="depth" time="2.070999">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="depth-escalation-after-repeated-question[pad=0,repeat=0]" classname="depth" time="3.611463" />
+    <testcase name="sequence-search-before-move[pad=0,repeat=0]" classname="sequence" time="2.545555" />
+    <testcase name="sequence-list-before-delete[pad=0,repeat=0]" classname="sequence" time="1.955582" />
+    <testcase name="sequence-search-before-share[pad=0,repeat=0]" classname="sequence" time="2.416032" />
+    <testcase name="sequence-list-before-share-all[pad=0,repeat=0]" classname="sequence" time="3.174888" />
+    <testcase name="sequence-availability-before-checkin[pad=0,repeat=0]" classname="sequence" time="2.019051" />
+    <testcase name="sequence-cancel-before-rebook[pad=0,repeat=0]" classname="sequence" time="16.102820">
+      <failure type="call_count" message="call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-refund[pad=0,repeat=0]" classname="sequence" time="12.613074">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed" />
+    </testcase>
+    <testcase name="sequence-status-before-conditional-escalation[pad=0,repeat=0]" classname="sequence" time="12.373094" />
+    <testcase name="select-status-direct[pad=0,repeat=1]" classname="select" time="10.178222" />
+    <testcase name="select-search-not-status[pad=0,repeat=1]" classname="select" time="12.194102" />
+    <testcase name="select-escalate-explicit[pad=0,repeat=1]" classname="select" time="12.699211" />
+    <testcase name="abstain-policy-question[pad=0,repeat=1]" classname="abstain" time="13.851387" />
+    <testcase name="abstain-missing-identifier[pad=0,repeat=1]" classname="abstain" time="10.492827" />
+    <testcase name="abstain-chitchat[pad=0,repeat=1]" classname="abstain" time="10.972949" />
+    <testcase name="args-partial-refund[pad=0,repeat=1]" classname="args" time="12.544900">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="args-enum-mapping[pad=0,repeat=1]" classname="args" time="12.326559" />
+    <testcase name="args-nested-address[pad=0,repeat=1]" classname="args" time="11.942170" />
+    <testcase name="args-relative-dates[pad=0,repeat=1]" classname="args" time="11.863140">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="depth-late-reference[pad=0,repeat=1]" classname="depth" time="13.783731" />
+    <testcase name="sequence-availability-first[pad=0,repeat=1]" classname="sequence" time="12.848824" />
+    <testcase name="abstain-status-no-identifier[pad=0,repeat=1]" classname="abstain" time="10.244167" />
+    <testcase name="abstain-no-such-capability[pad=0,repeat=1]" classname="abstain" time="13.064021">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="abstain-change-email-on-file[pad=0,repeat=1]" classname="abstain" time="14.738594" />
+    <testcase name="abstain-shipping-quote[pad=0,repeat=1]" classname="abstain" time="15.637296" />
+    <testcase name="abstain-availability-no-calendar[pad=0,repeat=1]" classname="abstain" time="15.906402">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="abstain-reschedule-unsupported[pad=0,repeat=1]" classname="abstain" time="14.563876" />
+    <testcase name="abstain-cancel-without-id[pad=0,repeat=1]" classname="abstain" time="13.986976" />
+    <testcase name="abstain-gratitude-midconversation[pad=0,repeat=1]" classname="abstain" time="12.198841" />
+    <testcase name="args-full-refund-omits-amount[pad=0,repeat=1]" classname="args" time="13.348583" />
+    <testcase name="args-dollars-to-cents[pad=0,repeat=1]" classname="args" time="13.637647" />
+    <testcase name="args-country-name-to-iso[pad=0,repeat=1]" classname="args" time="11.661784" />
+    <testcase name="args-filtered-search[pad=0,repeat=1]" classname="args" time="12.686275" />
+    <testcase name="args-duration-in-words[pad=0,repeat=1]" classname="args" time="13.584772" />
+    <testcase name="args-explicit-datetime[pad=0,repeat=1]" classname="args" time="14.511327">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="args-boolean-from-instruction[pad=0,repeat=1]" classname="args" time="10.445865" />
+    <testcase name="args-escalation-urgency[pad=0,repeat=1]" classname="args" time="5.592865" />
+    <testcase name="select-address-change[pad=0,repeat=1]" classname="select" time="4.038854" />
+    <testcase name="select-cancel-with-id[pad=0,repeat=1]" classname="select" time="3.031657" />
+    <testcase name="select-availability-not-booking[pad=0,repeat=1]" classname="select" time="3.366610" />
+    <testcase name="depth-corrected-identifier[pad=0,repeat=1]" classname="depth" time="3.001108" />
+    <testcase name="depth-reason-stated-earlier[pad=0,repeat=1]" classname="depth" time="3.749735">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="sequence-address-before-status[pad=0,repeat=1]" classname="sequence" time="4.303507">
+      <failure type="call_count" message="call count check failed" />
+    </testcase>
+    <testcase name="depth-file-share-after-detour[pad=0,repeat=1]" classname="depth" time="2.791470" />
+    <testcase name="depth-file-corrected-id[pad=0,repeat=1]" classname="depth" time="2.521354" />
+    <testcase name="depth-file-permanent-carried-forward[pad=0,repeat=1]" classname="depth" time="2.436284" />
+    <testcase name="depth-file-move-after-distraction[pad=0,repeat=1]" classname="depth" time="3.362802" />
+    <testcase name="depth-meeting-id-corrected[pad=0,repeat=1]" classname="depth" time="2.345337" />
+    <testcase name="depth-notify-preference-earlier[pad=0,repeat=1]" classname="depth" time="3.990965" />
+    <testcase name="depth-refund-amount-after-clarification[pad=0,repeat=1]" classname="depth" time="3.056205">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="depth-escalation-after-repeated-question[pad=0,repeat=1]" classname="depth" time="4.119596" />
+    <testcase name="sequence-search-before-move[pad=0,repeat=1]" classname="sequence" time="4.841882" />
+    <testcase name="sequence-list-before-delete[pad=0,repeat=1]" classname="sequence" time="3.373259" />
+    <testcase name="sequence-search-before-share[pad=0,repeat=1]" classname="sequence" time="2.300200" />
+    <testcase name="sequence-list-before-share-all[pad=0,repeat=1]" classname="sequence" time="4.213316" />
+    <testcase name="sequence-availability-before-checkin[pad=0,repeat=1]" classname="sequence" time="2.917224" />
+    <testcase name="sequence-cancel-before-rebook[pad=0,repeat=1]" classname="sequence" time="3.914749">
+      <failure type="call_count" message="call count check failed" />
+    </testcase>
+    <testcase name="sequence-search-before-refund[pad=0,repeat=1]" classname="sequence" time="4.547303" />
+    <testcase name="sequence-status-before-conditional-escalation[pad=0,repeat=1]" classname="sequence" time="2.459322" />
+  </testsuite>
+</testsuites>

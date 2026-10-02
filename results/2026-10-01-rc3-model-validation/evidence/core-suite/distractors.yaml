@@ -1,0 +1,160 @@
+# Plausible tools that are never the right answer for the core tasks.
+# Padding with these is how the tool count sweep stays honest: nonsense
+# distractors are easy to ignore, adjacent ones are not.
+tools:
+  - name: get_inventory_level
+    description: Check warehouse stock for a product SKU.
+    parameters:
+      type: object
+      properties:
+        sku: {type: string}
+      required: [sku]
+      additionalProperties: false
+
+  - name: create_return_label
+    description: Generate a prepaid return shipping label for an order.
+    parameters:
+      type: object
+      properties:
+        order_id: {type: string}
+        carrier: {type: string, enum: [ups, fedex, usps]}
+      required: [order_id]
+      additionalProperties: false
+
+  - name: lookup_customer
+    description: Fetch a customer profile by email or customer id.
+    parameters:
+      type: object
+      properties:
+        email: {type: string}
+        customer_id: {type: string}
+      additionalProperties: false
+
+  - name: apply_discount_code
+    description: Apply a promotional code to a pending order.
+    parameters:
+      type: object
+      properties:
+        order_id: {type: string}
+        code: {type: string}
+      required: [order_id, code]
+      additionalProperties: false
+
+  - name: get_shipping_rates
+    description: Quote shipping rates to a destination postal code.
+    parameters:
+      type: object
+      properties:
+        postal_code: {type: string}
+        country: {type: string}
+        weight_grams: {type: integer}
+      required: [postal_code, country]
+      additionalProperties: false
+
+  - name: send_email
+    description: Send a transactional email to a customer.
+    parameters:
+      type: object
+      properties:
+        to: {type: string}
+        template: {type: string}
+        variables: {type: object}
+      required: [to, template]
+      additionalProperties: false
+
+  - name: log_interaction
+    description: Write a note about this conversation to the CRM.
+    parameters:
+      type: object
+      properties:
+        note: {type: string}
+        tags: {type: array, items: {type: string}}
+      required: [note]
+      additionalProperties: false
+
+  - name: get_store_hours
+    description: Return opening hours for a retail location.
+    parameters:
+      type: object
+      properties:
+        store_id: {type: string}
+      required: [store_id]
+      additionalProperties: false
+
+  - name: translate_text
+    description: Translate a short passage between two languages.
+    parameters:
+      type: object
+      properties:
+        text: {type: string}
+        target_language: {type: string}
+      required: [text, target_language]
+      additionalProperties: false
+
+  - name: get_loyalty_balance
+    description: Return a customer's loyalty point balance.
+    parameters:
+      type: object
+      properties:
+        customer_id: {type: string}
+      required: [customer_id]
+      additionalProperties: false
+
+  - name: subscribe_to_newsletter
+    description: Add an email address to the marketing list.
+    parameters:
+      type: object
+      properties:
+        email: {type: string}
+      required: [email]
+      additionalProperties: false
+
+  - name: get_weather
+    description: Current conditions and forecast for a city.
+    parameters:
+      type: object
+      properties:
+        city: {type: string}
+        days: {type: integer, minimum: 1, maximum: 7}
+      required: [city]
+      additionalProperties: false
+
+  - name: convert_currency
+    description: Convert an amount between two currencies.
+    parameters:
+      type: object
+      properties:
+        amount: {type: number}
+        from_currency: {type: string}
+        to_currency: {type: string}
+      required: [amount, from_currency, to_currency]
+      additionalProperties: false
+
+  - name: search_knowledge_base
+    description: Search help center articles by keyword.
+    parameters:
+      type: object
+      properties:
+        query: {type: string}
+        limit: {type: integer}
+      required: [query]
+      additionalProperties: false
+
+  - name: get_invoice_pdf
+    description: Retrieve a PDF invoice for a completed order.
+    parameters:
+      type: object
+      properties:
+        order_id: {type: string}
+      required: [order_id]
+      additionalProperties: false
+
+  - name: set_reminder
+    description: Set a personal reminder at a future time.
+    parameters:
+      type: object
+      properties:
+        when: {type: string}
+        message: {type: string}
+      required: [when, message]
+      additionalProperties: false

@@ -143,6 +143,16 @@ despite the higher total. Raw results, coverage, model digests, and source
 provenance are included. These single-repeat runs are integration findings,
 not a general model ranking.
 
+## October 2026 repeated validation
+
+[Nine models, 1,386 recorded observations](results/2026-10-01-rc3-model-validation/README.md)
+cover two core repeats and mail tools at three padding settings. Qwen3 scored
+85/100 versus Qwen2.5’s 79/100 on core, but five matched observations regressed,
+so the CI gate fails. The runs contain zero request errors and seven token-limit
+truncations, all counted as failures. The archive includes raw results, frozen
+suites, model identities, JUnit exports, and offline report/resume checks.
+These local Ollama configurations are integration evidence, not a general ranking.
+
 ## Historical core benchmark
 
 The output below is an archived suite-v1 run, not the expected output of the

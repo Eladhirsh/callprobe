@@ -1,0 +1,766 @@
+{
+  "note": "Small-sample results: this leaderboard does not establish a robust model ranking. Scores are as the CLI reported them, with no repair.",
+  "dry_run": false,
+  "endpoint": "http://127.0.0.1:11434/v1",
+  "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+  "pad": "0,2,4",
+  "repeats": 1,
+  "max_tokens": 4096,
+  "timeout_seconds": 3600.0,
+  "request_timeout_seconds": 180.0,
+  "total_planned_requests": 486,
+  "models": [
+    {
+      "slot": "01",
+      "model": "qwen2.5:7b",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=qwen2.5:7b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.291,
+          "stdout": "01-dry-run.stdout.txt",
+          "stderr": "01-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=qwen2.5:7b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=01-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 166.426,
+          "stdout": "01-run.stdout.txt",
+          "stderr": "01-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "01-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.288,
+          "stdout": "01-explain.stdout.txt",
+          "stderr": "01-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "01-result.json",
+      "result_file": "01-result.json"
+    },
+    {
+      "slot": "02",
+      "model": "llama3.2:3b",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=llama3.2:3b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.298,
+          "stdout": "02-dry-run.stdout.txt",
+          "stderr": "02-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=llama3.2:3b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=02-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 64.924,
+          "stdout": "02-run.stdout.txt",
+          "stderr": "02-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "02-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.242,
+          "stdout": "02-explain.stdout.txt",
+          "stderr": "02-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "02-result.json",
+      "result_file": "02-result.json"
+    },
+    {
+      "slot": "03",
+      "model": "hermes3:8b",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=hermes3:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.288,
+          "stdout": "03-dry-run.stdout.txt",
+          "stderr": "03-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=hermes3:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=03-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 160.795,
+          "stdout": "03-run.stdout.txt",
+          "stderr": "03-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "03-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.274,
+          "stdout": "03-explain.stdout.txt",
+          "stderr": "03-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "03-result.json",
+      "result_file": "03-result.json"
+    },
+    {
+      "slot": "04",
+      "model": "granite3.3:8b",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=granite3.3:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.264,
+          "stdout": "04-dry-run.stdout.txt",
+          "stderr": "04-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=granite3.3:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=04-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 184.065,
+          "stdout": "04-run.stdout.txt",
+          "stderr": "04-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "04-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.235,
+          "stdout": "04-explain.stdout.txt",
+          "stderr": "04-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "04-result.json",
+      "result_file": "04-result.json"
+    },
+    {
+      "slot": "05",
+      "model": "llama3.1:8b",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=llama3.1:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.225,
+          "stdout": "05-dry-run.stdout.txt",
+          "stderr": "05-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=llama3.1:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=05-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 294.302,
+          "stdout": "05-run.stdout.txt",
+          "stderr": "05-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "05-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.219,
+          "stdout": "05-explain.stdout.txt",
+          "stderr": "05-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "05-result.json",
+      "result_file": "05-result.json"
+    },
+    {
+      "slot": "06",
+      "model": "mistral-nemo:latest",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=mistral-nemo:latest",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.2,
+          "stdout": "06-dry-run.stdout.txt",
+          "stderr": "06-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=mistral-nemo:latest",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=06-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 132.923,
+          "stdout": "06-run.stdout.txt",
+          "stderr": "06-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "06-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.182,
+          "stdout": "06-explain.stdout.txt",
+          "stderr": "06-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "06-result.json",
+      "result_file": "06-result.json"
+    },
+    {
+      "slot": "07",
+      "model": "command-r7b:latest",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=command-r7b:latest",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.184,
+          "stdout": "07-dry-run.stdout.txt",
+          "stderr": "07-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=command-r7b:latest",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=07-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 282.962,
+          "stdout": "07-run.stdout.txt",
+          "stderr": "07-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "07-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.245,
+          "stdout": "07-explain.stdout.txt",
+          "stderr": "07-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "07-result.json",
+      "result_file": "07-result.json"
+    },
+    {
+      "slot": "08",
+      "model": "phi4-mini:latest",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=phi4-mini:latest",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.173,
+          "stdout": "08-dry-run.stdout.txt",
+          "stderr": "08-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=phi4-mini:latest",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=08-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 393.472,
+          "stdout": "08-run.stdout.txt",
+          "stderr": "08-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "08-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.226,
+          "stdout": "08-explain.stdout.txt",
+          "stderr": "08-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "08-result.json",
+      "result_file": "08-result.json"
+    },
+    {
+      "slot": "09",
+      "model": "qwen3:8b",
+      "status": "ok",
+      "steps": [
+        {
+          "name": "dry-run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=qwen3:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--dry-run",
+            "--format=json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.162,
+          "stdout": "09-dry-run.stdout.txt",
+          "stderr": "09-dry-run.stderr.txt"
+        },
+        {
+          "name": "run",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "run",
+            "--model=qwen3:8b",
+            "--endpoint=http://127.0.0.1:11434/v1",
+            "--pad=0,2,4",
+            "--repeats=1",
+            "--temperature=0",
+            "--max-tokens=4096",
+            "--concurrency=1",
+            "--retries=0",
+            "--request-timeout=180.0",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+            "--quiet",
+            "--fail-under=0",
+            "--out=09-result.json"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 425.537,
+          "stdout": "09-run.stdout.txt",
+          "stderr": "09-run.stderr.txt"
+        },
+        {
+          "name": "explain",
+          "command": [
+            "/tmp/callprobe-junit-env/bin/python",
+            "-m",
+            "callprobe.cli",
+            "explain",
+            "09-result.json",
+            "--suite=/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite"
+          ],
+          "status": "ok",
+          "returncode": 0,
+          "duration_seconds": 0.181,
+          "stdout": "09-explain.stdout.txt",
+          "stderr": "09-explain.stderr.txt"
+        }
+      ],
+      "planned_requests": 54,
+      "raw_result_file": "09-result.json",
+      "result_file": "09-result.json"
+    }
+  ],
+  "leaderboard": {
+    "file": "leaderboard.md",
+    "models": [
+      "qwen2.5:7b",
+      "llama3.2:3b",
+      "hermes3:8b",
+      "granite3.3:8b",
+      "llama3.1:8b",
+      "mistral-nemo:latest",
+      "command-r7b:latest",
+      "phi4-mini:latest",
+      "qwen3:8b"
+    ],
+    "steps": [
+      {
+        "name": "board",
+        "command": [
+          "/tmp/callprobe-junit-env/bin/python",
+          "-m",
+          "callprobe.cli",
+          "leaderboard",
+          "01-result.json",
+          "02-result.json",
+          "03-result.json",
+          "04-result.json",
+          "05-result.json",
+          "06-result.json",
+          "07-result.json",
+          "08-result.json",
+          "09-result.json"
+        ],
+        "status": "ok",
+        "returncode": 0,
+        "duration_seconds": 0.288,
+        "stdout": "leaderboard-board.stdout.txt",
+        "stderr": "leaderboard-board.stderr.txt"
+      }
+    ]
+  },
+  "failed": false,
+  "status": "complete"
+}

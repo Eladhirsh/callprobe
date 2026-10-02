@@ -2,6 +2,9 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Archive 1,386 live observations across nine local model configurations, with
+  repeated core cases, mail padding sweeps, and verified offline CI reports.
+
 - Save sweep manifests atomically so interrupted writes preserve the last
   complete checkpoint.
 

@@ -1,0 +1,2056 @@
+{
+  "config": {
+    "model": "qwen3:8b",
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "suite": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/mail-suite",
+    "pads": [
+      0,
+      2,
+      4
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "quantization": null,
+    "notes": null,
+    "callprobe_version": "0.9.0rc3.dev0",
+    "suite_name": "mail-suite",
+    "suite_version": 1,
+    "suite_hash": "2e82c882d93ca06a",
+    "server_name": "ollama",
+    "server_version": "0.34.2",
+    "scoring_version": 3,
+    "task_ids": [
+      "search-by-sender",
+      "search-by-subject",
+      "search-archive-folder",
+      "search-with-limit",
+      "get-by-id",
+      "get-id-with-punctuation",
+      "reply-send",
+      "reply-draft-only",
+      "no-send-chat-only",
+      "get-missing-id",
+      "reply-missing-id",
+      "search-missing-criteria",
+      "unsupported-delete",
+      "unsupported-forward",
+      "reply-body-quotes",
+      "reply-body-symbols",
+      "correction-search-sender",
+      "correction-reply-target"
+    ],
+    "selected_task_ids": null,
+    "request_timeout": 180.0
+  },
+  "started_at": "2026-10-02T04:41:16.800780+00:00",
+  "finished_at": "2026-10-02T04:48:22.093839+00:00",
+  "results": [
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 460,
+      "completion_tokens": 144,
+      "latency_ms": 6844.00291700149,
+      "error": null,
+      "response_text": "Okay, the user wants to find messages from dana.rivera@example.invalid. Let me check the available tools. There's the search_messages function. The q parameter can take a from:ADDRESS format. So I should construct the query with \"from:dana.rivera@example.invalid\". The required parameter is q, and th",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_f6xfjocf",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "q": "from:dana.rivera@example.invalid"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"q\":\"from:dana.rivera@example.invalid\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'subject:Quarterly lunch plan'}, got missing"
+      ],
+      "prompt_tokens": 459,
+      "completion_tokens": 148,
+      "latency_ms": 4097.185457998421,
+      "error": null,
+      "response_text": "Okay, the user wants to find messages with the subject \"Quarterly lunch plan.\" Let me check the available tools. There's a search_messages function that allows searching by subject. The q parameter can take a subject:WORDS format. So I should construct the query with \"subject:Quarterly lunch plan.\" ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_jzg1xdf6",
+          "name": "search_messages",
+          "arguments": {
+            "q": "subject:Quarterly lunch plan."
+          },
+          "raw_arguments": "{\"q\":\"subject:Quarterly lunch plan.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+      ],
+      "prompt_tokens": 458,
+      "completion_tokens": 124,
+      "latency_ms": 3719.3192500271834,
+      "error": null,
+      "response_text": "Okay, the user wants to search their archive folder for the word \"invoice\". Let me check the available tools. There's a search_messages function that takes a query with q, folder, and limit. The user specified the archive folder, so I should set folder to \"archive\". The q parameter should be \"invoic",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_zoar2zm8",
+          "name": "search_messages",
+          "arguments": {
+            "q": "invoice",
+            "folder": "archive"
+          },
+          "raw_arguments": "{\"q\":\"invoice\",\"folder\":\"archive\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'offsite', 'limit': 5}, got missing"
+      ],
+      "prompt_tokens": 460,
+      "completion_tokens": 219,
+      "latency_ms": 5903.265208005905,
+      "error": null,
+      "response_text": "Okay, the user wants to see at most 5 messages about the offsite. Let me figure out which tool to use here. The available functions are send_reply, search_messages, and get_message.\n\nThe user's query is about searching messages, so search_messages is the right choice. The parameters needed for searc",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_pb8y64te",
+          "name": "search_messages",
+          "arguments": {
+            "q": "offsite",
+            "limit": 5
+          },
+          "raw_arguments": "{\"q\":\"offsite\",\"limit\":5}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing"
+      ],
+      "prompt_tokens": 458,
+      "completion_tokens": 111,
+      "latency_ms": 2638.746499957051,
+      "error": null,
+      "response_text": "Okay, the user wants to open message msg-1042. Let me check the available tools. There's a get_message function that retrieves a message by its ID. The parameters require the message_id as a string. Since the user provided \"msg-1042\", I should call get_message with that ID. No other parameters are n",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_63x3wrrj",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+      ],
+      "prompt_tokens": 466,
+      "completion_tokens": 162,
+      "latency_ms": 3796.840915980283,
+      "error": null,
+      "response_text": "Okay, the user is asking to fetch message msg-2024.07_a-19. Let me check the available tools. There's the get_message function which requires the message_id. The message ID they provided is msg-2024.07_a-19. I need to call get_message with that ID. I don't see any other parameters needed. Let me mak",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_7q6vy8uz",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing"
+      ],
+      "prompt_tokens": 466,
+      "completion_tokens": 188,
+      "latency_ms": 4422.184291994199,
+      "error": null,
+      "response_text": "Okay, the user wants to send a reply to the message with ID msg-1042. The reply text is \"Confirmed for Tuesday.\" Let me check the available tools.\n\nLooking at the functions, there's one called send_reply. It requires the message_id and the body with text and mode. The mode should be \"send\" since the",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_uqkx81je",
+          "name": "send_reply",
+          "arguments": {
+            "body": {
+              "mode": "send",
+              "text": "Confirmed for Tuesday."
+            },
+            "message_id": "msg-1042"
+          },
+          "raw_arguments": "{\"body\":{\"mode\":\"send\",\"text\":\"Confirmed for Tuesday.\"},\"message_id\":\"msg-1042\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 479,
+      "completion_tokens": 303,
+      "latency_ms": 7109.732249984518,
+      "error": null,
+      "response_text": "Okay, the user wants to draft a reply to msg-1042. The message they want to include is \"Let me check and get back to you.\" They also specified to draft only and not send it. \n\nFirst, I need to check which functions are available. There's the send_reply function which allows creating a reply. The par",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_nh07qt9x",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            },
+            "body": {
+              "mode": "draft",
+              "text": "Let me check and get back to you."
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"},\"body\":{\"mode\":\"draft\",\"text\":\"Let me check and get back to you.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 476,
+      "completion_tokens": 348,
+      "latency_ms": 8668.33241697168,
+      "error": null,
+      "response_text": "Okay, the user wants a polite decline reply for message msg-1042. They don't want it sent or saved, just a draft. Let me think about how to phrase that.\n\nFirst, I need to create a reply that's polite. Maybe start with a greeting, then express gratitude for the message. Then, explain that they can't ",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 469,
+      "completion_tokens": 286,
+      "latency_ms": 6617.670833016746,
+      "error": null,
+      "response_text": "Without the message ID, I cannot open the message using the `get_message` function. The tools provided do not include a way to retrieve message IDs without searching, and you explicitly stated not to search. Please provide the message ID or clarify if you need help finding it through another method.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 458,
+      "completion_tokens": 328,
+      "latency_ms": 7562.151999969501,
+      "error": null,
+      "response_text": "I need the message ID of the email you want to reply to. Could you please provide the specific message ID (like msg-1042) you'd like to respond to?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 453,
+      "completion_tokens": 196,
+      "latency_ms": 4592.574082955252,
+      "error": null,
+      "response_text": "To help you search your mail, could you please provide more details? For example:\n- Keywords to look for in the message content\n- A specific sender (e.g., \"from:example@example.com\")\n- A subject line (e.g., \"subject:Project Update\")\n- Whether you want to search the inbox or archive\n- How many messag",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 459,
+      "completion_tokens": 217,
+      "latency_ms": 5062.782082997728,
+      "error": null,
+      "response_text": "The provided tools do not include a function for permanently deleting messages. I cannot perform this action. Let me know if you'd like to archive, draft a reply, or search for messages instead.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 463,
+      "completion_tokens": 281,
+      "latency_ms": 7159.9911249941215,
+      "error": null,
+      "response_text": "The available tools do not include a function to forward messages. I can only reply to messages (using `send_reply`), search messages, or retrieve a single message by ID. Let me know if you'd like to reply to msg-1042 instead!",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3001'}, got missing",
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 486,
+      "completion_tokens": 370,
+      "latency_ms": 8596.729499986395,
+      "error": null,
+      "response_text": "Okay, let me tackle this user query. The user wants to send a reply to message ID msg-3001 with the exact text: [Please send the \"final\" draft by 5:00 p.m.; thanks!]. \n\nFirst, I need to check which tools are available. There's the send_reply function. The parameters required are message_id, text, an",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_hs1q93kf",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3001",
+            "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!",
+            "mode": "send"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3001\",\"text\":\"Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!\",\"mode\":\"send\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-3002'}, got missing",
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", 'mode': 'send'}, got missing"
+      ],
+      "prompt_tokens": 496,
+      "completion_tokens": 427,
+      "latency_ms": 9906.3317499822,
+      "error": null,
+      "response_text": "Okay, let me figure out how to handle this user request. The user wants to send a reply to message ID msg-3002 with the exact text provided. The text is between the brackets: [Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.] \n\nFirst, I need to check which tools are available. Th",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_d6ix98fi",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-3002",
+            "text": "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.",
+            "mode": "draft"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-3002\",\"text\":\"Hi Sam, Agenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\",\"mode\":\"draft\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 493,
+      "completion_tokens": 161,
+      "latency_ms": 3822.643416991923,
+      "error": null,
+      "response_text": "Okay, the user initially asked to find messages from dana.rivera@example.invalid. I used the search_messages function with that email. Then they realized they meant sam.lee@example.invalid instead. So I need to adjust the search query to the new email. Let me check the available functions again. The",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_0k3r62gs",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "qwen3:8b",
+      "pad": 0,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 503,
+      "completion_tokens": 374,
+      "latency_ms": 9795.592583017424,
+      "error": null,
+      "response_text": "Okay, let me try to figure out how to handle this. The user initially asked to reply to msg-1042 with \"Approved.\" Then they clarified that it should be a draft and use msg-1043 instead. \n\nFirst, I need to check the available functions. There's the send_reply function which requires a message_id and ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rhtrnmiy",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1043"
+            },
+            "body": {
+              "mode": "draft",
+              "text": "Approved."
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1043\"},\"body\":{\"mode\":\"draft\",\"text\":\"Approved.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 586,
+      "completion_tokens": 141,
+      "latency_ms": 4593.097667035181,
+      "error": null,
+      "response_text": "Okay, the user wants to find messages from dana.rivera@example.invalid. Let me check the available tools. There's a function called search_messages that allows searching messages. The parameters include q, which can be a from:ADDRESS query. So I should set q to \"from:dana.rivera@example.invalid\". Th",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_0tl4fgh7",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "q": "from:dana.rivera@example.invalid"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"q\":\"from:dana.rivera@example.invalid\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 563,
+      "completion_tokens": 149,
+      "latency_ms": 4947.340500017162,
+      "error": null,
+      "response_text": "Okay, the user wants to look for mail with the subject \"Quarterly lunch plan.\" Let me check the available tools. There's a function called search_messages that allows searching messages. The parameters include q, which can use subject:WORDS. So I should set q to \"subject:Quarterly lunch plan.\" The f",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_nyldoyeh",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "q": "subject:Quarterly lunch plan"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"q\":\"subject:Quarterly lunch plan\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 584,
+      "completion_tokens": 159,
+      "latency_ms": 4617.283875006251,
+      "error": null,
+      "response_text": "Okay, the user wants to search their archive folder for the word \"invoice\". Let me check the available tools. There's a function called search_messages. The parameters required are q, folder, and limit. The user specified the archive folder and the word invoice. So, q should be \"invoice\", folder is ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_50v2hf19",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "folder": "archive",
+              "q": "invoice"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"folder\":\"archive\",\"q\":\"invoice\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 586,
+      "completion_tokens": 171,
+      "latency_ms": 4555.7953750249,
+      "error": null,
+      "response_text": "Okay, the user wants to see at most 5 messages about the offsite. Let me figure out which tool to use. The available functions include search_messages, which allows searching with a query. The parameters for search_messages include 'q' for the search text, and 'limit' for the maximum number of resul",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_4wm2889s",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "limit": 5,
+              "q": "offsite"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"limit\":5,\"q\":\"offsite\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 565,
+      "completion_tokens": 122,
+      "latency_ms": 4293.906125007197,
+      "error": null,
+      "response_text": "Okay, the user wants to open message msg-1042. Let me check the available tools. There's a function called get_message that retrieves a message by its ID. The parameters require the message_id, which the user provided as msg-1042. I need to call this function with that ID. No other parameters are ne",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_mebf9125",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-2024.07_a-19'}, got missing"
+      ],
+      "prompt_tokens": 570,
+      "completion_tokens": 157,
+      "latency_ms": 5055.17233296996,
+      "error": null,
+      "response_text": "Okay, the user is asking to fetch message \"msg-2024.07_a-19\". Let me check the available tools. There's a function called get_message that retrieves a message by its exact ID. The parameters require a message_id, which the user provided. I need to make sure the ID is correctly formatted. The example",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_qk21r7or",
+          "name": "get_message",
+          "arguments": {
+            "message_id": "msg-2024.07_a-19"
+          },
+          "raw_arguments": "{\"message_id\":\"msg-2024.07_a-19\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 592,
+      "completion_tokens": 291,
+      "latency_ms": 8168.202749977354,
+      "error": null,
+      "response_text": "Okay, the user wants to send a reply to the message with ID msg-1042. The reply text is \"Confirmed for Tuesday.\" Let me check the available tools.\n\nLooking at the functions, there's send_reply which is used for creating a reply to a known message. The parameters required are message_id and the body ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_ronojy8d",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            },
+            "body": {
+              "mode": "send",
+              "text": "Confirmed for Tuesday."
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"},\"body\":{\"mode\":\"send\",\"text\":\"Confirmed for Tuesday.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 605,
+      "completion_tokens": 208,
+      "latency_ms": 6185.674874985125,
+      "error": null,
+      "response_text": "Okay, the user wants to draft a reply to message ID msg-1042. The reply text is \"Let me check and get back to you.\" They specified draft only, so the mode should be 'draft'. \n\nFirst, I need to check which functions are available. The 'send_reply' function is the right one here. It requires the messa",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_u7gn261f",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            },
+            "body": {
+              "mode": "draft",
+              "text": "Let me check and get back to you."
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"},\"body\":{\"mode\":\"draft\",\"text\":\"Let me check and get back to you.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 583,
+      "completion_tokens": 319,
+      "latency_ms": 8269.004874979146,
+      "error": null,
+      "response_text": "Here's a polite decline response you could use as a draft:\n\n\"Hi [Sender's Name],  \nThank you for your message. Unfortunately, I'm unable to proceed with this request at this time. I appreciate your understanding and hope we can connect in the future.  \nBest regards,  \n[Your Name]\"\n\nThis version main",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 573,
+      "completion_tokens": 137,
+      "latency_ms": 4432.454166992102,
+      "error": null,
+      "response_text": "I cannot open a message without its ID. Please provide the message ID you'd like to retrieve.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 584,
+      "completion_tokens": 218,
+      "latency_ms": 6211.81745902868,
+      "error": null,
+      "response_text": "I need the message ID to reply to a specific email. Could you please provide the message ID (e.g., \"msg-1042\") you want to respond to?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 557,
+      "completion_tokens": 195,
+      "latency_ms": 5765.162000025157,
+      "error": null,
+      "response_text": "To help you search your mail, could you please provide more details like keywords, sender, subject, or specific content you're looking for? For example: \"Find emails from john@example.com about project X\" or \"Show archived messages with the subject 'Meeting Notes'\".",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 563,
+      "completion_tokens": 162,
+      "latency_ms": 5085.771540994756,
+      "error": null,
+      "response_text": "The provided tools do not include a function for permanently deleting messages. I cannot perform this action with the available capabilities. Would you like me to help with something else?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 589,
+      "completion_tokens": 1145,
+      "latency_ms": 27903.04008300882,
+      "error": null,
+      "response_text": "The provided tools do not include a function for forwarding messages. The `send_reply` function is designed for replying to a message, not forwarding it. To forward a message, a dedicated function for handling message forwarding would be required, which is not available in the current toolset.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "body expected {'text': 'Please send the \"final\" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the \"final\" draft by 5:00 p.m.; thanks!]'}"
+      ],
+      "prompt_tokens": 590,
+      "completion_tokens": 309,
+      "latency_ms": 8437.438375025522,
+      "error": null,
+      "response_text": "Okay, let me tackle this user query. The user wants to send a reply to message ID msg-3001 with the exact text: [Please send the \"final\" draft by 5:00 p.m.; thanks!]. \n\nFirst, I need to check which function to use. The available functions include send_reply, which is for creating a reply to a known ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_w9r63zmo",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3001"
+            },
+            "body": {
+              "mode": "send",
+              "text": "[Please send the \"final\" draft by 5:00 p.m.; thanks!]"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-3001\"},\"body\":{\"mode\":\"send\",\"text\":\"[Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!]\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", 'mode': 'send'}, got {'mode': 'send', 'text': \"Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\"}"
+      ],
+      "prompt_tokens": 603,
+      "completion_tokens": 890,
+      "latency_ms": 21903.40683294926,
+      "error": null,
+      "response_text": "Okay, let's see. The user wants to send a reply to message ID msg-3002 with the exact text provided. The text is between the brackets: [Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]\n\nFirst, I need to check which function to use. The available functions include send_reply, whi",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_rzj8cnp0",
+          "name": "send_reply",
+          "arguments": {
+            "body": {
+              "mode": "send",
+              "text": "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."
+            },
+            "path": {
+              "message_id": "msg-3002"
+            }
+          },
+          "raw_arguments": "{\"body\":{\"mode\":\"send\",\"text\":\"Hi Sam, Agenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\"},\"path\":{\"message_id\":\"msg-3002\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 597,
+      "completion_tokens": 156,
+      "latency_ms": 4532.402625016402,
+      "error": null,
+      "response_text": "Okay, the user initially asked to find messages from dana.rivera@example.invalid. I used the search_messages function with that email. Then they realized they meant sam.lee@example.invalid instead. So I need to adjust the search query. The function requires the 'q' parameter, which can take 'from:AD",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_1lcp8ss4",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "qwen3:8b",
+      "pad": 2,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 607,
+      "completion_tokens": 320,
+      "latency_ms": 8827.985082985833,
+      "error": null,
+      "response_text": "Okay, let me try to figure out how to handle this. The user initially asked to reply to msg-1042 with \"Approved.\" Then they clarified that it should be a draft and use msg-1043 instead. \n\nFirst, I need to check the available functions. The send_reply function allows creating a reply with a mode (dra",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_1xg60pu4",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1043"
+            },
+            "body": {
+              "mode": "draft",
+              "text": "Approved."
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1043\"},\"body\":{\"mode\":\"draft\",\"text\":\"Approved.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-sender",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 671,
+      "completion_tokens": 171,
+      "latency_ms": 5481.937583012041,
+      "error": null,
+      "response_text": "Okay, the user wants to find messages from dana.rivera@example.invalid. Let me check the available tools. There's a function called search_messages that allows searching messages. The parameters include a query with the 'q' field, which can use 'from:ADDRESS' syntax. So I should construct the query ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_dhqjqkra",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "q": "from:dana.rivera@example.invalid"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"q\":\"from:dana.rivera@example.invalid\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-by-subject",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 670,
+      "completion_tokens": 142,
+      "latency_ms": 5006.052874960005,
+      "error": null,
+      "response_text": "Okay, the user wants to look for mail with the subject \"Quarterly lunch plan.\" Let me check the available tools. There's a function called search_messages that allows searching messages. The parameters include q, which can be a subject search. The q parameter can use \"subject:WORDS\" syntax. So I sho",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_r3adiwvd",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "q": "subject:Quarterly lunch plan"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"q\":\"subject:Quarterly lunch plan\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-archive-folder",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'invoice', 'folder': 'archive'}, got missing"
+      ],
+      "prompt_tokens": 669,
+      "completion_tokens": 163,
+      "latency_ms": 5029.919791966677,
+      "error": null,
+      "response_text": "Okay, the user wants to search their archive folder for the word \"invoice\". Let me check the available tools. There's a function called search_messages that takes parameters q, folder, and limit. The q parameter can be a search text, and the folder can be set to \"archive\". Since the user mentioned t",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_21dsu90o",
+          "name": "search_messages",
+          "arguments": {
+            "q": "invoice",
+            "folder": "archive"
+          },
+          "raw_arguments": "{\"q\":\"invoice\",\"folder\":\"archive\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-with-limit",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [],
+      "prompt_tokens": 671,
+      "completion_tokens": 181,
+      "latency_ms": 5912.592708016746,
+      "error": null,
+      "response_text": "Okay, the user wants to see at most 5 messages about the offsite. Let me figure out which tool to use here. Looking at the available functions, the search_messages function seems right. It allows searching messages with a query parameter. The user mentioned \"about the offsite,\" so the search term sh",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_3s4m13ea",
+          "name": "search_messages",
+          "arguments": {
+            "query": {
+              "limit": 5,
+              "q": "offsite"
+            }
+          },
+          "raw_arguments": "{\"query\":{\"limit\":5,\"q\":\"offsite\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-by-id",
+      "category": "select",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 669,
+      "completion_tokens": 116,
+      "latency_ms": 4244.734291045461,
+      "error": null,
+      "response_text": "Okay, the user wants to open message msg-1042. Let me check the available tools. There's a function called get_message that retrieves a message by its ID. The parameters require the message_id in the path. Since the user provided \"msg-1042\", I should call get_message with that ID. No other parameter",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_di9l3kmw",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-id-with-punctuation",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": "get_message",
+      "failures": [],
+      "prompt_tokens": 677,
+      "completion_tokens": 239,
+      "latency_ms": 7049.0653330343775,
+      "error": null,
+      "response_text": "Okay, the user is asking to \"Fetch message msg-2024.07_a-19 please.\" Let me see which tool to use here.\n\nLooking at the available functions, there's one called get_message that retrieves a message by its exact ID. The function requires a message_id parameter. The user provided the ID \"msg-2024.07_a-",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_jq9pi5pb",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-2024.07_a-19"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-2024.07_a-19\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-send",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id' was unexpected)",
+        "schema: (root): 'path' is a required property",
+        "path expected {'message_id': 'msg-1042'}, got missing"
+      ],
+      "prompt_tokens": 677,
+      "completion_tokens": 181,
+      "latency_ms": 5194.553875015117,
+      "error": null,
+      "response_text": "Okay, the user wants to send a reply to the message with ID msg-1042. The reply text is \"Confirmed for Tuesday.\" Let me check the available tools.\n\nLooking at the functions, there's one called send_reply. It requires the message_id and the body with text and mode. The mode should be \"send\" since the",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_cyw6mrff",
+          "name": "send_reply",
+          "arguments": {
+            "message_id": "msg-1042",
+            "body": {
+              "mode": "send",
+              "text": "Confirmed for Tuesday."
+            }
+          },
+          "raw_arguments": "{\"message_id\":\"msg-1042\",\"body\":{\"mode\":\"send\",\"text\":\"Confirmed for Tuesday.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-draft-only",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 690,
+      "completion_tokens": 257,
+      "latency_ms": 7627.606707974337,
+      "error": null,
+      "response_text": "Okay, the user wants me to draft a reply to message msg-1042. The reply should say \"Let me check and get back to you.\" and it should be a draft, not sent. Let me check the available tools.\n\nLooking at the functions, there's one called send_reply. Its purpose is to create a reply to a known message. ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_2bvc5u3y",
+          "name": "send_reply",
+          "arguments": {
+            "body": {
+              "mode": "draft",
+              "text": "Let me check and get back to you."
+            },
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"body\":{\"mode\":\"draft\",\"text\":\"Let me check and get back to you.\"},\"path\":{\"message_id\":\"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "no-send-chat-only",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 687,
+      "completion_tokens": 290,
+      "latency_ms": 7842.164542002138,
+      "error": null,
+      "response_text": "Here's a polite decline draft for message msg-1042:\n\n\"I'm sorry, but I'm unable to accept your invitation at this time. Thank you for considering me, and I hope we can collaborate on another project in the future!\"\n\nThis response:\n1. Apologizes for the decline\n2. Clearly states the refusal\n3. Thanks",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "get-missing-id",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 680,
+      "completion_tokens": 153,
+      "latency_ms": 5061.28608295694,
+      "error": null,
+      "response_text": "I cannot open a message without its ID. Could you please provide the message ID you'd like to open? If you don't have it, you'll need to find it through another method like checking your inbox or search results.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-missing-id",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 669,
+      "completion_tokens": 994,
+      "latency_ms": 23748.90291702468,
+      "error": null,
+      "response_text": "To reply to the email, I need the specific message ID. Could you please provide the message ID (e.g., \"msg-1042\") you want to reply to?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "search-missing-criteria",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 664,
+      "completion_tokens": 172,
+      "latency_ms": 5276.465583010577,
+      "error": null,
+      "response_text": "To help you search your mail, I'll need more details. Could you please specify:\n- What keywords or phrases are you looking for?\n- Any specific sender (e.g., \"from:example@example.com\")?\n- Are you searching the inbox or archive?\n- Do you want to limit the number of results?",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-delete",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": null,
+      "expected": null,
+      "failures": [],
+      "prompt_tokens": 670,
+      "completion_tokens": 167,
+      "latency_ms": 5574.375249969307,
+      "error": null,
+      "response_text": "The system does not have a function available to delete messages permanently. I can only retrieve messages (get_message) or search through messages (search_messages), but there is no tool provided for permanent deletion of messages.",
+      "truncated": false,
+      "calls": [],
+      "finish_reason": "stop",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "unsupported-forward",
+      "category": "abstain",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": false,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "get_message",
+      "expected": null,
+      "failures": [
+        "called get_message when no tool applied"
+      ],
+      "prompt_tokens": 674,
+      "completion_tokens": 1642,
+      "latency_ms": 39969.0951249795,
+      "error": null,
+      "response_text": "Okay, the user wants to forward the message with ID msg-1042 to sam.lee@example.invalid. Let me check the available tools to see how to handle this.\n\nLooking at the functions provided, there's 'send_reply' which allows creating a reply to a message. The process for forwarding might involve replying ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_twhluqkh",
+          "name": "get_message",
+          "arguments": {
+            "path": {
+              "message_id": "msg-1042"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-1042\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": false
+    },
+    {
+      "task_id": "reply-body-quotes",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": true,
+      "success": true,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": true,
+      "success_lenient": true,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [],
+      "prompt_tokens": 697,
+      "completion_tokens": 355,
+      "latency_ms": 9077.2076669964,
+      "error": null,
+      "response_text": "Okay, let's see. The user wants to send a reply to message ID msg-3001 with the exact text between the brackets. The text is [Please send the \"final\" draft by 5:00 p.m.; thanks!]. \n\nFirst, I need to check the available functions. There's the send_reply function which requires the message_id and the ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_nq0phnxi",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3001"
+            },
+            "body": {
+              "mode": "send",
+              "text": "Please send the \"final\" draft by 5:00 p.m.; thanks!"
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-3001\"},\"body\":{\"mode\":\"send\",\"text\":\"Please send the \\\"final\\\" draft by 5:00 p.m.; thanks!\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "reply-body-symbols",
+      "category": "args",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": true,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": true,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "body expected {'text': \"Hi Sam,\\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\", 'mode': 'send'}, got {'mode': 'send', 'text': \"Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.\"}"
+      ],
+      "prompt_tokens": 707,
+      "completion_tokens": 651,
+      "latency_ms": 16572.91750004515,
+      "error": null,
+      "response_text": "Okay, let me tackle this user query. The user wants to send a reply to message ID msg-3002 with specific text. The text is between the brackets: [Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.] \n\nFirst, I need to check which function to use. The user mentioned sending a reply, ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_21t8bz7d",
+          "name": "send_reply",
+          "arguments": {
+            "path": {
+              "message_id": "msg-3002"
+            },
+            "body": {
+              "mode": "send",
+              "text": "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."
+            }
+          },
+          "raw_arguments": "{\"path\":{\"message_id\":\"msg-3002\"},\"body\":{\"mode\":\"send\",\"text\":\"Hi Sam, Agenda: budget \\u0026 hiring (50% done) \\u003cdraft\\u003e 'v2' — café at 9.\"}}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-search-sender",
+      "category": "depth",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "search_messages",
+      "expected": "search_messages",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('q' was unexpected)",
+        "schema: (root): 'query' is a required property",
+        "query expected {'q': 'from:sam.lee@example.invalid'}, got missing"
+      ],
+      "prompt_tokens": 704,
+      "completion_tokens": 149,
+      "latency_ms": 4582.568208978046,
+      "error": null,
+      "response_text": "Okay, the user initially asked to find messages from dana.rivera@example.invalid. I used the search_messages function with that email. Then they realized they meant sam.lee@example.invalid instead. So I need to adjust the query. The function requires the 'q' parameter, which can take 'from:ADDRESS' ",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_kza53225",
+          "name": "search_messages",
+          "arguments": {
+            "q": "from:sam.lee@example.invalid"
+          },
+          "raw_arguments": "{\"q\":\"from:sam.lee@example.invalid\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    },
+    {
+      "task_id": "correction-reply-target",
+      "category": "depth",
+      "model": "qwen3:8b",
+      "pad": 4,
+      "repeat": 0,
+      "selection_ok": true,
+      "schema_ok": false,
+      "args_ok": false,
+      "success": false,
+      "schema_ok_lenient": false,
+      "args_ok_lenient": false,
+      "success_lenient": false,
+      "type_coerced": false,
+      "called": "send_reply",
+      "expected": "send_reply",
+      "failures": [
+        "schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)",
+        "schema: (root): 'path' is a required property",
+        "schema: (root): 'body' is a required property",
+        "path expected {'message_id': 'msg-1043'}, got missing",
+        "body expected {'text': 'Approved.', 'mode': 'draft'}, got missing"
+      ],
+      "prompt_tokens": 714,
+      "completion_tokens": 258,
+      "latency_ms": 7805.6184579618275,
+      "error": null,
+      "response_text": "Okay, let me process this step by step. The user initially asked to reply to msg-1042 with \"Approved.\" I then asked whether to send it as a draft or send it, and they responded that it should be a draft using msg-1043 instead.\n\nFirst, I need to call the send_reply function. The parameters required a",
+      "truncated": false,
+      "calls": [
+        {
+          "id": "call_jp1dcfn2",
+          "name": "send_reply",
+          "arguments": {
+            "mode": "draft",
+            "message_id": "msg-1043",
+            "text": "Approved."
+          },
+          "raw_arguments": "{\"mode\":\"draft\",\"message_id\":\"msg-1043\",\"text\":\"Approved.\"}",
+          "parse_error": null
+        }
+      ],
+      "finish_reason": "tool_calls",
+      "call_count_ok": true
+    }
+  ]
+}
