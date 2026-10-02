@@ -51,3 +51,65 @@ def test_resamples_by_task_id_not_individual_results():
 
 def test_empty_results():
     assert bootstrap_ci([]) == (0.0, 0.0)
+
+
+def _reference_pooled_ci(results, field='success', confidence=0.95, iterations=2000, seed=1234):
+    """Prior row-pooling implementation as an independent compatibility oracle."""
+    import random
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for row in results:
+        groups[row.task_id].append(row)
+    keys = list(groups)
+    if not keys:
+        return 0.0, 0.0
+    rng = random.Random(seed)
+    rates = []
+    for _ in range(iterations):
+        pooled = []
+        for _ in keys:
+            pooled.extend(groups[keys[rng.randrange(len(keys))]])
+        rates.append(sum(bool(getattr(row, field)) for row in pooled) / len(pooled))
+    rates.sort()
+    tail = (1 - confidence) / 2
+    return rates[int(tail * iterations)], rates[min(int((1 - tail) * iterations), iterations - 1)]
+
+
+def test_cluster_counts_preserve_exact_intervals_for_uneven_repeats_and_seeds():
+    # Different cluster sizes and mixed outcomes exercise the ratio of pooled
+    # counts; averaging per-task rates instead would give different intervals.
+    rows = [_R('heavy', i % 3 == 0) for i in range(17)]
+    rows += [_R('medium', i % 2 == 0) for i in range(6)]
+    rows += [_R('single', True), _R('small', False), _R('small', True)]
+    original = list(rows)
+    for seed in (0, 17, 1234):
+        for confidence in (0.5, 0.8, 0.95):
+            settings = dict(seed=seed, confidence=confidence, iterations=100)
+            assert bootstrap_ci(rows, **settings) == _reference_pooled_ci(rows, **settings)
+    assert rows == original
+
+
+def test_bootstrap_reads_each_observation_once_not_once_per_resample():
+    class CountedResult:
+        def __init__(self, task_id, value):
+            self.task_id, self.value, self.reads = task_id, value, 0
+
+        @property
+        def metric(self):
+            self.reads += 1
+            return self.value
+
+    rows = [CountedResult('a', True), CountedResult('a', False), CountedResult('b', True)]
+    assert bootstrap_ci(rows, field='metric', iterations=100) == (0.5, 1.0)
+    assert [r.reads for r in rows] == [1, 1, 1]
+
+
+def test_archived_live_intervals_match_prior_pooling():
+    from pathlib import Path
+    from callprobe.models import Run
+    root = Path(__file__).resolve().parents[1] / 'results/2026-10-02-llamacpp-validation/evidence'
+    for suite in ('core', 'mail'):
+        run = Run.model_validate_json((root / suite / '01-result.json').read_text())
+        scored = [r for r in run.results if r.error is None]
+        for field in ('success', 'success_lenient'):
+            assert bootstrap_ci(scored, field) == _reference_pooled_ci(scored, field)

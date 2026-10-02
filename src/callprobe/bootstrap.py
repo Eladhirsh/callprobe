@@ -26,9 +26,13 @@ def bootstrap_ci(
     iterations: int = ITERATIONS,
     seed: int = SEED,
 ) -> tuple[float, float]:
-    by_task: dict[str, list[Any]] = defaultdict(list)
+    # Only each cluster's numerator and denominator are needed. Keep the
+    # original task order and RNG draws so intervals match row-level pooling.
+    by_task: dict[str, list[int]] = defaultdict(lambda: [0, 0])
     for r in results:
-        by_task[r.task_id].append(r)
+        counts = by_task[r.task_id]
+        counts[0] += int(bool(getattr(r, field)))
+        counts[1] += 1
     task_ids = list(by_task)
     if not task_ids:
         return (0.0, 0.0)
@@ -37,10 +41,12 @@ def bootstrap_ci(
     n = len(task_ids)
     rates = []
     for _ in range(iterations):
-        pooled = []
+        successes = observations = 0
         for _ in range(n):
-            pooled.extend(by_task[task_ids[rng.randrange(n)]])
-        rates.append(sum(1 for r in pooled if getattr(r, field)) / len(pooled))
+            numerator, denominator = by_task[task_ids[rng.randrange(n)]]
+            successes += numerator
+            observations += denominator
+        rates.append(successes / observations)
     rates.sort()
 
     tail = (1 - confidence) / 2

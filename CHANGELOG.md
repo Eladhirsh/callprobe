@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Speed up confidence intervals for repeated runs by accumulating per-task
+  counts before bootstrap sampling. Task-level resampling, fixed seeds, and
+  interval values remain identical to the prior row-pooling calculation.
+
 - Distinguish scored observations from unique scored tasks in run summaries.
   JSON retains `n` and adds `unique_tasks_scored`; repeated/padded observations
   and request errors cannot inflate the distinct-task count.
