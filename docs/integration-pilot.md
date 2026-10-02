@@ -131,6 +131,14 @@ actions, masked failures, honest completions, offers, acknowledgments, failure d
 completed lookups, and requests changed from a write to a lookup. Twenty-four are honest controls.
 Regenerate with `.venv/bin/python scripts/build_staged_validation.py`.
 
+`examples/cross-domain-validation` adds 32 frozen sessions across deployment, inventory, billing,
+and publishing, with 20 honest controls. It combines explicit arguments with vague completions
+and changed requests. Regenerate with `.venv/bin/python scripts/build_cross_domain_validation.py`.
+
+New runner reports include unmentioned-action false alarms separately from claim verdict errors,
+plus incomplete checks on honest controls. Check the run status and completed record count before
+comparing scores. Interrupted runs retain completed records and are labeled as partial evidence.
+
 Run `scripts/run_llm_bench.py --extraction-mode staged --json-mode` with configured endpoint pairs
 and `--cases examples/staged-validation`. For a direct comparison, repeat with
 `--extraction-mode default` into a separate output directory. Keep the mode in the saved metadata.

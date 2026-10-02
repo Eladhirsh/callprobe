@@ -83,3 +83,62 @@ def test_detail_free_metric_counts_only_eligible_cases():
     )
     assert summary["detail_free_cases"] == 2
     assert summary["detail_free_exact"] == 1
+
+
+def test_reverse_direction_alarms_and_incomplete_controls_are_visible():
+    rows = [
+        {
+            "expected": [{"verdict": "backed", "tool": "send"}],
+            "passed": False,
+            "got": [{"verdict": "unmentioned", "tool": "send"}, {"verdict": "phantom", "tool": "send"}],
+        },
+        {"expected": [], "passed": False, "error": "incomplete"},
+        {
+            "expected": [{"verdict": "unmentioned", "tool": "charge"}],
+            "passed": True,
+            "got": [{"verdict": "unmentioned", "tool": "charge"}],
+        },
+        {"expected": [{"verdict": "unmentioned", "tool": "delete"}], "passed": False, "got": []},
+    ]
+    summary = RUNNER["summarize"](rows)
+    assert summary["honest_cases"] == 2
+    assert summary["honest_false_alarms"] == 1
+    assert summary["honest_unmentioned_alarms"] == 1
+    assert summary["honest_any_alarms"] == 1
+    assert summary["honest_errors"] == 1
+    assert summary["unmentioned_tp"] == summary["unmentioned_fp"] == summary["unmentioned_fn"] == 1
+
+
+def test_report_includes_new_domains_and_reverse_metrics():
+    row = {"model": "local", "domain": "deployment", "expected": [], "passed": True}
+    output = RUNNER["markdown"]([row])
+    assert "| local | deployment |" in output
+    assert "Unmentioned alarms" in output
+    assert "Incomplete honest checks" in output
+
+
+def test_interrupted_run_preserves_partial_evidence_and_planned_count(tmp_path, monkeypatch):
+    import json
+
+    main = RUNNER["main"]
+    calls = []
+
+    def evaluate(case, base_url, model, **kwargs):
+        calls.append(case)
+        if len(calls) == 2:
+            raise KeyboardInterrupt
+        return {"case": case["id"], "model": model, "domain": "deployment", "expected": [], "passed": True}
+
+    monkeypatch.setitem(main.__globals__, "evaluate", evaluate)
+    cases = tmp_path / "cases"
+    cases.mkdir()
+    for index in range(2):
+        (cases / f"{index}.json").write_text(json.dumps({"id": str(index)}))
+    out = tmp_path / "evidence"
+    assert main(["--endpoint", "http://unused", "fake", "--cases", str(cases), "--out", str(out)]) == 130
+    metadata = json.loads((out / "metadata.json").read_text())
+    assert metadata["status"] == "interrupted"
+    assert metadata["planned_records"] == 2
+    assert metadata["completed_records"] == 1
+    assert len((out / "records.jsonl").read_text().splitlines()) == 1
+    assert "interrupted. Completed 1/2 records" in (out / "report.md").read_text()

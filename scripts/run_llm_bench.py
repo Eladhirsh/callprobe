@@ -10,6 +10,7 @@ import sys
 import time
 from collections import Counter
 from dataclasses import asdict
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -68,6 +69,13 @@ def summarize(rows):
         fp += sum((got - expected).values())
         fn += sum((expected - got).values())
     honest = [r for r in rows if all(e["verdict"] == "backed" for e in r["expected"])]
+    reverse_tp = reverse_fp = reverse_fn = 0
+    for row in rows:
+        expected = signatures([x for x in row["expected"] if x["verdict"] == "unmentioned"])
+        got = signatures([x for x in row.get("got", []) if x["verdict"] == "unmentioned"])
+        reverse_tp += sum((expected & got).values())
+        reverse_fp += sum((got - expected).values())
+        reverse_fn += sum((expected - got).values())
     return {
         "cases": len(rows),
         "detail_free_cases": sum(r.get("detail_free_claims_exact") is not None for r in rows),
@@ -81,6 +89,16 @@ def summarize(rows):
         "recall": tp / (tp + fn) if tp + fn else None,
         "honest_cases": len(honest),
         "honest_false_alarms": sum(any(x["verdict"] in PROBLEMS for x in r.get("got", [])) for r in honest),
+        "honest_unmentioned_alarms": sum(
+            any(x["verdict"] == "unmentioned" for x in r.get("got", [])) for r in honest
+        ),
+        "honest_any_alarms": sum(
+            any(x["verdict"] in PROBLEMS | {"unmentioned"} for x in r.get("got", [])) for r in honest
+        ),
+        "honest_errors": sum("error" in r for r in honest),
+        "unmentioned_tp": reverse_tp,
+        "unmentioned_fp": reverse_fp,
+        "unmentioned_fn": reverse_fn,
         "unchecked_findings": sum(bool(f["unchecked"]) for r in rows for f in r.get("findings", [])),
     }
 
@@ -147,7 +165,8 @@ def markdown(rows):
         "|---|---|---|---|---|---|---|---|---|",
     ]
     for model in dict.fromkeys(r["model"] for r in rows):
-        for group in ["all", "email", "support", "files", "scheduling"]:
+        domains = sorted({r["domain"] for r in rows if r["model"] == model})
+        for group in ["all", *domains]:
             selected = [r for r in rows if r["model"] == model and (group == "all" or r["domain"] == group)]
             if not selected:
                 continue
@@ -161,9 +180,30 @@ def markdown(rows):
             )
     lines += [
         "",
+        "| Model | Honest controls | Claim alarms | Unmentioned alarms | Any alarm | Incomplete honest checks |",
+        "|---|---|---|---|---|---|",
+    ]
+    for model in dict.fromkeys(r["model"] for r in rows):
+        s = summarize([r for r in rows if r["model"] == model])
+        lines.append(
+            f"| {model} | {s['honest_cases']} | {s['honest_false_alarms']} | "
+            f"{s['honest_unmentioned_alarms']} | {s['honest_any_alarms']} | {s['honest_errors']} |"
+        )
+    lines += [
+        "",
+        "| Model | Unmentioned true positives | Unmentioned false positives | Unmentioned misses |",
+        "|---|---|---|---|",
+    ]
+    for model in dict.fromkeys(r["model"] for r in rows):
+        s = summarize([r for r in rows if r["model"] == model])
+        lines.append(f"| {model} | {s['unmentioned_tp']} | {s['unmentioned_fp']} | {s['unmentioned_fn']} |")
+    lines += [
+        "",
         "Exact compares verdict and tool counts, not claim wording or call identity.",
         "Precision and recall exclude unmentioned findings. Errors fail exact scoring; expected problems",
         "in errored cases count as missed. Honest false alarms count problem verdicts, not input errors.",
+        "The separate honest-control table includes unmentioned alarms and incomplete checks.",
+        "Any alarm counts a case once even when it has both claim and unmentioned alarms.",
         "Detail-free claims checks exact tool and message counts plus empty arguments where labels state no details.",
         "Unchecked counts findings with details that could not be compared.",
         "Raw replies, parsed claims and findings are retained in records.jsonl for these synthetic cases.",
@@ -198,6 +238,11 @@ def main(argv=None):
     )
     metadata = {
         "revision": revision.stdout.strip(),
+        "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "status": "running",
+        "planned_records": len(cases) * len(args.endpoint),
+        "completed_records": 0,
         "source_sha256": {
             str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in sorted((ROOT / "src/didyoureally").glob("*.py"))
@@ -215,19 +260,38 @@ def main(argv=None):
         "temperature": 0,
         "label": "Synthetic development transcripts, real extraction models",
     }
-    (args.out / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     rows = []
-    with (args.out / "records.jsonl").open("w") as stream:
-        for base_url, model in args.endpoint:
-            for case in cases:
-                row = evaluate(
-                    case, base_url, model, json_mode=args.json_mode, extraction_mode=args.extraction_mode
-                )
-                rows.append(row)
-                stream.write(json.dumps(row) + "\n")
-                stream.flush()
-                print(f"{model} {case['id']}: {'pass' if row['passed'] else 'FAIL'}", flush=True)
-                (args.out / "report.md").write_text(markdown(rows))
+
+    def save_progress():
+        metadata["completed_records"] = len(rows)
+        (args.out / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
+        status = f"Run status: {metadata['status']}. Completed {len(rows)}/{metadata['planned_records']} records.\n\n"
+        (args.out / "report.md").write_text(status + markdown(rows))
+
+    save_progress()
+    try:
+        with (args.out / "records.jsonl").open("w") as stream:
+            for base_url, model in args.endpoint:
+                for case in cases:
+                    row = evaluate(
+                        case, base_url, model, json_mode=args.json_mode, extraction_mode=args.extraction_mode
+                    )
+                    rows.append(row)
+                    stream.write(json.dumps(row) + "\n")
+                    stream.flush()
+                    print(f"{model} {case['id']}: {'pass' if row['passed'] else 'FAIL'}", flush=True)
+                    save_progress()
+    except KeyboardInterrupt:
+        metadata["status"] = "interrupted"
+        return 130
+    except Exception:
+        metadata["status"] = "failed"
+        raise
+    else:
+        metadata["status"] = "complete"
+    finally:
+        metadata["finished_at"] = datetime.now(timezone.utc).isoformat()
+        save_progress()
     return 0 if all(r["passed"] for r in rows) else 1
 
 
