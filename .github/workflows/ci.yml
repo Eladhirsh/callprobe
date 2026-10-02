@@ -102,6 +102,14 @@ jobs:
           Path("/tmp/callprobe-recorded-results.json").write_text(run.model_dump_json())
           PYTHON
           /tmp/callprobe-wheel-env/bin/callprobe report /tmp/callprobe-recorded-results.json --format text
+      - name: exercise installed recordings replay CLI
+        working-directory: /tmp
+        run: |
+          /tmp/callprobe-wheel-env/bin/callprobe replay "${{ github.workspace }}/examples/recordings/support.json" \
+            --suite /tmp/callprobe-support-example --out /tmp/callprobe-replayed-results.json
+          /tmp/callprobe-wheel-env/bin/callprobe report /tmp/callprobe-replayed-results.json \
+            --format json --out /tmp/callprobe-replayed-summary.json
+          /tmp/callprobe-wheel-env/bin/python -c 'import json; s=json.load(open("/tmp/callprobe-replayed-summary.json")); assert s["cost"]["successes"] == 1 and s["coverage"] == "1/1/6 INCOMPLETE (5 missing)"'
       - name: exercise installed offline contract comparison
         working-directory: /tmp
         run: |

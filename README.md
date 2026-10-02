@@ -1160,3 +1160,69 @@ metadata are caller assertions: CallProbe cannot verify how external recordings
 were produced. Evaluation timestamps describe this scoring pass. Scores use the
 current rubric and suite provenance; this differs from `report`, which only reads
 saved scores. No model request or application tool is executed by this API.
+
+
+### Replay a recordings file
+
+The development checkout also accepts normalized JSON recordings directly:
+
+```bash
+callprobe init --example support --out replay-suite
+callprobe replay examples/recordings/support.json --suite replay-suite --out replay-results.json
+callprobe report replay-results.json --format json
+```
+
+The bundled file is a **synthetic single-decision example**, not model accuracy
+evidence. It scores one of six support tasks and reports five missing observations.
+Your application can emit this version 1 format:
+
+```json
+{
+  "schema_version": 1,
+  "config": {
+    "model": "application-model",
+    "pads": [0],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_tokens": 4096
+  },
+  "records": [
+    {
+      "task_id": "status-by-id",
+      "pad": 0,
+      "repeat": 0,
+      "completion": {
+        "calls": [{"name": "get_order", "arguments": {"path": {"order_id": "ORD-448120"}}}],
+        "finish_reason": "tool_calls"
+      }
+    }
+  ]
+}
+```
+
+All five shown config fields are required; generation settings must describe the
+original request. Optional config fields are `quantization` and
+`selected_task_ids`. Each record requires `task_id` and `completion`; `pad` and
+`repeat` default to zero. Completion fields are `calls` (default `[]`), `content`,
+`reasoning`, `finish_reason` (default empty strings), `error` (default `null`),
+`prompt_tokens`, `completion_tokens`, and `latency_ms` (default zero). Preserve
+actual measurements when available; omitted measurements are unknown zeros, not
+fresh measurements. Calls require `name`; optional fields are `arguments`
+(default `{}`), `id`, `raw_arguments`, and `parse_error`. Keep malformed arguments
+in `raw_arguments` with `parse_error` set, and retain every call.
+
+An explicit `"completion": {}` means a successful response with no tool calls;
+an omitted completion is invalid. Use `"completion": {"error": "timeout"}` for
+a request failure, never an empty completion. Unknown fields, duplicate JSON
+keys, non-finite numbers, coerced types, and unsupported versions are rejected.
+This format accepts normalized decisions, not raw provider response envelopes or
+already-scored CallProbe results.
+
+`replay` reads the suite and recordings locally, scores with the current rubric,
+and writes ordinary results with endpoint `recorded://local`. It does not contact
+a model, execute tools, or infer missing observations. The same provenance and
+single-decision limitations as the Python API apply. Existing output requires
+`--force`; source recordings and suite files are protected even through file
+aliases. Invalid input or failed writes leave existing results intact. A successful
+export exits `0` even for model failures or partial recordings; invalid input exits
+`2`. Use `compare --fail-on-regression` on complete matched results for CI gating.

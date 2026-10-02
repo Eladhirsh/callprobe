@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add offline `replay` for versioned normalized recordings JSON, with strict
+  input validation, protected source/suite files, and atomic output writes.
+  A synthetic support example demonstrates partial coverage without a model.
+
 - Add a Python API to score recorded application completions without an HTTP
   proxy. It uses the existing rubric, preserves incomplete/targeted coverage,
   and rejects duplicate or out-of-plan observations before scoring.
