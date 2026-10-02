@@ -23,15 +23,24 @@ class Fake:
         sub = command[3]
         step = "dry-run" if "--dry-run" in command else sub
         kind = self.fail.get((model, step))
-        if kind == "timeout":
+        # partial-* kinds leave a partial --out file behind on a doomed run step
+        if step == "run" and kind in ("partial-timeout", "partial-exit"):
+            out = next(a.split("=", 1)[1] for a in command if a.startswith("--out="))
+            (Path(kw["cwd"]) / out).write_text("{\"partial\": true}")
+        if kind in ("timeout", "partial-timeout"):
             raise subprocess.TimeoutExpired(command, kw["timeout"], output=b"partial")
-        if kind == "exit":
+        if kind in ("exit", "partial-exit"):
             return subprocess.CompletedProcess(command, 1, "", "boom")
         if step == "run":
             out = next(a.split("=", 1)[1] for a in command if a.startswith("--out="))
             if kind != "nofile":
                 (Path(kw["cwd"]) / out).write_text("{}")
             return subprocess.CompletedProcess(command, 0, "done", "")
+        if step == "report":
+            out = next(a.split("=", 1)[1] for a in command if a.startswith("--out="))
+            if kind != "nofile":
+                (Path(kw["cwd"]) / out).write_text("<testsuite/>")
+            return subprocess.CompletedProcess(command, 0, "wrote JUnit report", "")
         stdout = json.dumps({"total_requests": 5}) if step == "dry-run" else "ok"
         return subprocess.CompletedProcess(command, 0, stdout, "")
 
@@ -242,6 +251,129 @@ def test_bad_request_timeout_rejected_before_output_created(tmp_path, monkeypatc
         sweep.main(["--models", "a", "--out", str(out), "--request-timeout", value])
     assert not out.exists()
     assert not fake.calls
+
+
+def test_junit_exports_one_file_per_normal_run(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    code, out, m = run(tmp_path, "--junit")
+    assert code == 0 and m["junit"] is True
+    reports = [c for c, _ in fake.calls if c[3] == "report"]
+    assert len(reports) == 2
+    for i, entry in enumerate(m["models"], 1):
+        slot = f"{i:02d}"
+        assert entry["junit_file"] == f"{slot}-junit.xml"
+        assert (out / f"{slot}-junit.xml").is_file()
+        cmd = next(c for c in reports if f"--out={slot}-junit.xml" in c)
+        # report step reads the per-slot raw result file; no model path on the command line
+        assert f"{slot}-result.json" in cmd
+    # junit step is strictly after the run and never pre-empts the leaderboard
+    kinds = ["dry" if "--dry-run" in c else c[3] for c, _ in fake.calls]
+    assert kinds == ["dry", "dry", "run", "report", "run", "report", "leaderboard"]
+
+
+def test_junit_exported_on_failed_run_with_partial_results(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch, {("a", "run"): "partial-exit"})
+    code, out, m = run(tmp_path, "--junit", models=("a",))
+    assert code == 1
+    entry = m["models"][0]
+    assert entry["raw_result_file"] == "01-result.json"
+    assert "result_file" not in entry  # incomplete run: not leaderboard-eligible
+    assert entry["junit_file"] == "01-junit.xml" and (out / "01-junit.xml").is_file()
+    assert any(c[3] == "report" for c, _ in fake.calls)
+
+
+def test_junit_exported_on_timed_out_run_with_partial_results(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch, {("a", "run"): "partial-timeout"})
+    code, out, m = run(tmp_path, "--junit", models=("a",))
+    assert code == 1
+    entry = m["models"][0]
+    assert entry["raw_result_file"] == "01-result.json"
+    assert "result_file" not in entry
+    assert next(s for s in entry["steps"] if s["name"] == "run")["status"] == "timeout"
+    assert entry["junit_file"] == "01-junit.xml" and (out / "01-junit.xml").is_file()
+    assert any(c[3] == "report" for c, _ in fake.calls)
+
+
+def test_junit_not_exported_when_no_results_file(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch, {("a", "run"): "nofile"})
+    code, out, m = run(tmp_path, "--junit", models=("a",))
+    assert code == 1
+    entry = m["models"][0]
+    assert "raw_result_file" not in entry and "junit_file" not in entry
+    assert not any(c[3] == "report" for c, _ in fake.calls)
+    assert not list(out.glob("*-junit.xml"))
+
+
+def test_junit_report_nonzero_fails_sweep_and_preserves_raw_results(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch, {(None, "report"): "exit"})
+    code, out, m = run(tmp_path, "--junit", models=("a",))
+    assert code == 1
+    entry = m["models"][0]
+    assert entry["status"] == "failed" and "junit_file" not in entry
+    # raw results are preserved; complete-result eligibility unchanged
+    assert entry["raw_result_file"] == "01-result.json"
+    assert entry["result_file"] == "01-result.json"
+    assert (out / "01-result.json").is_file() and not (out / "01-junit.xml").exists()
+    board = next(c for c, _ in fake.calls if c[3] == "leaderboard")
+    assert "01-result.json" in board
+
+
+def test_junit_report_timeout_fails_sweep_and_preserves_raw_results(tmp_path, monkeypatch):
+    Fake(monkeypatch, {(None, "report"): "timeout"})
+    code, out, m = run(tmp_path, "--junit", models=("a",))
+    assert code == 1
+    entry = m["models"][0]
+    report_step = next(s for s in entry["steps"] if s["name"] == "report")
+    assert report_step["status"] == "timeout" and "junit_file" not in entry
+    assert (out / "01-result.json").is_file() and not (out / "01-junit.xml").exists()
+    assert entry["result_file"] == "01-result.json"  # still eligible for leaderboard
+
+
+def test_junit_report_missing_output_file_fails_sweep(tmp_path, monkeypatch):
+    Fake(monkeypatch, {(None, "report"): "nofile"})
+    code, out, m = run(tmp_path, "--junit", models=("a",))
+    assert code == 1
+    entry = m["models"][0]
+    report_step = next(s for s in entry["steps"] if s["name"] == "report")
+    # child exited zero, but the expected file is absent: that is a failure
+    assert report_step["returncode"] == 0
+    assert report_step["status"] == "missing-file"
+    assert "junit_file" not in entry and not (out / "01-junit.xml").exists()
+    assert (out / "01-result.json").is_file()
+
+
+def test_no_junit_flag_leaves_behavior_unchanged(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    code, out, m = run(tmp_path)
+    assert code == 0 and m["junit"] is False
+    assert not any(c[3] == "report" for c, _ in fake.calls)
+    assert all("junit_file" not in e for e in m["models"])
+    assert not list(out.glob("*-junit.xml"))
+
+
+def test_dry_run_sends_no_report_commands_even_with_junit(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    code, out, m = run(tmp_path, "--dry-run", "--junit")
+    assert code == 0 and m["junit"] is True
+    assert not any(c[3] == "report" for c, _ in fake.calls)
+    assert not list(out.glob("*-junit.xml"))
+    assert all("junit_file" not in e for e in m["models"])
+
+
+def test_junit_filenames_safe_with_odd_model_names(tmp_path, monkeypatch):
+    fake = Fake(monkeypatch)
+    code, out, m = run(tmp_path, "--junit", models=("../evil/x:1", "a b;rm"))
+    assert code == 0
+    for slot in ("01", "02"):
+        assert (out / f"{slot}-junit.xml").is_file()
+        entry = next(e for e in m["models"] if e["slot"] == slot)
+        assert entry["junit_file"] == f"{slot}-junit.xml"
+    for cmd in [c for c, _ in fake.calls if c[3] == "report"]:
+        joined = " ".join(cmd)
+        for sentinel in ("../evil", "evil/x", "x:1", "a b;rm", ";rm"):
+            assert sentinel not in joined
+    # every file written sits directly in the sweep output directory
+    assert all(p.parent == out for p in out.iterdir())
 
 
 def test_manifest_exposes_running_step_before_subprocess_finishes(tmp_path, monkeypatch):

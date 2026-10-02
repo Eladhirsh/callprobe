@@ -2,6 +2,9 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add opt-in `sweep --junit` reports for each model, including preserved partial
+  results after failed runs; manifest links distinguish successful exports.
+
 - Add offline JUnit export for saved results, with model failures, endpoint errors,
   incomplete coverage and targeted debug scope represented explicitly. Raw
   responses and argument/error values are omitted from exported diagnostics.

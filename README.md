@@ -996,4 +996,17 @@ available, even when a threshold or regression gate fails. Its `junit-report`
 output contains the path only after export succeeds. Upload it with an
 `if: always()` artifact or test-report step to retain failure evidence.
 
+For a multi-model run, add `--junit` to export a report per model:
+
+```bash
+callprobe sweep --models qwen2.5:7b llama3.2:3b --suite my-suite \
+  --out model-results --junit
+```
+
+The manifest links each successful export as `junit_file`. Partial result files
+from failed or timed-out runs are exported too, with coverage errors in their
+XML; they remain excluded from the successful-run leaderboard. An export
+failure makes the sweep fail without discarding its original results.
+`--dry-run --junit` only plans requests and writes no XML.
+
 This feature requires the development checkout; it is not in `0.9.0rc2`.
