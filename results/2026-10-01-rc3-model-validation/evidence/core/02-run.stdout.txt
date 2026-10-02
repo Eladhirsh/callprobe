@@ -1,0 +1,41 @@
+model            llama3.2:3b
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     100
+
+                 selection   schema     args      success
+  overall         61.0%   39.0%   41.0%   31.0%   (95% CI 19.0-44.0%)
+  type-lenient    61.0%   49.0%   49.0%   37.0%
+
+  tool count sweep
+    +0   distractors   success  31.0%   selection  61.0%   sd  1.0
+
+  by category
+    abstain      9.1%  (n=22, 95% CI 0.0-22.7%)
+    args        33.3%  (n=24, 95% CI 8.3-58.3%)
+    depth       63.6%  (n=22, 95% CI 36.4-90.9%)
+    select      58.3%  (n=12, 95% CI 25.0-91.7%)
+    sequence     0.0%  (n=20, 95% CI 0.0-0.0%)
+
+  6 of 100 calls (6.0%) were correct but wrongly typed
+
+  cost per success   1866 tokens   4.45 s
+
+failures worth reading:
+  [abstain-policy-question pad=0] called get_order_status when no tool applied
+  [abstain-missing-identifier pad=0] called issue_refund when no tool applied
+  [abstain-chitchat pad=0] called find_availability when no tool applied
+  [args-partial-refund pad=0] amount_cents eq 4225, got 8405
+  [args-enum-mapping pad=0] schema: amount_cents: 0 is less than the minimum of 1
+  [args-nested-address pad=0] no tool call produced
+      said: {"name":"update_shipping_address","parameters":{"order_id":"ORD-772341","address":{"line1":"55 Riverside Drive","line2":"apartment 12B","city":"New York","regio
+  [args-relative-dates pad=0] schema: duration_minutes: '60' is not of type 'integer'; duration_minutes expected 60, got '60'
+  [sequence-availability-first pad=0] called book_meeting, expected find_availability; schema: attendees: "['priya@example.com']" is not of type 'array'
+  [abstain-status-no-identifier pad=0] called get_order_status when no tool applied
+  [abstain-change-email-on-file pad=0] called search_orders when no tool applied
+  [abstain-shipping-quote pad=0] called search_orders when no tool applied
+  [abstain-availability-no-calendar pad=0] called find_availability when no tool applied
+  [abstain-reschedule-unsupported pad=0] called book_meeting when no tool applied
+  [abstain-cancel-without-id pad=0] called book_meeting when no tool applied
+  [abstain-gratitude-midconversation pad=0] called get_order_status when no tool applied
+
+wrote 02-result.json

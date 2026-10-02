@@ -1,0 +1,28 @@
+{
+  "dry_run": true,
+  "model": "command-r7b:latest",
+  "suite": {
+    "label": "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-01-rc3-model-validation/evidence/core-suite",
+    "hash": "e597c986302b5596"
+  },
+  "scope": {
+    "targeted": false,
+    "task_ids": null,
+    "selected_task_count": null,
+    "total_task_count": 50
+  },
+  "pads": [
+    0
+  ],
+  "repeats": 2,
+  "total_requests": 100,
+  "temperature": 0.0,
+  "max_tokens": 4096,
+  "concurrency": 1,
+  "request_timeout": 180.0,
+  "max_completion_tokens": 409600,
+  "budget_excludes": [
+    "prompt_tokens",
+    "retries"
+  ]
+}

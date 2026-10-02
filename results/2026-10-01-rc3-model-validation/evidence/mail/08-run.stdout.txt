@@ -1,0 +1,47 @@
+model            phi4-mini:latest
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     54   truncated: 5
+
+                 selection   schema     args      success
+  overall         38.9%   33.3%   33.3%   31.5%   (95% CI 11.1-53.7%)
+  type-lenient    38.9%   33.3%   33.3%   31.5%
+
+  tool count sweep
+    +0   distractors   success  33.3%   selection  50.0%   sd  0.0
+    +2   distractors   success  27.8%   selection  33.3%   sd  0.0
+    +4   distractors   success  33.3%   selection  33.3%   sd  0.0
+
+  by category
+    abstain     94.4%  (n=18, 95% CI 83.3-100.0%)
+    args         0.0%  (n=15, 95% CI 0.0-0.0%)
+    depth        0.0%  (n=6, 95% CI 0.0-0.0%)
+    select       0.0%  (n=15, 95% CI 0.0-0.0%)
+
+  cost per success   3239 tokens   23.12 s
+
+failures worth reading:
+  [search-by-sender pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"search_messages","description":"Search messages.\n\nThe q parameter uses `from:ADDRESS`, `subject:WORDS`, or plain words
+  [search-by-subject pad=0] schema: (root): Additional properties are not allowed ('parameters', 'type' were unexpected); schema: (root): 'query' is a required property
+  [search-archive-folder pad=0] no tool call produced
+  [search-with-limit pad=0] no tool call produced
+  [get-by-id pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"get_message","function":{"name":"get_message","arguments":{"path":{"message_id":"msg-1042"}}}}}]function get_message(mes
+  [get-id-with-punctuation pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"get_message","function":{"name":"get_message","description":"Get one message by its exact message ID.","parameters":{"ty
+  [reply-send pad=0] schema: (root): Additional properties are not allowed ('type' was unexpected)
+  [reply-draft-only pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"send_reply","description":"Create a reply to a known message.\n\nSet mode to draft when the user wants a draft only or s
+  [reply-body-quotes pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"send_reply","description":"Create a reply to a known message.\n\nSet mode to draft when the user wants a draft only or s
+  [reply-body-symbols pad=0] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}
+  [correction-search-sender pad=0] no tool call produced
+      said: No problem. Searching for messages from sam.lee@example.invalid.
+  [correction-reply-target pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"send_reply","description":"Create a reply to a known message.\n\nSet mode to draft when the user wants a draft only or s
+  [search-by-sender pad=2] no tool call produced
+  [search-by-subject pad=2] schema: (root): Additional properties are not allowed ('parameters', 'type' were unexpected); schema: (root): 'query' is a required property
+  [search-archive-folder pad=2] no tool call produced
+      said: [{"type":"search_messages","parameters":{"query":{"q":"from:archive invoice"}}}]On September 15, 2021, at 10:00 AM, create an event titled "Team Meeting" in my 
+
+wrote 08-result.json

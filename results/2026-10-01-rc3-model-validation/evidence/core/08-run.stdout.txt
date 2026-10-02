@@ -1,0 +1,51 @@
+model            phi4-mini:latest
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     100
+
+                 selection   schema     args      success
+  overall         27.0%   22.0%   22.0%   22.0%   (95% CI 12.0-34.0%)
+  type-lenient    27.0%   22.0%   22.0%   22.0%
+
+  tool count sweep
+    +0   distractors   success  22.0%   selection  27.0%   sd  0.0
+
+  by category
+    abstain     95.5%  (n=22, 95% CI 86.4-100.0%)
+    args         0.0%  (n=24, 95% CI 0.0-0.0%)
+    depth        0.0%  (n=22, 95% CI 0.0-0.0%)
+    select       8.3%  (n=12, 95% CI 0.0-25.0%)
+    sequence     0.0%  (n=20, 95% CI 0.0-0.0%)
+
+  cost per success   2685 tokens   21.89 s
+
+failures worth reading:
+  [select-status-direct pad=0] schema: (root): 'order_id' is a required property; schema: (root): Additional properties are not allowed ('properties', 'required', 'type' were unexpected)
+  [select-escalate-explicit pad=0] no tool call produced
+      said: Sure, I can connect you to a human agent. Could you please provide me with a summary of the issue and indicate the urgency level (low, normal, high)?  **Summary
+  [args-partial-refund pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"issue_refund","description":"Refund an order in whole or in part. Only use after confirming the order exists and the cus
+  [args-enum-mapping pad=0] no tool call produced
+      said: [{"type":"issue_refund","function":{"name":"issue_refund","description":"Refund an order in whole or in part. Only use after confirming the order exists and the
+  [args-nested-address pad=0] no tool call produced
+      said: To update the shipping address for order ID ORD-772341, I will need to use the "update_shipping_address" function. I will now proceed with the update.  ```json 
+  [args-relative-dates pad=0] no tool call produced
+      said: To find a free hour on your calendar for next week, I need to know the exact date range you're interested in. Since today is Monday, 2023-04-07, and you want a 
+  [depth-late-reference pad=0] no tool call produced
+      said: Sure thing. One moment while I retrieve the information for you.  [{"name": "get_order_status", "arguments": {"order_id": "ORD-330045"}}]{   "status": "shipped"
+  [sequence-availability-first pad=0] no tool call produced
+      said: To execute the given instruction, we need to find the first free slot this Thursday on the calendar 'cal_main' and then book a 30-minute meeting titled "Weekly 
+  [abstain-no-such-capability pad=0] called issue_refund when no tool applied
+  [args-full-refund-omits-amount pad=0] no tool call produced
+      said: [{"type":"issue_refund","function":{"name":"issue_refund","description":"Refund an order in whole or in part. Only use after confirming the order exists and the
+  [args-dollars-to-cents pad=0] no tool call produced
+      said: [{"type":"issue_refund","function":{"name":"issue_refund","description":"Refund an order in whole or in part. Only use after confirming the order exists and the
+  [args-country-name-to-iso pad=0] no tool call produced
+      said: [{"type":"update_shipping_address","parameters":{"order_id":"ORD-310884","address":{"line1":"14 Bedford Square","city":"London","postal_code":"WC1B 3JA","countr
+  [args-filtered-search pad=0] no tool call produced
+      said: [{"type":"function","function":{"name":"search_orders","description":"Find orders for a customer when the order id is not known. Returns a list of matching orde
+  [args-duration-in-words pad=0] no tool call produced
+      said: To find an hour and a half (90 minutes) slot on the calendar with ID 'cal_design' between the 9th and the 11th of September 2026, we can use the `find_availabil
+  [args-explicit-datetime pad=0] no tool call produced
+      said: To book a meeting, I need to convert the given time to an ISO 8601 timestamp with a timezone offset. Since the user is in America/New_York, which is at UTC-04:0
+
+wrote 08-result.json

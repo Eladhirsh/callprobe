@@ -1,0 +1,167 @@
+{
+  "note": "Completed error-free runs only. Server identity is stubbed to recorded metadata; socket connections and model calls are blocked.",
+  "checks": [
+    {
+      "file": "core/01-result.json",
+      "observations": 100,
+      "raw_sha256": "015bd4c26c9feff38bc2f96985b8163cabf4fc97bcd921e2bd5437d648d2ec87",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/02-result.json",
+      "observations": 100,
+      "raw_sha256": "adb9a3f83dc8901be7a601e4e2b22949c37c6ed3c57ef1988a5d52e11d7e9170",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/03-result.json",
+      "observations": 100,
+      "raw_sha256": "0d6d90dcda4f2ea70e97736a5ecfcd53cd4322dcda65fd403e2c21ddb6b7ffd8",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/04-result.json",
+      "observations": 100,
+      "raw_sha256": "0e81169c38a59ac2394ab7ec8238cc71b19122b0b4f47aadea8eb6c06103b052",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/05-result.json",
+      "observations": 100,
+      "raw_sha256": "2f6435e35167bc6562cfdae9bd474c22b8feae9923fea4109638dc5a07df744a",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/06-result.json",
+      "observations": 100,
+      "raw_sha256": "912ea593ec1d7f5d07fdabc78cbc5cfa7fe68a8009e234ab51ad87c936612e0c",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/07-result.json",
+      "observations": 100,
+      "raw_sha256": "e34460f13f44c892765ed0dae58f77d8cbd2d94b51f2fcd90bdd7af1e034cc99",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/08-result.json",
+      "observations": 100,
+      "raw_sha256": "ddd5632b66afa9081338644f7a0e7e5f98bb5ae34f4f2cd031cbf43287bddc91",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "core/09-result.json",
+      "observations": 100,
+      "raw_sha256": "163838490f9b0f57fb79c6841af968678eb810ef4d58004d60f4bdf67feaeef6",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/01-result.json",
+      "observations": 54,
+      "raw_sha256": "0c3ce5395f8d66ccc2cd671f5dfce0a7878150a247329268adbf0a4d6441e035",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/02-result.json",
+      "observations": 54,
+      "raw_sha256": "b147f2815125b8fc457e344127d640c45aad044904eb6e720ec14b4f2b304e78",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/03-result.json",
+      "observations": 54,
+      "raw_sha256": "51ce38434f4f6ac8c58f0c0797a1b1cd17842175a784441772dc085204af7cf1",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/04-result.json",
+      "observations": 54,
+      "raw_sha256": "96466534b71b5dbe375363f4d526c4fc12cafe7f1f49689e11fe63eccb8fbc89",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/05-result.json",
+      "observations": 54,
+      "raw_sha256": "fdbe1dcf9e55de8ad68f43569ded29b962fd2bdb1fde55545e784693f73c1d18",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/06-result.json",
+      "observations": 54,
+      "raw_sha256": "d3a4e12224764ab7cf7231ed9f5baf65778acd01e45de50ac33fc191037ec334",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/07-result.json",
+      "observations": 54,
+      "raw_sha256": "e436f1ae6b16565799306daf5f6b425d01c18a39daef5197a85e4a14426f9f87",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/08-result.json",
+      "observations": 54,
+      "raw_sha256": "e72bc10fb74f19f9f127c8794902679a18b33309a405171061536e03baf92864",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    },
+    {
+      "file": "mail/09-result.json",
+      "observations": 54,
+      "raw_sha256": "ed90dedd3c0c95fdbc9dfdd2c8e65254896c0bf393f1182018d8bfbad6cce1cb",
+      "model_calls": 0,
+      "network_connections": 0,
+      "unchanged_results": true,
+      "comparison_gate": "PASS"
+    }
+  ]
+}

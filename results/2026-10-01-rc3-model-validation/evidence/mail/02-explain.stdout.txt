@@ -1,0 +1,333 @@
+suite            mail-suite v1 (2e82c882d93ca06a)
+model            llama3.2:3b
+cases            54   scored: 54   failed: 34
+
+diagnostic counts (cases; a case may carry more than one category)
+  no_call                 2   expected a call; the model produced none
+  unexpected_call        15   expected no call; the model called a tool anyway
+  schema                  7   arguments failed the tool's JSON Schema
+  argument_value         17   argument values did not match the task's expectation
+
+argument shape hints: 1 observation(s) across 1 task(s) (scalar_wrap=1)
+  next steps (advisory; nothing was repaired, executed, or re-scored):
+  - inspect each case's proposed arguments below; values may still be wrong
+  - make sure the application adapter and the tool contract agree on argument shape
+  - rerun with the same suite to measure any change
+
+failed cases
+
+[search-archive-folder pad=0 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Search my archive folder for the word invoice.
+  expected: call search_messages
+    args {'query': {'q': 'invoice', 'folder': 'archive'}}
+  called: search_messages
+  reason: schema: query.limit: None is not of type 'integer'
+  reason: query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+  call: search_messages arguments={'query': {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}}
+    assertion [FAIL] query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+    schema error at query.limit: None is not of type 'integer' (expected type: integer)
+
+[search-with-limit pad=0 repeat=0] category=select  diagnostics=argument_value
+  prompt: Show at most 5 messages about the offsite.
+  expected: call search_messages
+    args {'query': {'q': 'offsite', 'limit': 5}}
+  called: search_messages
+  reason: query expected {'q': 'offsite', 'limit': 5}, got {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}
+  call: search_messages arguments={'query': {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}}
+    assertion [FAIL] query expected {'q': 'offsite', 'limit': 5}, got {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}
+
+[reply-send pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-1042 saying: Confirmed for Tuesday.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Confirmed for Tuesday.', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+  call: send_reply arguments={'body': {'mode': 'send', 'text': 'Confirmed for Tuesday'}, 'path': {'message_id': 'msg-1042'}}
+    assertion [ok] path expected {'message_id': 'msg-1042'}, got {'message_id': 'msg-1042'}
+    assertion [FAIL] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+
+[reply-draft-only pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Draft a reply to msg-1042 that says: Let me check and get back to you. Draft only, do not send it.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Let me check and get back to you.', 'mode': 'draft'}}
+  called: send_reply
+  reason: body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got {'mode': 'draft', 'text': 'Let me check and get back to you. Draft only, do not send it.'}
+  call: send_reply arguments={'path': {'message_id': 'msg-1042'}, 'body': {'mode': 'draft', 'text': 'Let me check and get back to you. Draft only, do not send it.'}}
+    assertion [ok] path expected {'message_id': 'msg-1042'}, got {'message_id': 'msg-1042'}
+    assertion [FAIL] body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got {'mode': 'draft', 'text': 'Let me check and get back to you. Draft only, do not send it.'}
+
+[no-send-chat-only pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Do not send or save anything. Just tell me in chat what a polite decline to msg-1042 could look like.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'body': {'mode': 'draft', 'text': 'Sorry, I won\\u2019t be able to help you with that. Maybe I can assist with something else?'}}
+    schema error at (root): 'path' is a required property (expected type: object)
+
+[get-missing-id pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Open a message by its ID. I do not have the ID; do not search for it.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': None}}
+    schema error at path.message_id: None is not of type 'string' (expected type: string)
+
+[reply-missing-id pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Reply to that email and tell them yes.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'path': 'msg-1042/replies', 'body': {'mode': 'send', 'text': 'yes'}}
+    schema error at path: 'msg-1042/replies' is not of type 'object' (expected type: object)
+
+[search-missing-criteria pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Search my mail.
+  expected: no call
+  called: search_messages
+  reason: called search_messages when no tool applied
+  call: search_messages arguments={'query': {'q': 'from:me'}}
+
+[unsupported-delete pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Delete message msg-1042 permanently.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'body': {'mode': 'send', 'text': 'Forward msg-1042 to sam.lee@example.invalid.'}, 'path': {'message_id': 'msg-1042'}}
+
+[reply-body-quotes pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}
+  call: send_reply arguments={'body': {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}, 'path': {'message_id': 'msg-3001'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}
+
+[reply-body-symbols pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "[Hi Sam,Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"}
+  call: send_reply arguments={'body': {'mode': 'send', 'text': "[Hi Sam,Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"}, 'path': {'message_id': 'msg-3002'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "[Hi Sam,Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"}
+
+[correction-search-sender pad=0 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: schema: query: '{"q":"from:sam.lee@example.invalid"}' is not of type 'object'
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got '{"q":"from:sam.lee@example.invalid"}'
+  reason: passes once string values are cast to their schema types
+  call: search_messages arguments={'query': '{"q":"from:sam.lee@example.invalid"}'}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got '{"q":"from:sam.lee@example.invalid"}'
+    schema error at query: '{"q":"from:sam.lee@example.invalid"}' is not of type 'object' (expected type: object)
+
+[search-archive-folder pad=2 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Search my archive folder for the word invoice.
+  expected: call search_messages
+    args {'query': {'q': 'invoice', 'folder': 'archive'}}
+  called: search_messages
+  reason: schema: query.limit: None is not of type 'integer'
+  reason: query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+  call: search_messages arguments={'query': {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}}
+    assertion [FAIL] query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+    schema error at query.limit: None is not of type 'integer' (expected type: integer)
+
+[search-with-limit pad=2 repeat=0] category=select  diagnostics=argument_value
+  prompt: Show at most 5 messages about the offsite.
+  expected: call search_messages
+    args {'query': {'q': 'offsite', 'limit': 5}}
+  called: search_messages
+  reason: query expected {'q': 'offsite', 'limit': 5}, got {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}
+  call: search_messages arguments={'query': {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}}
+    assertion [FAIL] query expected {'q': 'offsite', 'limit': 5}, got {'folder': 'inbox', 'limit': 5, 'q': 'offsite'}
+
+[reply-send pad=2 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Send a reply to msg-1042 saying: Confirmed for Tuesday.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Confirmed for Tuesday.', 'mode': 'send'}}
+  called: send_reply
+  reason: schema: path: 'msg-1042' is not of type 'object'
+  reason: path expected {'message_id': 'msg-1042'}, got 'msg-1042'
+  reason: body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+  call: send_reply arguments={'path': 'msg-1042', 'body': {'mode': 'send', 'text': 'Confirmed for Tuesday'}}
+    assertion [FAIL] path expected {'message_id': 'msg-1042'}, got 'msg-1042'
+    assertion [FAIL] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+    schema error at path: 'msg-1042' is not of type 'object' (expected type: object)
+  shape hint [scalar_wrap] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    wrapped: {'path': 'message_id'}
+    proposed arguments: {'path': {'message_id': 'msg-1042'}, 'body': {'mode': 'send', 'text': 'Confirmed for Tuesday'}}
+
+[no-send-chat-only pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Do not send or save anything. Just tell me in chat what a polite decline to msg-1042 could look like.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'path': 'msg-1042', 'body': {'mode': 'draft', 'text': "Sorry, I won't be able to respond to this message."}}
+    schema error at path: 'msg-1042' is not of type 'object' (expected type: object)
+
+[reply-missing-id pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Reply to that email and tell them yes.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'body': {'mode': 'send', 'text': 'Yes'}, 'path': {'message_id': 'msg-1042'}}
+
+[search-missing-criteria pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Search my mail.
+  expected: no call
+  called: search_messages
+  reason: called search_messages when no tool applied
+  call: search_messages arguments={'query': {'q': 'from:me'}}
+
+[unsupported-delete pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Delete message msg-1042 permanently.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: search_messages
+  reason: called search_messages when no tool applied
+  call: search_messages arguments={'query': 'from:sam.lee@example.invalid'}
+    schema error at query: 'from:sam.lee@example.invalid' is not of type 'object' (expected type: object)
+
+[reply-body-quotes pad=2 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}
+  call: send_reply arguments={'body': {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}, 'path': {'message_id': 'msg-3001'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}
+
+[reply-body-symbols pad=2 repeat=0] category=args  diagnostics=no_call
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: None
+  reason: no tool call produced
+  said: {"name":"send_reply","parameters":{"path":"msg-3002","body":{"text":"[Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]","mode":"draft"}}
+
+[correction-search-sender pad=2 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: schema: query: '{"q":"from:sam.lee@example.invalid"}' is not of type 'object'
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got '{"q":"from:sam.lee@example.invalid"}'
+  reason: passes once string values are cast to their schema types
+  call: search_messages arguments={'query': '{"q":"from:sam.lee@example.invalid"}'}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got '{"q":"from:sam.lee@example.invalid"}'
+    schema error at query: '{"q":"from:sam.lee@example.invalid"}' is not of type 'object' (expected type: object)
+
+[search-archive-folder pad=4 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Search my archive folder for the word invoice.
+  expected: call search_messages
+    args {'query': {'q': 'invoice', 'folder': 'archive'}}
+  called: search_messages
+  reason: schema: query.limit: None is not of type 'integer'
+  reason: query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+  call: search_messages arguments={'query': {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}}
+    assertion [FAIL] query expected {'q': 'invoice', 'folder': 'archive'}, got {'folder': 'archive', 'limit': None, 'q': 'subject:invoice'}
+    schema error at query.limit: None is not of type 'integer' (expected type: integer)
+
+[search-with-limit pad=4 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Show at most 5 messages about the offsite.
+  expected: call search_messages
+    args {'query': {'q': 'offsite', 'limit': 5}}
+  called: search_messages
+  reason: schema: query: '{"q":"offsite"}' is not of type 'object'
+  reason: query expected {'q': 'offsite', 'limit': 5}, got '{"q":"offsite"}'
+  call: search_messages arguments={'query': '{"q":"offsite"}'}
+    assertion [FAIL] query expected {'q': 'offsite', 'limit': 5}, got '{"q":"offsite"}'
+    schema error at query: '{"q":"offsite"}' is not of type 'object' (expected type: object)
+
+[reply-send pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-1042 saying: Confirmed for Tuesday.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Confirmed for Tuesday.', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+  call: send_reply arguments={'path': {'message_id': 'msg-1042'}, 'body': {'mode': 'send', 'text': 'Confirmed for Tuesday'}}
+    assertion [ok] path expected {'message_id': 'msg-1042'}, got {'message_id': 'msg-1042'}
+    assertion [FAIL] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday'}
+
+[reply-draft-only pad=4 repeat=0] category=args  diagnostics=no_call
+  prompt: Draft a reply to msg-1042 that says: Let me check and get back to you. Draft only, do not send it.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Let me check and get back to you.', 'mode': 'draft'}}
+  called: None
+  reason: no tool call produced
+  said: {"name":"send_reply","parameters":{"body":{"text":"Let me check and get back to you. Draft only, do not send it.","mode":"draft"}}
+
+[reply-missing-id pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Reply to that email and tell them yes.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'body': {'mode': 'send', 'text': 'yes'}, 'path': {'message_id': 'msg-1042'}}
+
+[search-missing-criteria pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Search my mail.
+  expected: no call
+  called: search_messages
+  reason: called search_messages when no tool applied
+  call: search_messages arguments={'query': '{"q":"search my mail"}'}
+    schema error at query: '{"q":"search my mail"}' is not of type 'object' (expected type: object)
+
+[unsupported-delete pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Delete message msg-1042 permanently.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'body': {'mode': 'send', 'text': 'Forward msg-1042 to sam.lee@example.invalid.'}, 'message_id': 'msg-1042'}
+    schema error at (root): Additional properties are not allowed ('message_id' was unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+
+[reply-body-quotes pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3001'}, 'body': {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the “final” draft by 5:00 p.m.; thanks!]'}
+
+[reply-body-symbols pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': "[Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"}
+  call: send_reply arguments={'body': {'mode': 'draft', 'text': "[Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"}, 'path': {'message_id': 'msg-3002'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': "[Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]"}

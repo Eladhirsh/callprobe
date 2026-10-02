@@ -1,0 +1,53 @@
+model            command-r7b:latest
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     100
+
+                 selection   schema     args      success
+  overall         22.0%   22.0%   22.0%   22.0%   (95% CI 12.0-34.0%)
+  type-lenient    22.0%   22.0%   22.0%   22.0%
+
+  tool count sweep
+    +0   distractors   success  22.0%   selection  22.0%   sd  0.0
+
+  by category
+    abstain    100.0%  (n=22, 95% CI 100.0-100.0%)
+    args         0.0%  (n=24, 95% CI 0.0-0.0%)
+    depth        0.0%  (n=22, 95% CI 0.0-0.0%)
+    select       0.0%  (n=12, 95% CI 0.0-0.0%)
+    sequence     0.0%  (n=20, 95% CI 0.0-0.0%)
+
+  cost per success   7454 tokens   34.59 s
+
+failures worth reading:
+  [select-status-direct pad=0] no tool call produced
+      said: I can look into the status of your order for you. Could you please confirm your email address?
+  [select-search-not-status pad=0] no tool call produced
+      said: I can look into this for you. Could you please provide your order ID?
+  [select-escalate-explicit pad=0] no tool call produced
+      said: Of course, I can help you with that. Could you please provide me with a summary of the issue you're facing and your preferred urgency level? This will help me e
+  [args-partial-refund pad=0] no tool call produced
+      said: I can help with that. I'll need your order ID and the reason for the refund. Please could you provide that information?
+  [args-enum-mapping pad=0] no tool call produced
+      said: I can help with that. I'll need to confirm a few things first.  When did you order the blue jacket?  Can you also confirm your email address?
+  [args-nested-address pad=0] no tool call produced
+      said: I can update the shipping address for you. Could you please confirm your email address?
+  [args-relative-dates pad=0] no tool call produced
+      said: Of course, I can help with that. Could you please provide the start and end dates for the range of time you'd like to check?
+  [depth-late-reference pad=0] no tool call produced
+      said: I can do that for you. Would you mind confirming the email address associated with the order?
+  [sequence-availability-first pad=0] no tool call produced
+      said: I can book a 30 minute sync with priya@example.com on calendar cal_main on the first free slot this Thursday. Here are the details:  * **Title:** Weekly sync * 
+  [args-full-refund-omits-amount pad=0] no tool call produced
+      said: I can process a refund for you. I just need to confirm that the order is still available. Can you please provide the order ID and the reason for the refund?
+  [args-dollars-to-cents pad=0] no tool call produced
+      said: I can help with that. I'll need the order ID (ORD-771230) and the reason for the refund. Please also let me know if you would like the refund to be in full or j
+  [args-country-name-to-iso pad=0] no tool call produced
+      said: I can update the shipping address for you. Could you please confirm the order ID is ORD-310884?
+  [args-filtered-search pad=0] no tool call produced
+      said: I can do that for you. Could you please confirm the email address is correct?
+  [args-duration-in-words pad=0] no tool call produced
+      said: I'm sorry, I can't find any availability on cal_design between the 9th and 11th of this month.
+  [args-explicit-datetime pad=0] no tool call produced
+      said: I can book a 45-minute meeting for you on cal_main this Wednesday at 2 pm with the attendees omer@example.com and tal@example.com. Here are the details:  **Titl
+
+wrote 07-result.json

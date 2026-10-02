@@ -1,0 +1,314 @@
+suite            mail-suite v1 (2e82c882d93ca06a)
+model            qwen3:8b
+cases            54   scored: 54   failed: 19
+
+diagnostic counts (cases; a case may carry more than one category)
+  unexpected_call         1   expected no call; the model called a tool anyway
+  schema                 15   arguments failed the tool's JSON Schema
+  argument_value         18   argument values did not match the task's expectation
+
+argument shape hints: 15 observation(s) across 10 task(s) (nested_move=15)
+  next steps (advisory; nothing was repaired, executed, or re-scored):
+  - inspect each case's proposed arguments below; values may still be wrong
+  - make sure the application adapter and the tool contract agree on argument shape
+  - rerun with the same suite to measure any change
+
+failed cases
+
+[search-by-subject pad=0 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Look for mail with the subject Quarterly lunch plan.
+  expected: call search_messages
+    args {'query': {'q': 'subject:Quarterly lunch plan'}}
+  called: search_messages
+  reason: schema: (root): Additional properties are not allowed ('q' was unexpected)
+  reason: schema: (root): 'query' is a required property
+  reason: query expected {'q': 'subject:Quarterly lunch plan'}, got missing
+  call: search_messages arguments={'q': 'subject:Quarterly lunch plan.'}
+    assertion [FAIL] query expected {'q': 'subject:Quarterly lunch plan'}, got missing
+    schema error at (root): Additional properties are not allowed ('q' was unexpected) (expected type: object)
+    schema error at (root): 'query' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'q': 'query'}
+    proposed arguments: {'query': {'q': 'subject:Quarterly lunch plan.'}}
+
+[search-archive-folder pad=0 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Search my archive folder for the word invoice.
+  expected: call search_messages
+    args {'query': {'q': 'invoice', 'folder': 'archive'}}
+  called: search_messages
+  reason: schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)
+  reason: schema: (root): 'query' is a required property
+  reason: query expected {'q': 'invoice', 'folder': 'archive'}, got missing
+  call: search_messages arguments={'q': 'invoice', 'folder': 'archive'}
+    assertion [FAIL] query expected {'q': 'invoice', 'folder': 'archive'}, got missing
+    schema error at (root): Additional properties are not allowed ('folder', 'q' were unexpected) (expected type: object)
+    schema error at (root): 'query' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'q': 'query', 'folder': 'query'}
+    proposed arguments: {'query': {'q': 'invoice', 'folder': 'archive'}}
+
+[search-with-limit pad=0 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Show at most 5 messages about the offsite.
+  expected: call search_messages
+    args {'query': {'q': 'offsite', 'limit': 5}}
+  called: search_messages
+  reason: schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected)
+  reason: schema: (root): 'query' is a required property
+  reason: query expected {'q': 'offsite', 'limit': 5}, got missing
+  call: search_messages arguments={'q': 'offsite', 'limit': 5}
+    assertion [FAIL] query expected {'q': 'offsite', 'limit': 5}, got missing
+    schema error at (root): Additional properties are not allowed ('limit', 'q' were unexpected) (expected type: object)
+    schema error at (root): 'query' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'q': 'query', 'limit': 'query'}
+    proposed arguments: {'query': {'q': 'offsite', 'limit': 5}}
+
+[get-by-id pad=0 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Open message msg-1042.
+  expected: call get_message
+    args {'path': {'message_id': 'msg-1042'}}
+  called: get_message
+  reason: schema: (root): Additional properties are not allowed ('message_id' was unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: path expected {'message_id': 'msg-1042'}, got missing
+  call: get_message arguments={'message_id': 'msg-1042'}
+    assertion [FAIL] path expected {'message_id': 'msg-1042'}, got missing
+    schema error at (root): Additional properties are not allowed ('message_id' was unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'message_id': 'path'}
+    proposed arguments: {'path': {'message_id': 'msg-1042'}}
+
+[get-id-with-punctuation pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Fetch message msg-2024.07_a-19 please.
+  expected: call get_message
+    args {'path': {'message_id': 'msg-2024.07_a-19'}}
+  called: get_message
+  reason: schema: (root): Additional properties are not allowed ('message_id' was unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: path expected {'message_id': 'msg-2024.07_a-19'}, got missing
+  call: get_message arguments={'message_id': 'msg-2024.07_a-19'}
+    assertion [FAIL] path expected {'message_id': 'msg-2024.07_a-19'}, got missing
+    schema error at (root): Additional properties are not allowed ('message_id' was unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'message_id': 'path'}
+    proposed arguments: {'path': {'message_id': 'msg-2024.07_a-19'}}
+
+[reply-send pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Send a reply to msg-1042 saying: Confirmed for Tuesday.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Confirmed for Tuesday.', 'mode': 'send'}}
+  called: send_reply
+  reason: schema: (root): Additional properties are not allowed ('message_id' was unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: path expected {'message_id': 'msg-1042'}, got missing
+  call: send_reply arguments={'body': {'mode': 'send', 'text': 'Confirmed for Tuesday.'}, 'message_id': 'msg-1042'}
+    assertion [FAIL] path expected {'message_id': 'msg-1042'}, got missing
+    assertion [ok] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday.'}
+    schema error at (root): Additional properties are not allowed ('message_id' was unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'message_id': 'path'}
+    proposed arguments: {'body': {'mode': 'send', 'text': 'Confirmed for Tuesday.'}, 'path': {'message_id': 'msg-1042'}}
+
+[reply-body-quotes pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: schema: (root): 'body' is a required property
+  reason: path expected {'message_id': 'msg-3001'}, got missing
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing
+  call: send_reply arguments={'message_id': 'msg-3001', 'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}
+    assertion [FAIL] path expected {'message_id': 'msg-3001'}, got missing
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got missing
+    schema error at (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+    schema error at (root): 'body' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'message_id': 'path', 'text': 'body', 'mode': 'body'}
+    proposed arguments: {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+
+[reply-body-symbols pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: schema: (root): 'body' is a required property
+  reason: path expected {'message_id': 'msg-3002'}, got missing
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got missing
+  call: send_reply arguments={'message_id': 'msg-3002', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'draft'}
+    assertion [FAIL] path expected {'message_id': 'msg-3002'}, got missing
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got missing
+    schema error at (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+    schema error at (root): 'body' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'message_id': 'path', 'text': 'body', 'mode': 'body'}
+    proposed arguments: {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'draft'}}
+
+[correction-search-sender pad=0 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: schema: (root): Additional properties are not allowed ('q' was unexpected)
+  reason: schema: (root): 'query' is a required property
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got missing
+  call: search_messages arguments={'q': 'from:sam.lee@example.invalid'}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got missing
+    schema error at (root): Additional properties are not allowed ('q' was unexpected) (expected type: object)
+    schema error at (root): 'query' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'q': 'query'}
+    proposed arguments: {'query': {'q': 'from:sam.lee@example.invalid'}}
+
+[get-id-with-punctuation pad=2 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Fetch message msg-2024.07_a-19 please.
+  expected: call get_message
+    args {'path': {'message_id': 'msg-2024.07_a-19'}}
+  called: get_message
+  reason: schema: (root): Additional properties are not allowed ('message_id' was unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: path expected {'message_id': 'msg-2024.07_a-19'}, got missing
+  call: get_message arguments={'message_id': 'msg-2024.07_a-19'}
+    assertion [FAIL] path expected {'message_id': 'msg-2024.07_a-19'}, got missing
+    schema error at (root): Additional properties are not allowed ('message_id' was unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'message_id': 'path'}
+    proposed arguments: {'path': {'message_id': 'msg-2024.07_a-19'}}
+
+[reply-body-quotes pad=2 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3001'}, 'body': {'mode': 'send', 'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]'}
+
+[reply-body-symbols pad=2 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}
+  call: send_reply arguments={'body': {'mode': 'send', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}, 'path': {'message_id': 'msg-3002'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}
+
+[correction-search-sender pad=2 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: schema: (root): Additional properties are not allowed ('q' was unexpected)
+  reason: schema: (root): 'query' is a required property
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got missing
+  call: search_messages arguments={'q': 'from:sam.lee@example.invalid'}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got missing
+    schema error at (root): Additional properties are not allowed ('q' was unexpected) (expected type: object)
+    schema error at (root): 'query' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'q': 'query'}
+    proposed arguments: {'query': {'q': 'from:sam.lee@example.invalid'}}
+
+[search-archive-folder pad=4 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Search my archive folder for the word invoice.
+  expected: call search_messages
+    args {'query': {'q': 'invoice', 'folder': 'archive'}}
+  called: search_messages
+  reason: schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected)
+  reason: schema: (root): 'query' is a required property
+  reason: query expected {'q': 'invoice', 'folder': 'archive'}, got missing
+  call: search_messages arguments={'q': 'invoice', 'folder': 'archive'}
+    assertion [FAIL] query expected {'q': 'invoice', 'folder': 'archive'}, got missing
+    schema error at (root): Additional properties are not allowed ('folder', 'q' were unexpected) (expected type: object)
+    schema error at (root): 'query' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'q': 'query', 'folder': 'query'}
+    proposed arguments: {'query': {'q': 'invoice', 'folder': 'archive'}}
+
+[reply-send pad=4 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Send a reply to msg-1042 saying: Confirmed for Tuesday.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Confirmed for Tuesday.', 'mode': 'send'}}
+  called: send_reply
+  reason: schema: (root): Additional properties are not allowed ('message_id' was unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: path expected {'message_id': 'msg-1042'}, got missing
+  call: send_reply arguments={'message_id': 'msg-1042', 'body': {'mode': 'send', 'text': 'Confirmed for Tuesday.'}}
+    assertion [FAIL] path expected {'message_id': 'msg-1042'}, got missing
+    assertion [ok] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got {'mode': 'send', 'text': 'Confirmed for Tuesday.'}
+    schema error at (root): Additional properties are not allowed ('message_id' was unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'message_id': 'path'}
+    proposed arguments: {'body': {'mode': 'send', 'text': 'Confirmed for Tuesday.'}, 'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[reply-body-symbols pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}
+  call: send_reply arguments={'path': {'message_id': 'msg-3002'}, 'body': {'mode': 'send', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}
+
+[correction-search-sender pad=4 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: schema: (root): Additional properties are not allowed ('q' was unexpected)
+  reason: schema: (root): 'query' is a required property
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got missing
+  call: search_messages arguments={'q': 'from:sam.lee@example.invalid'}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got missing
+    schema error at (root): Additional properties are not allowed ('q' was unexpected) (expected type: object)
+    schema error at (root): 'query' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'q': 'query'}
+    proposed arguments: {'query': {'q': 'from:sam.lee@example.invalid'}}
+
+[correction-reply-target pad=4 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: Reply to msg-1042 saying: Approved.
+  prompt: Draft only, and use msg-1043 instead of msg-1042.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1043'}, 'body': {'text': 'Approved.', 'mode': 'draft'}}
+  called: send_reply
+  reason: schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected)
+  reason: schema: (root): 'path' is a required property
+  reason: schema: (root): 'body' is a required property
+  reason: path expected {'message_id': 'msg-1043'}, got missing
+  reason: body expected {'text': 'Approved.', 'mode': 'draft'}, got missing
+  call: send_reply arguments={'mode': 'draft', 'message_id': 'msg-1043', 'text': 'Approved.'}
+    assertion [FAIL] path expected {'message_id': 'msg-1043'}, got missing
+    assertion [FAIL] body expected {'text': 'Approved.', 'mode': 'draft'}, got missing
+    schema error at (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected) (expected type: object)
+    schema error at (root): 'path' is a required property (expected type: object)
+    schema error at (root): 'body' is a required property (expected type: object)
+  shape hint [nested_move] advisory only: not executed or re-scored; the tool and argument shape are validated, but expectation and value correctness are not guaranteed
+    moved: {'mode': 'body', 'message_id': 'path', 'text': 'body'}
+    proposed arguments: {'body': {'mode': 'draft', 'text': 'Approved.'}, 'path': {'message_id': 'msg-1043'}}

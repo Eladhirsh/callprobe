@@ -1,0 +1,222 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.9090909090909091,
+      "success_b": 0.5454545454545454,
+      "success_delta": -0.36363636363636365,
+      "lenient_a": 0.9090909090909091,
+      "lenient_b": 0.5454545454545454,
+      "lenient_delta": -0.36363636363636365
+    },
+    "args": {
+      "success_a": 0.7083333333333334,
+      "success_b": 0.5416666666666666,
+      "success_delta": -0.16666666666666674,
+      "lenient_a": 0.7083333333333334,
+      "lenient_b": 0.5416666666666666,
+      "lenient_delta": -0.16666666666666674
+    },
+    "depth": {
+      "success_a": 0.7727272727272727,
+      "success_b": 0.8636363636363636,
+      "success_delta": 0.09090909090909094,
+      "lenient_a": 0.7727272727272727,
+      "lenient_b": 0.8636363636363636,
+      "lenient_delta": 0.09090909090909094
+    },
+    "select": {
+      "success_a": 0.9166666666666666,
+      "success_b": 0.8333333333333334,
+      "success_delta": -0.08333333333333326,
+      "lenient_a": 0.9166666666666666,
+      "lenient_b": 0.8333333333333334,
+      "lenient_delta": -0.08333333333333326
+    },
+    "sequence": {
+      "success_a": 0.7,
+      "success_b": 0.05,
+      "success_delta": -0.6499999999999999,
+      "lenient_a": 0.7,
+      "lenient_b": 0.05,
+      "lenient_delta": -0.6499999999999999
+    }
+  },
+  "regressed_tasks": [
+    "abstain-cancel-without-id",
+    "abstain-missing-identifier",
+    "abstain-policy-question",
+    "abstain-reschedule-unsupported",
+    "abstain-status-no-identifier",
+    "args-duration-in-words",
+    "args-escalation-urgency",
+    "depth-escalation-after-repeated-question",
+    "select-availability-not-booking",
+    "sequence-availability-before-checkin",
+    "sequence-list-before-delete",
+    "sequence-list-before-share-all",
+    "sequence-search-before-move",
+    "sequence-search-before-share",
+    "sequence-status-before-conditional-escalation"
+  ],
+  "improved_tasks": [
+    "abstain-no-such-capability",
+    "depth-file-share-after-detour",
+    "depth-reason-stated-earlier",
+    "select-status-direct"
+  ],
+  "gate": {
+    "passed": false,
+    "failures": [
+      "29 previously passing case(s) regressed"
+    ],
+    "matched_cases": 100,
+    "success_delta": -0.24,
+    "regressions": [
+      {
+        "task_id": "abstain-availability-no-calendar",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-cancel-without-id",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-cancel-without-id",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-missing-identifier",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-policy-question",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-policy-question",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-reschedule-unsupported",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-status-no-identifier",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-status-no-identifier",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-country-name-to-iso",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-duration-in-words",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "args-duration-in-words",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-escalation-urgency",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "depth-escalation-after-repeated-question",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "select-availability-not-booking",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "select-availability-not-booking",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-availability-before-checkin",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-availability-before-checkin",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-availability-first",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-list-before-delete",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-list-before-share-all",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-list-before-share-all",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-search-before-move",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-search-before-move",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-search-before-refund",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-search-before-share",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-search-before-share",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-status-before-conditional-escalation",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-status-before-conditional-escalation",
+        "pad": 0,
+        "repeat": 1
+      }
+    ]
+  }
+}

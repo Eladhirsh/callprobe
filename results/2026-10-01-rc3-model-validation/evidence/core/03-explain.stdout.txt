@@ -1,0 +1,550 @@
+suite            core v2 (e597c986302b5596)
+model            hermes3:8b
+cases            100   scored: 100   failed: 45
+
+diagnostic counts (cases; a case may carry more than one category)
+  no_call                 4   expected a call; the model produced none
+  unexpected_call        10   expected no call; the model called a tool anyway
+  multiple_calls          5   produced more than one call
+  wrong_tool              9   called a tool other than the expected/acceptable one
+  schema                 13   arguments failed the tool's JSON Schema
+  argument_value         17   argument values did not match the task's expectation
+
+failed cases
+
+[abstain-policy-question pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: What is your return policy for opened electronics?
+  expected: no call
+  called: issue_refund
+  reason: called issue_refund when no tool applied
+  call: issue_refund arguments={'reason': 'opened electronics', 'order_id': 'ORD-123456'}
+    schema error at reason: 'opened electronics' is not one of ['damaged', 'late', 'wrong_item', 'changed_mind', 'other'] (expected type: string)
+
+[args-partial-refund pad=0 repeat=0] category=args  diagnostics=schema, argument_value
+  prompt: Order ORD-991003 came to $84.50 and one of the two mugs was cracked. Refund me for just the broken one, they were the same price.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-991003', 'reason': 'damaged'}
+    check amount_cents eq 4225
+  called: issue_refund
+  reason: schema: amount_cents: 0 is less than the minimum of 1
+  reason: amount_cents eq 4225, got 0
+  call: issue_refund arguments={'amount_cents': 0, 'order_id': 'ORD-991003', 'reason': 'damaged'}
+    assertion [ok] order_id expected 'ORD-991003', got 'ORD-991003'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents eq 4225, got 0 (half of 8450)
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[args-relative-dates pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Find me a free hour on my calendar cal_main sometime next week.
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 60}
+    check start_date matches '2026-09-1[2345]'
+    check end_date matches '2026-09-(1[89]|20)'
+  called: find_availability
+  reason: start_date matches '2026-09-1[2345]', got '2022-05-09'
+  reason: end_date matches '2026-09-(1[89]|20)', got '2022-05-15'
+  call: find_availability arguments={'duration_minutes': 60, 'calendar_id': 'cal_main', 'start_date': '2022-05-09', 'end_date': '2022-05-15'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 60, got 60
+    assertion [FAIL] start_date matches '2026-09-1[2345]', got '2022-05-09'
+    assertion [FAIL] end_date matches '2026-09-(1[89]|20)', got '2022-05-15'
+
+[sequence-availability-first pad=0 repeat=0] category=sequence  diagnostics=schema
+  prompt: Book a 30 minute sync with priya@example.com on calendar cal_main on the first free slot this Thursday. Call it Weekly sync.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 30}
+  called: find_availability
+  reason: schema: (root): Additional properties are not allowed ('attendees', 'title' were unexpected)
+  call: find_availability arguments={'start_date': '2022-05-01', 'end_date': '2022-05-05', 'duration_minutes': 30, 'attendees': ['priya@example.com'], 'title': 'Weekly sync', 'calendar_id': 'cal_main'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 30, got 30
+    schema error at (root): Additional properties are not allowed ('attendees', 'title' were unexpected) (expected type: object)
+
+[abstain-status-no-identifier pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Has my package gone out yet?
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-123456'}
+
+[abstain-availability-no-calendar pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Am I free for an hour on Tuesday afternoon?
+  expected: no call
+  called: find_availability
+  reason: called find_availability when no tool applied
+  call: find_availability arguments={'end_date': '2022-03-16', 'duration_minutes': 60, 'calendar_id': 'my_calendar', 'start_date': '2022-03-15'}
+
+[abstain-cancel-without-id pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Cancel my standup tomorrow morning please.
+  expected: no call
+  called: cancel_meeting
+  reason: called cancel_meeting when no tool applied
+  call: cancel_meeting arguments={'meeting_id': 'standup-tomorrow', 'notify_attendees': True}
+
+[args-country-name-to-iso pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Redirect ORD-310884 to 14 Bedford Square, London, WC1B 3JA, United Kingdom.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-310884'}
+    check address.country eq 'GB'
+    check address.postal_code eq 'WC1B 3JA'
+    check address.city eq 'London'
+  called: update_shipping_address
+  reason: address.country eq 'GB', got 'United Kingdom'
+  call: update_shipping_address arguments={'order_id': 'ORD-310884', 'address': {'city': 'London', 'country': 'United Kingdom', 'line1': '14 Bedford Square', 'postal_code': 'WC1B 3JA'}}
+    assertion [ok] order_id expected 'ORD-310884', got 'ORD-310884'
+    assertion [FAIL] address.country eq 'GB', got 'United Kingdom'
+    assertion [ok] address.postal_code eq 'WC1B 3JA', got 'WC1B 3JA'
+    assertion [ok] address.city eq 'London', got 'London'
+
+[args-duration-in-words pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Find me an hour and a half on cal_design between the 9th and the 11th of this month.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_design', 'duration_minutes': 90, 'start_date': '2026-09-09', 'end_date': '2026-09-11'}
+  called: find_availability
+  reason: start_date expected '2026-09-09', got '2022-05-09'
+  reason: end_date expected '2026-09-11', got '2022-05-11'
+  call: find_availability arguments={'end_date': '2022-05-11', 'duration_minutes': 90, 'calendar_id': 'cal_design', 'start_date': '2022-05-09'}
+    assertion [ok] calendar_id expected 'cal_design', got 'cal_design'
+    assertion [ok] duration_minutes expected 90, got 90
+    assertion [FAIL] start_date expected '2026-09-09', got '2022-05-09'
+    assertion [FAIL] end_date expected '2026-09-11', got '2022-05-11'
+
+[args-explicit-datetime pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Book 45 minutes on cal_main this Wednesday at 2pm with omer@example.com and tal@example.com. Title it Design review.
+
+  expected: call book_meeting
+    args {'calendar_id': 'cal_main', 'duration_minutes': 45, 'title': 'Design review'}
+    check start_time matches '2026-09-09T14:00(:00)?-04:00'
+    check attendees.0 exists None
+    check attendees.1 exists None
+  called: book_meeting
+  reason: start_time matches '2026-09-09T14:00(:00)?-04:00', got '2022-03-23T14:00:00+0000'
+  call: book_meeting arguments={'calendar_id': 'cal_main', 'start_time': '2022-03-23T14:00:00+0000', 'duration_minutes': 45, 'attendees': ['omer@example.com', 'tal@example.com'], 'title': 'Design review'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 45, got 45
+    assertion [ok] title expected 'Design review', got 'Design review'
+    assertion [FAIL] start_time matches '2026-09-09T14:00(:00)?-04:00', got '2022-03-23T14:00:00+0000'
+    assertion [ok] attendees.0 missing
+    assertion [ok] attendees.1 missing
+
+[args-escalation-urgency pad=0 repeat=0] category=args  diagnostics=no_call
+  prompt: This is the fourth time I have asked and my wedding is Saturday. I want to speak to a person right now.
+
+  expected: call escalate_to_human
+    check summary exists None
+    check urgency eq 'high'
+  called: None
+  reason: no tool call produced
+
+[select-availability-not-booking pad=0 repeat=0] category=select  diagnostics=argument_value
+  prompt: What thirty minute slots are open on cal_ops between the 14th and the 18th? Do not book anything yet.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_ops', 'duration_minutes': 30, 'start_date': '2026-09-14', 'end_date': '2026-09-18'}
+  called: find_availability
+  reason: start_date expected '2026-09-14', got '2022-05-14'
+  reason: end_date expected '2026-09-18', got '2022-05-18'
+  call: find_availability arguments={'duration_minutes': 30, 'calendar_id': 'cal_ops', 'start_date': '2022-05-14', 'end_date': '2022-05-18'}
+    assertion [ok] calendar_id expected 'cal_ops', got 'cal_ops'
+    assertion [ok] duration_minutes expected 30, got 30
+    assertion [FAIL] start_date expected '2026-09-14', got '2022-05-14'
+    assertion [FAIL] end_date expected '2026-09-18', got '2022-05-18'
+
+[sequence-address-before-status pad=0 repeat=0] category=sequence  diagnostics=multiple_calls
+  prompt: First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-505050'}
+    check address.country eq 'IL'
+  called: update_shipping_address
+  reason: produced 2 calls; expected exactly one
+  call: update_shipping_address arguments={'address': {'city': 'Tel Aviv', 'country': 'IL', 'line1': '9 Alon Street', 'postal_code': '6100000'}, 'order_id': 'ORD-505050'}
+  call: get_order_status arguments={'order_id': 'ORD-505050'}
+    assertion [ok] order_id expected 'ORD-505050', got 'ORD-505050'
+    assertion [ok] address.country eq 'IL', got 'IL'
+
+[depth-refund-amount-after-clarification pad=0 repeat=0] category=depth  diagnostics=schema, argument_value
+  prompt: One of the two lamps on ORD-340221 showed up broken, they were $30 each so a $60 order.
+
+  prompt: Just the broken one.
+  expected: call issue_refund
+    args {'order_id': 'ORD-340221', 'reason': 'damaged'}
+    check amount_cents eq 3000
+  called: issue_refund
+  reason: schema: amount_cents: None is not of type 'integer'
+  reason: amount_cents eq 3000, got None
+  call: issue_refund arguments={'amount_cents': None, 'order_id': 'ORD-340221', 'reason': 'damaged'}
+    assertion [ok] order_id expected 'ORD-340221', got 'ORD-340221'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents eq 3000, got None (one lamp of two at $30 each)
+    schema error at amount_cents: None is not of type 'integer' (expected type: integer)
+
+[depth-escalation-after-repeated-question pad=0 repeat=0] category=depth  diagnostics=no_call
+  prompt: Where is ORD-660011?
+  prompt: That's what you told me three days ago. I want to speak to someone.
+  expected: call escalate_to_human
+    check summary exists None
+  called: None
+  reason: no tool call produced
+
+[sequence-search-before-move pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Move the quarterly report into folder_archive_2026, I don't have the file id handy.
+
+  expected: call search_files
+    check query exists None
+  called: move_file
+  reason: called move_file, expected search_files
+  reason: query missing
+  call: move_file arguments={'destination_folder_id': 'folder_archive_2026', 'file_id': 'unknown'}
+    assertion [FAIL] query missing
+
+[sequence-search-before-share pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Share the file named onboarding_checklist with maya@example.com as a viewer, I don't know its id.
+
+  expected: call search_files
+    check query contains 'onboarding'
+  called: share_file
+  reason: called share_file, expected search_files
+  reason: query missing
+  call: share_file arguments={'file_id': 'unknown', 'email': 'maya@example.com', 'role': 'viewer'}
+    assertion [FAIL] query missing
+
+[sequence-list-before-share-all pad=0 repeat=0] category=sequence  diagnostics=no_call
+  prompt: Everything in folder_bids_2026 needs to go to legal@example.com as a viewer, I don't have individual file ids.
+
+  expected: call list_files
+    args {'folder_id': 'folder_bids_2026'}
+  called: None
+  reason: no tool call produced
+
+[sequence-availability-before-checkin pad=0 repeat=0] category=sequence  diagnostics=schema
+  prompt: Set up a 20 minute check-in with dana@example.com sometime tomorrow afternoon on cal_main, whatever's open.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 20}
+  called: find_availability
+  reason: schema: (root): Additional properties are not allowed ('attendees' was unexpected)
+  call: find_availability arguments={'calendar_id': 'cal_main', 'start_date': '2022-05-18', 'end_date': '2022-05-18', 'duration_minutes': 20, 'attendees': ['dana@example.com']}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 20, got 20
+    schema error at (root): Additional properties are not allowed ('attendees' was unexpected) (expected type: object)
+
+[sequence-cancel-before-rebook pad=0 repeat=0] category=sequence  diagnostics=multiple_calls
+  prompt: Cancel meeting mtg_1200, and then set up a new 30 minute slot on cal_main whenever's free for priya@example.com and omer@example.com.
+
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_1200'}
+  called: cancel_meeting
+  reason: produced 2 calls; expected exactly one
+  call: cancel_meeting arguments={'meeting_id': 'mtg_1200', 'notify_attendees': True}
+  call: book_meeting arguments={'calendar_id': 'cal_main', 'start_date': '2022-08-01', 'end_date': '2022-08-02', 'start_time': '2022-08-01T09:00:00Z', 'duration_minutes': 30, 'attendees': ['priya@example.com', 'omer@example.com']}
+    assertion [ok] meeting_id expected 'mtg_1200', got 'mtg_1200'
+
+[sequence-search-before-refund pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, schema
+  prompt: I don't have my order number, but refund the shampoo order for noa@example.com, it leaked everywhere.
+
+  expected: call search_orders
+    args {'email': 'noa@example.com'}
+  called: issue_refund
+  reason: called issue_refund, expected search_orders
+  reason: schema: (root): 'order_id' is a required property
+  reason: schema: (root): Additional properties are not allowed ('email' was unexpected)
+  call: issue_refund arguments={'email': 'noa@example.com', 'reason': 'damaged'}
+    assertion [ok] email expected 'noa@example.com', got 'noa@example.com'
+    schema error at (root): 'order_id' is a required property (expected type: object)
+    schema error at (root): Additional properties are not allowed ('email' was unexpected) (expected type: object)
+
+[sequence-status-before-conditional-escalation pad=0 repeat=0] category=sequence  diagnostics=multiple_calls
+  prompt: Check on ORD-770044 for me, and if it's still not moving after two weeks like last time, get me a person.
+
+  expected: call get_order_status
+    args {'order_id': 'ORD-770044'}
+  called: get_order_status
+  reason: produced 2 calls; expected exactly one
+  call: get_order_status arguments={'order_id': 'ORD-770044'}
+  call: escalate_to_human arguments={'summary': 'Check if ORD-770044 is still not moving after two weeks, like last time.', 'urgency': 'high'}
+    assertion [ok] order_id expected 'ORD-770044', got 'ORD-770044'
+
+[abstain-policy-question pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: What is your return policy for opened electronics?
+  expected: no call
+  called: update_shipping_address
+  reason: called update_shipping_address when no tool applied
+  call: update_shipping_address arguments={'city': 'Anytown', 'region': 'CA', 'postal_code': '12345', 'country': 'US', 'line1': '1234 Fake St', 'line2': 'Apartment 42'}
+    schema error at (root): 'order_id' is a required property (expected type: object)
+    schema error at (root): 'address' is a required property (expected type: object)
+    schema error at (root): Additional properties are not allowed ('city', 'country', 'line1', 'line2', 'postal_code', 'region' were unexpected) (expected type: object)
+
+[abstain-missing-identifier pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Can you refund my order? It arrived broken.
+  expected: no call
+  called: issue_refund
+  reason: called issue_refund when no tool applied
+  call: issue_refund arguments={'order_id': 'ORD-123456', 'reason': 'damaged'}
+
+[args-partial-refund pad=0 repeat=1] category=args  diagnostics=no_call
+  prompt: Order ORD-991003 came to $84.50 and one of the two mugs was cracked. Refund me for just the broken one, they were the same price.
+
+  expected: call issue_refund
+    args {'order_id': 'ORD-991003', 'reason': 'damaged'}
+    check amount_cents eq 4225
+  called: None
+  reason: no tool call produced
+
+[args-relative-dates pad=0 repeat=1] category=args  diagnostics=argument_value
+  prompt: Find me a free hour on my calendar cal_main sometime next week.
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 60}
+    check start_date matches '2026-09-1[2345]'
+    check end_date matches '2026-09-(1[89]|20)'
+  called: find_availability
+  reason: start_date matches '2026-09-1[2345]', got '2022-05-09'
+  reason: end_date matches '2026-09-(1[89]|20)', got '2022-05-15'
+  call: find_availability arguments={'calendar_id': 'cal_main', 'start_date': '2022-05-09', 'end_date': '2022-05-15', 'duration_minutes': 60}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 60, got 60
+    assertion [FAIL] start_date matches '2026-09-1[2345]', got '2022-05-09'
+    assertion [FAIL] end_date matches '2026-09-(1[89]|20)', got '2022-05-15'
+
+[sequence-availability-first pad=0 repeat=1] category=sequence  diagnostics=schema
+  prompt: Book a 30 minute sync with priya@example.com on calendar cal_main on the first free slot this Thursday. Call it Weekly sync.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 30}
+  called: find_availability
+  reason: schema: (root): Additional properties are not allowed ('attendees', 'title' were unexpected)
+  call: find_availability arguments={'calendar_id': 'cal_main', 'start_date': '2022-05-05', 'end_date': '2022-05-05', 'duration_minutes': 30, 'attendees': ['priya@example.com'], 'title': 'Weekly sync'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 30, got 30
+    schema error at (root): Additional properties are not allowed ('attendees', 'title' were unexpected) (expected type: object)
+
+[abstain-status-no-identifier pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Has my package gone out yet?
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-123456', 'status': 'shipped'}
+    schema error at (root): Additional properties are not allowed ('status' was unexpected) (expected type: object)
+
+[abstain-availability-no-calendar pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Am I free for an hour on Tuesday afternoon?
+  expected: no call
+  called: find_availability
+  reason: called find_availability when no tool applied
+  call: find_availability arguments={'calendar_id': 'my_calendar', 'start_date': '2022-03-15', 'end_date': '2022-03-15', 'duration_minutes': 60}
+
+[abstain-reschedule-unsupported pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Move my 3pm on Thursday to 4pm instead.
+  expected: no call
+  called: book_meeting
+  reason: called book_meeting when no tool applied
+  call: book_meeting arguments={'duration_minutes': 60, 'new_start_time': '2022-05-12T16:00:00', 'calendar_id': 'my_calendar', 'start_time': '2022-05-12T15:00:00'}
+    schema error at (root): 'attendees' is a required property (expected type: object)
+    schema error at (root): 'title' is a required property (expected type: object)
+    schema error at (root): Additional properties are not allowed ('new_start_time' was unexpected) (expected type: object)
+
+[abstain-cancel-without-id pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Cancel my standup tomorrow morning please.
+  expected: no call
+  called: cancel_meeting
+  reason: called cancel_meeting when no tool applied
+  call: cancel_meeting arguments={'notify_attendees': True, 'meeting_id': 'standup-tomorrow'}
+
+[args-country-name-to-iso pad=0 repeat=1] category=args  diagnostics=schema, argument_value
+  prompt: Redirect ORD-310884 to 14 Bedford Square, London, WC1B 3JA, United Kingdom.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-310884'}
+    check address.country eq 'GB'
+    check address.postal_code eq 'WC1B 3JA'
+    check address.city eq 'London'
+  called: update_shipping_address
+  reason: schema: address: 'country' is a required property
+  reason: address.country missing
+  reason: address.postal_code eq 'WC1B 3JA', got 'United Kingdom'
+  call: update_shipping_address arguments={'order_id': 'ORD-310884', 'address': {'city': 'London', 'line1': '14 Bedford Square', 'line2': '', 'postal_code': 'United Kingdom', 'region': 'WC1B 3JA'}}
+    assertion [ok] order_id expected 'ORD-310884', got 'ORD-310884'
+    assertion [FAIL] address.country missing
+    assertion [FAIL] address.postal_code eq 'WC1B 3JA', got 'United Kingdom'
+    assertion [ok] address.city eq 'London', got 'London'
+    schema error at address: 'country' is a required property (expected type: object)
+
+[args-duration-in-words pad=0 repeat=1] category=args  diagnostics=argument_value
+  prompt: Find me an hour and a half on cal_design between the 9th and the 11th of this month.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_design', 'duration_minutes': 90, 'start_date': '2026-09-09', 'end_date': '2026-09-11'}
+  called: find_availability
+  reason: start_date expected '2026-09-09', got '2022-09-09'
+  reason: end_date expected '2026-09-11', got '2022-09-11'
+  call: find_availability arguments={'calendar_id': 'cal_design', 'start_date': '2022-09-09', 'end_date': '2022-09-11', 'duration_minutes': 90}
+    assertion [ok] calendar_id expected 'cal_design', got 'cal_design'
+    assertion [ok] duration_minutes expected 90, got 90
+    assertion [FAIL] start_date expected '2026-09-09', got '2022-09-09'
+    assertion [FAIL] end_date expected '2026-09-11', got '2022-09-11'
+
+[args-explicit-datetime pad=0 repeat=1] category=args  diagnostics=argument_value
+  prompt: Book 45 minutes on cal_main this Wednesday at 2pm with omer@example.com and tal@example.com. Title it Design review.
+
+  expected: call book_meeting
+    args {'calendar_id': 'cal_main', 'duration_minutes': 45, 'title': 'Design review'}
+    check start_time matches '2026-09-09T14:00(:00)?-04:00'
+    check attendees.0 exists None
+    check attendees.1 exists None
+  called: book_meeting
+  reason: start_time matches '2026-09-09T14:00(:00)?-04:00', got '2022-03-23T14:00:00'
+  call: book_meeting arguments={'calendar_id': 'cal_main', 'start_time': '2022-03-23T14:00:00', 'duration_minutes': 45, 'attendees': ['omer@example.com', 'tal@example.com'], 'title': 'Design review'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 45, got 45
+    assertion [ok] title expected 'Design review', got 'Design review'
+    assertion [FAIL] start_time matches '2026-09-09T14:00(:00)?-04:00', got '2022-03-23T14:00:00'
+    assertion [ok] attendees.0 missing
+    assertion [ok] attendees.1 missing
+
+[select-availability-not-booking pad=0 repeat=1] category=select  diagnostics=argument_value
+  prompt: What thirty minute slots are open on cal_ops between the 14th and the 18th? Do not book anything yet.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_ops', 'duration_minutes': 30, 'start_date': '2026-09-14', 'end_date': '2026-09-18'}
+  called: find_availability
+  reason: start_date expected '2026-09-14', got '2022-05-14'
+  reason: end_date expected '2026-09-18', got '2022-05-18'
+  call: find_availability arguments={'calendar_id': 'cal_ops', 'start_date': '2022-05-14', 'end_date': '2022-05-18', 'duration_minutes': 30}
+    assertion [ok] calendar_id expected 'cal_ops', got 'cal_ops'
+    assertion [ok] duration_minutes expected 30, got 30
+    assertion [FAIL] start_date expected '2026-09-14', got '2022-05-14'
+    assertion [FAIL] end_date expected '2026-09-18', got '2022-05-18'
+
+[sequence-address-before-status pad=0 repeat=1] category=sequence  diagnostics=multiple_calls
+  prompt: First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-505050'}
+    check address.country eq 'IL'
+  called: update_shipping_address
+  reason: produced 2 calls; expected exactly one
+  call: update_shipping_address arguments={'order_id': 'ORD-505050', 'address': {'city': 'Tel Aviv', 'country': 'IL', 'line1': '9 Alon Street', 'postal_code': '6100000'}}
+  call: get_order_status arguments={'order_id': 'ORD-505050'}
+    assertion [ok] order_id expected 'ORD-505050', got 'ORD-505050'
+    assertion [ok] address.country eq 'IL', got 'IL'
+
+[depth-refund-amount-after-clarification pad=0 repeat=1] category=depth  diagnostics=argument_value
+  prompt: One of the two lamps on ORD-340221 showed up broken, they were $30 each so a $60 order.
+
+  prompt: Just the broken one.
+  expected: call issue_refund
+    args {'order_id': 'ORD-340221', 'reason': 'damaged'}
+    check amount_cents eq 3000
+  called: issue_refund
+  reason: amount_cents eq 3000, got 6000
+  call: issue_refund arguments={'amount_cents': 6000, 'order_id': 'ORD-340221', 'reason': 'damaged'}
+    assertion [ok] order_id expected 'ORD-340221', got 'ORD-340221'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents eq 3000, got 6000 (one lamp of two at $30 each)
+
+[sequence-search-before-move pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Move the quarterly report into folder_archive_2026, I don't have the file id handy.
+
+  expected: call search_files
+    check query exists None
+  called: move_file
+  reason: called move_file, expected search_files
+  reason: query missing
+  call: move_file arguments={'file_id': 'unknown', 'destination_folder_id': 'folder_archive_2026'}
+    assertion [FAIL] query missing
+
+[sequence-list-before-delete pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema
+  prompt: Go through folder_temp_uploads and get rid of everything in it, I don't remember what's in there.
+
+  expected: call list_files
+    args {'folder_id': 'folder_temp_uploads'}
+  called: delete_file
+  reason: called delete_file, expected list_files
+  reason: schema: (root): 'file_id' is a required property
+  reason: schema: (root): Additional properties are not allowed ('folder_id' was unexpected)
+  call: delete_file arguments={'folder_id': 'folder_temp_uploads'}
+    assertion [ok] folder_id expected 'folder_temp_uploads', got 'folder_temp_uploads'
+    schema error at (root): 'file_id' is a required property (expected type: object)
+    schema error at (root): Additional properties are not allowed ('folder_id' was unexpected) (expected type: object)
+
+[sequence-search-before-share pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema, argument_value
+  prompt: Share the file named onboarding_checklist with maya@example.com as a viewer, I don't know its id.
+
+  expected: call search_files
+    check query contains 'onboarding'
+  called: list_files
+  reason: called list_files, expected search_files
+  reason: schema: (root): 'folder_id' is a required property
+  reason: schema: (root): Additional properties are not allowed ('email', 'role' were unexpected)
+  reason: query missing
+  call: list_files arguments={'file_type': 'any', 'role': 'viewer', 'email': 'maya@example.com'}
+    assertion [FAIL] query missing
+    schema error at (root): 'folder_id' is a required property (expected type: object)
+    schema error at (root): Additional properties are not allowed ('email', 'role' were unexpected) (expected type: object)
+
+[sequence-list-before-share-all pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema
+  prompt: Everything in folder_bids_2026 needs to go to legal@example.com as a viewer, I don't have individual file ids.
+
+  expected: call list_files
+    args {'folder_id': 'folder_bids_2026'}
+  called: share_file
+  reason: called share_file, expected list_files
+  reason: schema: (root): 'file_id' is a required property
+  reason: schema: (root): Additional properties are not allowed ('folder_id' was unexpected)
+  call: share_file arguments={'email': 'legal@example.com', 'role': 'viewer', 'folder_id': 'folder_bids_2026'}
+    assertion [ok] folder_id expected 'folder_bids_2026', got 'folder_bids_2026'
+    schema error at (root): 'file_id' is a required property (expected type: object)
+    schema error at (root): Additional properties are not allowed ('folder_id' was unexpected) (expected type: object)
+
+[sequence-availability-before-checkin pad=0 repeat=1] category=sequence  diagnostics=schema
+  prompt: Set up a 20 minute check-in with dana@example.com sometime tomorrow afternoon on cal_main, whatever's open.
+
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 20}
+  called: find_availability
+  reason: schema: (root): Additional properties are not allowed ('attendees' was unexpected)
+  call: find_availability arguments={'calendar_id': 'cal_main', 'start_date': '2022-05-18', 'end_date': '2022-05-18', 'duration_minutes': 20, 'attendees': ['dana@example.com']}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 20, got 20
+    schema error at (root): Additional properties are not allowed ('attendees' was unexpected) (expected type: object)
+
+[sequence-cancel-before-rebook pad=0 repeat=1] category=sequence  diagnostics=multiple_calls
+  prompt: Cancel meeting mtg_1200, and then set up a new 30 minute slot on cal_main whenever's free for priya@example.com and omer@example.com.
+
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_1200'}
+  called: cancel_meeting
+  reason: produced 2 calls; expected exactly one
+  call: cancel_meeting arguments={'meeting_id': 'mtg_1200', 'notify_attendees': True}
+  call: find_availability arguments={'calendar_id': 'cal_main', 'start_date': '2022-08-01', 'end_date': '2022-08-02', 'duration_minutes': 30, 'attendees': ['priya@example.com', 'omer@example.com']}
+    assertion [ok] meeting_id expected 'mtg_1200', got 'mtg_1200'
+
+[sequence-search-before-refund pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema
+  prompt: I don't have my order number, but refund the shampoo order for noa@example.com, it leaked everywhere.
+
+  expected: call search_orders
+    args {'email': 'noa@example.com'}
+  called: issue_refund
+  reason: called issue_refund, expected search_orders
+  reason: schema: (root): 'order_id' is a required property
+  reason: schema: (root): Additional properties are not allowed ('email' was unexpected)
+  call: issue_refund arguments={'email': 'noa@example.com', 'reason': 'damaged'}
+    assertion [ok] email expected 'noa@example.com', got 'noa@example.com'
+    schema error at (root): 'order_id' is a required property (expected type: object)
+    schema error at (root): Additional properties are not allowed ('email' was unexpected) (expected type: object)
+
+[sequence-status-before-conditional-escalation pad=0 repeat=1] category=sequence  diagnostics=wrong_tool, schema
+  prompt: Check on ORD-770044 for me, and if it's still not moving after two weeks like last time, get me a person.
+
+  expected: call get_order_status
+    args {'order_id': 'ORD-770044'}
+  called: escalate_to_human
+  reason: called escalate_to_human, expected get_order_status
+  reason: schema: (root): Additional properties are not allowed ('order_id' was unexpected)
+  call: escalate_to_human arguments={'summary': 'Check order status, if still not moving after two weeks escalate to a human', 'urgency': 'high', 'order_id': 'ORD-770044'}
+    assertion [ok] order_id expected 'ORD-770044', got 'ORD-770044'
+    schema error at (root): Additional properties are not allowed ('order_id' was unexpected) (expected type: object)

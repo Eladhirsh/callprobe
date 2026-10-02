@@ -2,6 +2,15 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Archive 1,386 live observations across nine local model configurations, with
+  repeated core cases, mail padding sweeps, and verified offline CI reports.
+
+- Save sweep manifests atomically so interrupted writes preserve the last
+  complete checkpoint.
+
+- Add opt-in `sweep --junit` reports for each model, including preserved partial
+  results after failed runs; manifest links distinguish successful exports.
+
 - Add offline JUnit export for saved results, with model failures, endpoint errors,
   incomplete coverage and targeted debug scope represented explicitly. Raw
   responses and argument/error values are omitted from exported diagnostics.

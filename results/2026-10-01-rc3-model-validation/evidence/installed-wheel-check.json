@@ -1,0 +1,28 @@
+{
+  "label": "Scripted endpoint, not real-model accuracy evidence",
+  "version": "0.9.0rc3.dev0",
+  "requests": 54,
+  "accepted": 36,
+  "rejected": 18,
+  "passed": true,
+  "checks": [
+    {
+      "model": "synthetic-baseline",
+      "cases": 18,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "model": "synthetic-candidate",
+      "cases": 18,
+      "failures": 4,
+      "errors": 0
+    },
+    {
+      "model": "unavailable",
+      "cases": 18,
+      "failures": 0,
+      "errors": 18
+    }
+  ]
+}

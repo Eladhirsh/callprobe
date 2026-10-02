@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="mail-suite" tests="54" failures="34" errors="0" skipped="0" time="64.554574">
+    <properties>
+      <property name="model" value="llama3.2:3b" />
+      <property name="suite_hash" value="2e82c882d93ca06a" />
+      <property name="scoring_version" value="3" />
+      <property name="planned_coverage" value="54" />
+      <property name="recorded_coverage" value="54" />
+      <property name="targeted_scope" value="false" />
+    </properties>
+    <testcase name="search-by-sender[pad=0,repeat=0]" classname="select" time="3.096718" />
+    <testcase name="search-by-subject[pad=0,repeat=0]" classname="select" time="0.944240" />
+    <testcase name="search-archive-folder[pad=0,repeat=0]" classname="select" time="1.024574">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="search-with-limit[pad=0,repeat=0]" classname="select" time="0.973368">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="get-by-id[pad=0,repeat=0]" classname="select" time="0.434937" />
+    <testcase name="get-id-with-punctuation[pad=0,repeat=0]" classname="args" time="0.574217" />
+    <testcase name="reply-send[pad=0,repeat=0]" classname="args" time="0.706246">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="reply-draft-only[pad=0,repeat=0]" classname="args" time="1.032302">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="no-send-chat-only[pad=0,repeat=0]" classname="abstain" time="1.263146">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="get-missing-id[pad=0,repeat=0]" classname="abstain" time="0.590525">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="reply-missing-id[pad=0,repeat=0]" classname="abstain" time="0.736701">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="search-missing-criteria[pad=0,repeat=0]" classname="abstain" time="0.960716">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="unsupported-delete[pad=0,repeat=0]" classname="abstain" time="0.458972">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="unsupported-forward[pad=0,repeat=0]" classname="abstain" time="1.184222">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="reply-body-quotes[pad=0,repeat=0]" classname="args" time="1.158763">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="reply-body-symbols[pad=0,repeat=0]" classname="args" time="1.517679">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="correction-search-sender[pad=0,repeat=0]" classname="depth" time="1.388383">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="correction-reply-target[pad=0,repeat=0]" classname="depth" time="1.208879" />
+    <testcase name="search-by-sender[pad=2,repeat=0]" classname="select" time="1.037913" />
+    <testcase name="search-by-subject[pad=2,repeat=0]" classname="select" time="0.997010" />
+    <testcase name="search-archive-folder[pad=2,repeat=0]" classname="select" time="0.914774">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="search-with-limit[pad=2,repeat=0]" classname="select" time="0.742668">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="get-by-id[pad=2,repeat=0]" classname="select" time="1.105220" />
+    <testcase name="get-id-with-punctuation[pad=2,repeat=0]" classname="args" time="1.020789" />
+    <testcase name="reply-send[pad=2,repeat=0]" classname="args" time="1.407873">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="reply-draft-only[pad=2,repeat=0]" classname="args" time="1.809820" />
+    <testcase name="no-send-chat-only[pad=2,repeat=0]" classname="abstain" time="1.204055">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="get-missing-id[pad=2,repeat=0]" classname="abstain" time="0.830344" />
+    <testcase name="reply-missing-id[pad=2,repeat=0]" classname="abstain" time="1.073092">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="search-missing-criteria[pad=2,repeat=0]" classname="abstain" time="0.963472">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="unsupported-delete[pad=2,repeat=0]" classname="abstain" time="0.962047">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="unsupported-forward[pad=2,repeat=0]" classname="abstain" time="0.961870">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="reply-body-quotes[pad=2,repeat=0]" classname="args" time="1.645229">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="reply-body-symbols[pad=2,repeat=0]" classname="args" time="1.686006">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="correction-search-sender[pad=2,repeat=0]" classname="depth" time="1.196021">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="correction-reply-target[pad=2,repeat=0]" classname="depth" time="1.308733" />
+    <testcase name="search-by-sender[pad=4,repeat=0]" classname="select" time="1.238912" />
+    <testcase name="search-by-subject[pad=4,repeat=0]" classname="select" time="1.349835" />
+    <testcase name="search-archive-folder[pad=4,repeat=0]" classname="select" time="1.068969">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="search-with-limit[pad=4,repeat=0]" classname="select" time="1.269002">
+      <failure type="schema" message="schema check failed; args check failed" />
+    </testcase>
+    <testcase name="get-by-id[pad=4,repeat=0]" classname="select" time="1.203564" />
+    <testcase name="get-id-with-punctuation[pad=4,repeat=0]" classname="args" time="1.152542" />
+    <testcase name="reply-send[pad=4,repeat=0]" classname="args" time="1.486919">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="reply-draft-only[pad=4,repeat=0]" classname="args" time="1.366760">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="no-send-chat-only[pad=4,repeat=0]" classname="abstain" time="1.659267" />
+    <testcase name="get-missing-id[pad=4,repeat=0]" classname="abstain" time="1.098825" />
+    <testcase name="reply-missing-id[pad=4,repeat=0]" classname="abstain" time="1.247921">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="search-missing-criteria[pad=4,repeat=0]" classname="abstain" time="1.003159">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="unsupported-delete[pad=4,repeat=0]" classname="abstain" time="1.146425">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="unsupported-forward[pad=4,repeat=0]" classname="abstain" time="1.438328">
+      <failure type="selection" message="selection check failed; schema check failed; args check failed; call count check failed" />
+    </testcase>
+    <testcase name="reply-body-quotes[pad=4,repeat=0]" classname="args" time="2.003473">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="reply-body-symbols[pad=4,repeat=0]" classname="args" time="1.685764">
+      <failure type="args" message="args check failed" />
+    </testcase>
+    <testcase name="correction-search-sender[pad=4,repeat=0]" classname="depth" time="1.442422" />
+    <testcase name="correction-reply-target[pad=4,repeat=0]" classname="depth" time="1.570965" />
+  </testsuite>
+</testsuites>

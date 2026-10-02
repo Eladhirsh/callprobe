@@ -1,0 +1,49 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.6666666666666666,
+      "success_b": 0.9444444444444444,
+      "success_delta": 0.2777777777777778,
+      "lenient_a": 0.6666666666666666,
+      "lenient_b": 0.9444444444444444,
+      "lenient_delta": 0.2777777777777778
+    },
+    "args": {
+      "success_a": 0.26666666666666666,
+      "success_b": 0.4,
+      "success_delta": 0.13333333333333336,
+      "lenient_a": 0.26666666666666666,
+      "lenient_b": 0.4,
+      "lenient_delta": 0.13333333333333336
+    },
+    "depth": {
+      "success_a": 0.0,
+      "success_b": 0.3333333333333333,
+      "success_delta": 0.3333333333333333,
+      "lenient_a": 0.0,
+      "lenient_b": 0.3333333333333333,
+      "lenient_delta": 0.3333333333333333
+    },
+    "select": {
+      "success_a": 0.13333333333333333,
+      "success_b": 0.6666666666666666,
+      "success_delta": 0.5333333333333333,
+      "lenient_a": 0.13333333333333333,
+      "lenient_b": 0.6666666666666666,
+      "lenient_delta": 0.5333333333333333
+    }
+  },
+  "regressed_tasks": [],
+  "improved_tasks": [
+    "reply-draft-only",
+    "search-by-sender",
+    "unsupported-delete"
+  ],
+  "gate": {
+    "passed": true,
+    "failures": [],
+    "matched_cases": 54,
+    "success_delta": 0.3148148148148148,
+    "regressions": []
+  }
+}

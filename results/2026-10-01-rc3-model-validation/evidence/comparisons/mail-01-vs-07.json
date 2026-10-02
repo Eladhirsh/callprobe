@@ -1,0 +1,81 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.6666666666666666,
+      "success_b": 1.0,
+      "success_delta": 0.33333333333333337,
+      "lenient_a": 0.6666666666666666,
+      "lenient_b": 1.0,
+      "lenient_delta": 0.33333333333333337
+    },
+    "args": {
+      "success_a": 0.26666666666666666,
+      "success_b": 0.0,
+      "success_delta": -0.26666666666666666,
+      "lenient_a": 0.26666666666666666,
+      "lenient_b": 0.0,
+      "lenient_delta": -0.26666666666666666
+    },
+    "depth": {
+      "success_a": 0.0,
+      "success_b": 0.0,
+      "success_delta": 0.0,
+      "lenient_a": 0.0,
+      "lenient_b": 0.0,
+      "lenient_delta": 0.0
+    },
+    "select": {
+      "success_a": 0.13333333333333333,
+      "success_b": 0.0,
+      "success_delta": -0.13333333333333333,
+      "lenient_a": 0.13333333333333333,
+      "lenient_b": 0.0,
+      "lenient_delta": -0.13333333333333333
+    }
+  },
+  "regressed_tasks": [],
+  "improved_tasks": [
+    "unsupported-delete",
+    "unsupported-forward"
+  ],
+  "gate": {
+    "passed": false,
+    "failures": [
+      "6 previously passing case(s) regressed"
+    ],
+    "matched_cases": 54,
+    "success_delta": 0.0,
+    "regressions": [
+      {
+        "task_id": "get-by-id",
+        "pad": 2,
+        "repeat": 0
+      },
+      {
+        "task_id": "get-by-id",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "get-id-with-punctuation",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-draft-only",
+        "pad": 2,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-draft-only",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-send",
+        "pad": 2,
+        "repeat": 0
+      }
+    ]
+  }
+}

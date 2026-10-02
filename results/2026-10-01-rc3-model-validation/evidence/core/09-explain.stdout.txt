@@ -1,0 +1,191 @@
+suite            core v2 (e597c986302b5596)
+model            qwen3:8b
+cases            100   scored: 100   failed: 15
+
+diagnostic counts (cases; a case may carry more than one category)
+  truncated               1   truncated on the token limit before completion
+  no_call                 2   expected a call; the model produced none
+  unexpected_call         2   expected no call; the model called a tool anyway
+  multiple_calls          3   produced more than one call
+  wrong_tool              1   called a tool other than the expected/acceptable one
+  argument_value          8   argument values did not match the task's expectation
+
+failed cases
+
+[args-relative-dates pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Find me a free hour on my calendar cal_main sometime next week.
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 60}
+    check start_date matches '2026-09-1[2345]'
+    check end_date matches '2026-09-(1[89]|20)'
+  called: find_availability
+  reason: end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  call: find_availability arguments={'duration_minutes': 60, 'calendar_id': 'cal_main', 'start_date': '2026-09-14', 'end_date': '2026-09-21'}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 60, got 60
+    assertion [ok] start_date matches '2026-09-1[2345]', got '2026-09-14'
+    assertion [FAIL] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+
+[abstain-no-such-capability pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Please cancel order ORD-620114 before it ships.
+  expected: no call
+  called: issue_refund
+  reason: called issue_refund when no tool applied
+  call: issue_refund arguments={'order_id': 'ORD-620114', 'reason': 'changed_mind', 'amount_cents': 0}
+    schema error at amount_cents: 0 is less than the minimum of 1 (expected type: integer)
+
+[args-country-name-to-iso pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Redirect ORD-310884 to 14 Bedford Square, London, WC1B 3JA, United Kingdom.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-310884'}
+    check address.country eq 'GB'
+    check address.postal_code eq 'WC1B 3JA'
+    check address.city eq 'London'
+  called: update_shipping_address
+  reason: address.country eq 'GB', got 'UK'
+  call: update_shipping_address arguments={'order_id': 'ORD-310884', 'address': {'city': 'London', 'country': 'UK', 'line1': '14 Bedford Square', 'postal_code': 'WC1B 3JA'}}
+    assertion [ok] order_id expected 'ORD-310884', got 'ORD-310884'
+    assertion [FAIL] address.country eq 'GB', got 'UK'
+    assertion [ok] address.postal_code eq 'WC1B 3JA', got 'WC1B 3JA'
+    assertion [ok] address.city eq 'London', got 'London'
+
+[depth-reason-stated-earlier pad=0 repeat=0] category=depth  diagnostics=argument_value
+  prompt: The blender on ORD-664200 arrived with a cracked jug.
+  prompt: A refund for the whole order, please.
+  expected: call issue_refund
+    args {'order_id': 'ORD-664200', 'reason': 'damaged'}
+    check amount_cents absent None
+  called: issue_refund
+  reason: amount_cents should not be present
+  call: issue_refund arguments={'order_id': 'ORD-664200', 'reason': 'damaged', 'amount_cents': 100000}
+    assertion [ok] order_id expected 'ORD-664200', got 'ORD-664200'
+    assertion [ok] reason expected 'damaged', got 'damaged'
+    assertion [FAIL] amount_cents should not be present
+
+[sequence-address-before-status pad=0 repeat=0] category=sequence  diagnostics=multiple_calls
+  prompt: First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-505050'}
+    check address.country eq 'IL'
+  called: update_shipping_address
+  reason: produced 2 calls; expected exactly one
+  call: update_shipping_address arguments={'order_id': 'ORD-505050', 'address': {'city': 'Tel Aviv', 'country': 'IL', 'line1': '9 Alon Street', 'postal_code': '6100000'}}
+  call: get_order_status arguments={'order_id': 'ORD-505050'}
+    assertion [ok] order_id expected 'ORD-505050', got 'ORD-505050'
+    assertion [ok] address.country eq 'IL', got 'IL'
+
+[depth-file-share-after-detour pad=0 repeat=0] category=depth  diagnostics=argument_value
+  prompt: I've got file_881020 open, it's the shared Q3 numbers.
+  prompt: Actually, remind me, what folder is that file even in?
+  prompt: Never mind, forget the folder question. Just share the file with dor@example.com so she can edit it.
+
+  expected: call share_file
+    args {'file_id': 'file_881020', 'email': 'dor@example.com', 'role': 'editor'}
+  called: share_file
+  reason: file_id expected 'file_881020', got '881020'
+  call: share_file arguments={'file_id': '881020', 'email': 'dor@example.com', 'role': 'editor'}
+    assertion [FAIL] file_id expected 'file_881020', got '881020'
+    assertion [ok] email expected 'dor@example.com', got 'dor@example.com'
+    assertion [ok] role expected 'editor', got 'editor'
+
+[sequence-list-before-delete pad=0 repeat=0] category=sequence  diagnostics=wrong_tool, argument_value
+  prompt: Go through folder_temp_uploads and get rid of everything in it, I don't remember what's in there.
+
+  expected: call list_files
+    args {'folder_id': 'folder_temp_uploads'}
+  called: search_files
+  reason: called search_files, expected list_files
+  reason: folder_id expected 'folder_temp_uploads', got missing
+  call: search_files arguments={'query': 'folder_temp_uploads'}
+    assertion [FAIL] folder_id expected 'folder_temp_uploads', got missing
+
+[sequence-cancel-before-rebook pad=0 repeat=0] category=sequence  diagnostics=multiple_calls
+  prompt: Cancel meeting mtg_1200, and then set up a new 30 minute slot on cal_main whenever's free for priya@example.com and omer@example.com.
+
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_1200'}
+  called: cancel_meeting
+  reason: produced 2 calls; expected exactly one
+  call: cancel_meeting arguments={'meeting_id': 'mtg_1200', 'notify_attendees': True}
+  call: find_availability arguments={'duration_minutes': 30, 'calendar_id': 'cal_main', 'start_date': '2023-10-10', 'end_date': '2023-10-15'}
+    assertion [ok] meeting_id expected 'mtg_1200', got 'mtg_1200'
+
+[args-relative-dates pad=0 repeat=1] category=args  diagnostics=argument_value
+  prompt: Find me a free hour on my calendar cal_main sometime next week.
+  expected: call find_availability
+    args {'calendar_id': 'cal_main', 'duration_minutes': 60}
+    check start_date matches '2026-09-1[2345]'
+    check end_date matches '2026-09-(1[89]|20)'
+  called: find_availability
+  reason: end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+  call: find_availability arguments={'calendar_id': 'cal_main', 'start_date': '2026-09-14', 'end_date': '2026-09-21', 'duration_minutes': 60}
+    assertion [ok] calendar_id expected 'cal_main', got 'cal_main'
+    assertion [ok] duration_minutes expected 60, got 60
+    assertion [ok] start_date matches '2026-09-1[2345]', got '2026-09-14'
+    assertion [FAIL] end_date matches '2026-09-(1[89]|20)', got '2026-09-21'
+
+[abstain-no-such-capability pad=0 repeat=1] category=abstain  diagnostics=unexpected_call
+  prompt: Please cancel order ORD-620114 before it ships.
+  expected: no call
+  called: get_order_status
+  reason: called get_order_status when no tool applied
+  call: get_order_status arguments={'order_id': 'ORD-620114'}
+
+[select-address-change pad=0 repeat=1] category=select  diagnostics=no_call
+  prompt: ORD-905512 has not shipped yet and I moved last weekend. I need it going somewhere else.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-905512'}
+  called: None
+  reason: no tool call produced
+  said: The order has not shipped yet, so we can update the shipping address. Please provide your new address details so I can make the change.
+
+[sequence-address-before-status pad=0 repeat=1] category=sequence  diagnostics=multiple_calls
+  prompt: First change the delivery address on ORD-505050 to 9 Alon Street, Tel Aviv, 6100000, Israel, and then tell me the delivery estimate.
+
+  expected: call update_shipping_address
+    args {'order_id': 'ORD-505050'}
+    check address.country eq 'IL'
+  called: update_shipping_address
+  reason: produced 2 calls; expected exactly one
+  call: update_shipping_address arguments={'order_id': 'ORD-505050', 'address': {'city': 'Tel Aviv', 'country': 'IL', 'line1': '9 Alon Street', 'postal_code': '6100000'}}
+  call: get_order_status arguments={'order_id': 'ORD-505050'}
+    assertion [ok] order_id expected 'ORD-505050', got 'ORD-505050'
+    assertion [ok] address.country eq 'IL', got 'IL'
+
+[depth-file-share-after-detour pad=0 repeat=1] category=depth  diagnostics=argument_value
+  prompt: I've got file_881020 open, it's the shared Q3 numbers.
+  prompt: Actually, remind me, what folder is that file even in?
+  prompt: Never mind, forget the folder question. Just share the file with dor@example.com so she can edit it.
+
+  expected: call share_file
+    args {'file_id': 'file_881020', 'email': 'dor@example.com', 'role': 'editor'}
+  called: share_file
+  reason: file_id expected 'file_881020', got '881020'
+  call: share_file arguments={'file_id': '881020', 'email': 'dor@example.com', 'role': 'editor'}
+    assertion [FAIL] file_id expected 'file_881020', got '881020'
+    assertion [ok] email expected 'dor@example.com', got 'dor@example.com'
+    assertion [ok] role expected 'editor', got 'editor'
+
+[depth-file-move-after-distraction pad=0 repeat=1] category=depth  diagnostics=argument_value
+  prompt: I need to clean up file_330071, it's cluttering my main folder.
+  prompt: Hold on, first, does file_330071 have any editors on it right now?
+  prompt: Actually skip that, just move it into folder_archive_2026.
+  expected: call move_file
+    args {'file_id': 'file_330071', 'destination_folder_id': 'folder_archive_2026'}
+  called: move_file
+  reason: file_id expected 'file_330071', got '330071'
+  call: move_file arguments={'file_id': '330071', 'destination_folder_id': 'folder_archive_2026'}
+    assertion [FAIL] file_id expected 'file_330071', got '330071'
+    assertion [ok] destination_folder_id expected 'folder_archive_2026', got 'folder_archive_2026'
+
+[sequence-cancel-before-rebook pad=0 repeat=1] category=sequence  diagnostics=truncated, no_call
+  prompt: Cancel meeting mtg_1200, and then set up a new 30 minute slot on cal_main whenever's free for priya@example.com and omer@example.com.
+
+  expected: call cancel_meeting
+    args {'meeting_id': 'mtg_1200'}
+  called: None
+  reason: truncated on the token limit before any call, raise --max-tokens
+  said: Okay, let's break down the user's request. They want to cancel the meeting with ID mtg_1200 and then schedule a new 30-minute slot on cal_main for Priya and Ome

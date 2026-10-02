@@ -1,0 +1,39 @@
+model            mistral-nemo:latest
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         72.2%   75.9%   53.7%   51.9%   (95% CI 33.3-70.4%)
+  type-lenient    72.2%   75.9%   53.7%   51.9%
+
+  tool count sweep
+    +0   distractors   success  66.7%   selection  77.8%   sd  0.0
+    +2   distractors   success  44.4%   selection  72.2%   sd  0.0
+    +4   distractors   success  44.4%   selection  66.7%   sd  0.0
+
+  by category
+    abstain     33.3%  (n=18, 95% CI 5.6-66.7%)
+    args        46.7%  (n=15, 95% CI 20.0-80.0%)
+    depth       33.3%  (n=6, 95% CI 0.0-66.7%)
+    select      86.7%  (n=15, 95% CI 60.0-100.0%)
+
+  cost per success   1117 tokens   4.73 s
+
+failures worth reading:
+  [get-missing-id pad=0] called get_message when no tool applied
+  [reply-missing-id pad=0] called get_message when no tool applied
+  [unsupported-forward pad=0] called send_reply when no tool applied
+  [reply-body-symbols pad=0] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+  [correction-search-sender pad=0] query expected {'q': 'from:sam.lee@example.invalid'}, got {'q': 'from: sam.lee@example.invalid'}
+  [correction-reply-target pad=0] no tool call produced
+  [search-archive-folder pad=2] query expected {'q': 'invoice', 'folder': 'archive'}, got {'q': 'subject:invoice folder:archive'}
+  [reply-send pad=2] called get_message, expected send_reply; body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing
+  [reply-draft-only pad=2] produced 2 calls; expected exactly one
+  [no-send-chat-only pad=2] called get_message when no tool applied
+  [get-missing-id pad=2] called get_message when no tool applied
+  [reply-missing-id pad=2] called get_message when no tool applied
+  [unsupported-forward pad=2] called send_reply when no tool applied
+  [reply-body-quotes pad=2] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': 'Please send the final draft by 5:00 p.m.; thanks!'}
+  [reply-body-symbols pad=2] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+
+wrote 06-result.json

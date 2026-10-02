@@ -1,0 +1,39 @@
+model            qwen3:8b
+endpoint         http://127.0.0.1:11434/v1
+tasks scored     54
+
+                 selection   schema     args      success
+  overall         98.1%   70.4%   64.8%   64.8%   (95% CI 48.1-81.5%)
+  type-lenient    98.1%   70.4%   64.8%   64.8%
+
+  tool count sweep
+    +0   distractors   success  50.0%   selection 100.0%   sd  0.0
+    +2   distractors   success  77.8%   selection 100.0%   sd  0.0
+    +4   distractors   success  66.7%   selection  94.4%   sd  0.0
+
+  by category
+    abstain     94.4%  (n=18, 95% CI 83.3-100.0%)
+    args        40.0%  (n=15, 95% CI 13.3-73.3%)
+    depth       33.3%  (n=6, 95% CI 0.0-66.7%)
+    select      66.7%  (n=15, 95% CI 46.7-86.7%)
+
+  cost per success   1347 tokens   12.15 s
+
+failures worth reading:
+  [search-by-subject pad=0] schema: (root): Additional properties are not allowed ('q' was unexpected); schema: (root): 'query' is a required property
+  [search-archive-folder pad=0] schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected); schema: (root): 'query' is a required property
+  [search-with-limit pad=0] schema: (root): Additional properties are not allowed ('limit', 'q' were unexpected); schema: (root): 'query' is a required property
+  [get-by-id pad=0] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [get-id-with-punctuation pad=0] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [reply-send pad=0] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [reply-body-quotes pad=0] schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected); schema: (root): 'path' is a required property
+  [reply-body-symbols pad=0] schema: (root): Additional properties are not allowed ('message_id', 'mode', 'text' were unexpected); schema: (root): 'path' is a required property
+  [correction-search-sender pad=0] schema: (root): Additional properties are not allowed ('q' was unexpected); schema: (root): 'query' is a required property
+  [get-id-with-punctuation pad=2] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+  [reply-body-quotes pad=2] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': '[Please send the "final" draft by 5:00 p.m.; thanks!]'}
+  [reply-body-symbols pad=2] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'send', 'text': "Hi Sam, Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9."}
+  [correction-search-sender pad=2] schema: (root): Additional properties are not allowed ('q' was unexpected); schema: (root): 'query' is a required property
+  [search-archive-folder pad=4] schema: (root): Additional properties are not allowed ('folder', 'q' were unexpected); schema: (root): 'query' is a required property
+  [reply-send pad=4] schema: (root): Additional properties are not allowed ('message_id' was unexpected); schema: (root): 'path' is a required property
+
+wrote 09-result.json

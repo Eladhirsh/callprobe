@@ -1,0 +1,110 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.6666666666666666,
+      "success_b": 0.6666666666666666,
+      "success_delta": 0.0,
+      "lenient_a": 0.6666666666666666,
+      "lenient_b": 0.6666666666666666,
+      "lenient_delta": 0.0
+    },
+    "args": {
+      "success_a": 0.26666666666666666,
+      "success_b": 0.06666666666666667,
+      "success_delta": -0.2,
+      "lenient_a": 0.26666666666666666,
+      "lenient_b": 0.06666666666666667,
+      "lenient_delta": -0.2
+    },
+    "depth": {
+      "success_a": 0.0,
+      "success_b": 0.0,
+      "success_delta": 0.0,
+      "lenient_a": 0.0,
+      "lenient_b": 0.0,
+      "lenient_delta": 0.0
+    },
+    "select": {
+      "success_a": 0.13333333333333333,
+      "success_b": 0.0,
+      "success_delta": -0.13333333333333333,
+      "lenient_a": 0.13333333333333333,
+      "lenient_b": 0.0,
+      "lenient_delta": -0.13333333333333333
+    }
+  },
+  "regressed_tasks": [
+    "get-missing-id",
+    "no-send-chat-only",
+    "reply-missing-id"
+  ],
+  "improved_tasks": [
+    "unsupported-delete",
+    "unsupported-forward"
+  ],
+  "gate": {
+    "passed": false,
+    "failures": [
+      "11 previously passing case(s) regressed"
+    ],
+    "matched_cases": 54,
+    "success_delta": -0.09259259259259259,
+    "regressions": [
+      {
+        "task_id": "get-by-id",
+        "pad": 2,
+        "repeat": 0
+      },
+      {
+        "task_id": "get-by-id",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "get-missing-id",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "no-send-chat-only",
+        "pad": 2,
+        "repeat": 0
+      },
+      {
+        "task_id": "no-send-chat-only",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-draft-only",
+        "pad": 2,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-draft-only",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-missing-id",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-missing-id",
+        "pad": 2,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-missing-id",
+        "pad": 4,
+        "repeat": 0
+      },
+      {
+        "task_id": "reply-send",
+        "pad": 2,
+        "repeat": 0
+      }
+    ]
+  }
+}

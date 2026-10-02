@@ -1,0 +1,238 @@
+suite            mail-suite v1 (2e82c882d93ca06a)
+model            mistral-nemo:latest
+cases            54   scored: 54   failed: 26
+
+diagnostic counts (cases; a case may carry more than one category)
+  no_call                 1   expected a call; the model produced none
+  unexpected_call        12   expected no call; the model called a tool anyway
+  multiple_calls          1   produced more than one call
+  wrong_tool              2   called a tool other than the expected/acceptable one
+  argument_value         12   argument values did not match the task's expectation
+
+failed cases
+
+[get-missing-id pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Open a message by its ID. I do not have the ID; do not search for it.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[reply-missing-id pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Reply to that email and tell them yes.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=0 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'path': {'message_id': 'msg-1042'}, 'body': {'mode': 'send', 'text': 'Forward msg-1042 to sam.lee@example.invalid.'}}
+
+[reply-body-symbols pad=0 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3002'}, 'body': {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+
+[correction-search-sender pad=0 repeat=0] category=depth  diagnostics=argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got {'q': 'from: sam.lee@example.invalid'}
+  call: search_messages arguments={'query': {'q': 'from: sam.lee@example.invalid'}}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got {'q': 'from: sam.lee@example.invalid'}
+
+[correction-reply-target pad=0 repeat=0] category=depth  diagnostics=no_call
+  prompt: Reply to msg-1042 saying: Approved.
+  prompt: Draft only, and use msg-1043 instead of msg-1042.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1043'}, 'body': {'text': 'Approved.', 'mode': 'draft'}}
+  called: None
+  reason: no tool call produced
+
+[search-archive-folder pad=2 repeat=0] category=select  diagnostics=argument_value
+  prompt: Search my archive folder for the word invoice.
+  expected: call search_messages
+    args {'query': {'q': 'invoice', 'folder': 'archive'}}
+  called: search_messages
+  reason: query expected {'q': 'invoice', 'folder': 'archive'}, got {'q': 'subject:invoice folder:archive'}
+  call: search_messages arguments={'query': {'q': 'subject:invoice folder:archive'}}
+    assertion [FAIL] query expected {'q': 'invoice', 'folder': 'archive'}, got {'q': 'subject:invoice folder:archive'}
+
+[reply-send pad=2 repeat=0] category=args  diagnostics=wrong_tool, argument_value
+  prompt: Send a reply to msg-1042 saying: Confirmed for Tuesday.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Confirmed for Tuesday.', 'mode': 'send'}}
+  called: get_message
+  reason: called get_message, expected send_reply
+  reason: body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+    assertion [ok] path expected {'message_id': 'msg-1042'}, got {'message_id': 'msg-1042'}
+    assertion [FAIL] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing
+
+[reply-draft-only pad=2 repeat=0] category=args  diagnostics=multiple_calls
+  prompt: Draft a reply to msg-1042 that says: Let me check and get back to you. Draft only, do not send it.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Let me check and get back to you.', 'mode': 'draft'}}
+  called: send_reply
+  reason: produced 2 calls; expected exactly one
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+  call: send_reply arguments={'path': {'message_id': 'msg-1042'}, 'body': {'mode': 'draft', 'text': 'Let me check and get back to you.'}}
+    assertion [ok] path expected {'message_id': 'msg-1042'}, got {'message_id': 'msg-1042'}
+    assertion [ok] body expected {'text': 'Let me check and get back to you.', 'mode': 'draft'}, got {'mode': 'draft', 'text': 'Let me check and get back to you.'}
+
+[no-send-chat-only pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Do not send or save anything. Just tell me in chat what a polite decline to msg-1042 could look like.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[get-missing-id pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Open a message by its ID. I do not have the ID; do not search for it.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[reply-missing-id pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Reply to that email and tell them yes.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-forward pad=2 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'path': {'message_id': 'msg-1042'}, 'body': {'mode': 'send', 'text': 'Forwarded message text.'}}
+
+[reply-body-quotes pad=2 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': 'Please send the final draft by 5:00 p.m.; thanks!'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3001'}, 'body': {'mode': 'send', 'text': 'Please send the final draft by 5:00 p.m.; thanks!'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'send', 'text': 'Please send the final draft by 5:00 p.m.; thanks!'}
+
+[reply-body-symbols pad=2 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3002'}, 'body': {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+
+[correction-search-sender pad=2 repeat=0] category=depth  diagnostics=argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got {'q': 'from: sam.lee@example.invalid'}
+  call: search_messages arguments={'query': {'q': 'from: sam.lee@example.invalid'}}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got {'q': 'from: sam.lee@example.invalid'}
+
+[search-archive-folder pad=4 repeat=0] category=select  diagnostics=argument_value
+  prompt: Search my archive folder for the word invoice.
+  expected: call search_messages
+    args {'query': {'q': 'invoice', 'folder': 'archive'}}
+  called: search_messages
+  reason: query expected {'q': 'invoice', 'folder': 'archive'}, got {'q': 'folder:archive keyword:invoice'}
+  call: search_messages arguments={'query': {'q': 'folder:archive keyword:invoice'}}
+    assertion [FAIL] query expected {'q': 'invoice', 'folder': 'archive'}, got {'q': 'folder:archive keyword:invoice'}
+
+[reply-send pad=4 repeat=0] category=args  diagnostics=wrong_tool, argument_value
+  prompt: Send a reply to msg-1042 saying: Confirmed for Tuesday.
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-1042'}, 'body': {'text': 'Confirmed for Tuesday.', 'mode': 'send'}}
+  called: get_message
+  reason: called get_message, expected send_reply
+  reason: body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+    assertion [ok] path expected {'message_id': 'msg-1042'}, got {'message_id': 'msg-1042'}
+    assertion [FAIL] body expected {'text': 'Confirmed for Tuesday.', 'mode': 'send'}, got missing
+
+[no-send-chat-only pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Do not send or save anything. Just tell me in chat what a polite decline to msg-1042 could look like.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[get-missing-id pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Open a message by its ID. I do not have the ID; do not search for it.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[reply-missing-id pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Reply to that email and tell them yes.
+  expected: no call
+  called: get_message
+  reason: called get_message when no tool applied
+  call: get_message arguments={'path': {'message_id': 'msg-1042'}}
+
+[unsupported-delete pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Delete message msg-1042 permanently.
+  expected: no call
+  called: search_messages
+  reason: called search_messages when no tool applied
+  call: search_messages arguments={'query': {'q': 'msg-1042'}}
+
+[unsupported-forward pad=4 repeat=0] category=abstain  diagnostics=unexpected_call
+  prompt: Forward msg-1042 to sam.lee@example.invalid.
+  expected: no call
+  called: send_reply
+  reason: called send_reply when no tool applied
+  call: send_reply arguments={'path': {'message_id': 'msg-1042'}, 'body': {'mode': 'send', 'text': 'Forwarding message to Sam Lee\n\nOriginal message:\n\nSubject: Meeting Request\n\nBody: We need to discuss the Q2 sales strategy tomorrow.\n\nSent: June 6, 2023\n\nFrom: Dana Rivera\n\n---'}}
+
+[reply-body-quotes pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3001 with exactly this text between the brackets: [Please send the "final" draft by 5:00 p.m.; thanks!]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3001'}, 'body': {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'draft', 'text': 'Please send the "final" draft by 5:00 p.m.; thanks!'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3001'}, 'body': {'mode': 'draft', 'text': 'Please send the "final" draft by 5:00 p.m.; thanks!'}}
+    assertion [ok] path expected {'message_id': 'msg-3001'}, got {'message_id': 'msg-3001'}
+    assertion [FAIL] body expected {'text': 'Please send the "final" draft by 5:00 p.m.; thanks!', 'mode': 'send'}, got {'mode': 'draft', 'text': 'Please send the "final" draft by 5:00 p.m.; thanks!'}
+
+[reply-body-symbols pad=4 repeat=0] category=args  diagnostics=argument_value
+  prompt: Send a reply to msg-3002 with exactly this text between the brackets: [Hi Sam,
+Agenda: budget & hiring (50% done) <draft> 'v2' — café at 9.]
+  expected: call send_reply
+    args {'path': {'message_id': 'msg-3002'}, 'body': {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}}
+  called: send_reply
+  reason: body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+  call: send_reply arguments={'path': {'message_id': 'msg-3002'}, 'body': {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}}
+    assertion [ok] path expected {'message_id': 'msg-3002'}, got {'message_id': 'msg-3002'}
+    assertion [FAIL] body expected {'text': "Hi Sam,\nAgenda: budget & hiring (50% done) <draft> 'v2' — café at 9.", 'mode': 'send'}, got {'mode': 'draft', 'text': 'Hi Sam,\nAgenda: budget & hiring (50% done)'}
+
+[correction-search-sender pad=4 repeat=0] category=depth  diagnostics=argument_value
+  prompt: Find messages from dana.rivera@example.invalid.
+  prompt: Sorry, I meant sam.lee@example.invalid instead.
+  expected: call search_messages
+    args {'query': {'q': 'from:sam.lee@example.invalid'}}
+  called: search_messages
+  reason: query expected {'q': 'from:sam.lee@example.invalid'}, got {'q': 'from: sam.lee@example.invalid'}
+  call: search_messages arguments={'query': {'q': 'from: sam.lee@example.invalid'}}
+    assertion [FAIL] query expected {'q': 'from:sam.lee@example.invalid'}, got {'q': 'from: sam.lee@example.invalid'}

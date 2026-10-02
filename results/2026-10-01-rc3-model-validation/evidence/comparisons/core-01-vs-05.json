@@ -1,0 +1,347 @@
+{
+  "by_category": {
+    "abstain": {
+      "success_a": 0.9090909090909091,
+      "success_b": 0.22727272727272727,
+      "success_delta": -0.6818181818181818,
+      "lenient_a": 0.9090909090909091,
+      "lenient_b": 0.22727272727272727,
+      "lenient_delta": -0.6818181818181818
+    },
+    "args": {
+      "success_a": 0.7083333333333334,
+      "success_b": 0.25,
+      "success_delta": -0.45833333333333337,
+      "lenient_a": 0.7083333333333334,
+      "lenient_b": 0.5416666666666666,
+      "lenient_delta": -0.16666666666666674
+    },
+    "depth": {
+      "success_a": 0.7727272727272727,
+      "success_b": 0.5454545454545454,
+      "success_delta": -0.2272727272727273,
+      "lenient_a": 0.7727272727272727,
+      "lenient_b": 0.8181818181818182,
+      "lenient_delta": 0.045454545454545525
+    },
+    "select": {
+      "success_a": 0.9166666666666666,
+      "success_b": 0.4166666666666667,
+      "success_delta": -0.49999999999999994,
+      "lenient_a": 0.9166666666666666,
+      "lenient_b": 0.8333333333333334,
+      "lenient_delta": -0.08333333333333326
+    },
+    "sequence": {
+      "success_a": 0.7,
+      "success_b": 0.15,
+      "success_delta": -0.5499999999999999,
+      "lenient_a": 0.7,
+      "lenient_b": 0.25,
+      "lenient_delta": -0.44999999999999996
+    }
+  },
+  "regressed_tasks": [
+    "abstain-cancel-without-id",
+    "abstain-change-email-on-file",
+    "abstain-missing-identifier",
+    "abstain-policy-question",
+    "abstain-reschedule-unsupported",
+    "abstain-shipping-quote",
+    "abstain-status-no-identifier",
+    "args-boolean-from-instruction",
+    "args-dollars-to-cents",
+    "args-duration-in-words",
+    "args-filtered-search",
+    "args-full-refund-omits-amount",
+    "args-nested-address",
+    "depth-file-corrected-id",
+    "depth-file-permanent-carried-forward",
+    "depth-meeting-id-corrected",
+    "depth-notify-preference-earlier",
+    "select-address-change",
+    "select-availability-not-booking",
+    "select-cancel-with-id",
+    "select-search-not-status",
+    "sequence-availability-before-checkin",
+    "sequence-list-before-delete",
+    "sequence-list-before-share-all",
+    "sequence-search-before-move",
+    "sequence-search-before-share",
+    "sequence-status-before-conditional-escalation"
+  ],
+  "improved_tasks": [
+    "depth-file-share-after-detour",
+    "select-status-direct"
+  ],
+  "gate": {
+    "passed": false,
+    "failures": [
+      "52 previously passing case(s) regressed"
+    ],
+    "matched_cases": 100,
+    "success_delta": -0.48,
+    "regressions": [
+      {
+        "task_id": "abstain-availability-no-calendar",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-cancel-without-id",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-cancel-without-id",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-change-email-on-file",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-change-email-on-file",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-missing-identifier",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-missing-identifier",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-no-such-capability",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-policy-question",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-policy-question",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-reschedule-unsupported",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-reschedule-unsupported",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-shipping-quote",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-shipping-quote",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "abstain-status-no-identifier",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "abstain-status-no-identifier",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-boolean-from-instruction",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "args-boolean-from-instruction",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-country-name-to-iso",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-dollars-to-cents",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "args-duration-in-words",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "args-duration-in-words",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-filtered-search",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "args-filtered-search",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-full-refund-omits-amount",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "args-full-refund-omits-amount",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "args-nested-address",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "depth-file-corrected-id",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "depth-file-corrected-id",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "depth-file-permanent-carried-forward",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "depth-file-permanent-carried-forward",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "depth-meeting-id-corrected",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "depth-notify-preference-earlier",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "depth-notify-preference-earlier",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "select-address-change",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "select-address-change",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "select-availability-not-booking",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "select-availability-not-booking",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "select-cancel-with-id",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "select-cancel-with-id",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "select-search-not-status",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-availability-before-checkin",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-availability-before-checkin",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-availability-first",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-list-before-delete",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-list-before-delete",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-list-before-share-all",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-list-before-share-all",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-search-before-move",
+        "pad": 0,
+        "repeat": 1
+      },
+      {
+        "task_id": "sequence-search-before-share",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-status-before-conditional-escalation",
+        "pad": 0,
+        "repeat": 0
+      },
+      {
+        "task_id": "sequence-status-before-conditional-escalation",
+        "pad": 0,
+        "repeat": 1
+      }
+    ]
+  }
+}

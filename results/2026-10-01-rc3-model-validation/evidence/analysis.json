@@ -1,0 +1,1341 @@
+{
+  "note": "Recorded outcomes, no rescoring. Separate suites; do not combine into a model ranking.",
+  "models_unchanged": true,
+  "suites": {
+    "core": {
+      "suite_hash": "e597c986302b5596",
+      "models": [
+        {
+          "model": "qwen2.5:7b",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 79,
+          "success": 0.79,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "no_call": 1,
+            "argument_value": 13,
+            "wrong_tool": 2,
+            "schema": 3,
+            "multiple_calls": 4,
+            "unexpected_call": 2
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 79,
+              "success": 0.79,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 38,
+              "success": 0.76,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 41,
+              "success": 0.82,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "select-status-direct",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "sequence-availability-first",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "abstain-no-such-capability",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "abstain-availability-no-calendar",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "args-country-name-to-iso",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "depth-file-share-after-detour",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "sequence-search-before-refund",
+              "pad": 0,
+              "first": false,
+              "second": true
+            }
+          ],
+          "raw_sha256": "015bd4c26c9feff38bc2f96985b8163cabf4fc97bcd921e2bd5437d648d2ec87"
+        },
+        {
+          "model": "llama3.2:3b",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 31,
+          "success": 0.31,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "unexpected_call": 20,
+            "argument_value": 32,
+            "schema": 34,
+            "no_call": 7,
+            "wrong_tool": 12,
+            "multiple_calls": 2
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 31,
+              "success": 0.31,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 15,
+              "success": 0.3,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 16,
+              "success": 0.32,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "abstain-no-such-capability",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "abstain-change-email-on-file",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "select-cancel-with-id",
+              "pad": 0,
+              "first": false,
+              "second": true
+            }
+          ],
+          "raw_sha256": "adb9a3f83dc8901be7a601e4e2b22949c37c6ed3c57ef1988a5d52e11d7e9170"
+        },
+        {
+          "model": "hermes3:8b",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 55,
+          "success": 0.55,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "unexpected_call": 10,
+            "schema": 13,
+            "argument_value": 17,
+            "no_call": 4,
+            "multiple_calls": 5,
+            "wrong_tool": 9
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 55,
+              "success": 0.55,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 28,
+              "success": 0.56,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 27,
+              "success": 0.54,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "abstain-missing-identifier",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "abstain-reschedule-unsupported",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "args-escalation-urgency",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "depth-escalation-after-repeated-question",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "sequence-list-before-delete",
+              "pad": 0,
+              "first": true,
+              "second": false
+            }
+          ],
+          "raw_sha256": "0d6d90dcda4f2ea70e97736a5ecfcd53cd4322dcda65fd403e2c21ddb6b7ffd8"
+        },
+        {
+          "model": "granite3.3:8b",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 51,
+          "success": 0.51,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "unexpected_call": 12,
+            "argument_value": 11,
+            "schema": 7,
+            "no_call": 18,
+            "multiple_calls": 7,
+            "wrong_tool": 3
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 51,
+              "success": 0.51,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 24,
+              "success": 0.48,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 27,
+              "success": 0.54,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "args-nested-address",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "args-dollars-to-cents",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "args-filtered-search",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "select-availability-not-booking",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "sequence-address-before-status",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "depth-file-permanent-carried-forward",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "depth-file-move-after-distraction",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "depth-escalation-after-repeated-question",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "sequence-search-before-move",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "sequence-search-before-share",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "sequence-status-before-conditional-escalation",
+              "pad": 0,
+              "first": true,
+              "second": false
+            }
+          ],
+          "raw_sha256": "0e81169c38a59ac2394ab7ec8238cc71b19122b0b4f47aadea8eb6c06103b052"
+        },
+        {
+          "model": "llama3.1:8b",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 31,
+          "success": 0.31,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "schema": 43,
+            "unexpected_call": 17,
+            "argument_value": 34,
+            "wrong_tool": 8,
+            "no_call": 5,
+            "multiple_calls": 5
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 31,
+              "success": 0.31,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 15,
+              "success": 0.3,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 16,
+              "success": 0.32,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "select-search-not-status",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "args-nested-address",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "abstain-no-such-capability",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "args-dollars-to-cents",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "depth-meeting-id-corrected",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "depth-refund-amount-after-clarification",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "sequence-search-before-move",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "sequence-search-before-share",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "sequence-search-before-refund",
+              "pad": 0,
+              "first": false,
+              "second": true
+            }
+          ],
+          "raw_sha256": "2f6435e35167bc6562cfdae9bd474c22b8feae9923fea4109638dc5a07df744a"
+        },
+        {
+          "model": "mistral-nemo:latest",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 60,
+          "success": 0.6,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "no_call": 15,
+            "wrong_tool": 6,
+            "argument_value": 11,
+            "unexpected_call": 10,
+            "multiple_calls": 4
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 60,
+              "success": 0.6,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 29,
+              "success": 0.58,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 31,
+              "success": 0.62,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "select-escalate-explicit",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "abstain-change-email-on-file",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "abstain-shipping-quote",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "args-country-name-to-iso",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "args-filtered-search",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "args-escalation-urgency",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "sequence-search-before-move",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "sequence-list-before-delete",
+              "pad": 0,
+              "first": false,
+              "second": true
+            }
+          ],
+          "raw_sha256": "912ea593ec1d7f5d07fdabc78cbc5cfa7fe68a8009e234ab51ad87c936612e0c"
+        },
+        {
+          "model": "command-r7b:latest",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 22,
+          "success": 0.22,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "no_call": 78
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 22,
+              "success": 0.22,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 11,
+              "success": 0.22,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 11,
+              "success": 0.22,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [],
+          "raw_sha256": "e34460f13f44c892765ed0dae58f77d8cbd2d94b51f2fcd90bdd7af1e034cc99"
+        },
+        {
+          "model": "phi4-mini:latest",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 22,
+          "success": 0.22,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "schema": 5,
+            "argument_value": 5,
+            "no_call": 72,
+            "unexpected_call": 1
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 22,
+              "success": 0.22,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 11,
+              "success": 0.22,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 11,
+              "success": 0.22,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "select-search-not-status",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "abstain-no-such-capability",
+              "pad": 0,
+              "first": false,
+              "second": true
+            }
+          ],
+          "raw_sha256": "ddd5632b66afa9081338644f7a0e7e5f98bb5ae34f4f2cd031cbf43287bddc91"
+        },
+        {
+          "model": "qwen3:8b",
+          "status": "ok",
+          "planned": 100,
+          "recorded": 100,
+          "scored": 100,
+          "passed": 85,
+          "success": 0.85,
+          "errors": 0,
+          "truncated": 1,
+          "failure_patterns": {
+            "argument_value": 8,
+            "unexpected_call": 2,
+            "multiple_calls": 3,
+            "wrong_tool": 1,
+            "no_call": 2,
+            "truncated": 1
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 100,
+              "scored": 100,
+              "passed": 85,
+              "success": 0.85,
+              "errors": 0,
+              "truncated": 1
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 42,
+              "success": 0.84,
+              "errors": 0,
+              "truncated": 0
+            },
+            "1": {
+              "recorded": 50,
+              "scored": 50,
+              "passed": 43,
+              "success": 0.86,
+              "errors": 0,
+              "truncated": 1
+            }
+          },
+          "repeat_pairs": 50,
+          "repeat_disagreements": [
+            {
+              "task_id": "args-country-name-to-iso",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "select-address-change",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "depth-reason-stated-earlier",
+              "pad": 0,
+              "first": false,
+              "second": true
+            },
+            {
+              "task_id": "depth-file-move-after-distraction",
+              "pad": 0,
+              "first": true,
+              "second": false
+            },
+            {
+              "task_id": "sequence-list-before-delete",
+              "pad": 0,
+              "first": false,
+              "second": true
+            }
+          ],
+          "raw_sha256": "163838490f9b0f57fb79c6841af968678eb810ef4d58004d60f4bdf67feaeef6"
+        }
+      ]
+    },
+    "mail": {
+      "suite_hash": "2e82c882d93ca06a",
+      "models": [
+        {
+          "model": "qwen2.5:7b",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 18,
+          "success": 0.3333333333333333,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "schema": 30,
+            "argument_value": 30,
+            "unexpected_call": 6
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 4,
+              "success": 0.2222222222222222,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 7,
+              "success": 0.3888888888888889,
+              "errors": 0,
+              "truncated": 0
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 7,
+              "success": 0.3888888888888889,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 18,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "0c3ce5395f8d66ccc2cd671f5dfce0a7878150a247329268adbf0a4d6441e035"
+        },
+        {
+          "model": "llama3.2:3b",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 20,
+          "success": 0.37037037037037035,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "schema": 7,
+            "argument_value": 17,
+            "unexpected_call": 15,
+            "no_call": 2
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 5,
+              "success": 0.2777777777777778,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 7,
+              "success": 0.3888888888888889,
+              "errors": 0,
+              "truncated": 0
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 8,
+              "success": 0.4444444444444444,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 20,
+              "success": 0.37037037037037035,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "b147f2815125b8fc457e344127d640c45aad044904eb6e720ec14b4f2b304e78"
+        },
+        {
+          "model": "hermes3:8b",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 13,
+          "success": 0.24074074074074073,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "schema": 30,
+            "argument_value": 30,
+            "unexpected_call": 6,
+            "no_call": 5
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 5,
+              "success": 0.2777777777777778,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 4,
+              "success": 0.2222222222222222,
+              "errors": 0,
+              "truncated": 0
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 4,
+              "success": 0.2222222222222222,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 13,
+              "success": 0.24074074074074073,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "51ce38434f4f6ac8c58f0c0797a1b1cd17842175a784441772dc085204af7cf1"
+        },
+        {
+          "model": "granite3.3:8b",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 28,
+          "success": 0.5185185185185185,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "argument_value": 7,
+            "unexpected_call": 12,
+            "schema": 3,
+            "no_call": 7
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 9,
+              "success": 0.5,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 8,
+              "success": 0.4444444444444444,
+              "errors": 0,
+              "truncated": 0
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 11,
+              "success": 0.6111111111111112,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 28,
+              "success": 0.5185185185185185,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "96466534b71b5dbe375363f4d526c4fc12cafe7f1f49689e11fe63eccb8fbc89"
+        },
+        {
+          "model": "llama3.1:8b",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 18,
+          "success": 0.3333333333333333,
+          "errors": 0,
+          "truncated": 1,
+          "failure_patterns": {
+            "argument_value": 16,
+            "schema": 9,
+            "unexpected_call": 17,
+            "no_call": 3,
+            "truncated": 1
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 5,
+              "success": 0.2777777777777778,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 5,
+              "success": 0.2777777777777778,
+              "errors": 0,
+              "truncated": 1
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 8,
+              "success": 0.4444444444444444,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 18,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 1
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "fdbe1dcf9e55de8ad68f43569ded29b962fd2bdb1fde55545e784693f73c1d18"
+        },
+        {
+          "model": "mistral-nemo:latest",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 28,
+          "success": 0.5185185185185185,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "unexpected_call": 12,
+            "argument_value": 12,
+            "no_call": 1,
+            "wrong_tool": 2,
+            "multiple_calls": 1
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 12,
+              "success": 0.6666666666666666,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 8,
+              "success": 0.4444444444444444,
+              "errors": 0,
+              "truncated": 0
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 8,
+              "success": 0.4444444444444444,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 28,
+              "success": 0.5185185185185185,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "d3a4e12224764ab7cf7231ed9f5baf65778acd01e45de50ac33fc191037ec334"
+        },
+        {
+          "model": "command-r7b:latest",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 18,
+          "success": 0.3333333333333333,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "no_call": 36
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 6,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 6,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 0
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 6,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 18,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "e436f1ae6b16565799306daf5f6b425d01c18a39daef5197a85e4a14426f9f87"
+        },
+        {
+          "model": "phi4-mini:latest",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 17,
+          "success": 0.3148148148148148,
+          "errors": 0,
+          "truncated": 5,
+          "failure_patterns": {
+            "no_call": 32,
+            "schema": 3,
+            "argument_value": 3,
+            "truncated": 5
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 6,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 5,
+              "success": 0.2777777777777778,
+              "errors": 0,
+              "truncated": 2
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 6,
+              "success": 0.3333333333333333,
+              "errors": 0,
+              "truncated": 3
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 17,
+              "success": 0.3148148148148148,
+              "errors": 0,
+              "truncated": 5
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "e72bc10fb74f19f9f127c8794902679a18b33309a405171061536e03baf92864"
+        },
+        {
+          "model": "qwen3:8b",
+          "status": "ok",
+          "planned": 54,
+          "recorded": 54,
+          "scored": 54,
+          "passed": 35,
+          "success": 0.6481481481481481,
+          "errors": 0,
+          "truncated": 0,
+          "failure_patterns": {
+            "schema": 15,
+            "argument_value": 18,
+            "unexpected_call": 1
+          },
+          "by_pad": {
+            "0": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 9,
+              "success": 0.5,
+              "errors": 0,
+              "truncated": 0
+            },
+            "2": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 14,
+              "success": 0.7777777777777778,
+              "errors": 0,
+              "truncated": 0
+            },
+            "4": {
+              "recorded": 18,
+              "scored": 18,
+              "passed": 12,
+              "success": 0.6666666666666666,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "by_repeat": {
+            "0": {
+              "recorded": 54,
+              "scored": 54,
+              "passed": 35,
+              "success": 0.6481481481481481,
+              "errors": 0,
+              "truncated": 0
+            }
+          },
+          "repeat_pairs": 0,
+          "repeat_disagreements": [],
+          "raw_sha256": "ed90dedd3c0c95fdbc9dfdd2c8e65254896c0bf393f1182018d8bfbad6cce1cb"
+        }
+      ]
+    }
+  },
+  "junit_checks": [
+    {
+      "file": "core/01-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/02-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/03-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/04-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/05-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/06-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/07-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/08-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "core/09-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/01-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/02-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/03-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/04-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/05-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/06-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/07-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/08-junit.xml",
+      "passed": true
+    },
+    {
+      "file": "mail/09-junit.xml",
+      "passed": true
+    }
+  ]
+}

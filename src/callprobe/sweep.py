@@ -20,6 +20,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -84,13 +85,23 @@ class Sweep:
             "note": NOTE, "dry_run": args.dry_run, "endpoint": args.endpoint,
             "suite": self.suite, "pad": args.pad, "repeats": args.repeats,
             "max_tokens": args.max_tokens, "timeout_seconds": args.timeout,
-            "request_timeout_seconds": args.request_timeout,
+            "request_timeout_seconds": args.request_timeout, "junit": args.junit,
             "total_planned_requests": None, "models": [], "leaderboard": None,
             "failed": False, "status": "running",
         }
 
     def save(self) -> None:
-        (self.out / "manifest.json").write_text(json.dumps(self.manifest, indent=2) + "\n")
+        # Readers and interrupted writes must retain the last complete manifest.
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=self.out,
+                                             prefix=".manifest.", delete=False) as handle:
+                temporary = Path(handle.name)
+                handle.write(json.dumps(self.manifest, indent=2) + "\n")
+            temporary.replace(self.out / "manifest.json")
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
 
     def fail(self, entry: dict) -> None:
         entry["status"] = "failed"
@@ -175,8 +186,30 @@ class Sweep:
                               self.cli("explain", result.name, f"--suite={self.suite}"))
             elif proc is not None:
                 self.fail(entry)
+            if self.args.junit and result.is_file():
+                self.export_junit(entry)
             print(f"{entry['slot']}: {entry['status']}", flush=True)
             self.save()
+
+    def export_junit(self, entry: dict) -> None:
+        """Export per-model JUnit XML from the raw results file. Never calls the model.
+
+        Runs even for failed/timeout runs that still produced a partial file.
+        Records ``junit_file`` only after the child command returns zero and the
+        expected output exists; a missing file is a failure. Raw results are
+        preserved in all cases.
+        """
+        junit_name = f"{entry['slot']}-junit.xml"
+        proc = self.step(entry, "report",
+                         self.cli("report", entry["raw_result_file"], "--format=junit", f"--out={junit_name}"))
+        if proc is None:
+            return
+        if (self.out / junit_name).is_file():
+            entry["junit_file"] = junit_name
+        else:
+            entry["steps"][-1]["status"] = "missing-file"
+            self.fail(entry)
+        self.save()
 
     def leaderboard(self) -> None:
         ok = [e for e in self.manifest["models"] if e.get("result_file")]
@@ -232,6 +265,10 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
         help="HTTP operation timeout in seconds (positive finite float, default 120); "
              "forwarded to each child `callprobe run`",
     )
+    p.add_argument("--junit", action="store_true",
+                   help="also export per-model JUnit XML by invoking the child CLI's `report` "
+                        "command on each raw result (including partial files); never makes extra "
+                        "model calls and no exports happen under --dry-run")
     p.add_argument("--dry-run", dest="dry_run", action="store_true", help="plan only")
 
 

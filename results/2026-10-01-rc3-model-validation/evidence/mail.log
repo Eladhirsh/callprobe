@@ -1,0 +1,20 @@
+planned requests: 486 across 9 model(s)
+01: running qwen2.5:7b
+01: ok
+02: running llama3.2:3b
+02: ok
+03: running hermes3:8b
+03: ok
+04: running granite3.3:8b
+04: ok
+05: running llama3.1:8b
+05: ok
+06: running mistral-nemo:latest
+06: ok
+07: running command-r7b:latest
+07: ok
+08: running phi4-mini:latest
+08: ok
+09: running qwen3:8b
+09: ok
+Small-sample results: this leaderboard does not establish a robust model ranking. Scores are as the CLI reported them, with no repair.

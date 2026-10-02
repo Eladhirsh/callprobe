@@ -173,3 +173,50 @@ def test_public_sweep_exercises_two_models_through_the_real_cli(tmp_path):
               for entry in manifest["models"]]
     assert scores == [18, 14]
     assert "18/18/18" in (out / "leaderboard.md").read_text()
+
+
+def test_sweep_junit_uses_real_cli_without_extra_model_requests(tmp_path):
+    import xml.etree.ElementTree as ET
+    from callprobe.sweep import main as sweep_main
+
+    tasks = yaml.safe_load((agent.FIXTURES / 'tasks.yaml').read_text())['tasks']
+    from callprobe.cli import main as cli_main
+    suite = tmp_path / 'suite'
+    assert cli_main(['init', '--example', 'mail-sandbox', '--out', str(suite)]) == 0
+    out = tmp_path / 'sweep'
+    with agent.ScriptedServer(tasks) as server:
+        code = sweep_main(['--models', 'synthetic-baseline', 'synthetic-candidate',
+                           '--suite', str(suite), '--endpoint', server.endpoint,
+                           '--out', str(out), '--junit'])
+        assert code == 0
+        assert server.accepted == 36 and server.rejected == 0
+    manifest = json.loads((out / 'manifest.json').read_text())
+    for entry, expected_failures in zip(manifest['models'], [0, 4]):
+        tree = ET.parse(out / entry['junit_file'])
+        assert len(tree.findall('.//testcase')) == 18
+        assert len(tree.findall('.//failure')) == expected_failures
+        assert not tree.findall('.//error')
+        assert entry['status'] == 'ok'
+
+
+def test_sweep_junit_preserves_all_request_error_results(tmp_path):
+    import xml.etree.ElementTree as ET
+    from callprobe.sweep import main as sweep_main
+
+    tasks = yaml.safe_load((agent.FIXTURES / 'tasks.yaml').read_text())['tasks']
+    from callprobe.cli import main as cli_main
+    suite = tmp_path / 'suite'
+    assert cli_main(['init', '--example', 'mail-sandbox', '--out', str(suite)]) == 0
+    out = tmp_path / 'errors'
+    with agent.ScriptedServer(tasks) as server:
+        code = sweep_main(['--models', 'unavailable-model', '--suite', str(suite),
+                           '--endpoint', server.endpoint, '--out', str(out), '--junit'])
+        assert code == 1
+        assert server.accepted == 0 and server.rejected == 18
+    manifest = json.loads((out / 'manifest.json').read_text())
+    entry = manifest['models'][0]
+    assert entry['status'] == 'failed' and 'result_file' not in entry
+    assert (out / entry['raw_result_file']).is_file()
+    tree = ET.parse(out / entry['junit_file'])
+    assert len(tree.findall('.//error')) == 18
+    assert not tree.findall('.//failure')

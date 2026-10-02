@@ -1,0 +1,164 @@
+[
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "qwen2.5:7b",
+    "gate_passed": true,
+    "matched_cases": 100,
+    "regressions": 0,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "llama3.2:3b",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 52,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "hermes3:8b",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 29,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "granite3.3:8b",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 32,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "llama3.1:8b",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 52,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "mistral-nemo:latest",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 25,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "command-r7b:latest",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 59,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "phi4-mini:latest",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 59,
+    "report_verified": true
+  },
+  {
+    "suite": "core",
+    "baseline": "qwen2.5:7b",
+    "candidate": "qwen3:8b",
+    "gate_passed": false,
+    "matched_cases": 100,
+    "regressions": 5,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "qwen2.5:7b",
+    "gate_passed": true,
+    "matched_cases": 54,
+    "regressions": 0,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "llama3.2:3b",
+    "gate_passed": false,
+    "matched_cases": 54,
+    "regressions": 11,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "hermes3:8b",
+    "gate_passed": false,
+    "matched_cases": 54,
+    "regressions": 11,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "granite3.3:8b",
+    "gate_passed": false,
+    "matched_cases": 54,
+    "regressions": 11,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "llama3.1:8b",
+    "gate_passed": false,
+    "matched_cases": 54,
+    "regressions": 13,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "mistral-nemo:latest",
+    "gate_passed": false,
+    "matched_cases": 54,
+    "regressions": 10,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "command-r7b:latest",
+    "gate_passed": false,
+    "matched_cases": 54,
+    "regressions": 6,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "phi4-mini:latest",
+    "gate_passed": false,
+    "matched_cases": 54,
+    "regressions": 6,
+    "report_verified": true
+  },
+  {
+    "suite": "mail",
+    "baseline": "qwen2.5:7b",
+    "candidate": "qwen3:8b",
+    "gate_passed": true,
+    "matched_cases": 54,
+    "regressions": 0,
+    "report_verified": true
+  }
+]
