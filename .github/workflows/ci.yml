@@ -80,6 +80,28 @@ jobs:
             echo "expected the offline demo's --fail-on-regression gate to exit 1 (its two recorded regressions), got $demo_gate_exit"
             exit 1
           fi
+      - name: exercise installed recorded-completion API
+        working-directory: /tmp
+        run: |
+          /tmp/callprobe-wheel-env/bin/python - <<'PYTHON'
+          from pathlib import Path
+          from callprobe.client import Completion
+          from callprobe.loader import load_suite
+          from callprobe.models import Call, RunConfig
+          from callprobe.recordings import RecordedCompletion, score_recordings
+          from callprobe.report import summarize
+          suite = load_suite(Path("/tmp/callprobe-support-example"))
+          config = RunConfig(model="synthetic-recording", endpoint="recorded://local",
+                             suite="support", pads=[0], repeats=1, temperature=0, max_tokens=4096)
+          record = RecordedCompletion("status-by-id", Completion(calls=[Call(
+              name="get_order", arguments={"path": {"order_id": "ORD-448120"}},
+          )]))
+          run = score_recordings(suite, config, [record])
+          assert run.results[0].success
+          assert summarize(run)["coverage"] == "1/1/6 INCOMPLETE (5 missing)"
+          Path("/tmp/callprobe-recorded-results.json").write_text(run.model_dump_json())
+          PYTHON
+          /tmp/callprobe-wheel-env/bin/callprobe report /tmp/callprobe-recorded-results.json --format text
       - name: exercise installed offline contract comparison
         working-directory: /tmp
         run: |
