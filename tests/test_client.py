@@ -300,3 +300,80 @@ def test_invalid_text_does_not_retry_or_leak_and_next_response_succeeds():
         assert len(requests) == 2
     finally:
         client.close()
+
+
+@pytest.mark.parametrize('field', ['prompt_tokens', 'completion_tokens'])
+@pytest.mark.parametrize('value', [-1, -0.25, 1.5, True, False, [], {}, '', ' ',
+                                   '-2', '1.5', 'PRIVATE_BAD_COUNT',
+                                   float('nan'), float('inf'), float('-inf')])
+def test_invalid_token_counts_raise_without_echoing_values(field, value):
+    from callprobe.client import parse_completion
+    body = {'choices': [{'message': {'content': 'PRIVATE_RESPONSE'}}], 'usage': {field: value}}
+    with pytest.raises(ValueError, match='token counts must be nonnegative integers') as caught:
+        parse_completion(body, 0)
+    assert 'PRIVATE' not in str(caught.value)
+
+
+@pytest.mark.parametrize('field', ['prompt_tokens', 'completion_tokens'])
+@pytest.mark.parametrize('value,expected', [(None, 0), (0, 0), (7, 7), ('7', 7),
+                                            (' 7 ', 7), (7.0, 7), (0.0, 0)])
+def test_lossless_provider_token_representations_remain_compatible(field, value, expected):
+    import copy
+    from callprobe.client import parse_completion
+    body = {'choices': [{'message': {'content': 'response', 'tool_calls': [{
+        'id': 'call-1', 'function': {'name': 'lookup', 'arguments': '{"id":7}'},
+    }]}, 'finish_reason': 'tool_calls'}], 'usage': {field: value}}
+    before = copy.deepcopy(body)
+    completion = parse_completion(body, 12.5)
+    assert getattr(completion, field) == expected
+    assert completion.calls[0].arguments == {'id': 7}
+    assert completion.calls[0].raw_arguments == '{"id":7}'
+    assert completion.content == 'response' and completion.finish_reason == 'tool_calls'
+    assert completion.latency_ms == 12.5 and completion.raw == before and body == before
+
+
+@pytest.mark.parametrize('usage', [None, {}, {'prompt_tokens': None, 'completion_tokens': None}])
+def test_unknown_usage_still_defaults_to_zero(usage):
+    from callprobe.client import parse_completion
+    body = {'choices': [{'message': {}}], 'usage': usage}
+    completion = parse_completion(body, 0)
+    assert completion.prompt_tokens == completion.completion_tokens == 0
+    del body['usage']
+    completion = parse_completion(body, 0)
+    assert completion.prompt_tokens == completion.completion_tokens == 0
+
+
+@pytest.mark.parametrize('field', ['prompt_tokens', 'completion_tokens'])
+@pytest.mark.parametrize('value', [-5, 1.5, True, 'PRIVATE_BAD_COUNT'])
+def test_bad_usage_does_not_corrupt_cost_or_retry_and_next_request_works(field, value):
+    from callprobe.models import Bundle, Expectation, Run, RunConfig, Task
+    from callprobe.report import summarize
+    from callprobe.scoring import score
+    responses = iter([
+        {'choices': [{'message': {'content': 'PRIVATE_RESPONSE'}}], 'usage': {field: value}},
+        OK_BODY,
+    ])
+    seen = []
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json=next(responses))
+    client = _client(handler)
+    try:
+        completions = [client.complete('m', [], []), client.complete('m', [], [])]
+    finally:
+        client.close()
+    assert completions[0].error.startswith('invalid chat completion response')
+    assert 'PRIVATE' not in completions[0].error
+    assert completions[1].error is None and len(seen) == 2
+    results = []
+    for index, completion in enumerate(completions):
+        task = Task(id=str(index), category='abstain', bundle='b', messages=[],
+                    expect=Expectation(type='no_call'))
+        results.append(score(task, Bundle(name='b', tools=[]), completion, model='m', pad=0, repeat=0))
+    run = Run(config=RunConfig(model='m', endpoint='http://fake', suite='stub',
+                              pads=[0], repeats=1, temperature=0, max_tokens=20),
+              started_at='now', results=results)
+    summary = summarize(run)
+    assert summary['n'] == summary['errors'] == 1
+    assert summary['cost']['total_tokens'] == summary['cost']['tokens_per_success'] == 2
+    assert summary['overall']['success'] == 1.0

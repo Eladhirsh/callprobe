@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Reject invalid provider token counts instead of rounding fractions, accepting
+  negatives, or treating booleans/containers as usage. Valid integer strings
+  and integral floats remain supported; absent or null usage still defaults to
+  zero. Malformed usage becomes a request error, never a corrupted cost total.
+
 - Let `doctor --config FILE` use the same model, endpoint, and suite defaults as
   `run`, with CLI overrides and config-relative suite paths. Diagnostics remain
   read-only, use their own short timeout, and ignore run output settings.

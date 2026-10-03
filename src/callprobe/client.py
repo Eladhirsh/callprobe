@@ -166,6 +166,23 @@ class ChatClient:
         raise AssertionError("unreachable: loop always returns or retries")
 
 
+def _token_count(value: Any) -> int:
+    """Keep compatible integer representations without truncation or coercing flags."""
+    if value is None:
+        return 0
+    if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+        raise ValueError("token counts must be nonnegative integers")
+    if isinstance(value, float) and (not math.isfinite(value) or not value.is_integer()):
+        raise ValueError("token counts must be nonnegative integers")
+    try:
+        count = int(value)
+    except (ValueError, OverflowError):
+        raise ValueError("token counts must be nonnegative integers") from None
+    if count < 0:
+        raise ValueError("token counts must be nonnegative integers")
+    return count
+
+
 def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
     """Turn a chat completion body into calls, tolerating provider quirks."""
     if not isinstance(body, dict):
@@ -235,8 +252,8 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
     return Completion(
         calls=calls,
         content=message.get("content") or "",
-        prompt_tokens=int(usage.get("prompt_tokens") or 0),
-        completion_tokens=int(usage.get("completion_tokens") or 0),
+        prompt_tokens=_token_count(usage.get("prompt_tokens")),
+        completion_tokens=_token_count(usage.get("completion_tokens")),
         latency_ms=latency_ms,
         finish_reason=finish_reason,
         reasoning=reasoning,
