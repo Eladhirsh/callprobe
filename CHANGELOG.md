@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Support `python -m callprobe` for all CLI commands, using the selected Python
+  environment even when the console script is not on `PATH`. Command output and
+  exit codes match the `callprobe` executable.
+
 - Reject invalid provider token counts instead of rounding fractions, accepting
   negatives, or treating booleans/containers as usage. Valid integer strings
   and integral floats remain supported; absent or null usage still defaults to

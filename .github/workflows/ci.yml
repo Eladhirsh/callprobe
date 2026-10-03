@@ -42,6 +42,8 @@ jobs:
         working-directory: /tmp
         run: |
           /tmp/callprobe-wheel-env/bin/callprobe --version
+          /tmp/callprobe-wheel-env/bin/python -m callprobe --version
+          /tmp/callprobe-wheel-env/bin/python -m callprobe --help
           /tmp/callprobe-wheel-env/bin/callprobe validate
           /tmp/callprobe-wheel-env/bin/callprobe examples
           /tmp/callprobe-wheel-env/bin/callprobe init --example support --out /tmp/callprobe-support-example
@@ -72,7 +74,7 @@ jobs:
           /tmp/callprobe-wheel-env/bin/callprobe explain /tmp/callprobe-offline-demo/candidate.json \
             --suite /tmp/callprobe-offline-demo/github-issues-suite --task comment-body-punctuation
           set +e
-          /tmp/callprobe-wheel-env/bin/callprobe compare /tmp/callprobe-offline-demo/baseline.json \
+          /tmp/callprobe-wheel-env/bin/python -m callprobe compare /tmp/callprobe-offline-demo/baseline.json \
             /tmp/callprobe-offline-demo/candidate.json --fail-on-regression
           demo_gate_exit=$?
           set -e
