@@ -23,7 +23,18 @@ Alternatively, use `python -m pip install --upgrade callprobe==0.9.0rc2`.
 before reusing baselines.
 
 This checkout is the unpublished `0.9.0rc3.dev0`; use `uv tool install . --force`
-to test development features.
+to test development features. This checkout also supports `python -m callprobe`
+wherever the instructions use `callprobe`. For a virtual environment installation,
+use the same interpreter for installation and execution:
+
+```bash
+python -m pip install .
+python -m callprobe --version
+python -m callprobe examples
+```
+
+This avoids relying on the environment's scripts directory being on `PATH`.
+The module entry point is new in this checkout and is not available in rc2.
 
 ## Try it
 
