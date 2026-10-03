@@ -216,3 +216,102 @@ def test_real_http_discovery_and_metadata_never_generate_or_forward_auth_to_root
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+
+@pytest.fixture
+def config_discovery(monkeypatch):
+    calls = []
+    def endpoint(url, model, **kwargs):
+        calls.append((url, model, kwargs))
+        return {'checks': [{'name': 'models', 'status': 'pass', 'message': 'listed'}],
+                'server': {'name': None, 'version': None}, 'model_listed': True,
+                'generation_tested': False}
+    def forbidden(*args, **kwargs):
+        pytest.fail('doctor must not generate or write run results')
+    monkeypatch.setattr(cli, 'check_endpoint', endpoint)
+    monkeypatch.setattr(cli, 'ChatClient', forbidden)
+    monkeypatch.setattr(cli, '_write_run', forbidden)
+    return calls
+
+
+def test_config_relative_suite_and_output_are_independent_of_cwd(tmp_path, monkeypatch, capsys, config_discovery):
+    folder = tmp_path / 'config'
+    folder.mkdir()
+    suite = folder / 'suite'
+    assert cli.main(['init', '--example', 'support', '--out', str(suite)]) == 0
+    capsys.readouterr()
+    output = folder / 'existing.json'
+    output.write_text('preserve me')
+    config = folder / 'run.yaml'
+    config.write_text('model: configured\nendpoint: https://example.test/prefix/v1\nsuite: suite\nout: existing.json\nrequest_timeout: 1200\nretries: 99\n')
+    before = config.read_bytes()
+    monkeypatch.chdir(tmp_path)
+    assert cli.main(['doctor', '--config', str(config), '--format', 'json']) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert '6 tasks' in report['checks'][0]['message']
+    assert report['generation_tested'] is False
+    assert config_discovery[0][:2] == ('https://example.test/prefix/v1', 'configured')
+    assert config_discovery[0][2]['timeout'] == 5.0
+    assert output.read_text() == 'preserve me' and config.read_bytes() == before
+
+
+def test_explicit_discovery_flags_override_file_and_cli_suite_uses_cwd(tmp_path, monkeypatch, capsys, config_discovery):
+    folder = tmp_path / 'config'
+    folder.mkdir()
+    config = folder / 'run.yaml'
+    config.write_text('model: configured\nendpoint: https://example.test/v1\nsuite: missing\n')
+    assert cli.main(['init', '--example', 'support', '--out', str(tmp_path / 'cli-suite')]) == 0
+    capsys.readouterr()
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv('API_KEY', 'env-value')
+    assert cli.main(['doctor', '--config', str(config), '--model', 'explicit',
+                     '--endpoint', 'http://localhost:7777/v1', '--suite', 'cli-suite',
+                     '--timeout', '0.25', '--api-key', 'explicit-key', '--format', 'json']) == 0
+    assert config_discovery == [('http://localhost:7777/v1', 'explicit',
+                                {'api_key': 'explicit-key', 'timeout': 0.25})]
+    output = capsys.readouterr().out
+    assert '6 tasks' in output and 'explicit-key' not in output
+
+
+def test_config_missing_discovery_fields_uses_defaults(tmp_path, capsys, config_discovery):
+    config = tmp_path / 'run.yaml'
+    config.write_text('model: configured\nout: never-created.json\n')
+    assert cli.main(['doctor', '--config', str(config), '--format', 'json']) == 0
+    assert '50 tasks' in capsys.readouterr().out
+    assert config_discovery[0][:2] == (cli.RUN_DEFAULTS['endpoint'], 'configured')
+    assert not (tmp_path / 'never-created.json').exists()
+
+
+@pytest.mark.parametrize('text', [
+    'model: first\nmodel: second\n',
+    'model: configured\napi_key: PRIVATE_KEY\n',
+    'model: configured\nunknown: PRIVATE_VALUE\n',
+    'model: configured\nrepeats: false\n',
+    'model: configured\nrequest_timeout: 0\n',
+    'model: [PRIVATE_MODEL]\n',
+])
+def test_bad_config_rejected_before_network_even_with_overrides(tmp_path, capsys, config_discovery, text):
+    config = tmp_path / 'bad.yaml'
+    config.write_text(text)
+    assert cli.main(['doctor', '--config', str(config), '--model', 'override']) == 2
+    assert not config_discovery
+    assert 'PRIVATE' not in capsys.readouterr().err
+
+
+def test_missing_model_and_missing_config_stop_before_network(tmp_path, capsys, config_discovery):
+    config = tmp_path / 'run.yaml'
+    config.write_text('repeats: 2\n')
+    assert cli.main(['doctor', '--config', str(config)]) == 2
+    assert '--model is required' in capsys.readouterr().err
+    assert cli.main(['doctor']) == 2
+    assert '--model is required' in capsys.readouterr().err
+    assert cli.main(['doctor', '--config', str(tmp_path / 'missing'), '--model', 'm']) == 2
+    assert not config_discovery
+
+
+def test_explicit_blank_model_does_not_fall_back_to_config(tmp_path, capsys, config_discovery):
+    config = tmp_path / 'run.yaml'
+    config.write_text('model: configured\n')
+    assert cli.main(['doctor', '--config', str(config), '--model', ' ']) == 2
+    assert 'model must not be blank' in capsys.readouterr().err
+    assert not config_discovery

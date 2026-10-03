@@ -75,6 +75,7 @@ starting a benchmark:
 ```bash
 callprobe doctor --model qwen2.5:7b --suite callprobe-demo
 callprobe doctor --model your-model --endpoint http://localhost:8080/v1 --format json
+callprobe doctor --config callprobe.yaml --format json
 ```
 
 `doctor` validates the suite locally, then uses `GET /models` to check endpoint
@@ -92,9 +93,16 @@ Exit codes are `0` for completed checks (possibly with warnings), `1` for endpoi
 failures, and `2` for invalid local input or suites. JSON includes `status`,
 individual `checks`, `model_listed`, and `generation_tested: false`.
 
-Pass the endpoint/model/suite explicitly; `doctor` does not load `--config`.
-Use `run --config FILE --dry-run` to validate experiment settings and preview
-coverage without endpoint access.
+`doctor --config FILE` reads the same explicit YAML file as `run`. It uses the
+file's model, endpoint, and suite defaults; explicit CLI flags take precedence.
+A suite path from the file resolves relative to that file, while a CLI suite
+path resolves relative to the current directory. The whole file must be valid,
+including settings that doctor does not use. Credentials remain outside the file.
+
+Run-only settings such as `out`, retries, padding, and `request_timeout` do not
+change doctor's behavior or cause writes. Its discovery timeout remains 5 seconds
+unless `--timeout` is supplied. Use `run --config FILE --dry-run` to validate the
+planned experiment and preview coverage without endpoint access.
 
 ### Try the workflow offline (0.9.0rc1)
 

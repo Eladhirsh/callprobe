@@ -700,11 +700,27 @@ def _leaderboard(args: argparse.Namespace) -> int:
 
 
 def _doctor(args: argparse.Namespace) -> int:
-    # Validate local input before any endpoint access.
-    validate_endpoint(args.endpoint, args.timeout)
-    if not args.model.strip():
+    # Load the same explicit config as run, but use only discovery settings.
+    settings = {'model': None, 'endpoint': RUN_DEFAULTS['endpoint'], 'suite': DEFAULT_SUITE}
+    if args.config:
+        file_config, config_dir = load_run_config(args.config)
+        for field in settings:
+            value = getattr(file_config, field)
+            if value is not None:
+                settings[field] = str(config_dir / value) if field == 'suite' else value
+    for field in settings:
+        value = getattr(args, field)
+        if value is not None:
+            settings[field] = value
+    model, endpoint = settings['model'], settings['endpoint']
+    if model is None:
+        raise ValueError('--model is required: pass --model or set model in --config')
+    if not model.strip():
         raise ValueError('model must not be blank')
-    suite, _ = _resolve_suite(args.suite)
+    # Validate local input before any endpoint access. Run timeout/output and
+    # other generation settings never affect doctor's read-only behavior.
+    validate_endpoint(endpoint, args.timeout)
+    suite, _ = _resolve_suite(settings['suite'])
     problems = validate_suite(suite)
     if not suite.tasks:
         problems.append('suite contains no active tasks')
@@ -717,7 +733,7 @@ def _doctor(args: argparse.Namespace) -> int:
         code = 2
     else:
         api_key = args.api_key or os.getenv('API_KEY') or os.getenv('OPENAI_API_KEY')
-        report = check_endpoint(args.endpoint, args.model, api_key=api_key, timeout=args.timeout)
+        report = check_endpoint(endpoint, model, api_key=api_key, timeout=args.timeout)
         report['checks'].insert(0, suite_check)
         code = int(any(check['status'] == 'fail' for check in report['checks']))
     report['status'] = ('fail' if code else 'warning' if any(
@@ -805,8 +821,9 @@ def main(argv: list[str] | None = None) -> int:
     run_cmd.set_defaults(func=_run)
 
     doctor_cmd = sub.add_parser('doctor', help='check suite and endpoint setup without model generation')
-    doctor_cmd.add_argument('--model', required=True, help='exact model ID or alias to check in the catalog')
-    doctor_cmd.add_argument('--endpoint', default=RUN_DEFAULTS['endpoint'], help='OpenAI-compatible API base URL')
+    doctor_cmd.add_argument('--config', help='explicit run YAML config; CLI discovery settings override it')
+    doctor_cmd.add_argument('--model', help='exact model ID or alias; required unless configured in --config')
+    doctor_cmd.add_argument('--endpoint', default=None, help='OpenAI-compatible API base URL; defaults to config or localhost:11434/v1')
     doctor_cmd.add_argument('--api-key', default=None, help='defaults to API_KEY, then OPENAI_API_KEY')
     doctor_cmd.add_argument('--suite', default=DEFAULT_SUITE, help='suite directory, defaults to packaged core')
     doctor_cmd.add_argument('--timeout', type=float, default=5.0, help='positive finite HTTP operation timeout in seconds')
