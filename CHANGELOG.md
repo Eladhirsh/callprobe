@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Let `doctor --config FILE` use the same model, endpoint, and suite defaults as
+  `run`, with CLI overrides and config-relative suite paths. Diagnostics remain
+  read-only, use their own short timeout, and ignore run output settings.
+
 - Reject malformed provider text, usage containers, and argument types even
   when their values are false or empty. Invalid response envelopes become
   request errors instead of successful abstentions or empty-argument calls;

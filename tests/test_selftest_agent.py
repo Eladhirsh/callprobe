@@ -32,7 +32,7 @@ def test_full_workflow_passes_and_writes_evidence(passing_run):
     failed = [a["name"] for a in report["assertions"] if not a["ok"]]
     assert code == 0 and report["overall"] == "PASS" and not failed
     assert [s["name"] for s in report["steps"]] == [
-        "version", "init", "validate", "dry-run", "doctor", "run-baseline", "run-candidate",
+        "version", "init", "validate", "dry-run", "doctor", "doctor-config", "run-baseline", "run-candidate",
         "compare-json", "compare-markdown", "explain", "targeted-rerun", "targeted-as-baseline"]
     # Gate failures and the targeted-baseline refusal are expected statuses.
     expected = {s["name"]: s["expected_status"] for s in report["steps"]}

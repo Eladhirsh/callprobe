@@ -274,6 +274,23 @@ class Agent:
             self.check('doctor made discovery requests but no completions',
                        server.discovery_requests > 0 and server.accepted == server.rejected == 0)
 
+            config_dir = self.out / 'config'
+            config_dir.mkdir()
+            (config_dir / 'doctor.yaml').write_text(yaml.safe_dump({
+                'model': 'synthetic-baseline', 'endpoint': endpoint, 'suite': '../suite',
+                'out': '../doctor-output.json', 'request_timeout': 900,
+            }), encoding='utf-8')
+            protected_output = self.out / 'doctor-output.json'
+            protected_output.write_text('preserve existing output', encoding='utf-8')
+            out, _ = self.step('doctor-config', ['doctor', '--config', 'config/doctor.yaml',
+                                                '--format', 'json'])
+            setup = json.loads(out)
+            self.check('doctor config resolves its suite without generating or replacing output',
+                       setup['status'] == 'pass' and setup['model_listed'] is True
+                       and setup['generation_tested'] is False
+                       and server.accepted == server.rejected == 0
+                       and protected_output.read_text() == 'preserve existing output')
+
             self.step("run-baseline", self.run_args("synthetic-baseline", endpoint,
                                                     "--out", "baseline.json"), timeout=RUN_TIMEOUT)
             self.step("run-candidate", self.run_args("synthetic-candidate", endpoint,
