@@ -1183,3 +1183,77 @@ def test_observed_phi_text_tool_shape_is_advisory_only():
     assert case["content_tool_json"]["tools"] == ["cancel_meeting"]
     assert case["diagnostics"] == ["no_call"]
     assert not result.success and not result.calls
+
+
+@pytest.fixture
+def observation_run(github_suite):
+    task, other = github_suite.tasks[:2]
+    return Run(config=_config(github_suite, pads=[0, 2], repeats=2), started_at='now', results=[
+        _passing_result(task, pad=0, repeat=0),
+        _failing_result(task, pad=0, repeat=1),
+        _base_result(task, pad=2, repeat=0, error='timeout'),
+        _failing_result(other, pad=0, repeat=1),
+    ])
+
+
+@pytest.mark.parametrize('filters,total,errors,failed', [
+    ({'pad': 0}, 3, 0, 2), ({'repeat': 1}, 2, 0, 2),
+    ({'pad': 2}, 1, 1, 1), ({'pad': 0, 'repeat': 0}, 1, 0, 0),
+    ({'pad': 99}, 0, 0, 0), ({'repeat': 99}, 0, 0, 0),
+])
+def test_observation_filters_scope_all_counts(github_suite, observation_run, filters, total, errors, failed):
+    before = observation_run.model_dump_json()
+    report = explain_run(observation_run, github_suite, **filters)
+    assert report['observation_filter'] == filters
+    assert report['total_cases'] == total
+    assert report['scored_cases'] == total - errors
+    assert report['request_errors'] == errors
+    assert report['failed_cases'] == failed
+    assert all(all(case[key] == value for key, value in filters.items()) for case in report['cases'])
+    text = render_explain_text(report)
+    assert 'counts and verdicts cover only this selection' in text
+    if total == 0:
+        assert 'no recorded results in this selection' in text
+        assert 'passed' not in text
+    if 'repeat' in filters:
+        assert 'repeat_variation' not in report
+    assert observation_run.model_dump_json() == before
+
+
+def test_pad_filter_keeps_repeat_variation_and_task_filter_scopes_verdict(github_suite, observation_run):
+    task = github_suite.tasks[0].id
+    report = explain_run(observation_run, github_suite, task_id=task, pad=0)
+    assert len(report['repeat_variation']['mixed_groups']) == 1
+    assert not report['task_passed']
+    passed = explain_run(observation_run, github_suite, task_id=task, pad=0, repeat=0)
+    assert passed['task_passed'] and passed['total_cases'] == 1
+    missing = explain_run(observation_run, github_suite, task_id=task, repeat=99)
+    assert not missing['task_passed'] and not missing['task_has_results']
+    assert 'no recorded results in this selection' in render_explain_text(missing)
+    assert 'observation_filter' not in explain_run(observation_run, github_suite)
+
+
+@pytest.mark.parametrize('field', ['pad', 'repeat'])
+@pytest.mark.parametrize('value', [-1, True, 0.0, '0'])
+def test_invalid_observation_filter_is_rejected(github_suite, observation_run, field, value):
+    with pytest.raises(ValueError, match='filter must be a nonnegative integer'):
+        explain_run(observation_run, github_suite, **{field: value})
+
+
+def test_cli_observation_filter_is_offline_and_preserves_source(tmp_path, github_suite, github_suite_dir, observation_run, capsys, monkeypatch):
+    import httpx
+    def no_network(*args, **kwargs):
+        raise AssertionError('explain must not contact a model')
+    monkeypatch.setattr(httpx, 'Client', no_network)
+    path = tmp_path / 'run.json'
+    _write_run(path, observation_run)
+    before = path.read_bytes()
+    code = cli.main(['explain', str(path), '--suite', str(github_suite_dir),
+                     '--task', github_suite.tasks[0].id, '--pad', '0', '--repeat', '1', '--format', 'json'])
+    report = json.loads(capsys.readouterr().out)
+    assert code == 0
+    assert report['observation_filter'] == {'pad': 0, 'repeat': 1}
+    assert report['total_cases'] == report['failed_cases'] == 1
+    assert path.read_bytes() == before
+    assert cli.main(['explain', str(path), '--suite', str(github_suite_dir), '--repeat', '-1']) == 2
+    assert 'repeat filter must be a nonnegative integer' in capsys.readouterr().err

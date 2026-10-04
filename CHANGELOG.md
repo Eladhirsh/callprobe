@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Filter offline `explain` diagnostics by `--pad` and zero-based `--repeat`,
+  optionally combined with `--task`. Counts and repeat-variation summaries
+  describe only the explicitly labeled selection; saved results are unchanged.
+
 - Add `recordings_to_json(config, recordings)` to export application completions
   in the offline replay v1 format. It validates before returning JSON, preserves
   decision evidence, and excludes raw provider bodies and connection settings.
