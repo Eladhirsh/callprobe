@@ -940,6 +940,23 @@ callprobe explain results/github-issues/qwen3-8b.json --suite github-issues-suit
   --task get-issue-details --format json
 ```
 
+### Inspect a specific recorded observation
+
+The development checkout supports `--pad` and `--repeat` on `explain`:
+
+```bash
+callprobe explain results.json --suite my-suite --task my-task --pad 0 --repeat 1
+```
+
+`--pad` selects the recorded distractor count; `--repeat` selects the zero-based
+repeat index (`1` is the second repeat). Either filter works independently or
+with `--task`. Text output labels the selection and JSON adds `observation_filter`.
+Counts, task verdicts, shape hints, and repeat-variation summaries cover only
+matching observations. A single selected repeat cannot establish variation.
+If nothing matches, the report says there are no recorded results in that
+selection; it does not infer a pass. These filters never rescore, rerun, or modify
+saved results.
+
 For one common, fixable shape of bug, a correctly chosen tool whose
 arguments were flattened or under-wrapped relative to an OpenAPI-imported
 `path`/`query`/`body` schema, `explain` proposes a corrected argument

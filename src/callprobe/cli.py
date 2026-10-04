@@ -613,7 +613,7 @@ def _compare(args: argparse.Namespace) -> int:
 def _explain(args: argparse.Namespace) -> int:
     run = _read_run(args.results)
     suite = load_suite(args.suite)
-    report = explain_run(run, suite, task_id=args.task)
+    report = explain_run(run, suite, task_id=args.task, pad=args.pad, repeat=args.repeat)
     if args.format == "json":
         print(json.dumps(report, indent=2))
     else:
@@ -912,7 +912,9 @@ def main(argv: list[str] | None = None) -> int:
         "--suite", required=True,
         help="suite directory the run was scored against (must match its recorded suite hash)"
     )
-    explain_cmd.add_argument("--task", default=None, help="only explain this task id, all pads/repeats")
+    explain_cmd.add_argument("--task", default=None, help="only explain this task id")
+    explain_cmd.add_argument("--pad", type=int, default=None, help="only explain this distractor count")
+    explain_cmd.add_argument("--repeat", type=int, default=None, help="only explain this zero-based repeat index")
     explain_cmd.add_argument("--format", choices=["text", "json"], default="text")
     explain_cmd.set_defaults(func=_explain)
 

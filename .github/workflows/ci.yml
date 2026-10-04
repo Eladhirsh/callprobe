@@ -72,7 +72,7 @@ jobs:
           /tmp/callprobe-wheel-env/bin/callprobe report /tmp/callprobe-offline-demo/candidate.json --format text
           /tmp/callprobe-wheel-env/bin/callprobe validate --suite /tmp/callprobe-offline-demo/github-issues-suite
           /tmp/callprobe-wheel-env/bin/callprobe explain /tmp/callprobe-offline-demo/candidate.json \
-            --suite /tmp/callprobe-offline-demo/github-issues-suite --task comment-body-punctuation
+            --suite /tmp/callprobe-offline-demo/github-issues-suite --task comment-body-punctuation --pad 0 --repeat 0
           set +e
           /tmp/callprobe-wheel-env/bin/python -m callprobe compare /tmp/callprobe-offline-demo/baseline.json \
             /tmp/callprobe-offline-demo/candidate.json --fail-on-regression

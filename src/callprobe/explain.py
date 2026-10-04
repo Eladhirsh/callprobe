@@ -698,8 +698,15 @@ def _argument_shape_summary(cases: list[dict]) -> dict:
     }
 
 
-def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
-    """Build the structured diagnostics report for a run.
+def explain_run(
+    run: Run, suite: Suite, *, task_id: str | None = None,
+    pad: int | None = None, repeat: int | None = None,
+) -> dict:
+    """Build diagnostics for recorded observations matching optional filters.
+
+    Pad and repeat filters are nonnegative integers; repeat is zero-based.
+    Counts and verdicts refer only to the selected observations. Missing
+    coordinates stay missing, and no results or scores are changed.
 
     Raises ValueError for a missing/mismatched suite hash, a result that
     names a task id the suite does not define (a matching suite hash
@@ -708,6 +715,9 @@ def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
     `task_id` filter, so the caller can surface a clear, non-zero-exit
     error instead of a partial or misleading report.
     """
+    for label, value in (("pad", pad), ("repeat", repeat)):
+        if value is not None and (type(value) is not int or value < 0):
+            raise ValueError(f"{label} filter must be a nonnegative integer")
     check_suite_matches(run, suite)
 
     tasks_by_id = {t.id: t for t in suite.tasks}
@@ -726,6 +736,11 @@ def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
     results = run.results
     if task_id is not None:
         results = [r for r in results if r.task_id == task_id]
+
+    if pad is not None:
+        results = [r for r in results if r.pad == pad]
+    if repeat is not None:
+        results = [r for r in results if r.repeat == repeat]
 
     request_errors = sum(1 for r in results if r.error is not None)
     # An errored record is a request error regardless of its saved success
@@ -766,6 +781,11 @@ def explain_run(run: Run, suite: Suite, *, task_id: str | None = None) -> dict:
         "argument_shape_summary": _argument_shape_summary(cases),
         "cases": cases,
     }
+    if pad is not None or repeat is not None:
+        report["observation_filter"] = {
+            key: value for key, value in (("pad", pad), ("repeat", repeat))
+            if value is not None
+        }
     repeat_variation = _repeat_variation_summary(results)
     if repeat_variation is not None:
         report["repeat_variation"] = repeat_variation
@@ -787,12 +807,17 @@ def render_explain_text(report: dict) -> str:
         + (f"   request errors: {report['request_errors']}" if report["request_errors"] else "")
         + f"   failed: {report['failed_cases']}",
     ]
+    observation_filter = report.get("observation_filter")
+    if observation_filter:
+        scope = ", ".join(f"{key}={value}" for key, value in observation_filter.items())
+        lines.append(f"observation filter {scope} (counts and verdicts cover only this selection)")
     task_filter = report["task_filter"]
     if task_filter is not None:
         lines.append(f"task filter      {task_filter}")
         if not report["task_has_results"]:
             lines.append("")
-            lines.append(f"task {task_filter!r} has no recorded results in this run")
+            lines.append(f"task {task_filter!r} has no recorded results in "
+                         + ("this selection" if observation_filter else "this run"))
             return "\n".join(lines)
         if report["task_passed"]:
             lines.append("")
@@ -804,7 +829,8 @@ def render_explain_text(report: dict) -> str:
     else:
         if report["total_cases"] == 0:
             lines.append("")
-            lines.append("no recorded results in this run")
+            lines.append("no recorded results in "
+                         + ("this selection" if observation_filter else "this run"))
             return "\n".join(lines)
         if report["failed_cases"] == 0:
             lines.append("")
