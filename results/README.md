@@ -1,4 +1,6 @@
-Latest: [Fixed action identities and source references](fixed-action-validation/README.md).
+Latest: [Argument repair regression evaluation](argument-repair-regression/README.md).
+
+Previous: [Fixed action identities and source references](fixed-action-validation/README.md).
 
 Previous: [Experimental staged extraction](staged-extraction-suite/README.md).
 

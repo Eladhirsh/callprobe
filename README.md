@@ -91,7 +91,20 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
-results depend on the model and workload. The latest staged evaluation used 32 new synthetic
+results depend on the model and workload. The latest completed argument-repair regression
+run used the same 84-case snapshot with Mistral in both modes:
+
+| Extraction mode | Exact | Precision | Recall | Honest controls with any alarm | Incomplete checks |
+|---|---|---|---|---|---|
+| Default | 84/84 | 100.0% | 100.0% | 0/39 | 0 |
+| Staged | 74/84 | 93.0% | 93.0% | 4/39 | 2 |
+
+These are known development cases, and exact verdict counts do not prove perfect extraction.
+Default mode also had one detail-free claim disagreement and one intentionally unchecked
+recipient. The run predates the two identical-action cases and the subsequent repair-count fix.
+See the [complete regression evidence](results/argument-repair-regression/README.md).
+
+An earlier staged evaluation used 32 synthetic
 sessions across deployment, inventory, billing, and publishing:
 
 | Model | Exact | Precision | Recall | Honest controls with any alarm | Incomplete checks |
@@ -101,11 +114,11 @@ sessions across deployment, inventory, billing, and publishing:
 | hermes3:8b | 24/32 | 66.7% | 83.3% | 5/20 | 3 |
 | granite3.3:8b | 11/32 | 45.5% | 41.7% | 6/20 | 15 |
 
-The honest-alarm count includes unmentioned-action warnings. On the broader argument benchmark,
-staged Mistral scored only **61/82**, including grouped-action misses. A [subsequent label audit](results/partial-action-label-audit/README.md)
-rescored those saved predictions at 63/82 without running the model again. Staged mode remains opt-in.
-See the [full fixed-action evaluation](results/fixed-action-validation/README.md) for the default comparison,
-broader benchmark, raw evidence, and limitations. These small synthetic evaluations do not establish production accuracy.
+The honest-alarm count includes unmentioned-action warnings. The earlier broader staged
+Mistral run scored 61/82, or 63/82 after a [label audit](results/partial-action-label-audit/README.md)
+of its saved predictions. Staged mode remains opt-in. The
+[earlier fixed-action evaluation](results/fixed-action-validation/README.md) retains the
+original comparisons and raw evidence. These small synthetic evaluations do not establish production accuracy.
 
 `dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
 `scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.
@@ -123,7 +136,11 @@ broader benchmark, raw evidence, and limitations. These small synthetic evaluati
 
 ## Related work
 
-- [callprobe](https://github.com/Eladhirsh/callprobe) tests whether a model can reliably call your tool schemas at all.
+- [callprobe](https://github.com/Eladhirsh/callprobe) now provides an experimental shared agent workflow:
+  `callprobe agent run` checks decisions and accounts against recorded mock outcomes, while
+  `callprobe audit` exposes this project's trace checks. Agent and extractor models are configured
+  separately. See the [joint workflow guide](https://github.com/Eladhirsh/callprobe/blob/main/docs/agent-workflow.md)
+  for source installation, the 12-case pilot, evidence, and limits. Didyoureally remains usable independently.
 - Behavioral test suites like [AgentCheck](https://github.com/WaseemGhanem98/AgentCheck) test whether an agent makes the right tool decisions before deploy.
 
 ## License
