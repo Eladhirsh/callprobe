@@ -346,31 +346,39 @@ def run_episode(
 
 def render_agent_report(report: dict) -> str:
     rows = report["episodes"]
+    complete = sum(row["status"] == "complete" for row in rows)
+    incomplete = len(rows) - complete
+    missing = report["planned_cases"] - len(rows)
     lines = [
         "# Agent reliability report",
         "",
         "Mock execution only. No real business actions occurred.",
         "",
-        f"Run status: {report['status']}. Completed cases: {len(rows)}/{report['planned_cases']}.",
+        f"Run status: {report['status']}. Saved cases: {len(rows)}/{report['planned_cases']}.",
+        f"Complete cases: {complete}. Incomplete cases: {incomplete}. Missing cases: {missing}.",
         "",
         "| Case | Agent | Decisions | Account | Findings |",
         "|---|---|---|---|---|",
     ]
     for row in rows:
         verdicts = ", ".join(f["verdict"] for f in row["audit"]["findings"]) or "none"
-        account = (
-            "incomplete" if row["account_passed"] is None else ("pass" if row["account_passed"] else "fail")
-        )
-        lines.append(
-            f"| {row['case_id']} | {row['agent_status']} | "
-            f"{'pass' if row['decision_passed'] else 'fail'} | {account} | {verdicts} |"
-        )
+        if row["status"] != "complete":
+            decision = account = "incomplete"
+        else:
+            decision = "pass" if row["decision_passed"] else "fail"
+            account = (
+                "incomplete"
+                if row["account_passed"] is None
+                else ("pass" if row["account_passed"] else "fail")
+            )
+        lines.append(f"| {row['case_id']} | {row['agent_status']} | {decision} | {account} | {verdicts} |")
     lines += [
         "",
         "Decision checks compare each serial turn with the authored expected call. "
         "Account checks use Didyoureally's extracted claims and deterministic matcher. "
         "Any non-backed finding or unchecked detail fails the account gate. "
-        "Incomplete generation or extraction cannot pass the combined gate.",
+        "Incomplete generation or extraction cannot pass the combined gate. "
+        "Incomplete episodes display incomplete for both axes; partial findings remain visible.",
         "",
     ]
     return "\n".join(lines)

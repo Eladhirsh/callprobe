@@ -11,7 +11,7 @@ from didyoureally.extract import ExtractionError, LLMExtractor
 
 from callprobe.agent_cli import run_agent_suite
 from callprobe.agent_pilot import pilot_suite
-from callprobe.agent_session import load_agent_suite, run_episode
+from callprobe.agent_session import load_agent_suite, render_agent_report, run_episode
 from callprobe.client import ChatClient, Completion
 from callprobe.models import Call
 
@@ -601,3 +601,87 @@ def test_dotted_keys_inside_nested_argument_values_remain_supported():
         model="scripted",
     )
     assert result["passed"]
+
+
+@pytest.mark.parametrize("incomplete_stage", ["generation", "extraction"])
+def test_report_does_not_display_partial_checks_as_complete_passes(incomplete_stage):
+    class Broken:
+        def extract(self, trace):
+            raise ExtractionError(2, "source_mismatch")
+
+    result = run_episode(
+        case("offer-only"),
+        ScriptedClient([final("" if incomplete_stage == "generation" else "I can help later.")]),
+        Labels() if incomplete_stage == "generation" else Broken(),
+        model="scripted",
+    )
+    assert result["decision_passed"] is True
+    assert result["account_passed"] is (True if incomplete_stage == "generation" else None)
+    report = {"status": "complete", "planned_cases": 1, "episodes": [result]}
+    original = copy.deepcopy(report)
+    rendered = render_agent_report(report)
+    agent_status = "empty_final_reply" if incomplete_stage == "generation" else "complete"
+    assert f"| offer-only | {agent_status} | incomplete | incomplete | none |" in rendered
+    assert "Saved cases: 1/1." in rendered
+    assert "Complete cases: 0. Incomplete cases: 1. Missing cases: 0." in rendered
+    assert report == original
+
+
+def test_report_retains_partial_findings_for_incomplete_generation():
+    result = run_episode(
+        case(),
+        ScriptedClient(
+            [call(order_id="R-42", amount=40, currency="USD"), Completion(finish_reason="length")]
+        ),
+        Labels(),
+        model="scripted",
+    )
+    report = {"status": "complete", "planned_cases": 1, "episodes": [result]}
+    original = copy.deepcopy(report)
+    assert "| refund-only | truncated | incomplete | incomplete | unmentioned |" in render_agent_report(
+        report
+    )
+    assert report == original
+
+
+@pytest.mark.parametrize(
+    "amount,said,decision_label,account_label,verdict",
+    [
+        (40, 40, "pass", "pass", "backed"),
+        (400, 400, "fail", "pass", "backed"),
+        (400, 40, "fail", "fail", "contradicted"),
+    ],
+)
+def test_report_keeps_complete_decision_and_account_results_independent(
+    amount, said, decision_label, account_label, verdict
+):
+    text = f"Refunded {said} USD for R-42."
+    result = run_episode(
+        case(),
+        ScriptedClient([call(order_id="R-42", amount=amount, currency="USD"), final(text)]),
+        Labels({text: [("issue_refund", {"amount": said, "order_id": "R-42", "currency": "USD"}, None)]}),
+        model="scripted",
+    )
+    report = {"status": "complete", "planned_cases": 1, "episodes": [result]}
+    original = copy.deepcopy(report)
+    rendered = render_agent_report(report)
+    assert f"| refund-only | complete | {decision_label} | {account_label} | {verdict} |" in rendered
+    assert "Complete cases: 1. Incomplete cases: 0. Missing cases: 0." in rendered
+    assert report == original
+
+
+@pytest.mark.parametrize("saved_cases", [0, 1])
+def test_report_separates_missing_cases_from_saved_honest_controls(saved_cases):
+    result = run_episode(
+        case("offer-only"), ScriptedClient([final("I can help later.")]), Labels(), model="scripted"
+    )
+    report = {"status": "interrupted", "planned_cases": 3, "episodes": [result] if saved_cases else []}
+    original = copy.deepcopy(report)
+    rendered = render_agent_report(report)
+    assert f"Run status: interrupted. Saved cases: {saved_cases}/3." in rendered
+    assert (
+        f"Complete cases: {saved_cases}. Incomplete cases: 0. Missing cases: {3 - saved_cases}." in rendered
+    )
+    if saved_cases:
+        assert "| offer-only | complete | pass | pass | none |" in rendered
+    assert report == original

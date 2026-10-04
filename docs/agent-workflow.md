@@ -60,7 +60,7 @@ Each new output directory contains:
 - `traces/CASE.json`: native traces accepted by Didyoureally.
 - `claims/CASE.json`: extracted claims for completed audits, not human ground truth.
 
-The report is checkpointed after each case. Interrupted runs keep completed cases
+The report is checkpointed after each case. Interrupted runs keep saved episode records
 and a partial status; an interrupted in-flight case is not included. Existing
 output directories are refused. Use synthetic data for shareable reports because
 transcripts and model responses are retained.
@@ -70,6 +70,12 @@ failure; `2` invalid setup or run failure; `3` incomplete generation or extracti
 `130` interrupted. The account gate includes all non-backed findings and unchecked
 details. An empty extraction can still miss a phantom claim; a passing account
 check is not proof that every claim was extracted.
+
+The Markdown report separates saved, complete, incomplete, and missing case counts.
+Both check columns show `incomplete` for unfinished episodes while retaining their
+findings. Raw JSON keeps partial decision and account checks for inspection, so
+`account_passed: true` alone is insufficient. Require episode `status: complete`
+when counting either axis as a complete pass, or use `passed` for the combined gate.
 
 Audit a trace with fresh extraction:
 
