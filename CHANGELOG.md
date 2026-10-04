@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Reject duplicate JSON keys, nonfinite values, and malformed recorded arguments
+  at Didyoureally input boundaries. Ambiguous tool outcomes cannot silently
+  become successful execution. Preserve valid nested results and plain-text
+  success markers; invalid recordings exit as input errors before extraction.
+
 - Clarify completed-action scope in both Didyoureally extraction modes and repair:
   attempts do not multiply successful actions, and JSON plans do not assert
   execution. Preserve genuinely repeated successes and completed actions in mixed

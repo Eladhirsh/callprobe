@@ -92,10 +92,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 94 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 96 bundled sessions with planted failures and honest controls:
 
 ```text
-94/94 cases exact. Problem detection: precision 100%, recall 100% (49 caught, 0 false alarms, 0 missed).
+96/96 cases exact. Problem detection: precision 100%, recall 100% (50 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -363,3 +363,25 @@ A [focused local model check](../../results/2026-10-04-completion-scope/README.m
 records the improvement and remaining limits. In that check, the staged extractor
 still flags one future-tense JSON plan. Prefer the default extractor for this
 pattern; verify it against your own traces before using its account gate.
+
+## Strict JSON evidence
+
+Trace files, reviewed claim files, and model extraction responses reject duplicate
+JSON keys and nonfinite numbers, including overflowing numeric literals such as
+`1e400`. OpenAI message adapters apply the same checks to JSON strings inside
+recorded arguments and results. Already-decoded native and adapter inputs also
+reject nonfinite values. Distinct objects may use the same key normally.
+
+Malformed tool arguments are invalid input instead of becoming empty arguments
+or an opaque `_raw` field. Arguments must be an object or a string containing a
+JSON object. Omitted arguments still describe an empty object; an explicit null,
+empty string, array, or scalar is invalid. Plain-text outcome markers such as
+`ok` and `Success!` remain supported.
+
+`dyr check` returns input-error exit code 2 for invalid recordings, with
+`status: invalid_input` and no summary in JSON output. Invalid model responses
+exhaust their bounded repair or produce an incomplete extraction; they cannot
+be a clean empty result. Fix ambiguous recordings at the export source instead
+of choosing whichever duplicate value appears last. If a caller has already
+parsed duplicate keys with another JSON library, the discarded values cannot
+be recovered; use the CLI file loader or retain the original JSON strings.

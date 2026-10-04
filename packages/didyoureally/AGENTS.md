@@ -40,12 +40,13 @@ Always call tools through `.venv/bin/` so commands work whether or not the venv 
 .venv/bin/python packages/didyoureally/scripts/build_benchmark.py
 ```
 
-If the commands are missing, install the development environment first. Missing executables are setup failures, not evidence of failing project tests. After setup, stop and report any failing baseline check before changing implementation. The package currently has 321 tests and 94 labeled benchmark cases; update those expectations as coverage grows.
+If the commands are missing, install the development environment first. Missing executables are setup failures, not evidence of failing project tests. After setup, stop and report any failing baseline check before changing implementation. The package currently has 367 tests and 96 labeled benchmark cases; update those expectations as coverage grows.
 
 The same commands can be run through `.venv/bin/` without activating the environment. Never commit the environment, credentials, or local assistant metadata.
 
 ## Layout
 
+- `src/didyoureally/strict_json.py`: duplicate-key and finite-number validation for evidence.
 - `src/didyoureally/schema.py`: Trace, ToolSpec, ToolCall, Message, Claim. Every event has an `index` in session order.
 - `src/didyoureally/matcher.py`: deterministic matching and verdicts. `values_agree` holds all normalization.
 - `src/didyoureally/extract.py`: `GivenClaims` and `LLMExtractor` (OpenAI-compatible, stdlib HTTP, injectable transport).

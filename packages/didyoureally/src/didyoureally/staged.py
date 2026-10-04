@@ -15,11 +15,11 @@ from .extract import (
     _claim_payload,
     _preserves_source_details,
     _source_anchors,
-    _unique_object,
     parse_claims,
     source_spans,
 )
 from .schema import Claim, Trace
+from .strict_json import loads
 
 ACTION_PROMPT = (
     """Identify the actions described as completed in the TARGET assistant message.
@@ -119,7 +119,7 @@ def _detail_claims(raw: str, mapped: list[Claim]) -> str:
     fence = re.search(r"```(?:json)?\s*(.*?)```", raw, re.DOTALL)
     text = fence.group(1) if fence else raw.strip()
     try:
-        payload = json.loads(text, object_pairs_hook=_unique_object)
+        payload = loads(text)
     except ValueError:
         raise ClaimFormatError("invalid_action_details") from None
     if not isinstance(payload, dict) or set(payload) != {"details"}:
