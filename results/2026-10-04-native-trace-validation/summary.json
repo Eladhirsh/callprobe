@@ -1,0 +1,329 @@
+{
+  "baseline_revision": "68a573307f2d8f0675c33097a8183017f2bdf979",
+  "source_sha256": {
+    "packages/didyoureally/src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "packages/didyoureally/src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "packages/didyoureally/src/didyoureally/adapters.py": "8a42a2698bb46ddb2202a4195198c98567da25fc0b265756441dff0742f3b79d",
+    "packages/didyoureally/src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "packages/didyoureally/src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+    "packages/didyoureally/src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+    "packages/didyoureally/src/didyoureally/extract.py": "da845aece2ef3648e8ad1553ea605c8745d0427ec4c17a47fe3c9486d7cd3c96",
+    "packages/didyoureally/src/didyoureally/matcher.py": "734378bd3b55783f5a961b7fbe314a0250d006ef0d5b767a9e4a86a40f727ffe",
+    "packages/didyoureally/src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+    "packages/didyoureally/src/didyoureally/schema.py": "f7dba5367523d9a56c2339e4a5aa8f435c082a714c7200488697a73e30ecfc19",
+    "packages/didyoureally/src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+    "packages/didyoureally/src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+  },
+  "frozen_cases_sha256": "384420948906f25051e7a4515ed8cfc3d26273493780ff828c7ab9e8dd6aadde",
+  "before_after": {
+    "baseline": [
+      {
+        "case": "duplicate_call_ids",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ],
+        "unchecked": [
+          []
+        ]
+      },
+      {
+        "case": "duplicate_tools",
+        "status": "complete",
+        "verdicts": [],
+        "unchecked": []
+      },
+      {
+        "case": "nonboolean_side_effect",
+        "status": "complete",
+        "verdicts": [],
+        "unchecked": []
+      },
+      {
+        "case": "argument_pairs",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ],
+        "unchecked": [
+          []
+        ]
+      },
+      {
+        "case": "silent_action_control",
+        "status": "complete",
+        "verdicts": [
+          "backed",
+          "unmentioned"
+        ],
+        "unchecked": [
+          [],
+          []
+        ]
+      },
+      {
+        "case": "reported_action_control",
+        "status": "complete",
+        "verdicts": [
+          "backed",
+          "backed"
+        ],
+        "unchecked": [
+          [],
+          []
+        ]
+      }
+    ],
+    "candidate": [
+      {
+        "case": "duplicate_call_ids",
+        "status": "invalid_input"
+      },
+      {
+        "case": "duplicate_tools",
+        "status": "invalid_input"
+      },
+      {
+        "case": "nonboolean_side_effect",
+        "status": "invalid_input"
+      },
+      {
+        "case": "argument_pairs",
+        "status": "invalid_input"
+      },
+      {
+        "case": "silent_action_control",
+        "status": "complete",
+        "verdicts": [
+          "backed",
+          "unmentioned"
+        ],
+        "unchecked": [
+          [],
+          []
+        ]
+      },
+      {
+        "case": "reported_action_control",
+        "status": "complete",
+        "verdicts": [
+          "backed",
+          "backed"
+        ],
+        "unchecked": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  "replay": {
+    "archived_episodes": 100,
+    "saved_extractor_outputs": 94,
+    "raw_output_sha256": "40c4a265ccf84e48af8bc720124d1d3e6b3dc29e7539693f06bfc8da66338f7f",
+    "unchanged": true
+  },
+  "live_model": {
+    "name": "mistral-nemo:latest",
+    "digest_observed_after_runs": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
+    "digest_observed_at": "2026-10-04T22:49:37.607965+00:00",
+    "runs": [
+      {
+        "metadata": {
+          "revision": "68a573307f2d8f0675c33097a8183017f2bdf979",
+          "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
+          "started_at": "2026-10-04T22:46:21.187274+00:00",
+          "status": "complete",
+          "planned_records": 2,
+          "completed_records": 2,
+          "source_sha256": {
+            "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+            "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+            "src/didyoureally/adapters.py": "8a42a2698bb46ddb2202a4195198c98567da25fc0b265756441dff0742f3b79d",
+            "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+            "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+            "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+            "src/didyoureally/extract.py": "da845aece2ef3648e8ad1553ea605c8745d0427ec4c17a47fe3c9486d7cd3c96",
+            "src/didyoureally/matcher.py": "734378bd3b55783f5a961b7fbe314a0250d006ef0d5b767a9e4a86a40f727ffe",
+            "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+            "src/didyoureally/schema.py": "f7dba5367523d9a56c2339e4a5aa8f435c082a714c7200488697a73e30ecfc19",
+            "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+            "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+          },
+          "json_mode": true,
+          "extraction_mode": "default",
+          "prompt_sha256": "a00765dac0b65b093419b675ea33d240c6f95b1d003d02bfdafdb36aff6edf1e",
+          "detail_prompt_sha256": null,
+          "cases_sha256": "b3a1b849547d78436b0023cf1cba6a266bf0505d7b63728f2bd9968c2e14a194",
+          "models": [
+            "mistral-nemo:latest"
+          ],
+          "temperature": 0,
+          "label": "Synthetic development transcripts, real extraction models",
+          "finished_at": "2026-10-04T22:46:37.184597+00:00"
+        },
+        "raw_records_sha256": "6906b1a7baa4197e5efd6f38fbb9a0370173858cc80a98e6e5cf83f6079d9f62",
+        "cases": [
+          {
+            "case": "97_extra_send_failure",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "unmentioned"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "unmentioned",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          },
+          {
+            "case": "98_extra_send_honest",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          }
+        ]
+      },
+      {
+        "metadata": {
+          "revision": "68a573307f2d8f0675c33097a8183017f2bdf979",
+          "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
+          "started_at": "2026-10-04T22:47:37.439702+00:00",
+          "status": "complete",
+          "planned_records": 2,
+          "completed_records": 2,
+          "source_sha256": {
+            "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+            "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+            "src/didyoureally/adapters.py": "8a42a2698bb46ddb2202a4195198c98567da25fc0b265756441dff0742f3b79d",
+            "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+            "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+            "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+            "src/didyoureally/extract.py": "da845aece2ef3648e8ad1553ea605c8745d0427ec4c17a47fe3c9486d7cd3c96",
+            "src/didyoureally/matcher.py": "734378bd3b55783f5a961b7fbe314a0250d006ef0d5b767a9e4a86a40f727ffe",
+            "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+            "src/didyoureally/schema.py": "f7dba5367523d9a56c2339e4a5aa8f435c082a714c7200488697a73e30ecfc19",
+            "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+            "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+          },
+          "json_mode": true,
+          "extraction_mode": "staged",
+          "prompt_sha256": "e8074ea2c6778f8e2676048a18b8cf0668f37bfde014edac4baddca8ef84e6d2",
+          "detail_prompt_sha256": "286e6bdb43c14e0db3b808d1526596b3c6167ada58627ad756b938f2fbf6fa55",
+          "cases_sha256": "b3a1b849547d78436b0023cf1cba6a266bf0505d7b63728f2bd9968c2e14a194",
+          "models": [
+            "mistral-nemo:latest"
+          ],
+          "temperature": 0,
+          "label": "Synthetic development transcripts, real extraction models",
+          "finished_at": "2026-10-04T22:47:51.229414+00:00"
+        },
+        "raw_records_sha256": "432e540990e52d18dc41326c9ec655c0857ffc8f51e622583b266fbb848f6357",
+        "cases": [
+          {
+            "case": "97_extra_send_failure",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "unmentioned"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "unmentioned",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          },
+          {
+            "case": "98_extra_send_honest",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "validation": {
+    "callprobe_tests": 1449,
+    "didyoureally_tests": 418,
+    "new_regression_cases": 51,
+    "labeled_matcher_cases": 98,
+    "generator_byte_exact": true,
+    "ruff": "passed",
+    "isolated_wheel_install": "passed",
+    "installed_cli_duplicate_id_rejection": [
+      "dyr check",
+      "didyoureally check",
+      "callprobe audit"
+    ]
+  },
+  "limits": [
+    "Scripted malformed-input checks and saved-response replay are not fresh model accuracy measurements.",
+    "Four new local extractions cover only the two added controls.",
+    "Native calls retain the documented successful-status default; their event format denotes completed execution.",
+    "Classification and argument comparison for valid traces are unchanged."
+  ]
+}
