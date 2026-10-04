@@ -1,0 +1,13 @@
+[
+  {
+    "text": "The refund for order R-42 (40 USD) was successfully processed. However, the receipt email could not be sent to dana@example.invalid due to a \"service_unavailable\" error. No further actions will be taken, as per the instruction to not retry failed operations.",
+    "tool": "issue_refund",
+    "args": {
+      "order_id": "R-42",
+      "amount": 40,
+      "currency": "USD"
+    },
+    "message_index": 4,
+    "group_id": null
+  }
+]

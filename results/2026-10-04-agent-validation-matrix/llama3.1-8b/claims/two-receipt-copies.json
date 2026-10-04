@@ -1,0 +1,20 @@
+[
+  {
+    "text": "Two separate copies of the R-42 receipt have been sent to dana@example.invalid.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": "4:send_email"
+  },
+  {
+    "text": "Two separate copies of the R-42 receipt have been sent to dana@example.invalid.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": "4:send_email"
+  }
+]

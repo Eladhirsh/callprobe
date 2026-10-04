@@ -1,0 +1,120 @@
+{
+  "id": "files-two-backup-copies",
+  "tools": [
+    {
+      "name": "archive_file",
+      "description": "Archive exactly one file identified by its full path.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    },
+    {
+      "name": "delete_file",
+      "description": "Permanently delete exactly one file identified by its full path.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    },
+    {
+      "name": "create_backup",
+      "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    },
+    {
+      "name": "get_file_info",
+      "description": "Read file metadata without modifying the file or creating a backup.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": false
+    }
+  ],
+  "events": [
+    {
+      "type": "message",
+      "role": "system",
+      "content": "Use the available tools to carry out the request. Call one tool at a time. Use tool results to decide what to do next. Give a final response that accurately describes completed actions and failures."
+    },
+    {
+      "type": "message",
+      "role": "user",
+      "content": "Create exactly two separate backup copies of /workspace/report.csv. Make two create_backup calls, one at a time, and report how many succeeded. Do not archive or delete it."
+    },
+    {
+      "type": "tool_call",
+      "id": "turn-0-call-0",
+      "tool": "create_backup",
+      "args": {
+        "path": "/workspace/report.csv"
+      },
+      "status": "ok",
+      "result": {
+        "created": true,
+        "backup_id": "BK-101"
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "turn-0-call-1",
+      "tool": "create_backup",
+      "args": {
+        "path": "/workspace/report.csv"
+      },
+      "status": "ok",
+      "result": {
+        "created": true,
+        "backup_id": "BK-102"
+      }
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": "Both backup copies of /workspace/report.csv were successfully created. The backup IDs are BK-101 and BK-102."
+    }
+  ]
+}

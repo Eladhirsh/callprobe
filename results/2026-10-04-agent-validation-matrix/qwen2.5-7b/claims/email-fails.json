@@ -1,0 +1,11 @@
+[
+  {
+    "text": "The refund for order R-42 was successful, but there was an issue sending the receipt email. The service is currently unavailable. Please try again later.",
+    "tool": "issue_refund",
+    "args": {
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": null
+  }
+]

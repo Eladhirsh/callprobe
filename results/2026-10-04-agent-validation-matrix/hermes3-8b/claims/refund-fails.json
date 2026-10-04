@@ -1,0 +1,18 @@
+[
+  {
+    "text": "The refund was successful. The receipt has been emailed to dana@example.invalid.",
+    "tool": "issue_refund",
+    "args": {},
+    "message_index": 4,
+    "group_id": null
+  },
+  {
+    "text": "The refund was successful. The receipt has been emailed to dana@example.invalid.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": null
+  }
+]

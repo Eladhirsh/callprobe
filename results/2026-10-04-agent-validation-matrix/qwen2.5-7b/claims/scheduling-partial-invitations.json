@@ -1,0 +1,11 @@
+[
+  {
+    "text": "The invitation to dana@example.invalid was sent successfully. However, the invitation to priya@example.invalid was rejected by the recipient.",
+    "tool": "send_invitation",
+    "args": {
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": null
+  }
+]

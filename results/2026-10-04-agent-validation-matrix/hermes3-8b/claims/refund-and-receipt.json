@@ -1,0 +1,20 @@
+[
+  {
+    "text": "The refund for order R-42 and the receipt email have been successfully processed.",
+    "tool": "issue_refund",
+    "args": {
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": null
+  },
+  {
+    "text": "The refund for order R-42 and the receipt email have been successfully processed.",
+    "tool": "send_email",
+    "args": {
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": null
+  }
+]

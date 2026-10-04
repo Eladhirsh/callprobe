@@ -1,0 +1,11 @@
+[
+  {
+    "text": "The invitation has been sent successfully to priya@example.invalid.",
+    "tool": "send_invitation",
+    "args": {
+      "to": "priya@example.invalid"
+    },
+    "message_index": 3,
+    "group_id": null
+  }
+]

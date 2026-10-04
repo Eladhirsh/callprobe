@@ -1,0 +1,22 @@
+[
+  {
+    "text": "Both copies of the R-42 receipt have been successfully sent to dana@example.invalid via separate email transmissions. No refund was issued as requested.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid",
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": "4:send_email"
+  },
+  {
+    "text": "Both copies of the R-42 receipt have been successfully sent to dana@example.invalid via separate email transmissions. No refund was issued as requested.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid",
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": "4:send_email"
+  }
+]

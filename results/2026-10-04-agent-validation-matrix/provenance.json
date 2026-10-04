@@ -1,0 +1,294 @@
+{
+  "started_at": "2026-10-04T19:05:33.553081+00:00",
+  "status": "finished",
+  "endpoint": "http://localhost:11434/v1",
+  "ollama": {
+    "version": "0.34.2"
+  },
+  "local_models": [
+    {
+      "name": "hermes3:8b",
+      "model": "hermes3:8b",
+      "modified_at": "2026-09-17T12:18:56.050991137-04:00",
+      "size": 4661227243,
+      "digest": "4f6b83f30b62bc3d0cf9be09266db222805ee815c8fd7d8b38f863f655be78b7",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "8.0B",
+        "quantization_level": "Q4_0",
+        "context_length": 131072,
+        "embedding_length": 4096
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    },
+    {
+      "name": "mistral-nemo:latest",
+      "model": "mistral-nemo:latest",
+      "modified_at": "2026-09-16T16:26:18.920155652-04:00",
+      "size": 7071713227,
+      "digest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "12.2B",
+        "quantization_level": "Q4_0",
+        "context_length": 1024000,
+        "embedding_length": 5120
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    },
+    {
+      "name": "qwen2.5:7b",
+      "model": "qwen2.5:7b",
+      "modified_at": "2026-09-16T15:25:58.78198287-04:00",
+      "size": 4683087332,
+      "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen2",
+        "families": [
+          "qwen2"
+        ],
+        "parameter_size": "7.6B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 32768,
+        "embedding_length": 3584
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    },
+    {
+      "name": "qwen3:8b",
+      "model": "qwen3:8b",
+      "modified_at": "2026-09-03T07:55:26.871238291-04:00",
+      "size": 5225388164,
+      "digest": "500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen3",
+        "families": [
+          "qwen3"
+        ],
+        "parameter_size": "8.2B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 40960,
+        "embedding_length": 4096
+      },
+      "capabilities": [
+        "completion",
+        "tools",
+        "thinking"
+      ]
+    },
+    {
+      "name": "llama3.1:8b",
+      "model": "llama3.1:8b",
+      "modified_at": "2026-09-03T07:28:48.382603802-04:00",
+      "size": 4920753328,
+      "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "8.0B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 131072,
+        "embedding_length": 4096
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    }
+  ],
+  "models": [
+    "qwen2.5:7b",
+    "llama3.1:8b",
+    "qwen3:8b",
+    "hermes3:8b"
+  ],
+  "extractor_model": "mistral-nemo:latest",
+  "git_head_at_start": "3af5cf8e0aed665d16f53452fcfab449a736462f",
+  "suite_file_sha256": "0eb76875b2bf819cef93c31cb326b7bbe230fbaf7a50561d9a642147bb556f9d",
+  "source_files": {
+    "src/callprobe/__init__.py": "76807b94b42e2dad3d4c5dea2e9c1bbb488d017a23bffc05592dbd1dcdb574cc",
+    "src/callprobe/__main__.py": "d6d0a6d09b7fbbea30f9ee4702f2b223cf2ed29e981fedce4495a8f2e010ec9f",
+    "src/callprobe/adapters.py": "b46aecb2ec109e9206734d0826afbaf402cf98cd4026e0a5f0d02cef81c857f2",
+    "src/callprobe/agent_cli.py": "1efe0a57d8326e7174ddfa3f4e28af9d92ec14295fbe15b186a777c939f09b81",
+    "src/callprobe/agent_compare.py": "76170c614423052d7fac1e17b40efd0bbf1fb01d9611c910be80d8adea298da9",
+    "src/callprobe/agent_pilot.py": "9de9a86b4f6c3e0d16d5693b653c05e2984e19c7830c920686a311a5d0bcb98e",
+    "src/callprobe/agent_session.py": "92c3eda66c9658362694c2d88063aa4e556a90cd881f7ba37d3e2e1dcd4fd131",
+    "src/callprobe/bootstrap.py": "3903e31ed1e29a04f52301c30cc8ccef7a2ec7749090cf88dae7d271381b42e8",
+    "src/callprobe/cli.py": "4545ff40f4b847bb09fc38e6602a47ed8f8e9ad98d711a5e55a31e63fd77a246",
+    "src/callprobe/client.py": "821bdd38f98cb1c77f7d5f185abcdf1bcb661beab46a61f52324b082b685e279",
+    "src/callprobe/coerce.py": "d783f9cb5a4d34db429c835abe880135a6e59fc137cbb0052c82eefee4275164",
+    "src/callprobe/compare.py": "6a77877ffd83c0bc2b00a2f21b56609f5edbf128ac9dbe5650d583d9bc8e87fb",
+    "src/callprobe/contract_demo.py": "fd6cce6874ab648a3a84c38063bc40e7a84fdb73f77ad237ba69a25372b06240",
+    "src/callprobe/contracts.py": "2b4208d682c6ae266f6b311787a97d8690604a4b8a9dbe32a5df13001593379c",
+    "src/callprobe/demo.py": "723458e672f64f851b27befd21bdddaebad3ff82c0f6077b8a131b88a8766bd4",
+    "src/callprobe/doctor.py": "d7ad7cc218a5b2bd374f0beb3e1f847673e6aa0780347c991ed156fa78c7b5e4",
+    "src/callprobe/examples.py": "a1f2c3f995845ff227d36ec578a55dbbcb96aa203aa0b6f2741d2279990e306d",
+    "src/callprobe/explain.py": "9eea4902d581046356948180e45082c6cecb5e268f177f9ecd8d02e2c77f1505",
+    "src/callprobe/gates.py": "3366bf659af43ca26551d9c4d6fc408013e2f1d9a57ed34f40930d316323ba61",
+    "src/callprobe/init.py": "965c48866ff32317b7676a327ec7d347ba2dec4b97bf661a970b24a3a82241c2",
+    "src/callprobe/junit.py": "e1c6d8cb3dc41ef42902ce5ec41ecc85ad05ea0393e85d2025dd3653285b4d27",
+    "src/callprobe/loader.py": "396320d76415eea92254fc92b7deb0bab17ed802a43c5032507a2e2b146e2cf4",
+    "src/callprobe/models.py": "9aaa591dafa4eadf94396a861c0ffe801fd1382c561e53455cdc795cac46df5e",
+    "src/callprobe/openapi.py": "a1004fc9e97e59fb88705fdde2fe8f6d8ebd99a330b09145cffaa2b7156e8355",
+    "src/callprobe/recording_io.py": "65e049995d9ed4ec3897b1fd45035d527ed96d4726db0b0b3fcafd595b04f665",
+    "src/callprobe/recordings.py": "ec43b338f4ca654d8b68936305dae75888cb0aaf216b696355bfc268839d08e7",
+    "src/callprobe/report.py": "471625788e4a0276fa72d43c82ed3f24954a883b5581128b94dc2fc55e5cef59",
+    "src/callprobe/run_config.py": "80a43419e311fc1e6becc57e6b9f23b2171e6401a82e46ae532d1a3cece13bfd",
+    "src/callprobe/runner.py": "ef3e3bfa847ca713b2b85f2e7c5211cfecfc5254627a37c483dace781eaa0f30",
+    "src/callprobe/scoring.py": "30e34ca9f6f945d94f01d136407062495d8c9f1b966ac77a98232f932b384d7d",
+    "src/callprobe/sweep.py": "9d431b85a3553f9f8bd99de20ee3abce5cc39bf32c4112cd68e803056aa88c6a",
+    "src/callprobe/validate.py": "3b1765935ce2806260d407e7071f69f264823db50ea6bc49726c01a22f6193f8",
+    "src/callprobe/yaml_config.py": "b324d57df7b0c91485382f61fb84afe1ed80678a2fa5eb36bb661e1c3ee38857",
+    "packages/didyoureally/src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "packages/didyoureally/src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "packages/didyoureally/src/didyoureally/adapters.py": "55cea7ddfb0b886592211f9f9d583f2fcd3228cae9f48824767387d0a37c870d",
+    "packages/didyoureally/src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "packages/didyoureally/src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+    "packages/didyoureally/src/didyoureally/extract.py": "4161e4d64e0a04e9f0c74198f39490a6485ea55f9340dc0b74a33f440697f152",
+    "packages/didyoureally/src/didyoureally/matcher.py": "8ed0d3820c020b6d6f451299b9cd777052282ad34776f2761dc8e34bc8fb47b4",
+    "packages/didyoureally/src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+    "packages/didyoureally/src/didyoureally/schema.py": "8287d2cd2b5714ff293dacfb4dd6b61ee3ea56fba05855aa2d4c389eb9892a64",
+    "packages/didyoureally/src/didyoureally/staged.py": "f31fb6141eab29599fbeb96f794ddc8a158fcbc3397febe4602847c713098334"
+  },
+  "python": "3.14.2 (main, Dec  5 2025, 21:11:58) [Clang 21.1.4 ]",
+  "execution": "declarative_mocks",
+  "runs": [
+    {
+      "model": "qwen2.5:7b",
+      "directory": "qwen2.5-7b",
+      "started_at": "2026-10-04T19:05:33.574199+00:00",
+      "command": [
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/.venv/bin/python",
+        "-m",
+        "callprobe",
+        "agent",
+        "run",
+        "--suite",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/examples/agent-validation/suite.json",
+        "--model",
+        "qwen2.5:7b",
+        "--endpoint",
+        "http://localhost:11434/v1",
+        "--extractor-model",
+        "mistral-nemo:latest",
+        "--json-mode",
+        "--out",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-04-agent-validation-matrix/qwen2.5-7b"
+      ],
+      "status": "finished",
+      "finished_at": "2026-10-04T19:12:42.451101+00:00",
+      "elapsed_seconds": 428.875,
+      "exit_code": 1
+    },
+    {
+      "model": "llama3.1:8b",
+      "directory": "llama3.1-8b",
+      "started_at": "2026-10-04T19:12:42.452363+00:00",
+      "command": [
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/.venv/bin/python",
+        "-m",
+        "callprobe",
+        "agent",
+        "run",
+        "--suite",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/examples/agent-validation/suite.json",
+        "--model",
+        "llama3.1:8b",
+        "--endpoint",
+        "http://localhost:11434/v1",
+        "--extractor-model",
+        "mistral-nemo:latest",
+        "--json-mode",
+        "--out",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-04-agent-validation-matrix/llama3.1-8b"
+      ],
+      "status": "finished",
+      "finished_at": "2026-10-04T19:21:24.392828+00:00",
+      "elapsed_seconds": 521.937,
+      "exit_code": 1
+    },
+    {
+      "model": "qwen3:8b",
+      "directory": "qwen3-8b",
+      "started_at": "2026-10-04T19:21:24.394900+00:00",
+      "command": [
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/.venv/bin/python",
+        "-m",
+        "callprobe",
+        "agent",
+        "run",
+        "--suite",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/examples/agent-validation/suite.json",
+        "--model",
+        "qwen3:8b",
+        "--endpoint",
+        "http://localhost:11434/v1",
+        "--extractor-model",
+        "mistral-nemo:latest",
+        "--json-mode",
+        "--out",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-04-agent-validation-matrix/qwen3-8b"
+      ],
+      "status": "finished",
+      "finished_at": "2026-10-04T19:51:29.130626+00:00",
+      "elapsed_seconds": 595.529,
+      "exit_code": 130
+    },
+    {
+      "model": "hermes3:8b",
+      "directory": "hermes3-8b",
+      "started_at": "2026-10-04T19:51:29.137018+00:00",
+      "command": [
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/.venv/bin/python",
+        "-m",
+        "callprobe",
+        "agent",
+        "run",
+        "--suite",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/examples/agent-validation/suite.json",
+        "--model",
+        "hermes3:8b",
+        "--endpoint",
+        "http://localhost:11434/v1",
+        "--extractor-model",
+        "mistral-nemo:latest",
+        "--json-mode",
+        "--out",
+        "/Users/eladhirsh/Documents/ChatGPT/callprobe/results/2026-10-04-agent-validation-matrix/hermes3-8b"
+      ],
+      "status": "finished",
+      "finished_at": "2026-10-04T19:53:35.171136+00:00",
+      "elapsed_seconds": 126.033,
+      "exit_code": 3
+    }
+  ],
+  "finished_at": "2026-10-04T19:53:35.172684+00:00",
+  "source_files_unchanged": true
+}

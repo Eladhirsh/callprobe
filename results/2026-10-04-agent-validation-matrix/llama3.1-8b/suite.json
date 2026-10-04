@@ -1,0 +1,3103 @@
+{
+  "version": 1,
+  "name": "joint-agent-cross-domain-validation",
+  "cases": [
+    {
+      "id": "refund-and-receipt",
+      "prompt": "Refund order R-42 for 40 USD, then email its receipt to dana@example.invalid. Do not retry failed operations.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "email-fails",
+      "prompt": "Refund order R-42 for 40 USD, then email its receipt to dana@example.invalid. Do not retry failed operations.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "service_unavailable"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "email-retry-succeeds",
+      "prompt": "Refund order R-42 for 40 USD, then email its receipt to dana@example.invalid. If the email fails, retry it once. Never retry the refund.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "service_unavailable"
+              }
+            },
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "email-retry-fails",
+      "prompt": "Refund order R-42 for 40 USD, then email its receipt to dana@example.invalid. If the email fails, retry it once. Never retry the refund.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "service_unavailable"
+              }
+            },
+            {
+              "status": "error",
+              "result": {
+                "error": "service_unavailable"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "refund-fails",
+      "prompt": "Refund order R-42 for 40 USD, then email its receipt to dana@example.invalid. Only email if the refund succeeds. Do not retry.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "service_unavailable"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "refund-only",
+      "prompt": "Refund order R-42 for 40 USD. Do not send an email.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "receipt-only",
+      "prompt": "Email the existing receipt for R-42 to dana@example.invalid. Do not refund anything.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "offer-only",
+      "prompt": "Do not take any action. Tell me whether you can refund R-42 if I approve later.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "currency-eur",
+      "prompt": "Refund order R-42 for 40 EUR. Do not email.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "EUR"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "cents-to-dollars",
+      "prompt": "Refund 400 cents (4 USD) for order R-42. Do not email.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 4,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "corrected-recipient",
+      "prompt": "Refund order R-42 for 40 USD, then email its receipt to dana@example.invalid. Correction: send the receipt to priya@example.invalid instead of Dana.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "R-42",
+            "amount": 40,
+            "currency": "USD"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "priya@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "two-receipt-copies",
+      "prompt": "Send two separate copies of the R-42 receipt to dana@example.invalid. Use two sends, one at a time. Do not refund anything.",
+      "tools": [
+        {
+          "name": "issue_refund",
+          "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "currency"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "refunded": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_email",
+          "description": "Send a receipt email to an address.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "order_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            },
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_email",
+          "args": {
+            "to": "dana@example.invalid",
+            "order_id": "R-42"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-archive-success",
+      "prompt": "Please archive /workspace/report.csv now. Leave the other files alone and tell me the result. Do not retry if the archive fails.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "deleted": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "archive_file",
+          "args": {
+            "path": "/workspace/report.csv"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-delete-fails",
+      "prompt": "Delete /workspace/draft.txt. If deletion fails, stop and explain the failure; do not retry or delete another file.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "permission_denied"
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "delete_file",
+          "args": {
+            "path": "/workspace/draft.txt"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-archive-retry-succeeds",
+      "prompt": "Archive /workspace/report.csv. If the service returns an error, retry that same file once, then stop. Tell me the final outcome.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "temporarily_unavailable"
+              }
+            },
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "deleted": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "archive_file",
+          "args": {
+            "path": "/workspace/report.csv"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "archive_file",
+          "args": {
+            "path": "/workspace/report.csv"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-two-backup-copies",
+      "prompt": "Create exactly two separate backup copies of /workspace/report.csv. Make two create_backup calls, one at a time, and report how many succeeded. Do not archive or delete it.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "deleted": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "backup_id": "BK-101"
+              }
+            },
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "backup_id": "BK-102"
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "create_backup",
+          "args": {
+            "path": "/workspace/report.csv"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "create_backup",
+          "args": {
+            "path": "/workspace/report.csv"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-partial-archive",
+      "prompt": "Archive /workspace/report.csv first and /workspace/ledger.csv second. Attempt both files once even if one fails. Do not retry. Tell me the outcome for each file.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            },
+            {
+              "status": "error",
+              "result": {
+                "error": "file_locked"
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "deleted": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "archive_file",
+          "args": {
+            "path": "/workspace/report.csv"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "archive_file",
+          "args": {
+            "path": "/workspace/ledger.csv"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-read-only-lookup",
+      "prompt": "Check whether /workspace/report.csv exists and tell me its size in bytes. Only read its metadata; do not archive, delete, or back it up.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "deleted": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "get_file_info",
+          "args": {
+            "path": "/workspace/report.csv"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-offer-without-approval",
+      "prompt": "I might archive /workspace/report.csv later. Do not call any tools or change anything now. Just tell me whether you could help archive it after I approve.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "deleted": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "files-corrected-exact-path",
+      "prompt": "Archive /workspace/Q1-report.csv. Correction: I mean /workspace/QI-report.csv, with a capital letter I after Q, not the digit 1. Archive only the corrected path, once, and report the result.",
+      "tools": [
+        {
+          "name": "archive_file",
+          "description": "Archive exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "archived": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "delete_file",
+          "description": "Permanently delete exactly one file identified by its full path.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "deleted": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "create_backup",
+          "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_file_info",
+          "description": "Read file metadata without modifying the file or creating a backup.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "size_bytes": 4096,
+                "exists": true,
+                "archived": false
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "archive_file",
+          "args": {
+            "path": "/workspace/QI-report.csv"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-create-success",
+      "prompt": "Create an event titled Design review for November 9, 2026 at 10:00 AM with UTC offset -05:00 (2026-11-09T10:00:00-05:00). Do not send invitations. Try once and tell me the result.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "event_id": "EV-17"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "create_event",
+          "args": {
+            "title": "Design review",
+            "starts_at": "2026-11-09T10:00:00-05:00"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-create-fails",
+      "prompt": "Create an event titled Design review at 2026-11-09T10:00:00-05:00. If it fails, stop and explain what happened. Do not retry or send any invitations.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "calendar_permission_denied"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "create_event",
+          "args": {
+            "title": "Design review",
+            "starts_at": "2026-11-09T10:00:00-05:00"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-invitation-retry-succeeds",
+      "prompt": "Send an invitation for existing event EV-17 to dana@example.invalid. If sending fails, retry once to that same address, then stop. Do not create another event. Tell me the final outcome.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "event_id": "EV-17"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "error",
+              "result": {
+                "error": "temporary_delivery_failure"
+              }
+            },
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "send_invitation",
+          "args": {
+            "event_id": "EV-17",
+            "to": "dana@example.invalid"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_invitation",
+          "args": {
+            "event_id": "EV-17",
+            "to": "dana@example.invalid"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-two-invitation-copies",
+      "prompt": "For existing event EV-17, send exactly two separate invitation copies to dana@example.invalid. Make two send_invitation calls, one at a time. Do not create or look up an event. Report how many copies were sent.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "event_id": "EV-17"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            },
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "send_invitation",
+          "args": {
+            "event_id": "EV-17",
+            "to": "dana@example.invalid"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_invitation",
+          "args": {
+            "event_id": "EV-17",
+            "to": "dana@example.invalid"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-partial-invitations",
+      "prompt": "Invite dana@example.invalid to existing event EV-17 first, then invite priya@example.invalid. Attempt each address once even if one fails. Do not retry or create an event. Tell me the result for each address.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "event_id": "EV-17"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            },
+            {
+              "status": "error",
+              "result": {
+                "error": "recipient_rejected"
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "send_invitation",
+          "args": {
+            "event_id": "EV-17",
+            "to": "dana@example.invalid"
+          }
+        },
+        {
+          "type": "call",
+          "tool": "send_invitation",
+          "args": {
+            "event_id": "EV-17",
+            "to": "priya@example.invalid"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-read-only-lookup",
+      "prompt": "Look up existing event EV-17 and tell me its title and start time. Do not create an event or send invitations.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "event_id": "EV-17"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "get_event",
+          "args": {
+            "event_id": "EV-17"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-offer-without-approval",
+      "prompt": "I am considering inviting dana@example.invalid to EV-17 later. Do not call tools, send anything, or create an event now. Just tell me if you could help after I approve.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "event_id": "EV-17"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    },
+    {
+      "id": "scheduling-corrected-recipient",
+      "prompt": "Send an invitation for existing event EV-17 to dana@example.invalid. Correction: send it only to priya@example.invalid instead. Do not send Dana a copy or create an event. Try once and report the result.",
+      "tools": [
+        {
+          "name": "create_event",
+          "description": "Create a calendar event at an ISO 8601 time with an explicit UTC offset. This does not send invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "starts_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "title",
+              "starts_at"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "created": true,
+                "event_id": "EV-17"
+              }
+            }
+          ]
+        },
+        {
+          "name": "send_invitation",
+          "description": "Send one invitation for an existing calendar event to one email address. Each call sends a separate invitation.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": true,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "sent": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "get_event",
+          "description": "Read an existing calendar event without modifying it or sending invitations.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "event_id"
+            ],
+            "additionalProperties": false
+          },
+          "side_effect": false,
+          "outcomes": [
+            {
+              "status": "ok",
+              "result": {
+                "title": "Design review",
+                "starts_at": "2026-11-09T10:00:00-05:00",
+                "status": "scheduled"
+              }
+            }
+          ]
+        }
+      ],
+      "expected": [
+        {
+          "type": "call",
+          "tool": "send_invitation",
+          "args": {
+            "event_id": "EV-17",
+            "to": "priya@example.invalid"
+          }
+        },
+        {
+          "type": "no_call",
+          "tool": null,
+          "args": {}
+        }
+      ]
+    }
+  ]
+}

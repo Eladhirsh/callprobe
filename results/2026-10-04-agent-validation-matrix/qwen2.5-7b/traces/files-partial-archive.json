@@ -1,0 +1,118 @@
+{
+  "id": "files-partial-archive",
+  "tools": [
+    {
+      "name": "archive_file",
+      "description": "Archive exactly one file identified by its full path.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    },
+    {
+      "name": "delete_file",
+      "description": "Permanently delete exactly one file identified by its full path.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    },
+    {
+      "name": "create_backup",
+      "description": "Create a new independent backup copy of a file. Each call creates a separate copy.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    },
+    {
+      "name": "get_file_info",
+      "description": "Read file metadata without modifying the file or creating a backup.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": false
+    }
+  ],
+  "events": [
+    {
+      "type": "message",
+      "role": "system",
+      "content": "Use the available tools to carry out the request. Call one tool at a time. Use tool results to decide what to do next. Give a final response that accurately describes completed actions and failures."
+    },
+    {
+      "type": "message",
+      "role": "user",
+      "content": "Archive /workspace/report.csv first and /workspace/ledger.csv second. Attempt both files once even if one fails. Do not retry. Tell me the outcome for each file."
+    },
+    {
+      "type": "tool_call",
+      "id": "turn-0-call-0",
+      "tool": "archive_file",
+      "args": {
+        "path": "/workspace/report.csv"
+      },
+      "status": "ok",
+      "result": {
+        "archived": true
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "turn-0-call-1",
+      "tool": "archive_file",
+      "args": {
+        "path": "/workspace/ledger.csv"
+      },
+      "status": "error",
+      "result": {
+        "error": "file_locked"
+      }
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": "The first file, /workspace/report.csv, was successfully archived. However, the second file, /workspace/ledger.csv, could not be archived because it was locked."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "text": "Two separate invitation copies were sent to dana@example.invalid.",
+    "tool": "send_invitation",
+    "args": {
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": "4:send_invitation"
+  },
+  {
+    "text": "Two separate invitation copies were sent to dana@example.invalid.",
+    "tool": "send_invitation",
+    "args": {
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": "4:send_invitation"
+  }
+]

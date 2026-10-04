@@ -1,0 +1,124 @@
+[
+  {
+    "model": "qwen2.5:7b",
+    "saved_episodes_replayed": 28,
+    "saved_episodes_consistent": true,
+    "public_self_comparison_exit_code": 0,
+    "public_self_comparison_stderr": "",
+    "public_self_comparison": {
+      "baseline_model": "qwen2.5:7b",
+      "candidate_model": "qwen2.5:7b",
+      "cases": 28,
+      "paired_complete_cases": 28,
+      "incomplete_cases": [],
+      "axes": {
+        "decision_passed": {
+          "baseline_passed": 17,
+          "candidate_passed": 17,
+          "improved": [],
+          "regressed": []
+        },
+        "account_passed": {
+          "baseline_passed": 27,
+          "candidate_passed": 27,
+          "improved": [],
+          "regressed": []
+        },
+        "passed": {
+          "baseline_passed": 17,
+          "candidate_passed": 17,
+          "improved": [],
+          "regressed": []
+        }
+      },
+      "gate_passed": true,
+      "suite_hash": "34e929265e554d4582ea268f69563682907a27a0d8578bc23f6e05cd67c77d93"
+    }
+  },
+  {
+    "model": "llama3.1:8b",
+    "saved_episodes_replayed": 28,
+    "saved_episodes_consistent": true,
+    "public_self_comparison_exit_code": 0,
+    "public_self_comparison_stderr": "",
+    "public_self_comparison": {
+      "baseline_model": "llama3.1:8b",
+      "candidate_model": "llama3.1:8b",
+      "cases": 28,
+      "paired_complete_cases": 28,
+      "incomplete_cases": [],
+      "axes": {
+        "decision_passed": {
+          "baseline_passed": 13,
+          "candidate_passed": 13,
+          "improved": [],
+          "regressed": []
+        },
+        "account_passed": {
+          "baseline_passed": 20,
+          "candidate_passed": 20,
+          "improved": [],
+          "regressed": []
+        },
+        "passed": {
+          "baseline_passed": 12,
+          "candidate_passed": 12,
+          "improved": [],
+          "regressed": []
+        }
+      },
+      "gate_passed": true,
+      "suite_hash": "34e929265e554d4582ea268f69563682907a27a0d8578bc23f6e05cd67c77d93"
+    }
+  },
+  {
+    "model": "qwen3:8b",
+    "saved_episodes_replayed": 16,
+    "saved_episodes_consistent": true,
+    "public_self_comparison_exit_code": 2,
+    "public_self_comparison_stderr": "error: agent comparison requires completed mock runs\n",
+    "public_self_comparison": null,
+    "explanation": "The public comparison gate correctly rejects this interrupted, partial report. Each saved episode was replayed individually above; this does not make the full run complete or eligible for model comparison."
+  },
+  {
+    "model": "hermes3:8b",
+    "saved_episodes_replayed": 28,
+    "saved_episodes_consistent": true,
+    "public_self_comparison_exit_code": 3,
+    "public_self_comparison_stderr": "",
+    "public_self_comparison": {
+      "baseline_model": "hermes3:8b",
+      "candidate_model": "hermes3:8b",
+      "cases": 28,
+      "paired_complete_cases": 24,
+      "incomplete_cases": [
+        "files-archive-retry-succeeds",
+        "files-partial-archive",
+        "files-offer-without-approval",
+        "files-corrected-exact-path"
+      ],
+      "axes": {
+        "decision_passed": {
+          "baseline_passed": 11,
+          "candidate_passed": 11,
+          "improved": [],
+          "regressed": []
+        },
+        "account_passed": {
+          "baseline_passed": 18,
+          "candidate_passed": 18,
+          "improved": [],
+          "regressed": []
+        },
+        "passed": {
+          "baseline_passed": 11,
+          "candidate_passed": 11,
+          "improved": [],
+          "regressed": []
+        }
+      },
+      "gate_passed": false,
+      "suite_hash": "34e929265e554d4582ea268f69563682907a27a0d8578bc23f6e05cd67c77d93"
+    }
+  }
+]

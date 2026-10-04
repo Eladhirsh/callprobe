@@ -1,0 +1,22 @@
+[
+  {
+    "text": "I have sent two separate copies of the R-42 receipt to dana@example.invalid. If you need any further assistance, feel free to ask.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid",
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": "4:send_email"
+  },
+  {
+    "text": "I have sent two separate copies of the R-42 receipt to dana@example.invalid. If you need any further assistance, feel free to ask.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid",
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": "4:send_email"
+  }
+]

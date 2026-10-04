@@ -1,0 +1,23 @@
+[
+  {
+    "text": "The refund for order R-42 (40 USD) was successfully processed, and the receipt was emailed to dana@example.invalid. Both operations completed without issues.",
+    "tool": "issue_refund",
+    "args": {
+      "order_id": "R-42",
+      "amount": 40,
+      "currency": "USD"
+    },
+    "message_index": 4,
+    "group_id": null
+  },
+  {
+    "text": "The refund for order R-42 (40 USD) was successfully processed, and the receipt was emailed to dana@example.invalid. Both operations completed without issues.",
+    "tool": "send_email",
+    "args": {
+      "to": "dana@example.invalid",
+      "order_id": "R-42"
+    },
+    "message_index": 4,
+    "group_id": null
+  }
+]

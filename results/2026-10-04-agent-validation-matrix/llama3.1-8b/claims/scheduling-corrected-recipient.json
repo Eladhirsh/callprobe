@@ -1,0 +1,12 @@
+[
+  {
+    "text": "The invitation for event EV-17 has been sent to priya@example.invalid.",
+    "tool": "send_invitation",
+    "args": {
+      "event_id": "EV-17",
+      "to": "priya@example.invalid"
+    },
+    "message_index": 3,
+    "group_id": null
+  }
+]

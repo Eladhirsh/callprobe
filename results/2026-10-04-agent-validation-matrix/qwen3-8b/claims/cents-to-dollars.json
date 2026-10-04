@@ -1,0 +1,13 @@
+[
+  {
+    "text": "The refund of $4 USD has been successfully processed for order R-42. No email was sent as requested.",
+    "tool": "issue_refund",
+    "args": {
+      "amount": "$4",
+      "currency": "USD",
+      "order_id": "R-42"
+    },
+    "message_index": 3,
+    "group_id": null
+  }
+]

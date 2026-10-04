@@ -1,0 +1,27 @@
+{
+  "introduced_at": "2026-10-04T19:50:33.943060+00:00",
+  "introduced_after_matrix_start": true,
+  "reason": "Post-start operational runtime limit requested because local wall-clock gaps and reasoning-heavy turns extended the matrix. This is not an intrinsic speed comparison.",
+  "models": [
+    "qwen3:8b",
+    "hermes3:8b"
+  ],
+  "max_wall_seconds_from_run_start": 1800,
+  "action": "SIGINT only to the active CLI child; preserve completed checkpoints and let the serial orchestrator proceed.",
+  "token_budget_changed": false,
+  "case_selection_changed": false,
+  "applied": [
+    {
+      "model": "qwen3:8b",
+      "signaled_at": "2026-10-04T19:51:29.006372+00:00",
+      "signal": "SIGINT",
+      "pid": 38292,
+      "completed_checkpoints_before_signal": 16,
+      "planned_cases": 28,
+      "run_started_at": "2026-10-04T19:21:24.394900+00:00",
+      "wall_seconds_at_signal": 1804.611472
+    }
+  ],
+  "status": "finished",
+  "finished_at": "2026-10-04T19:53:39.181547+00:00"
+}

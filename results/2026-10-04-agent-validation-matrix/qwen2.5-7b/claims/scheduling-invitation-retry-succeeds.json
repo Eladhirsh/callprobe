@@ -1,0 +1,11 @@
+[
+  {
+    "text": "The invitation to dana@example.invalid has been successfully resented. The final outcome is that the invitation was sent successfully.",
+    "tool": "send_invitation",
+    "args": {
+      "to": "dana@example.invalid"
+    },
+    "message_index": 5,
+    "group_id": null
+  }
+]

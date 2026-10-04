@@ -1,0 +1,22 @@
+[
+  {
+    "text": "Both invitation copies were successfully sent to dana@example.invalid for the existing event EV-17.",
+    "tool": "send_invitation",
+    "args": {
+      "event_id": "EV-17",
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": "4:send_invitation"
+  },
+  {
+    "text": "Both invitation copies were successfully sent to dana@example.invalid for the existing event EV-17.",
+    "tool": "send_invitation",
+    "args": {
+      "event_id": "EV-17",
+      "to": "dana@example.invalid"
+    },
+    "message_index": 4,
+    "group_id": "4:send_invitation"
+  }
+]

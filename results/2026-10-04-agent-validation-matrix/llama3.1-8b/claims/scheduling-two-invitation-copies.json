@@ -1,0 +1,22 @@
+[
+  {
+    "text": "To answer the question, I will call the \"send_invitation\" function twice with the same arguments, and then call the \"get_event\" function to retrieve the event and count the number of invitations sent.\n\nHere are the function calls:\n\n1. {\"name\": \"send_invitation\", \"parameters\": {\"event_id\": \"EV-17\", \"to\": \"dana@example.invalid\"}}\n2. {\"name\": \"send_invitation\", \"parameters\": {\"event_id\": \"EV-17\", \"to\": \"dana@example.invalid\"}}\n3. {\"name\": \"get_event\", \"parameters\": {\"event_id\": \"EV-17\"}}",
+    "tool": "send_invitation",
+    "args": {
+      "event_id": "EV-17",
+      "to": "dana@example.invalid"
+    },
+    "message_index": 2,
+    "group_id": "2:send_invitation"
+  },
+  {
+    "text": "To answer the question, I will call the \"send_invitation\" function twice with the same arguments, and then call the \"get_event\" function to retrieve the event and count the number of invitations sent.\n\nHere are the function calls:\n\n1. {\"name\": \"send_invitation\", \"parameters\": {\"event_id\": \"EV-17\", \"to\": \"dana@example.invalid\"}}\n2. {\"name\": \"send_invitation\", \"parameters\": {\"event_id\": \"EV-17\", \"to\": \"dana@example.invalid\"}}\n3. {\"name\": \"get_event\", \"parameters\": {\"event_id\": \"EV-17\"}}",
+    "tool": "send_invitation",
+    "args": {
+      "event_id": "EV-17",
+      "to": "dana@example.invalid"
+    },
+    "message_index": 2,
+    "group_id": "2:send_invitation"
+  }
+]

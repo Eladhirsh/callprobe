@@ -1,0 +1,11 @@
+{
+  "sealed_at": "2026-10-04T19:58:18.847243+00:00",
+  "source_files_match_start_and_end": true,
+  "source_file_count": 43,
+  "saved_episode_count": 100,
+  "complete_episode_count": 93,
+  "incomplete_episode_count": 7,
+  "missing_planned_episode_count": 12,
+  "independent_review_sha256": "b9336c86d98e1492bd53a5e29de2b10574b4ec84dbd4483d6aeb7df5a3b7d3e4",
+  "live_model_calls_finished": true
+}

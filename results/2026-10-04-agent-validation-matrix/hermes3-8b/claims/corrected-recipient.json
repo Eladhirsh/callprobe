@@ -1,0 +1,12 @@
+[
+  {
+    "text": "I have sent the receipt for order R-42 to priya@example.invalid. Is there anything else I can help you with?",
+    "tool": "send_email",
+    "args": {
+      "to": "priya@example.invalid",
+      "order_id": "R-42"
+    },
+    "message_index": 3,
+    "group_id": null
+  }
+]

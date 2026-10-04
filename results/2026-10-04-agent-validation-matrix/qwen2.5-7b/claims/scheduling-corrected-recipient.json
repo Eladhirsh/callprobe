@@ -1,0 +1,12 @@
+[
+  {
+    "text": "The invitation for the existing event EV-17 has been successfully sent to priya@example.invalid. No invitation was sent to Dana as per your request.",
+    "tool": "send_invitation",
+    "args": {
+      "event_id": "EV-17",
+      "to": "priya@example.invalid"
+    },
+    "message_index": 3,
+    "group_id": null
+  }
+]
