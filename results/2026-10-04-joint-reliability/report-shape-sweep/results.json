@@ -1,0 +1,4929 @@
+{
+  "started_at": "2026-10-04T19:48:42.875288+00:00",
+  "finished_at": "2026-10-04T19:48:48.109103+00:00",
+  "git_revision": "31067454d678b51a1d2868b111b469baa062e52c",
+  "source_sha256": {
+    "callprobe": {
+      "__init__.py": "76807b94b42e2dad3d4c5dea2e9c1bbb488d017a23bffc05592dbd1dcdb574cc",
+      "__main__.py": "d6d0a6d09b7fbbea30f9ee4702f2b223cf2ed29e981fedce4495a8f2e010ec9f",
+      "adapters.py": "b46aecb2ec109e9206734d0826afbaf402cf98cd4026e0a5f0d02cef81c857f2",
+      "agent_cli.py": "1efe0a57d8326e7174ddfa3f4e28af9d92ec14295fbe15b186a777c939f09b81",
+      "agent_compare.py": "76170c614423052d7fac1e17b40efd0bbf1fb01d9611c910be80d8adea298da9",
+      "agent_pilot.py": "9de9a86b4f6c3e0d16d5693b653c05e2984e19c7830c920686a311a5d0bcb98e",
+      "agent_session.py": "92c3eda66c9658362694c2d88063aa4e556a90cd881f7ba37d3e2e1dcd4fd131",
+      "bootstrap.py": "3903e31ed1e29a04f52301c30cc8ccef7a2ec7749090cf88dae7d271381b42e8",
+      "cli.py": "4545ff40f4b847bb09fc38e6602a47ed8f8e9ad98d711a5e55a31e63fd77a246",
+      "client.py": "821bdd38f98cb1c77f7d5f185abcdf1bcb661beab46a61f52324b082b685e279",
+      "coerce.py": "d783f9cb5a4d34db429c835abe880135a6e59fc137cbb0052c82eefee4275164",
+      "compare.py": "6a77877ffd83c0bc2b00a2f21b56609f5edbf128ac9dbe5650d583d9bc8e87fb",
+      "contract_demo.py": "fd6cce6874ab648a3a84c38063bc40e7a84fdb73f77ad237ba69a25372b06240",
+      "contracts.py": "2b4208d682c6ae266f6b311787a97d8690604a4b8a9dbe32a5df13001593379c",
+      "demo.py": "723458e672f64f851b27befd21bdddaebad3ff82c0f6077b8a131b88a8766bd4",
+      "doctor.py": "d7ad7cc218a5b2bd374f0beb3e1f847673e6aa0780347c991ed156fa78c7b5e4",
+      "examples.py": "a1f2c3f995845ff227d36ec578a55dbbcb96aa203aa0b6f2741d2279990e306d",
+      "explain.py": "9eea4902d581046356948180e45082c6cecb5e268f177f9ecd8d02e2c77f1505",
+      "gates.py": "3366bf659af43ca26551d9c4d6fc408013e2f1d9a57ed34f40930d316323ba61",
+      "init.py": "965c48866ff32317b7676a327ec7d347ba2dec4b97bf661a970b24a3a82241c2",
+      "junit.py": "e1c6d8cb3dc41ef42902ce5ec41ecc85ad05ea0393e85d2025dd3653285b4d27",
+      "loader.py": "396320d76415eea92254fc92b7deb0bab17ed802a43c5032507a2e2b146e2cf4",
+      "models.py": "9aaa591dafa4eadf94396a861c0ffe801fd1382c561e53455cdc795cac46df5e",
+      "openapi.py": "a1004fc9e97e59fb88705fdde2fe8f6d8ebd99a330b09145cffaa2b7156e8355",
+      "recording_io.py": "65e049995d9ed4ec3897b1fd45035d527ed96d4726db0b0b3fcafd595b04f665",
+      "recordings.py": "ec43b338f4ca654d8b68936305dae75888cb0aaf216b696355bfc268839d08e7",
+      "report.py": "471625788e4a0276fa72d43c82ed3f24954a883b5581128b94dc2fc55e5cef59",
+      "run_config.py": "80a43419e311fc1e6becc57e6b9f23b2171e6401a82e46ae532d1a3cece13bfd",
+      "runner.py": "ef3e3bfa847ca713b2b85f2e7c5211cfecfc5254627a37c483dace781eaa0f30",
+      "scoring.py": "30e34ca9f6f945d94f01d136407062495d8c9f1b966ac77a98232f932b384d7d",
+      "sweep.py": "9d431b85a3553f9f8bd99de20ee3abce5cc39bf32c4112cd68e803056aa88c6a",
+      "validate.py": "3b1765935ce2806260d407e7071f69f264823db50ea6bc49726c01a22f6193f8",
+      "yaml_config.py": "b324d57df7b0c91485382f61fb84afe1ed80678a2fa5eb36bb661e1c3ee38857"
+    },
+    "didyoureally": {
+      "__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+      "__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+      "adapters.py": "55cea7ddfb0b886592211f9f9d583f2fcd3228cae9f48824767387d0a37c870d",
+      "bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+      "cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+      "extract.py": "4161e4d64e0a04e9f0c74198f39490a6485ea55f9340dc0b74a33f440697f152",
+      "matcher.py": "8ed0d3820c020b6d6f451299b9cd777052282ad34776f2761dc8e34bc8fb47b4",
+      "report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+      "schema.py": "8287d2cd2b5714ff293dacfb4dd6b61ee3ea56fba05855aa2d4c389eb9892a64",
+      "staged.py": "f31fb6141eab29599fbeb96f794ddc8a158fcbc3397febe4602847c713098334"
+    }
+  },
+  "fixture_sha256": "2c78d9b35a78b024a17baa7617b8fb275b130ce3eacfce29cffd2884f9120865",
+  "script_sha256": "59b6557a92d33af57fe33809777fa00aba5a97649067ee8c726df87c5c637f29",
+  "cases": 456,
+  "uncaught_exceptions": 0,
+  "exit_counts": {
+    "2": 428,
+    "0": 28
+  },
+  "interpretation": "This tests exception containment and records exit codes. Some replacements remain valid. It does not assert every replacement is invalid, measure detection accuracy, or prove authenticity.",
+  "records": [
+    {
+      "path": [
+        "format_version"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: unsupported agent report format\n"
+    },
+    {
+      "path": [
+        "format_version"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: unsupported agent report format\n"
+    },
+    {
+      "path": [
+        "format_version"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: unsupported agent report format\n"
+    },
+    {
+      "path": [
+        "format_version"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: unsupported agent report format\n"
+    },
+    {
+      "path": [
+        "format_version"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: unsupported agent report format\n"
+    },
+    {
+      "path": [
+        "format_version"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: unsupported agent report format\n"
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "execution"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "execution"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "execution"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "execution"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "execution"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "execution"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent comparison requires completed mock runs\n"
+    },
+    {
+      "path": [
+        "suite_hash"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report does not match its frozen suite.json\n"
+    },
+    {
+      "path": [
+        "suite_hash"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report does not match its frozen suite.json\n"
+    },
+    {
+      "path": [
+        "suite_hash"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report does not match its frozen suite.json\n"
+    },
+    {
+      "path": [
+        "suite_hash"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report does not match its frozen suite.json\n"
+    },
+    {
+      "path": [
+        "suite_hash"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report does not match its frozen suite.json\n"
+    },
+    {
+      "path": [
+        "suite_hash"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report does not match its frozen suite.json\n"
+    },
+    {
+      "path": [
+        "planned_cases"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "planned_cases"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "planned_cases"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "planned_cases"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "planned_cases"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "planned_cases"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "source_sha256"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "config"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing comparison provenance\n"
+    },
+    {
+      "path": [
+        "config"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report is missing comparison provenance\n"
+    },
+    {
+      "path": [
+        "config"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing comparison provenance\n"
+    },
+    {
+      "path": [
+        "config"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing comparison provenance\n"
+    },
+    {
+      "path": [
+        "config"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report is missing comparison provenance\n"
+    },
+    {
+      "path": [
+        "episodes"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "episodes"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "episodes"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "episodes"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "episodes"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "episodes"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has incomplete case coverage\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_model"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_model"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_model"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_model"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_model"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_model"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_endpoint"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_endpoint"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_endpoint"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_endpoint"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_endpoint"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_endpoint"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: endpoint must be a valid HTTP(S) API base URL\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_model"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_model"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_model"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_model"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_model"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_model"
+      ],
+      "replacement": "wrong",
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "config",
+        "extractor_endpoint"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_endpoint"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_endpoint"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_endpoint"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_endpoint"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid model or endpoint settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_endpoint"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: endpoint must be a valid HTTP(S) API base URL\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_turns"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_turns"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_turns"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_turns"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_turns"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_turns"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_tokens"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_tokens"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_tokens"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_tokens"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_tokens"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "max_tokens"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_timeout"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_timeout"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_timeout"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_timeout"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_timeout"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_timeout"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_timeout"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_timeout"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_timeout"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_timeout"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_timeout"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_timeout"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_json_mode"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_json_mode"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_json_mode"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_json_mode"
+      ],
+      "replacement": false,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "config",
+        "extractor_json_mode"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "extractor_json_mode"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "temperature"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "temperature"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "temperature"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "temperature"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "temperature"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "config",
+        "temperature"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_retries"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_retries"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_retries"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_retries"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "config",
+        "agent_retries"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "config",
+        "agent_retries"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid request settings\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "callprobe"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "callprobe"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "callprobe"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "callprobe"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "callprobe"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "callprobe"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "didyoureally"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "didyoureally"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "didyoureally"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "didyoureally"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "didyoureally"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "source_sha256",
+        "didyoureally"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report is missing source hashes\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "case_id"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has an unknown case\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "case_id"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has an unknown case\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "case_id"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has an unknown case\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "case_id"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has an unknown case\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "case_id"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has an unknown case\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "case_id"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has an unknown case\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "status"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "status"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "status"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "status"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "status"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "status"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "agent_status"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report agent_status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "agent_status"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report agent_status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "agent_status"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report agent_status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "agent_status"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report agent_status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "agent_status"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report agent_status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "agent_status"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report agent_status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decision_passed"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decision_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decision_passed"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decision_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decision_passed"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decision_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decision_passed"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decision_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decision_passed"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decision_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decision_passed"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decision_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "account_passed"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report account_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "account_passed"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report account_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "account_passed"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report account_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "account_passed"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report account_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "account_passed"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report account_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "account_passed"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report account_passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "passed"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "passed"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "passed"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "passed"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "passed"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "passed"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report passed does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "missing_decision_turns"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report missing_decision_turns does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "missing_decision_turns"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "missing_decision_turns"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report missing_decision_turns does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "missing_decision_turns"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report missing_decision_turns does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "missing_decision_turns"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report missing_decision_turns does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "missing_decision_turns"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report missing_decision_turns does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion coverage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion coverage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion coverage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion coverage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion coverage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion coverage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "executions"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report executions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "executions"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "executions"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report executions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "executions"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report executions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "executions"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report executions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "executions"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report executions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "trace"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report trace does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "trace"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report trace does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "trace"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report trace does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "trace"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report trace does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "trace"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report trace does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "trace"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report trace does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "conversation"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report conversation does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "conversation"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report conversation does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "conversation"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report conversation does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "conversation"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report conversation does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "conversation"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report conversation does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "conversation"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report conversation does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "versions"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing episode versions\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "versions"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report is missing episode versions\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "versions"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report is missing episode versions\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "versions"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing episode versions\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "versions"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report is missing episode versions\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "versions"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report is missing episode versions\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "extraction_requests"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid extraction evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "extraction_requests"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "extraction_requests"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid extraction evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "extraction_requests"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid extraction evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "extraction_requests"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid extraction evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "extraction_requests"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid extraction evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "status"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "status"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "status"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "status"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "status"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "status"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid audit evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "passed"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "passed"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "passed"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "passed"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "passed"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "passed"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "claims"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid claim evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "claims"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "claims"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid claim evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "claims"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid claim evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "claims"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid claim evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "claims"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid claim evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "findings"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "findings"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "findings"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "findings"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "findings"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "findings"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "error"
+      ],
+      "replacement": null,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "error"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "error"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "error"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "error"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "audit",
+        "error"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report audit does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "calls"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "calls"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "calls"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "calls"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "calls"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "calls"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "content"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "content"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "content"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "content"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "content"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "content"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion usage\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion latency\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion latency\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion latency\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion latency\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion latency\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "error"
+      ],
+      "replacement": null,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "error"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion error\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "error"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion error\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "error"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion error\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "error"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion error\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "error"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion error\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report status does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "reasoning"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "reasoning"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "reasoning"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "reasoning"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "reasoning"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "reasoning"
+      ],
+      "replacement": "wrong",
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "raw"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "raw"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "raw"
+      ],
+      "replacement": {},
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "raw"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "raw"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "completions",
+        0,
+        "raw"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report has invalid completion evidence\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "task_id"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "task_id"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "task_id"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "task_id"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "task_id"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "task_id"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "category"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "category"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "category"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "category"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "category"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "category"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "model"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "model"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "model"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "model"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "model"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "model"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "pad"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "pad"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "pad"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "pad"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "pad"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "pad"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "repeat"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "repeat"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "repeat"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "repeat"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "repeat"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "repeat"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "selection_ok"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "selection_ok"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "selection_ok"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "selection_ok"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "selection_ok"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "selection_ok"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok_lenient"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok_lenient"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok_lenient"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok_lenient"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok_lenient"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "schema_ok_lenient"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok_lenient"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok_lenient"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok_lenient"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok_lenient"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok_lenient"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "args_ok_lenient"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success_lenient"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success_lenient"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success_lenient"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success_lenient"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success_lenient"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "success_lenient"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "type_coerced"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "type_coerced"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "type_coerced"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "type_coerced"
+      ],
+      "replacement": false,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "type_coerced"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "type_coerced"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "called"
+      ],
+      "replacement": null,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "called"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "called"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "called"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "called"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "called"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "expected"
+      ],
+      "replacement": null,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "expected"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "expected"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "expected"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "expected"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "expected"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "failures"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "failures"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "failures"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "failures"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "failures"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "failures"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "prompt_tokens"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": 0,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "completion_tokens"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "latency_ms"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "error"
+      ],
+      "replacement": null,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "error"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "error"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "error"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "error"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "error"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "response_text"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "response_text"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "response_text"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "response_text"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "response_text"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "response_text"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "truncated"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "truncated"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "truncated"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "truncated"
+      ],
+      "replacement": false,
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "truncated"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "truncated"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "calls"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "calls"
+      ],
+      "replacement": [],
+      "exit_code": 0,
+      "gate_passed": true,
+      "stderr": ""
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "calls"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "calls"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "calls"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "calls"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "finish_reason"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "call_count_ok"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "call_count_ok"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "call_count_ok"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "call_count_ok"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "call_count_ok"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "call_count_ok"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "planned"
+      ],
+      "replacement": null,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "planned"
+      ],
+      "replacement": [],
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "planned"
+      ],
+      "replacement": {},
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "planned"
+      ],
+      "replacement": false,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "planned"
+      ],
+      "replacement": 0,
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    },
+    {
+      "path": [
+        "episodes",
+        0,
+        "decisions",
+        0,
+        "planned"
+      ],
+      "replacement": "wrong",
+      "exit_code": 2,
+      "stderr": "error: agent report decisions does not reproduce from saved evidence; the evidence is inconsistent or the installed evaluator behavior changed\n"
+    }
+  ]
+}

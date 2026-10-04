@@ -1,0 +1,35 @@
+{
+  "kind": "exhaustive_group_allocation_oracle",
+  "status": "passed",
+  "scope": {
+    "claims": 3,
+    "calls": 3,
+    "compatibility_graphs": 512,
+    "status_patterns": 8,
+    "objective": "Maximize successful compatible assignments, then all compatible assignments.",
+    "invariants": [
+      "Every assigned edge is compatible.",
+      "Each call is assigned at most once."
+    ],
+    "limitations": "Exhaustive only for three claims and three calls; no model extraction or production accuracy claim."
+  },
+  "configurations_checked": 4096,
+  "configurations_per_status_pattern": {
+    "ok,ok,ok": 512,
+    "ok,ok,error": 512,
+    "ok,error,ok": 512,
+    "ok,error,error": 512,
+    "error,ok,ok": 512,
+    "error,ok,error": 512,
+    "error,error,ok": 512,
+    "error,error,error": 512
+  },
+  "failures_count": 0,
+  "failures": [],
+  "provenance": {
+    "python_version": "3.14.2",
+    "script_sha256": "e3a154514fb50b6f6c401036ccf57cbbd8d0d94fe89ef35920ce1ab5369e6e1a",
+    "matcher_sha256": "8ed0d3820c020b6d6f451299b9cd777052282ad34776f2761dc8e34bc8fb47b4",
+    "schema_sha256": "8287d2cd2b5714ff293dacfb4dd6b61ee3ea56fba05855aa2d4c389eb9892a64"
+  }
+}

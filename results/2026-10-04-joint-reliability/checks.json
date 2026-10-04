@@ -1,0 +1,35 @@
+{
+  "revision": "31067454d678b51a1d2868b111b469baa062e52c",
+  "python": "3.14.2",
+  "callprobe_tests_passed": 1441,
+  "didyoureally_tests_passed": 267,
+  "ruff_package_lint": "passed",
+  "ruff_package_format": "passed",
+  "ruff_shared_workflow_lint": "passed",
+  "ruff_shared_workflow_format": "passed",
+  "labeled_matcher_cases": 88,
+  "labeled_matcher_exact": 88,
+  "labeled_problems_caught": 45,
+  "labeled_false_positives": 0,
+  "labeled_false_negatives": 0,
+  "installed_wheels": {
+    "callprobe": "0.9.0rc3.dev0",
+    "didyoureally": "0.1.0"
+  },
+  "outside_checkout_checks": [
+    "callprobe validate: 50 packaged tasks",
+    "callprobe agent init: 12 pilot cases",
+    "callprobe audit: masked failure example exited 1",
+    "dyr bench: 88 of 88 exact",
+    "agent compare: each of two historical 12-case reports replayed with no differences"
+  ],
+  "github_ci": "https://github.com/Eladhirsh/callprobe/actions/runs/37227137221",
+  "github_ci_conclusion": "success",
+  "github_ci_python_versions": [
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13"
+  ],
+  "limitations": "Offline deterministic checks and scripted fixtures. Not a measurement of model extraction accuracy."
+}

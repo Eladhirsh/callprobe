@@ -31,6 +31,8 @@ See [installation, evidence, gates, and limitations](docs/agent-workflow.md).
 `callprobe agent compare` adds an offline regression gate for the two axes.
 The [first real-model pilot](results/2026-10-04-joint-agent-pilot/README.md)
 caught false success reports after failed refunds in both tested agents.
+The [unified reliability checks](results/2026-10-04-joint-reliability/README.md)
+cover both engines, adversarial reports, and isolated wheel installs.
 
 ## One repository, two engines
 
