@@ -123,3 +123,62 @@ def test_pronoun_repair_can_correct_a_misclassified_future_action():
     assert LLMExtractor(transport=transport(replies, requests)).extract(t) == []
     assert len(requests) == 2
     assert '"role": "assistant"' not in json.dumps(requests[-1]["messages"])
+
+
+@pytest.mark.parametrize("mode", ["default", "staged"])
+@pytest.mark.parametrize("copies", [1, 2])
+def test_repair_preserves_identical_action_multiplicity(mode, copies):
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "send_email"}],
+            "events": [{"type": "message", "role": "assistant", "content": "I sent two copies to Dana."}],
+        }
+    )
+    bad = [{"to": "Dana", "subject": None}] * 2
+    repaired = [{"to": "Dana"}] * copies
+    if mode == "default":
+
+        def payload(values):
+            return {"claims": [{"completed": True, "tool": "send_email", "actions": values}]}
+
+        replies = [payload(bad), payload(repaired)]
+        cls = LLMExtractor
+    else:
+
+        def payload(values):
+            return {"details": [{"action_id": 0, "args": a} for a in values]}
+
+        replies = [
+            {"claims": [{"completed": True, "tool": "send_email", "args": {}}]},
+            payload(bad),
+            payload(repaired),
+        ]
+        cls = StagedExtractor
+    extractor = cls(transport=transport(replies, []))
+    if copies == 1:
+        with pytest.raises(ExtractionError) as caught:
+            extractor.extract(t)
+        assert caught.value.reason == "lost_source_detail"
+    else:
+        claims = extractor.extract(t)
+        assert len(claims) == 2
+        assert claims[0].group_id == claims[1].group_id
+
+
+def test_source_anchor_matching_reassigns_overlapping_subsets():
+    from didyoureally import Claim
+    from didyoureally.extract import _preserves_source_details
+
+    anchors = [
+        {"tool": "send_email", "args": {"to": "Dana"}},
+        {"tool": "send_email", "args": {"to": "Dana", "subject": "Receipt"}},
+    ]
+    claims = [
+        Claim("Sent", "send_email", {"to": "Dana", "subject": "Receipt"}),
+        Claim("Sent", "send_email", {"to": "Dana", "subject": "Update"}),
+    ]
+    assert _preserves_source_details(claims, anchors)
+    assert _preserves_source_details(list(reversed(claims)), anchors)
+    assert not _preserves_source_details(claims[:1], anchors)
+    claims[1].tool = "other_tool"
+    assert not _preserves_source_details(claims, anchors)

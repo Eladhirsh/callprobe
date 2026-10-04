@@ -533,14 +533,35 @@ def _source_detail_agrees(expected: Any, actual: Any) -> bool:
 
 
 def _preserves_source_details(claims: list[Claim], anchors: list[dict[str, Any]]) -> bool:
-    return all(
-        any(
-            c.tool == anchor["tool"]
-            and all(k in c.args and _source_detail_agrees(v, c.args[k]) for k, v in anchor["args"].items())
-            for c in claims
-        )
+    # Every anchored action needs its own repaired claim, even when two actions
+    # have identical arguments. Reassign earlier matches when subset anchors
+    # overlap, so claim order cannot make a valid repair fail.
+    candidates = [
+        [
+            index
+            for index, c in enumerate(claims)
+            if (
+                c.tool == anchor["tool"]
+                and all(
+                    k in c.args and _source_detail_agrees(v, c.args[k]) for k, v in anchor["args"].items()
+                )
+            )
+        ]
         for anchor in anchors
-    )
+    ]
+    assigned: dict[int, int] = {}
+
+    def match(anchor_index: int, visited: set[int]) -> bool:
+        for claim_index in candidates[anchor_index]:
+            if claim_index in visited:
+                continue
+            visited.add(claim_index)
+            if claim_index not in assigned or match(assigned[claim_index], visited):
+                assigned[claim_index] = anchor_index
+                return True
+        return False
+
+    return all(match(index, set()) for index in range(len(anchors)))
 
 
 def _source_repair_prompt(raw: str, trace: Trace, message_index: int) -> str:
