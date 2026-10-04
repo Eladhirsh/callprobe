@@ -1,29 +1,54 @@
 # Contributing
 
-## Development setup
+Both engines are developed in this repository. The historical Didyoureally repository
+is retained as a reference; open issues and pull requests here.
 
-Use Python 3.10 or newer. From a checkout, create an environment and install
-the project with its test dependencies:
+## Install one checkout
 
-```bash
-uv venv
-uv pip install -e '.[dev]'
-.venv/bin/python -m pytest -q
-.venv/bin/callprobe validate
+```sh
+git clone https://github.com/Eladhirsh/callprobe.git
+cd callprobe
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]" -e "packages/didyoureally[dev]"
 ```
 
-The automated suite uses local fixtures and does not require API keys,
-Ollama, or paid model calls. Add a regression test for a behavior change,
-then run the relevant tests and the full suite before opening a PR.
+Callprobe and Didyoureally keep separate package metadata and licenses. This installs
+both development packages into one environment. It does not publish either package.
 
-For packaging changes, also build a wheel with `uv build` and install it in
-a separate environment. Run the CLI from outside the checkout: importing
-from `src/` can hide missing package resources. CI checks Python 3.10–3.13
-and validates the examples from an installed wheel.
+## Verify changes
 
-Keep changes focused. Describe the user-visible behavior and how you
-verified it in the PR. Do not include API keys or private model prompts in
-test fixtures or submitted results.
+```sh
+.venv/bin/pytest -q tests
+.venv/bin/pytest -q packages/didyoureally/tests
+.venv/bin/ruff check packages/didyoureally
+.venv/bin/ruff format --check packages/didyoureally
+.venv/bin/dyr bench
+```
+
+Run the two test directories separately to keep their independent configurations.
+The test suites use fake transports and local loopback servers, not live model APIs.
+The benchmark command uses labeled claims to test the matcher. Real model runs must
+be reported separately and require an explicitly configured endpoint.
+
+For the shared agent workflow, see [the workflow guide](docs/agent-workflow.md).
+The 28-case validation suite is regenerated with
+`.venv/bin/python scripts/build_agent_validation.py`.
+
+For packaging changes, build both wheels and install them in a separate environment.
+Run the CLIs from outside the checkout so source imports cannot hide missing resources.
+CI checks Python 3.10 through 3.13 and exercises installed wheels.
+Keep changes focused, describe user-visible behavior and validation, and never include
+private prompts or credentials in submitted evidence.
+
+## History and releases
+
+Didyoureally was imported with an unsquashed Git subtree merge under
+`packages/didyoureally`, preserving its commit history. New development happens
+here; no further synchronization with the old repository is required.
+
+The current package versions remain unchanged. Root release automation still applies
+to Callprobe. Didyoureally is not published and requires a separately authorized
+release. The nested historical workflow files do not run as root GitHub Actions.
 
 ## Writing a task
 

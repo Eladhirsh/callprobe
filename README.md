@@ -1,6 +1,6 @@
 # callprobe
 
-Test whether a model can actually call **your** tools.
+Test your agent’s tool decisions and whether its account matches the recorded actions.
 
 `callprobe` tests tool selection, argument schemas, values, and abstention
 against an OpenAI-compatible model endpoint. Bring your own tools or start
@@ -10,7 +10,7 @@ the API operations described by your tools.
 ## Agent decisions and accounts
 
 The experimental `callprobe agent` workflow combines Callprobe decision scoring
-with [Didyoureally](https://github.com/Eladhirsh/didyoureally) trace checks. Run a
+with [Didyoureally](packages/didyoureally/README.md) trace checks. Both engines now live in this repository. Run a
 real model against declarative mock tools, then inspect whether it chose the
 expected calls and accurately described their recorded outcomes. Agent and
 extractor models are configured separately. No real business actions execute.
@@ -18,9 +18,11 @@ extractor models are configured separately. No real business actions execute.
 Start with the 12-case refund and receipt pilot:
 
 ```sh
-# Install both source checkouts in the same environment first.
-callprobe agent init --out refund-pilot.json
-callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
+# From this single checkout:
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]" -e "packages/didyoureally[dev]"
+.venv/bin/callprobe agent init --out refund-pilot.json
+.venv/bin/callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
   --extractor-model mistral-nemo:latest --json-mode --out results/agent-pilot
 ```
 
@@ -29,6 +31,18 @@ See [installation, evidence, gates, and limitations](docs/agent-workflow.md).
 `callprobe agent compare` adds an offline regression gate for the two axes.
 The [first real-model pilot](results/2026-10-04-joint-agent-pilot/README.md)
 caught false success reports after failed refunds in both tested agents.
+
+## One repository, two engines
+
+- `src/callprobe`: tool-decision scoring, the mock agent runner, reports, and CI gates.
+- `packages/didyoureally`: standalone claim extraction and deterministic trace matching, including its tests and benchmarks.
+- `examples/agent-validation/suite.json`: 28 frozen scenarios across refunds, email, files, and scheduling.
+
+The import preserves Didyoureally's Git history and Apache-2.0 license. Callprobe's
+code remains MIT licensed. See [contributing and verification](CONTRIBUTING.md).
+Development and issues for both engines belong in this repository. Existing
+package names, CLI aliases, and versions are unchanged. The combined workflow is
+available from source; the older published prerelease below does not include it.
 
 ## Release candidate: 0.9.0rc2
 

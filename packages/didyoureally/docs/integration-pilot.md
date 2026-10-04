@@ -1,10 +1,13 @@
 # Integration pilot
 
+Install both packages using the repository-root instructions, then run the commands below
+from `packages/didyoureally`. They use the shared virtual environment at `../../.venv`.
+
 The local file pilot executes real model tool calls against disposable files and saves the
 OpenAI-format transcript, before and after filesystem state, and didyoureally findings:
 
 ```bash
-.venv/bin/python scripts/run_local_file_pilot.py \
+../../.venv/bin/python scripts/run_local_file_pilot.py \
   --endpoint http://localhost:11434/v1 mistral-nemo:latest \
   --endpoint http://localhost:11434/v1 qwen2.5:7b \
   --out results/my-file-pilot
@@ -46,7 +49,7 @@ at least an honest successful send and an honest failure disclosure alongside a 
 The runner saves prompts' model replies and trace content, so supply only reviewed sanitized data.
 
 ```bash
-.venv/bin/python scripts/run_trace_pilot.py --manifest captures/manifest.json \
+../../.venv/bin/python scripts/run_trace_pilot.py --manifest captures/manifest.json \
   --endpoint http://localhost:11434/v1 mistral-nemo:latest \
   --endpoint http://localhost:11434/v1 qwen2.5:7b \
   --out results/mailops-pilot
@@ -59,7 +62,7 @@ alone does not prove semantic correctness.
 ## Frozen synthetic comparison
 
 ```bash
-.venv/bin/python scripts/run_ci_pilot_suite.py \
+../../.venv/bin/python scripts/run_ci_pilot_suite.py \
   --base-url http://localhost:11434/v1 --out results/new-ci-pilot-suite
 ```
 
@@ -73,10 +76,10 @@ work rather than a fresh holdout. One run per model does not measure run-to-run 
 
 The separate `examples/context-validation` set contains 16 multi-turn sessions in email, refunds,
 files, and scheduling, including eight honest controls. Labels were written before real-model
-validation. Regenerate them with `python scripts/build_context_validation.py`.
+validation. Regenerate them with `../../.venv/bin/python scripts/build_context_validation.py`.
 
 ```bash
-.venv/bin/python scripts/run_llm_bench.py --json-mode \
+../../.venv/bin/python scripts/run_llm_bench.py --json-mode \
   --cases examples/context-validation \
   --endpoint http://localhost:11434/v1 mistral-nemo:latest \
   --endpoint http://localhost:11434/v1 qwen2.5:7b \
@@ -89,11 +92,11 @@ After inspecting a run, treat this set as regression evidence rather than a fres
 
 `examples/vague-validation` adds 16 frozen cases across email, support, files, and scheduling:
 honest completions, missing actions, offers, and honest failure disclosures. Regenerate them with
-`python scripts/build_vague_validation.py`. These test whether the extractor identifies a completed
+`../../.venv/bin/python scripts/build_vague_validation.py`. These test whether the extractor identifies a completed
 action without copying requested argument values into the claim.
 
 ```bash
-.venv/bin/python scripts/run_llm_bench.py --json-mode \
+../../.venv/bin/python scripts/run_llm_bench.py --json-mode \
   --cases examples/vague-validation \
   --endpoint http://localhost:11434/v1 mistral-nemo:latest \
   --endpoint http://localhost:11434/v1 qwen2.5:7b \
@@ -110,10 +113,10 @@ has an honest completion, a phantom completion, an offer, a failure disclosure, 
 and a completed read-only lookup. The latter four must not produce side-effect claims. All expected
 claims have empty arguments, so compare both verdict exact and detail-free claim agreement.
 
-Regenerate with `.venv/bin/python scripts/build_completion_validation.py`. Evaluate with:
+Regenerate with `../../.venv/bin/python scripts/build_completion_validation.py`. Evaluate with:
 
 ```bash
-.venv/bin/python scripts/run_llm_bench.py --json-mode \
+../../.venv/bin/python scripts/run_llm_bench.py --json-mode \
   --cases examples/completion-validation \
   --endpoint http://localhost:11434/v1 mistral-nemo:latest \
   --endpoint http://localhost:11434/v1 qwen2.5:7b \
@@ -129,11 +132,11 @@ regressions and create new wording for future validation.
 `examples/staged-validation` contains 32 frozen sessions across four domains, including phantom
 actions, masked failures, honest completions, offers, acknowledgments, failure disclosures,
 completed lookups, and requests changed from a write to a lookup. Twenty-four are honest controls.
-Regenerate with `.venv/bin/python scripts/build_staged_validation.py`.
+Regenerate with `../../.venv/bin/python scripts/build_staged_validation.py`.
 
 `examples/cross-domain-validation` adds 32 frozen sessions across deployment, inventory, billing,
 and publishing, with 20 honest controls. It combines explicit arguments with vague completions
-and changed requests. Regenerate with `.venv/bin/python scripts/build_cross_domain_validation.py`.
+and changed requests. Regenerate with `../../.venv/bin/python scripts/build_cross_domain_validation.py`.
 
 New runner reports include unmentioned-action false alarms separately from claim verdict errors,
 plus incomplete checks on honest controls. Check the run status and completed record count before

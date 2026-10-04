@@ -1,5 +1,7 @@
 # didyoureally
 
+Part of the [Callprobe unified repository](../../README.md). Development and issues for both engines live here. Didyoureally remains independently installable from this package directory.
+
 **Catch AI agents that tell users they did something they didn't.**
 
 Your agent says *"I refunded $40 and emailed you the receipt."* The trace says it refunded $400, and the email tool was never called. The user trusts the summary, never sees the trace, and finds out on their bank statement.
@@ -41,10 +43,16 @@ Details the tool couldn't compare (the agent said "$40" but the call used `amoun
 ## Install
 
 ```bash
-pip install didyoureally   # not yet published, for now: pip install -e .
+# From the Callprobe repository root, using the shared environment:
+python3 -m venv .venv
+.venv/bin/python -m pip install -e packages/didyoureally
+source .venv/bin/activate
+cd packages/didyoureally
 ```
 
-No dependencies beyond the standard library.
+Didyoureally is not yet published. It has no runtime dependencies beyond the standard library.
+The relative example and script paths below are resolved from this package directory.
+See the [root setup guide](../../CONTRIBUTING.md) to install both development packages.
 
 ## Use
 

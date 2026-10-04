@@ -11,15 +11,15 @@ There is no combined accuracy score. Each axis remains visible.
 
 ## Install from source
 
-Didyoureally is not published yet. Install both checkouts in the same environment:
+Didyoureally is not published yet. Both packages are in this repository. Install them from one checkout:
 
 ```sh
-# From the Callprobe checkout, with Didyoureally beside it:
+# From the Callprobe repository root:
 python3 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]' -e ../didyoureally
+.venv/bin/python -m pip install -e '.[dev]' -e 'packages/didyoureally[dev]'
 ```
 
-Existing Callprobe commands do not require Didyoureally. The `agent run` and `audit`
+Existing Callprobe commands do not require Didyoureally. The `agent run`, `agent compare`, and `audit`
 commands explain how to install it when missing. Neither package version changes for this pilot.
 
 ## Run the refund and receipt pilot

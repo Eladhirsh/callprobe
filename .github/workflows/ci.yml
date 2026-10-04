@@ -151,18 +151,63 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: Eladhirsh/didyoureally
-          ref: 2e6b147f94a977eca7ccb6a57e42f5070ef7dd79
-          path: .joint-didyoureally
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -e ".[dev]" -e .joint-didyoureally
-      - run: pytest -q tests/test_agent_session.py tests/test_agent_compare.py
+      - run: pip install -e ".[dev]" -e "packages/didyoureally[dev]"
+      - run: pytest -q tests/test_agent_session.py tests/test_agent_compare.py tests/test_agent_mutations.py
+      - name: Lint shared workflow modules
+        run: |
+          ruff check --config packages/didyoureally/pyproject.toml src/callprobe/agent_session.py src/callprobe/agent_compare.py tests/test_agent_session.py tests/test_agent_compare.py tests/test_agent_mutations.py scripts/build_agent_validation.py
+          ruff format --check --config packages/didyoureally/pyproject.toml src/callprobe/agent_session.py src/callprobe/agent_compare.py tests/test_agent_session.py tests/test_agent_compare.py tests/test_agent_mutations.py scripts/build_agent_validation.py
       - name: Verify shared command surface
         run: |
           callprobe agent init --out /tmp/refund-pilot.json
           callprobe agent run --help
           callprobe audit --help
+
+  didyoureally:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e "packages/didyoureally[dev]"
+      - run: pytest -q packages/didyoureally/tests
+      - run: ruff check packages/didyoureally
+      - run: ruff format --check packages/didyoureally
+      - run: dyr bench
+
+  joint-wheel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build --wheel --outdir /tmp/joint-wheels
+      - run: python -m build --wheel --outdir /tmp/joint-wheels packages/didyoureally
+      - run: python -m venv /tmp/joint-env
+      - run: /tmp/joint-env/bin/pip install /tmp/joint-wheels/*.whl
+      - name: Verify installed engines outside the checkout
+        working-directory: /tmp
+        run: |
+          /tmp/joint-env/bin/callprobe agent init --out /tmp/joint-suite.json
+          /tmp/joint-env/bin/callprobe audit --help
+          /tmp/joint-env/bin/callprobe agent compare --help
+          /tmp/joint-env/bin/dyr bench
+      - name: Replay prior joint evidence with installed engines
+        working-directory: /tmp
+        run: |
+          report="${{ github.workspace }}/results/2026-10-04-joint-agent-pilot/qwen25/report.json"
+          /tmp/joint-env/bin/callprobe agent compare "$report" "$report" --fail-on-regression
+          set +e
+          /tmp/joint-env/bin/callprobe audit "${{ github.workspace }}/packages/didyoureally/examples/openai_masked_failure.json" --claims "${{ github.workspace }}/packages/didyoureally/examples/openai_masked_failure.claims.json"
+          audit_exit=$?
+          set -e
+          test "$audit_exit" -eq 1

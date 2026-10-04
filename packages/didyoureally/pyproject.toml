@@ -27,7 +27,9 @@ didyoureally = "didyoureally.cli:main"
 dyr = "didyoureally.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/Eladhirsh/didyoureally"
+Homepage = "https://github.com/Eladhirsh/callprobe/tree/main/packages/didyoureally"
+Repository = "https://github.com/Eladhirsh/callprobe"
+Issues = "https://github.com/Eladhirsh/callprobe/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/didyoureally"]

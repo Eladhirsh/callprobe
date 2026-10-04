@@ -6,7 +6,7 @@ didyoureally checks whether an AI agent told the user the truth about what it di
 
 Verdicts: backed, contradicted, phantom, masked_failure, unmentioned.
 
-These instructions apply to any coding assistant working in this repository. This file is the source of truth; no assistant-specific tooling or external instruction files are required.
+These instructions apply to the Didyoureally package in the Callprobe monorepo. Read the root AGENTS.md for shared setup and commands. This file is the source of truth; no assistant-specific tooling or external instruction files are required.
 
 ## Product scope
 
@@ -19,11 +19,11 @@ These instructions apply to any coding assistant working in this repository. Thi
 
 ## Setup
 
-Before running anything, make sure the project is installed in a local virtual environment. If `.venv` is missing or `.venv/bin/dyr` does not exist, run:
+From the repository root, install both packages in the shared virtual environment:
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -e ".[dev]"
+.venv/bin/python -m pip install -e ".[dev]" -e "packages/didyoureally[dev]"
 ```
 
 Always call tools through `.venv/bin/` so commands work whether or not the venv is activated. If a command is "not found", run the setup above instead of stopping.
@@ -31,14 +31,16 @@ Always call tools through `.venv/bin/` so commands work whether or not the venv 
 ## Commands
 
 ```bash
-.venv/bin/pytest -q                 # all tests, no network
-.venv/bin/ruff check . && .venv/bin/ruff format --check .
-.venv/bin/dyr bench                 # benchmark with labeled claims (tests the matcher)
-.venv/bin/dyr bench --llm           # end to end, needs DYR_BASE_URL, DYR_API_KEY, DYR_MODEL
-.venv/bin/python scripts/build_benchmark.py   # regenerate benchmark JSON after editing cases
+# From the repository root:
+.venv/bin/pytest -q packages/didyoureally/tests
+.venv/bin/ruff check packages/didyoureally
+.venv/bin/ruff format --check packages/didyoureally
+.venv/bin/dyr bench
+.venv/bin/dyr bench --llm
+.venv/bin/python packages/didyoureally/scripts/build_benchmark.py
 ```
 
-If the commands are missing, install the development environment first. Missing executables are setup failures, not evidence of failing project tests. After setup, stop and report any failing baseline check before changing implementation. The initial scaffold expects 23 tests and 10 benchmark cases; update those expectations as coverage grows.
+If the commands are missing, install the development environment first. Missing executables are setup failures, not evidence of failing project tests. After setup, stop and report any failing baseline check before changing implementation. The package currently has 267 tests and 88 labeled benchmark cases; update those expectations as coverage grows.
 
 The same commands can be run through `.venv/bin/` without activating the environment. Never commit the environment, credentials, or local assistant metadata.
 
@@ -59,7 +61,7 @@ The same commands can be run through `.venv/bin/` without activating the environ
 - No runtime dependencies. Stdlib only in `src/`. Dev tools go in the `dev` extra.
 - Tests must not touch the network. Use the `transport` argument to fake LLM responses.
 - Every new verdict rule or adapter needs tests, and every new failure pattern needs a benchmark case plus an honest control case that must not be flagged.
-- Run `.venv/bin/pytest -q`, `.venv/bin/ruff check .`, and `.venv/bin/dyr bench` before committing. All must pass.
+- Run the shared root AGENTS.md checks before committing, including both test suites, package Ruff checks, and `dyr bench`. All must pass.
 - Commit each completed development step separately and report what changed and any unexpected findings.
 - Run real model benchmarks only with configured endpoints and credentials. Do not fabricate results or describe labeled-claim scores as end-to-end scores. Keep credentials out of logs and result files.
 - Prepare release infrastructure without changing the version or publishing until the user explicitly authorizes publication. A package-name availability check is time-sensitive and does not reserve the name.

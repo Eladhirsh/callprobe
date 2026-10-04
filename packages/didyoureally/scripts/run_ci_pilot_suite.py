@@ -24,6 +24,7 @@ def main():
     parser.add_argument("--base-url", required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
+    args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=False)
     for name, cases, models in [
         ("screen", "examples/reliability-challenge", MODELS),
