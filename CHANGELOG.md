@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Preserve explicit date, time, and UTC-offset claims in Didyoureally extraction
+  and repair. Compare supported prose timestamps with their ISO representations
+  without guessing missing details. Add wrong-date and honest benchmark controls.
+  Saved claims stay unchanged; rerun extraction for the new date coverage.
+
 - Add `parse_ollama_completion` for native, completed non-streaming `/api/chat`
   recordings. Preserve calls, thinking, usage, and truncation through the existing
   offline scoring/export APIs; reject malformed, partial, and lifecycle responses.

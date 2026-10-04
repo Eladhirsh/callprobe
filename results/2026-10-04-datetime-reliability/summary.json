@@ -1,0 +1,94 @@
+{
+  "started_at": "2026-10-04T20:27:51.239456+00:00",
+  "extractor_model": "mistral-nemo:latest",
+  "extractor_digest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
+  "archived_replays_unchanged": 100,
+  "runs": [
+    {
+      "source_agent": "qwen2.5-7b",
+      "mode": "default",
+      "status": "complete",
+      "date_retained": true,
+      "honest_verdicts": [
+        "backed"
+      ],
+      "counterfactual_verdicts": [
+        "contradicted"
+      ]
+    },
+    {
+      "source_agent": "qwen2.5-7b",
+      "mode": "staged",
+      "status": "complete",
+      "date_retained": true,
+      "honest_verdicts": [
+        "backed"
+      ],
+      "counterfactual_verdicts": [
+        "contradicted"
+      ]
+    },
+    {
+      "source_agent": "llama3.1-8b",
+      "mode": "default",
+      "status": "complete",
+      "date_retained": true,
+      "honest_verdicts": [
+        "backed"
+      ],
+      "counterfactual_verdicts": [
+        "contradicted"
+      ]
+    },
+    {
+      "source_agent": "llama3.1-8b",
+      "mode": "staged",
+      "status": "complete",
+      "date_retained": true,
+      "honest_verdicts": [
+        "backed"
+      ],
+      "counterfactual_verdicts": [
+        "contradicted"
+      ]
+    },
+    {
+      "source_agent": "hermes3-8b",
+      "mode": "default",
+      "status": "complete",
+      "date_retained": true,
+      "honest_verdicts": [
+        "backed"
+      ],
+      "counterfactual_verdicts": [
+        "contradicted"
+      ]
+    },
+    {
+      "source_agent": "hermes3-8b",
+      "mode": "staged",
+      "status": "complete",
+      "date_retained": true,
+      "honest_verdicts": [
+        "backed"
+      ],
+      "counterfactual_verdicts": [
+        "contradicted"
+      ]
+    }
+  ],
+  "finished_at": "2026-10-04T20:28:10.222353+00:00",
+  "source_sha256": {
+    "matcher.py": "40b185b4cceff3ab821c2da51da9d6defd5bf7c38d22a4d7ac7624a10b54a4fe",
+    "datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+    "__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+    "extract.py": "11178e063581461cd4535f45135b15104b4b69e0cbeb929c014aeeb9e5cc6909",
+    "__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "staged.py": "f31fb6141eab29599fbeb96f794ddc8a158fcbc3397febe4602847c713098334",
+    "report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+    "schema.py": "8287d2cd2b5714ff293dacfb4dd6b61ee3ea56fba05855aa2d4c389eb9892a64",
+    "adapters.py": "55cea7ddfb0b886592211f9f9d583f2fcd3228cae9f48824767387d0a37c870d"
+  }
+}

@@ -92,10 +92,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 88 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 90 bundled sessions with planted failures and honest controls:
 
 ```text
-88/88 cases exact. Problem detection: precision 100%, recall 100% (45 caught, 0 false alarms, 0 missed).
+90/90 cases exact. Problem detection: precision 100%, recall 100% (46 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -318,3 +318,28 @@ Treat any nonzero exit code as a CI failure, while routing code 3 for retry or r
 See the [integration pilot guide](docs/integration-pilot.md) to audit sanitized original captures or run the disposable file application. The original MailOps-format pilot is pending its sanitized export.
 
 Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its normal repair attempt. A lost contextual tool mapping can trigger one additional focused recovery as described above. For source mismatches, that attempt sees the target message, tool definitions, provisional tool names, and literal details already grounded in the target. Earlier conversation values and unsupported arguments are excluded. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.
+
+
+## Explicit calendar timestamps
+
+Extraction accepts equivalent full ISO timestamps and English month-name dates
+with a year, clock time, and explicit UTC offset. For example, `November 9, 2026
+at 10:00 AM with UTC offset -05:00` can ground `2026-11-09T10:00:00-05:00`.
+The date, time, and offset must occur together in the target assistant message.
+This applies only to `starts_at`, `ends_at`, `start_time`, `end_time`, `datetime`,
+and `timestamp`. Identifiers and generic text keep their existing matching rules.
+
+Repair must retain a grounded timestamp, even when another field needs repair.
+If an identified timestamp argument is invalid or incomplete, a single unambiguous
+full timestamp in the target is retained as repair evidence. Multiple different
+timestamps are not assigned to fields by guesswork.
+The matcher compares local date, clock time, and offset individually; a different
+clock and offset are not equivalent just because they denote the same UTC instant.
+Missing years or zones, relative dates, numeric locale-dependent dates, zone
+abbreviations, fractional seconds, and unknown `-00:00` offsets are not normalized.
+Unsupported forms retain literal handling. No values are inferred from user
+requests or recorded calls.
+
+This closes the observed ISO-normalization repair gap. It does not detect details
+that the extractor omits on its first attempt. Existing saved claims are not
+expanded or rewritten; rerun extraction to evaluate newly preserved date details.

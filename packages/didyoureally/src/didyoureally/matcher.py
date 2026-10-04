@@ -13,6 +13,7 @@ from decimal import Decimal, InvalidOperation
 from enum import Enum
 from typing import Any
 
+from .datetimes import DATETIME_KEYS, explicit_datetime
 from .schema import Claim, ToolCall, Trace
 
 
@@ -154,6 +155,10 @@ def _clock_minutes(value: Any) -> int | None:
 
 
 def _argument_agrees(key: str, claimed: Any, actual: Any) -> bool:
+    if key in DATETIME_KEYS:
+        left, right = explicit_datetime(claimed), explicit_datetime(actual)
+        if left is not None and right is not None:
+            return left == right
     if key == "time":
         left, right = _clock_minutes(claimed), _clock_minutes(actual)
         if left is not None and right is not None:
