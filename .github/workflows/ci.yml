@@ -99,6 +99,13 @@ jobs:
           record = RecordedCompletion("status-by-id", Completion(calls=[Call(
               name="get_order", arguments={"path": {"order_id": "ORD-448120"}},
           )]))
+          from callprobe.adapters import parse_ollama_completion
+          native = parse_ollama_completion({"done": True, "done_reason": "stop", "message": {
+              "role": "assistant", "tool_calls": [{"function": {
+                  "name": "get_order", "arguments": {"path": {"order_id": "ORD-448120"}},
+              }}],
+          }})
+          assert score_recordings(suite, config, [RecordedCompletion("status-by-id", native)]).results[0].success
           run = score_recordings(suite, config, [record])
           assert run.results[0].success
           assert summarize(run)["coverage"] == "1/1/6 INCOMPLETE (5 missing)"

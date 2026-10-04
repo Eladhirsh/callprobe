@@ -1209,6 +1209,32 @@ current rubric and suite provenance; this differs from `report`, which only read
 saved scores. No model request or application tool is executed by this API.
 
 
+### Native Ollama recordings
+
+For applications using Ollama's native `/api/chat` endpoint, normalize the full
+response captured with `stream: false` before passing it to the recording API:
+
+```python
+from callprobe.adapters import parse_ollama_completion
+
+# body is your already-captured native response, not an OpenAI-compatible one.
+completion = parse_ollama_completion(body, latency_ms=measured_request_ms)
+record = RecordedCompletion(task_id="status-by-id", completion=completion)
+run = score_recordings(suite, config, [record])
+```
+
+This offline adapter preserves every native tool call, `thinking` text, prompt
+and generated token counts, and the finish reason (including `length` for
+truncation). It expects the [native chat response format](https://docs.ollama.com/api/chat);
+SDK callers can pass `response.model_dump()`. It rejects error envelopes,
+incomplete responses, and load/unload acknowledgements. Do not pass individual
+stream chunks, including the terminal chunk: collect the complete non-streaming
+response instead. Server duration is not used as client latency; supply your
+measured milliseconds, or leave latency unknown/zero. The adapter makes no HTTP
+requests and changes neither the CLI's OpenAI-compatible endpoint nor scoring.
+The response's `raw` field retains the input body locally; recordings export
+continues to exclude raw provider bodies while preserving decision evidence.
+
 ### Export application recordings
 
 Use `recordings_to_json` to export the same normalized records for offline replay,
