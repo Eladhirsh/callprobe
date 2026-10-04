@@ -1,4 +1,6 @@
-Latest: [Experimental staged extraction](staged-extraction-suite/README.md).
+Latest: [Fixed action identities and source references](fixed-action-validation/README.md).
+
+Previous: [Experimental staged extraction](staged-extraction-suite/README.md).
 
 Previous: [Bounded action-mapping recovery](completion-resolution-suite/README.md).
 

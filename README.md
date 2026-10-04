@@ -89,14 +89,20 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
-results are lower. The latest paired evaluation compares extraction modes on 32 new sessions with Mistral:
+results depend on the model and workload. The latest staged evaluation used 32 new synthetic
+sessions across deployment, inventory, billing, and publishing:
 
-| Mode | Exact cases | Precision | Recall | Honest false alarms | Incomplete checks |
+| Model | Exact | Precision | Recall | Honest controls with any alarm | Incomplete checks |
 |---|---|---|---|---|---|
-| default | 19/32 | 22.2% | 25.0% | 5/24 | 3 |
-| staged | 29/32 | 100.0% | 75.0% | 0/24 | 3 |
+| mistral-nemo:latest | 32/32 | 100.0% | 100.0% | 0/20 | 0 |
+| qwen2.5:7b | 30/32 | 92.3% | 100.0% | 1/20 | 1 |
+| hermes3:8b | 24/32 | 66.7% | 83.3% | 5/20 | 3 |
+| granite3.3:8b | 11/32 | 45.5% | 41.7% | 6/20 | 15 |
 
-Staged mode scored 65/80 on the broader benchmark, compared with a historical default score of 76/80. It remains opt-in; the default extractor is unchanged. See the [staged-extraction report](results/staged-extraction-suite/README.md) for the four-model diagnostic, scoring definitions, raw evidence, and limitations. The false-alarm column excludes unmentioned findings. These small synthetic evaluations do not establish production accuracy.
+The honest-alarm count includes unmentioned-action warnings. On the broader argument benchmark,
+staged Mistral scored only **61/82**, including grouped-action misses. Staged mode remains opt-in.
+See the [full fixed-action evaluation](results/fixed-action-validation/README.md) for the default comparison,
+broader benchmark, raw evidence, and limitations. These small synthetic evaluations do not establish production accuracy.
 
 `dyr bench --llm --json-mode` evaluates extraction with the configured model. Add cases in
 `scripts/build_benchmark.py` and regenerate; do not edit generated JSON directly.
@@ -211,8 +217,9 @@ dyr check trace.json --extractor llm --extraction-mode staged --json-mode \
 ```
 
 This mode is opt-in. Each stage allows one validation retry, so a message can require up to four
-model calls. Read-only actions and nonclaims stop after the first stage. The default extractor
-is unchanged. Evaluate this mode on representative traces before choosing it for a workload.
+model calls. Read-only actions and nonclaims stop after the first stage. The default mode keeps
+its existing extraction flow and shares source-validation rules. Evaluate staged mode on
+representative traces before choosing it for a workload.
 
 Both extractors reject unquoted pronouns used as explicit identifiers or recipients and request
 one repair. A quoted identifier such as the filename `"it"` remains valid. This is a narrow check;
