@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate native trace structures before extraction. Reject duplicate call IDs
+  and tool definitions, nonboolean side-effect flags, and malformed argument or
+  message shapes. Check call identity again in the matcher so an unreported
+  action cannot disappear behind a reused ID. Valid traces retain their scores.
+
 - Reject duplicate JSON keys, nonfinite values, and malformed recorded arguments
   at Didyoureally input boundaries. Ambiguous tool outcomes cannot silently
   become successful execution. Preserve valid nested results and plain-text

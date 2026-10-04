@@ -272,6 +272,7 @@ def _reserve_group_calls(
 
 
 def check(trace: Trace, claims: list[Claim]) -> list[Finding]:
+    trace.validate_call_ids()
     findings: list[Finding] = []
     linked: set[str] = set()
     grouped_calls: dict[tuple[int | None, str], set[str]] = {}

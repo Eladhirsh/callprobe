@@ -17,6 +17,30 @@ from .strict_json import ensure_finite_numbers, loads
 Status = Literal["ok", "error"]
 
 
+def _object(value: Any, field_name: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"{field_name} must be an object")
+    return value
+
+
+def _array(value: Any, field_name: str) -> list[Any]:
+    if not isinstance(value, list):
+        raise ValueError(f"{field_name} must be an array")
+    return value
+
+
+def _name(value: Any, field_name: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field_name} must be a nonempty string")
+    return value
+
+
+def _text(value: Any, field_name: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError(f"{field_name} must be a string")
+    return value
+
+
 @dataclass
 class ToolSpec:
     name: str
@@ -54,41 +78,68 @@ class Trace:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Trace:
         """Build from the native format: ``{"id", "tools", "events"}``."""
+        data = _object(data, "trace")
         ensure_finite_numbers(data)
         tools: dict[str, ToolSpec] = {}
-        for t in data.get("tools", []):
-            spec = ToolSpec(
-                name=t["name"],
-                side_effect=bool(t.get("side_effect", True)),
-                description=t.get("description", ""),
-                parameters=dict(t.get("parameters") or {}),
+        for i, raw in enumerate(_array(data.get("tools", []), "tools")):
+            tool = _object(raw, f"tool {i}")
+            name = _name(tool.get("name"), f"tool {i} name")
+            if name in tools:
+                raise ValueError("Tool definitions require unique names")
+            side_effect = tool.get("side_effect", True)
+            if type(side_effect) is not bool:
+                raise ValueError(f"tool {i} side_effect must be a boolean")
+            tools[name] = ToolSpec(
+                name=name,
+                side_effect=side_effect,
+                description=_text(tool.get("description", ""), f"tool {i} description"),
+                parameters=dict(_object(tool.get("parameters", {}), f"tool {i} parameters")),
             )
-            tools[spec.name] = spec
 
         calls: list[ToolCall] = []
         messages: list[Message] = []
-        for i, ev in enumerate(data.get("events", [])):
+        for i, raw in enumerate(_array(data.get("events", []), "events")):
+            ev = _object(raw, f"event {i}")
             kind = ev.get("type")
             if kind == "tool_call":
                 status = ev.get("status", "ok")
                 if status not in ("ok", "error"):
-                    raise ValueError(f"event {i}: status must be 'ok' or 'error', got {status!r}")
+                    raise ValueError(f"event {i} status must be 'ok' or 'error'")
+                name = _name(ev.get("tool"), f"event {i} tool")
                 calls.append(
                     ToolCall(
-                        id=str(ev.get("id", f"call_{i}")),
-                        tool=ev["tool"],
-                        args=dict(ev.get("args", {})),
+                        id=_name(ev.get("id", f"call_{i}"), f"event {i} id"),
+                        tool=name,
+                        args=dict(_object(ev.get("args", {}), f"event {i} args")),
                         status=status,
                         result=ev.get("result"),
                         index=i,
                     )
                 )
-                tools.setdefault(ev["tool"], ToolSpec(name=ev["tool"]))
+                tools.setdefault(name, ToolSpec(name=name))
             elif kind == "message":
-                messages.append(Message(role=ev["role"], content=ev.get("content", ""), index=i))
+                role = ev.get("role")
+                if role not in ("user", "assistant", "system", "developer", "tool"):
+                    raise ValueError(f"event {i} role is not supported")
+                messages.append(
+                    Message(role=role, content=_text(ev.get("content", ""), f"event {i} content"), index=i)
+                )
             else:
-                raise ValueError(f"event {i}: unknown type {kind!r}")
-        return cls(id=str(data.get("id", "trace")), tools=tools, calls=calls, messages=messages)
+                raise ValueError(f"event {i} type must be 'tool_call' or 'message'")
+        trace = cls(
+            id=_name(data.get("id", "trace"), "trace id"), tools=tools, calls=calls, messages=messages
+        )
+        trace.validate_call_ids()
+        return trace
+
+    def validate_call_ids(self) -> None:
+        """Call identity drives evidence allocation, including for directly constructed traces."""
+        seen = set()
+        for call in self.calls:
+            call_id = _name(call.id, "call id")
+            if call_id in seen:
+                raise ValueError("Tool calls require unique IDs")
+            seen.add(call_id)
 
     def to_dict(self) -> dict[str, Any]:
         events: list[tuple[int, dict[str, Any]]] = []
@@ -142,11 +193,12 @@ class Claim:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Claim:
+        data = _object(data, "claim")
         ensure_finite_numbers(data)
         return cls(
             text=data["text"],
             tool=data.get("tool"),
-            args=dict(data.get("args", {})),
+            args=dict(_object(data.get("args", {}), "claim args")),
             message_index=data.get("message_index"),
             group_id=data.get("group_id"),
         )

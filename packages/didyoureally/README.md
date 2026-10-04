@@ -92,10 +92,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 96 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 98 bundled sessions with planted failures and honest controls:
 
 ```text
-96/96 cases exact. Problem detection: precision 100%, recall 100% (50 caught, 0 false alarms, 0 missed).
+98/98 cases exact. Problem detection: precision 100%, recall 100% (50 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -385,3 +385,30 @@ be a clean empty result. Fix ambiguous recordings at the export source instead
 of choosing whichever duplicate value appears last. If a caller has already
 parsed duplicate keys with another JSON library, the discarded values cannot
 be recovered; use the CLI file loader or retain the original JSON strings.
+
+## Native trace structure
+
+Native traces now validate field shapes before extraction. `tools` and `events`
+are arrays of objects. Tool names must be unique, and explicit `side_effect`
+values must be JSON booleans. Descriptions are strings; parameter schemas and
+recorded arguments are objects. Arrays of key and value pairs are not argument objects.
+Reviewed claim arguments follow the same object requirement.
+
+Call IDs must be nonempty strings and unique across the whole trace, including
+calls to different tools. Omitted IDs keep their generated `call_<event index>`
+form, but cannot collide with explicit IDs. The matcher checks ID uniqueness
+again for traces constructed or modified through the Python API. Duplicate IDs
+cannot make an extra write disappear from unmentioned-action reporting.
+
+Message content must be a string. Supported roles are `user`, `assistant`,
+`system`, `developer`, and `tool`; only user and assistant messages supply
+extraction context. Normalize other role names before importing. Trace IDs and
+tool names must be nonempty strings. Invalid native records return input-error
+exit code 2 instead of silently coercing fields or raising an attribute error.
+
+Omitted optional fields retain their existing defaults: empty tool and event
+lists, empty arguments, generated call IDs, and `status: "ok"` for native calls.
+Native call events represent already-completed execution. Record explicit
+`status: "error"` when execution failed, and use the OpenAI message adapter when
+working with proposals and subsequent results. Validation does not verify the
+real-world outcome of a supplied native status.
