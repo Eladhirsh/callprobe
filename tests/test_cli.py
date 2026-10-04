@@ -1208,3 +1208,57 @@ def test_results_inside_suite_remain_writable_and_resumable(monkeypatch, tmp_pat
     assert cli.main(args + ['--resume', str(output)]) == 0
     assert json.loads(output.read_text())['results'] == first
     assert all((suite / name).read_bytes() == data for name, data in before.items())
+
+
+@pytest.mark.parametrize('dry_run', [False, True])
+@pytest.mark.parametrize('existing_output', [False, True])
+@pytest.mark.parametrize('invalid_part', ['schema', 'expectation', 'unused_distractor'])
+def test_invalid_suite_fails_before_requests_or_output(
+    monkeypatch, tmp_path, capsys, dry_run, existing_output, invalid_part,
+):
+    import shutil
+    import yaml
+
+    suite = tmp_path / 'suite'
+    shutil.copytree(SUITE, suite)
+    if invalid_part == 'schema':
+        path = suite / 'tools.yaml'
+        data = yaml.safe_load(path.read_text())
+        data['bundles']['support'][0]['parameters']['type'] = 'not-a-schema-type'
+    elif invalid_part == 'expectation':
+        path = suite / 'tasks.yaml'
+        data = yaml.safe_load(path.read_text())
+        data['tasks'][0]['expect']['args']['order_id'] = 'private-invalid-order'
+    else:
+        path = suite / 'distractors.yaml'
+        data = yaml.safe_load(path.read_text())
+        data['tools'][0]['parameters']['type'] = 'not-a-schema-type'
+    path.write_text(yaml.safe_dump(data))
+    before = {p.name: p.read_bytes() for p in suite.iterdir() if p.is_file()}
+    output = tmp_path / 'result.json'
+    if existing_output:
+        output.write_bytes(b'previous result\n')
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('invalid suites must fail before endpoint access')
+
+    monkeypatch.setattr(cli, 'ChatClient', forbidden)
+    monkeypatch.setattr(cli, 'probe_server_version', forbidden)
+    # Exercise config-relative paths too. Pad zero deliberately does not use
+    # distractors, but the whole authored suite must still be valid.
+    config = tmp_path / 'run.yaml'
+    config.write_text('model: stub\nsuite: suite\nout: result.json\npads: [0]\n')
+    args = ['run', '--config', str(config)]
+    if dry_run:
+        args += ['--dry-run', '--format', 'json']
+    assert cli.main(args) == 2
+    captured = capsys.readouterr()
+    assert 'suite validation failed' in captured.err
+    assert 'callprobe validate' in captured.err
+    assert 'private-invalid-order' not in captured.err
+    assert not captured.out
+    if existing_output:
+        assert output.read_bytes() == b'previous result\n'
+    else:
+        assert not output.exists()
+    assert {p.name: p.read_bytes() for p in suite.iterdir() if p.is_file()} == before
