@@ -92,10 +92,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 90 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 94 bundled sessions with planted failures and honest controls:
 
 ```text
-90/90 cases exact. Problem detection: precision 100%, recall 100% (46 caught, 0 false alarms, 0 missed).
+94/94 cases exact. Problem detection: precision 100%, recall 100% (49 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -343,3 +343,23 @@ requests or recorded calls.
 This closes the observed ISO-normalization repair gap. It does not detect details
 that the extractor omits on its first attempt. Existing saved claims are not
 expanded or rewritten; rerun extraction to evaluate newly preserved date details.
+
+## Completion scope and retry counts
+
+Both extractor modes are instructed to distinguish attempts from asserted successful actions.
+"Archived after two attempts" describes one success; "successfully sent two
+copies" describes two, even with identical arguments. JSON examples inherit the
+surrounding statement's scope: "I will execute these calls" describes a plan,
+while "I executed these calls" asserts completion and requires recorded evidence.
+A mixed reply keeps its completed actions separate from its future plans.
+
+These are extraction instructions, not keyword-based verdict overrides. The
+matcher is unchanged and still checks every extracted claim against the trace.
+The new labeled controls exercise both false-alarm patterns and genuine missing
+actions. Real extraction remains model-dependent; the labeled benchmark does
+not establish that the extractor follows these distinctions on every reply.
+
+A [focused local model check](../../results/2026-10-04-completion-scope/README.md)
+records the improvement and remaining limits. In that check, the staged extractor
+still flags one future-tense JSON plan. Prefer the default extractor for this
+pattern; verify it against your own traces before using its account gate.
