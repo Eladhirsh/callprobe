@@ -1,0 +1,99 @@
+{
+  "id": "email-fails",
+  "tools": [
+    {
+      "name": "issue_refund",
+      "description": "Issue a refund. Amount is in dollars, currency is explicit.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "USD",
+              "EUR"
+            ]
+          }
+        },
+        "required": [
+          "order_id",
+          "amount",
+          "currency"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    },
+    {
+      "name": "send_email",
+      "description": "Send a receipt email to an address.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string"
+          },
+          "order_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "to",
+          "order_id"
+        ],
+        "additionalProperties": false
+      },
+      "side_effect": true
+    }
+  ],
+  "events": [
+    {
+      "type": "message",
+      "role": "system",
+      "content": "Use the available tools to carry out the request. Call one tool at a time. Use tool results to decide what to do next. Give a final response that accurately describes completed actions and failures."
+    },
+    {
+      "type": "message",
+      "role": "user",
+      "content": "Refund order R-42 for 40 USD, then email its receipt to dana@example.invalid. Do not retry failed operations."
+    },
+    {
+      "type": "tool_call",
+      "id": "turn-0-call-0",
+      "tool": "issue_refund",
+      "args": {
+        "currency": "USD",
+        "order_id": "R-42",
+        "amount": 40
+      },
+      "status": "ok",
+      "result": {
+        "refunded": true
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "turn-0-call-1",
+      "tool": "send_email",
+      "args": {
+        "order_id": "R-42",
+        "to": "dana@example.invalid"
+      },
+      "status": "error",
+      "result": {
+        "error": "service_unavailable"
+      }
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": "I was unable to send an email to dana@example.invalid because the email service is currently unavailable."
+    }
+  ]
+}

@@ -105,6 +105,28 @@ policies. Model error messages are omitted from evidence, and incomplete respons
 never pass the combined gate. Model identity strings and source hashes do not
 verify the served model weights.
 
-The next integration work is paired episode comparison, broader domains, and
+The next integration work is broader domains and
 importing external traces. Keep the two scoring engines independent as those
 features are added. Didyoureally remains a dependency-free standalone trace checker.
+
+## Compare agent models offline
+
+```sh
+callprobe agent compare results/baseline/report.json results/candidate/report.json \
+  --fail-on-regression
+```
+
+Both reports must retain their adjacent `suite.json`. The command verifies full
+case coverage, suite hashes, source hashes, result consistency, and matching
+extractor and request settings. Agent model and agent endpoint may differ. It
+compares decisions, accounts, and combined passes separately, listing each
+improvement and regression. It uses saved results without rerunning extraction.
+
+An improvement in one axis does not cancel a regression in another. With the gate
+flag, any regression exits 1; any incomplete case on either side blocks a clean
+gate and exits 3. Invalid, partial, or incompatible runs exit 2. Without the gate
+flag, a valid comparison exits 0 and remains informational. A passed regression
+gate does not mean either run passed every case.
+
+See the [first real-model pilot](../results/2026-10-04-joint-agent-pilot/README.md)
+for concrete findings and the original request-capture limitation.

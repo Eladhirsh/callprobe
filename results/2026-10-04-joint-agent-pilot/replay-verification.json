@@ -1,0 +1,149 @@
+{
+  "execution": "offline installed-wheel replay with saved extracted claims",
+  "records": [
+    {
+      "model": "qwen25",
+      "case": "refund-and-receipt",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "email-fails",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "email-retry-succeeds",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "email-retry-fails",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "refund-fails",
+      "exit_code": 1,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "refund-only",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "receipt-only",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "offer-only",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "currency-eur",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "cents-to-dollars",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "corrected-recipient",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "qwen25",
+      "case": "two-receipt-copies",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "refund-and-receipt",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "email-fails",
+      "exit_code": 1,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "email-retry-succeeds",
+      "exit_code": 1,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "email-retry-fails",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "refund-fails",
+      "exit_code": 1,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "refund-only",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "receipt-only",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "offer-only",
+      "exit_code": 1,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "currency-eur",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "cents-to-dollars",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "corrected-recipient",
+      "exit_code": 0,
+      "identical_findings": true
+    },
+    {
+      "model": "llama31",
+      "case": "two-receipt-copies",
+      "exit_code": 0,
+      "identical_findings": true
+    }
+  ]
+}

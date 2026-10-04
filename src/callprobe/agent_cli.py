@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -43,6 +44,14 @@ def add_agent_arguments(parser):
     run.add_argument("--json-mode", action="store_true", help="JSON mode for the extractor only")
     run.add_argument("--out", required=True, help="new results directory")
     run.set_defaults(func=run_agent_suite)
+    compare = commands.add_parser("compare", help="compare saved agent runs without model calls")
+    compare.add_argument("baseline", help="baseline report.json with its frozen suite.json beside it")
+    compare.add_argument("candidate", help="candidate report.json with its frozen suite.json beside it")
+    compare.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    compare.add_argument("--fail-on-regression", action="store_true")
+    from .agent_compare import agent_compare_main
+
+    compare.set_defaults(func=agent_compare_main)
 
 
 def init_agent_suite(args):
@@ -132,8 +141,9 @@ def run_agent_suite(args):
     transport = extractor.transport
 
     def capture(url, headers, body):
+        request_snapshot = copy.deepcopy(body)
         response = transport(url, headers, body)
-        requests.append({"request": body, "response": response})
+        requests.append({"request": request_snapshot, "response": copy.deepcopy(response)})
         return response
 
     extractor.transport = capture

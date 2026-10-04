@@ -160,7 +160,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -e ".[dev]" -e .joint-didyoureally
-      - run: pytest -q tests/test_agent_session.py
+      - run: pytest -q tests/test_agent_session.py tests/test_agent_compare.py
       - name: Verify shared command surface
         run: |
           callprobe agent init --out /tmp/refund-pilot.json

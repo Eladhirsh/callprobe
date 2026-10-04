@@ -26,6 +26,9 @@ callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
 
 `callprobe audit TRACE` also exposes Didyoureally's existing trace-checking CLI.
 See [installation, evidence, gates, and limitations](docs/agent-workflow.md).
+`callprobe agent compare` adds an offline regression gate for the two axes.
+The [first real-model pilot](results/2026-10-04-joint-agent-pilot/README.md)
+caught false success reports after failed refunds in both tested agents.
 
 ## Release candidate: 0.9.0rc2
 

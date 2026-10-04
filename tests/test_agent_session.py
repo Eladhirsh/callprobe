@@ -388,3 +388,27 @@ def test_failed_cli_preserves_status_without_exception_secrets(tmp_path, monkeyp
         run_agent_suite(args)
     saved = json.loads((tmp_path / "out/report.json").read_text())
     assert saved["status"] == "failed" and saved["episodes"] == []
+
+
+def test_extraction_requests_are_snapshots_before_repair_mutates_body(tmp_path, monkeypatch):
+    from callprobe import agent_cli
+
+    args = cli_args(tmp_path)
+    monkeypatch.setattr(agent_cli, "ChatClient", lambda *a, **kw: ScriptedClient([final("Later.")]))
+
+    def init(self, **kwargs):
+        self.transport = lambda *args: {"choices": [{"message": {"content": '{"claims":[]}'}}]}
+
+    def extract(self, trace):
+        body = {"messages": [{"role": "user", "content": "original"}]}
+        self.transport("unused", {}, body)
+        body["messages"][0]["content"] = "repair"
+        self.transport("unused", {}, body)
+        return []
+
+    monkeypatch.setattr(LLMExtractor, "__init__", init)
+    monkeypatch.setattr(LLMExtractor, "extract", extract)
+    assert run_agent_suite(args) == 0
+    saved = json.loads((tmp_path / "out/report.json").read_text())
+    requests = saved["episodes"][0]["extraction_requests"]
+    assert [r["request"]["messages"][0]["content"] for r in requests] == ["original", "repair"]
