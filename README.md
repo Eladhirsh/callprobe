@@ -84,10 +84,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 84 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 86 bundled sessions with planted failures and honest controls:
 
 ```text
-84/84 cases exact. Problem detection: precision 100%, recall 100% (43 caught, 0 false alarms, 0 missed).
+86/86 cases exact. Problem detection: precision 100%, recall 100% (44 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
