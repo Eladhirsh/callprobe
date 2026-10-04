@@ -7,6 +7,26 @@ against an OpenAI-compatible model endpoint. Bring your own tools or start
 with a bundled example. It evaluates model responses; it does not execute
 the API operations described by your tools.
 
+## Agent decisions and accounts
+
+The experimental `callprobe agent` workflow combines Callprobe decision scoring
+with [Didyoureally](https://github.com/Eladhirsh/didyoureally) trace checks. Run a
+real model against declarative mock tools, then inspect whether it chose the
+expected calls and accurately described their recorded outcomes. Agent and
+extractor models are configured separately. No real business actions execute.
+
+Start with the 12-case refund and receipt pilot:
+
+```sh
+# Install both source checkouts in the same environment first.
+callprobe agent init --out refund-pilot.json
+callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
+  --extractor-model mistral-nemo:latest --json-mode --out results/agent-pilot
+```
+
+`callprobe audit TRACE` also exposes Didyoureally's existing trace-checking CLI.
+See [installation, evidence, gates, and limitations](docs/agent-workflow.md).
+
 ## Release candidate: 0.9.0rc2
 
 **0.9.0rc2 is published.** Install the tester prerelease explicitly:

@@ -762,6 +762,14 @@ def _doctor(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "audit":
+        from .agent_cli import audit_main
+        try:
+            return audit_main(argv[1:])
+        except ValueError as exc:
+            sys.stderr.write(f"error: {exc}\n")
+            return 2
     parser = argparse.ArgumentParser(prog="callprobe")
     parser.add_argument(
         "--version", action="version", version=f"callprobe {__version__}"
@@ -954,6 +962,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     add_sweep_arguments(sweep_cmd)
     sweep_cmd.set_defaults(func=run_sweep)
+
+    sub.add_parser("audit", help="check a recorded trace with Didyoureally", add_help=False)
+    from .agent_cli import add_agent_arguments
+    add_agent_arguments(sub.add_parser("agent", help="test decisions and accounts in mock agent sessions"))
 
     args = parser.parse_args(argv)
     if args.command == "init" and args.from_openapi is None and (args.tag or args.skip_unsupported):

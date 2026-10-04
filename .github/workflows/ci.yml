@@ -146,3 +146,23 @@ jobs:
         with:
           name: mail-selftest
           path: /tmp/callprobe-mail-selftest
+
+  joint-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Eladhirsh/didyoureally
+          ref: 2e6b147f94a977eca7ccb6a57e42f5070ef7dd79
+          path: .joint-didyoureally
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]" -e .joint-didyoureally
+      - run: pytest -q tests/test_agent_session.py
+      - name: Verify shared command surface
+        run: |
+          callprobe agent init --out /tmp/refund-pilot.json
+          callprobe agent run --help
+          callprobe audit --help
