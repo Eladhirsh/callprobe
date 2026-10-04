@@ -377,3 +377,71 @@ def test_bad_usage_does_not_corrupt_cost_or_retry_and_next_request_works(field, 
     assert summary['n'] == summary['errors'] == 1
     assert summary['cost']['total_tokens'] == summary['cost']['tokens_per_success'] == 2
     assert summary['overall']['success'] == 1.0
+
+
+@pytest.mark.parametrize('arguments', [
+    '{"amount":0,"amount":1}',
+    '{"outer":{"PRIVATE_KEY":0,"PRIVATE_KEY":1}}',
+    '{"items":[{"x":0,"x":1}]}',
+    '{"value":NaN}', '{"value":Infinity}', '{"value":-Infinity}',
+    '{"items":[1e999]}', '{"outer":{"value":-1e999}}',
+])
+def test_ambiguous_or_nonfinite_argument_json_is_parse_failure(arguments):
+    from callprobe.client import parse_completion
+    body = {'choices': [{'message': {'tool_calls': [
+        {'id': 'bad', 'function': {'name': 'test', 'arguments': arguments}},
+        {'id': 'good', 'function': {'name': 'test', 'arguments': '{"amount":1}'}},
+    ]}, 'finish_reason': 'tool_calls'}], 'usage': {'prompt_tokens': 5, 'completion_tokens': 3}}
+    completion = parse_completion(body, 17.5)
+    assert completion.error is None and len(completion.calls) == 2
+    bad, good = completion.calls
+    assert bad.id == 'bad' and bad.name == 'test'
+    assert bad.raw_arguments == arguments and bad.parse_error
+    assert 'PRIVATE' not in bad.parse_error
+    assert bad.arguments == {}
+    assert good.arguments == {'amount': 1} and good.parse_error is None
+    assert completion.prompt_tokens == 5 and completion.completion_tokens == 3
+    assert completion.latency_ms == 17.5 and completion.finish_reason == 'tool_calls'
+
+
+@pytest.mark.parametrize('arguments,expected', [
+    ('{"left":{"x":1},"right":{"x":2}}', {'left': {'x': 1}, 'right': {'x': 2}}),
+    ('{"value":1e2,"small":-0.25,"text":"NaN","flag":true,"null":null}',
+     {'value': 100.0, 'small': -0.25, 'text': 'NaN', 'flag': True, 'null': None}),
+    ('', {}), ('   ', {}), ('{}', {}),
+])
+def test_strict_argument_decoder_preserves_valid_json_and_blank_fallback(arguments, expected):
+    from callprobe.client import parse_completion
+    call = parse_completion({'choices': [{'message': {'tool_calls': [
+        {'function': {'name': 'test', 'arguments': arguments}},
+    ]}}]}, 0).calls[0]
+    assert call.arguments == expected and call.parse_error is None
+    assert call.raw_arguments == arguments
+
+
+def test_duplicate_argument_failure_is_scored_not_retried_and_next_response_works():
+    from callprobe.models import Bundle, Expectation, Task, Tool
+    from callprobe.scoring import score
+    bad = {'choices': [{'message': {'tool_calls': [
+        {'function': {'name': 'test', 'arguments': '{"amount":0,"amount":1}'}},
+    ]}}]}
+    responses = iter([bad, OK_BODY])
+    requests = []
+    def handler(request):
+        requests.append(request)
+        return httpx.Response(200, json=next(responses))
+    client = _client(handler)
+    try:
+        completion = client.complete('m', [], [])
+        assert completion.error is None
+        task = Task(id='t', category='args', bundle='b', messages=[],
+                    expect=Expectation(type='call', tool='test', args={'amount': 1}))
+        bundle = Bundle(name='b', tools=[Tool(name='test', description='Synthetic test tool', parameters={
+            'type': 'object', 'properties': {'amount': {'type': 'integer'}}, 'required': ['amount'],
+        })])
+        result = score(task, bundle, completion, model='m', pad=0, repeat=0)
+        assert result.selection_ok and not result.success and not result.success_lenient
+        assert any('did not parse' in failure for failure in result.failures)
+        assert client.complete('m', [], []).error is None and len(requests) == 2
+    finally:
+        client.close()

@@ -183,6 +183,26 @@ def _token_count(value: Any) -> int:
     return count
 
 
+def _argument_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("tool arguments contain duplicate object keys")
+        result[key] = value
+    return result
+
+
+def _argument_constant(_value: str) -> Any:
+    raise ValueError("tool arguments contain nonfinite numbers")
+
+
+def _argument_float(value: str) -> float:
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError("tool arguments contain nonfinite numbers")
+    return number
+
+
 def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
     """Turn a chat completion body into calls, tolerating provider quirks."""
     if not isinstance(body, dict):
@@ -228,7 +248,10 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
             continue
         raw_args = raw_args or ""
         try:
-            parsed = json.loads(raw_args) if raw_args.strip() else {}
+            parsed = json.loads(
+                raw_args, object_pairs_hook=_argument_object,
+                parse_constant=_argument_constant, parse_float=_argument_float,
+            ) if raw_args.strip() else {}
             if not isinstance(parsed, dict):
                 raise ValueError("arguments were not a JSON object")
             calls.append(
