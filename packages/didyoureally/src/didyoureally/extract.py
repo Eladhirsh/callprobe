@@ -16,6 +16,7 @@ import urllib.request
 from collections.abc import Callable
 from typing import Any, Protocol
 
+from .datetimes import DATETIME_KEYS, datetime_in_source, explicit_datetime, sole_datetime_source
 from .matcher import values_agree
 from .schema import Claim, Trace
 
@@ -266,7 +267,7 @@ def _ground_arguments(args: dict[str, Any], text: str, spans: list[dict[str, Any
             return all(grounded(item) for item in value.values())
         return False
 
-    if not all(grounded(value) for value in args.values()):
+    if not all(grounded(value) or datetime_in_source(key, value, text) for key, value in args.items()):
         raise ClaimFormatError("source_mismatch")
 
 
@@ -454,8 +455,13 @@ def _source_anchors(raw: str, trace: Trace, message_index: int) -> list[dict[str
                 continue
             literal = {}
             for key, value in args.items():
-                if not _literal_in_source(value, values, target.content):
-                    continue
+                if not (
+                    _literal_in_source(value, values, target.content)
+                    or datetime_in_source(key, value, target.content)
+                ):
+                    value = sole_datetime_source(key, target.content)
+                    if value is None:
+                        continue
                 try:
                     _ground_identifiers({key: value}, spans, target.content)
                 except ClaimFormatError:
@@ -520,7 +526,11 @@ def _argument_feedback(raw: str, trace: Trace, message_index: int) -> str:
     )
 
 
-def _source_detail_agrees(expected: Any, actual: Any) -> bool:
+def _source_detail_agrees(expected: Any, actual: Any, key: str = "") -> bool:
+    if key in DATETIME_KEYS:
+        left, right = explicit_datetime(expected), explicit_datetime(actual)
+        if left is not None and right is not None:
+            return left == right
     if isinstance(expected, str):
         return isinstance(actual, str) and " ".join(expected.casefold().split()) == " ".join(
             actual.casefold().split()
@@ -543,7 +553,7 @@ def _preserves_source_details(claims: list[Claim], anchors: list[dict[str, Any]]
             if (
                 c.tool == anchor["tool"]
                 and all(
-                    k in c.args and _source_detail_agrees(v, c.args[k]) for k, v in anchor["args"].items()
+                    k in c.args and _source_detail_agrees(v, c.args[k], k) for k, v in anchor["args"].items()
                 )
             )
         ]
