@@ -289,6 +289,17 @@ def _run(args: argparse.Namespace) -> int:
     if not math.isfinite(request_timeout) or request_timeout <= 0:
         raise ValueError("--request-timeout must be a finite positive number of seconds")
 
+    if settings["out"]:
+        suite_root = (Path(settings["suite"]) if settings["suite"] is not None
+                      else importlib.resources.files("callprobe") / "suites" / "core")
+        # A zipped resource cannot alias a writable filesystem output. Normal
+        # installations and caller-supplied suite directories are filesystem paths.
+        if isinstance(suite_root, os.PathLike) and any(
+            _same_file_target(settings["out"], str(suite_root / name))
+            for name in ("suite.yaml", "tools.yaml", "tasks.yaml", "distractors.yaml")
+        ):
+            raise ValueError("--out must not overwrite or alias suite source files")
+
     suite, suite_label = _resolve_suite(settings["suite"])
     pads = settings["pads"]
 
@@ -339,6 +350,10 @@ def _run(args: argparse.Namespace) -> int:
         else:
             print(_render_dry_run_text(plan))
         return 0
+
+    if settings["out"]:
+        out_path = Path(settings["out"])
+        _preflight_files(out_path.parent, {out_path.name: ""}, force=True)
 
     api_key = args.api_key or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY")
     server_name, server_version = probe_server_version(settings["endpoint"])
