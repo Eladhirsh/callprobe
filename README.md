@@ -1186,6 +1186,28 @@ current rubric and suite provenance; this differs from `report`, which only read
 saved scores. No model request or application tool is executed by this API.
 
 
+### Export application recordings
+
+Use `recordings_to_json` to export the same normalized records for offline replay,
+without constructing the JSON document by hand:
+
+```python
+from callprobe.recording_io import recordings_to_json
+
+payload = recordings_to_json(config, [record])
+with Path("recordings.json").open("x", encoding="utf-8") as output:
+    output.write(payload)
+```
+
+Serialization validates the v1 format before any file is opened. It preserves all
+calls, errors, text, token counts, latency, and supplied coordinates. Raw provider
+bodies, endpoint settings, local suite paths, and run notes are excluded. Response
+text and tool arguments can still contain private data; this is not a redaction
+function. Non-JSON argument values (including tuples and non-string object keys)
+are rejected rather than converted. Suite membership, duplicate coordinates, and
+coverage remain checks for scoring/replay. No model or file is accessed by the
+serializer; the example uses exclusive creation to avoid overwriting an export.
+
 ### Replay a recordings file
 
 The development checkout also accepts normalized JSON recordings directly:

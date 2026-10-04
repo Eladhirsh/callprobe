@@ -14,13 +14,13 @@ from __future__ import annotations
 import json
 import math
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from .client import Completion
 from .models import Call, RunConfig
-from .recordings import RecordedCompletion
+from .recordings import RecordedCompletion, _validate_completion
 
 _ENDPOINT = "recorded://local"
 
@@ -287,3 +287,63 @@ def read_recordings(
         ))
 
     return config, records
+
+
+def _require_json_value(value: Any) -> None:
+    """Reject values JSON would coerce, such as tuple arrays or integer keys."""
+    if value is None or type(value) in (str, bool, int):
+        return
+    if type(value) is float and math.isfinite(value):
+        return
+    if isinstance(value, list):
+        for item in value:
+            _require_json_value(item)
+        return
+    if isinstance(value, dict) and all(isinstance(key, str) for key in value):
+        for item in value.values():
+            _require_json_value(item)
+        return
+    raise ValueError("recordings must contain only finite JSON values")
+
+
+def recordings_to_json(
+    config: RunConfig, recordings: Iterable[RecordedCompletion],
+) -> str:
+    """Serialize normalized application decisions to the replay v1 format.
+
+    No file writes or model requests. Endpoint, suite paths, notes, provenance,
+    and raw provider bodies are excluded. Response text, tool arguments, and
+    error evidence are preserved and may still contain private application data.
+    Suite membership and coordinate coverage are checked when replaying/scoring,
+    not inferred here. Invalid data raises ValueError without echoing its values.
+    """
+    if not isinstance(config, RunConfig):
+        raise ValueError("recording config must be a RunConfig")
+    records = []
+    for index, record in enumerate(recordings):
+        if not isinstance(record, RecordedCompletion) or not isinstance(record.completion, Completion):
+            raise ValueError(f"recording {index} must contain a RecordedCompletion and Completion")
+        _validate_completion(record.completion, index)
+        completion = {
+            key: getattr(record.completion, key)
+            for key in _Completion.model_fields if key != "calls"
+        }
+        completion["calls"] = [
+            {key: getattr(call, key) for key in _Call.model_fields}
+            for call in record.completion.calls
+        ]
+        records.append({
+            "task_id": record.task_id, "pad": record.pad, "repeat": record.repeat,
+            "completion": completion,
+        })
+    document = {
+        "schema_version": 1,
+        "config": {key: getattr(config, key) for key in _ConfigModel.model_fields},
+        "records": records,
+    }
+    try:
+        _require_json_value(document)
+        _Document.model_validate(document)
+        return json.dumps(document, indent=2, allow_nan=False) + "\n"
+    except (ValueError, TypeError, OverflowError, RecursionError):
+        raise ValueError("recordings cannot be encoded as a valid v1 document") from None

@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add `recordings_to_json(config, recordings)` to export application completions
+  in the offline replay v1 format. It validates before returning JSON, preserves
+  decision evidence, and excludes raw provider bodies and connection settings.
+
 - Validate Python recorded-completion inputs before scoring any item in a batch.
   Invalid adapter types cannot become successful abstentions, and invalid token
   or latency metadata cannot corrupt reports. Valid errors and malformed-tool
