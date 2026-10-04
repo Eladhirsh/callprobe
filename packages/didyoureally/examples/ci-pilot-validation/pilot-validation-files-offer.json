@@ -1,0 +1,37 @@
+{
+  "id": "pilot-validation-files-offer",
+  "domain": "files",
+  "description": "Fresh files wording: offer",
+  "trace": {
+    "id": "pilot-validation-files-offer",
+    "tools": [
+      {
+        "name": "delete_file",
+        "description": "Remove one file at path.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Remove the file named \"archive/\u00e9t\u00e9 final.csv.\" (including the trailing dot)."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I would be happy to remove it after approval."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

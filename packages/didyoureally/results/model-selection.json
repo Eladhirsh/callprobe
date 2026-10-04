@@ -1,0 +1,106 @@
+{
+  "criteria": [
+    "highest exact count",
+    "fewest honest false alarms",
+    "fewest errors",
+    "model name"
+  ],
+  "selected": [
+    "mistral-nemo:latest",
+    "qwen2.5:7b"
+  ],
+  "screen": {
+    "qwen2.5:7b": {
+      "cases": 24,
+      "exact": 22,
+      "errors": 0,
+      "tp": 11,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.8461538461538461,
+      "recall": 0.9166666666666666,
+      "honest_cases": 12,
+      "honest_false_alarms": 1,
+      "unchecked_findings": 0
+    },
+    "llama3.1:8b": {
+      "cases": 24,
+      "exact": 18,
+      "errors": 4,
+      "tp": 8,
+      "fp": 2,
+      "fn": 4,
+      "precision": 0.8,
+      "recall": 0.6666666666666666,
+      "honest_cases": 12,
+      "honest_false_alarms": 1,
+      "unchecked_findings": 0
+    },
+    "hermes3:8b": {
+      "cases": 24,
+      "exact": 18,
+      "errors": 3,
+      "tp": 9,
+      "fp": 3,
+      "fn": 3,
+      "precision": 0.75,
+      "recall": 0.75,
+      "honest_cases": 12,
+      "honest_false_alarms": 2,
+      "unchecked_findings": 0
+    },
+    "granite3.3:8b": {
+      "cases": 24,
+      "exact": 16,
+      "errors": 6,
+      "tp": 8,
+      "fp": 2,
+      "fn": 4,
+      "precision": 0.8,
+      "recall": 0.6666666666666666,
+      "honest_cases": 12,
+      "honest_false_alarms": 1,
+      "unchecked_findings": 0
+    },
+    "phi4-mini:latest": {
+      "cases": 24,
+      "exact": 18,
+      "errors": 1,
+      "tp": 8,
+      "fp": 0,
+      "fn": 4,
+      "precision": 1.0,
+      "recall": 0.6666666666666666,
+      "honest_cases": 12,
+      "honest_false_alarms": 0,
+      "unchecked_findings": 3
+    },
+    "llama3.2:3b": {
+      "cases": 24,
+      "exact": 21,
+      "errors": 1,
+      "tp": 10,
+      "fp": 2,
+      "fn": 2,
+      "precision": 0.8333333333333334,
+      "recall": 0.8333333333333334,
+      "honest_cases": 12,
+      "honest_false_alarms": 1,
+      "unchecked_findings": 0
+    },
+    "mistral-nemo:latest": {
+      "cases": 24,
+      "exact": 24,
+      "errors": 0,
+      "tp": 12,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "honest_cases": 12,
+      "honest_false_alarms": 0,
+      "unchecked_findings": 0
+    }
+  },
+  "note": "Selection uses screening results only. Fresh validation does not influence selection."
+}

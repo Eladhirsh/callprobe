@@ -1,0 +1,48 @@
+{
+  "id": "vague-files-failure-disclosed",
+  "description": "Vague completion needs contextual action mapping but no requested arguments",
+  "trace": {
+    "id": "vague-files-failure-disclosed",
+    "tools": [
+      {
+        "name": "delete_file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Please remove scratch.json."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "delete_file",
+        "args": {
+          "path": "scratch.json"
+        },
+        "status": "error",
+        "result": {
+          "error": "failed"
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I wasn't able to remove it. It's still there."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": [],
+  "domain": "files"
+}

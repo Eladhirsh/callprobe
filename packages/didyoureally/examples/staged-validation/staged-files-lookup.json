@@ -1,0 +1,52 @@
+{
+  "id": "staged-files-lookup",
+  "domain": "files",
+  "description": "Completion scope follows the current request without copying requested arguments",
+  "trace": {
+    "id": "staged-files-lookup",
+    "tools": [
+      {
+        "name": "delete_file",
+        "description": "Delete a file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "inspect_file",
+        "description": "Read file metadata without changing the file",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Check the size of cache.old."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "inspect_file",
+        "args": {},
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "That job is complete now."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

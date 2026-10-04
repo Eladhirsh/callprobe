@@ -1,0 +1,37 @@
+{
+  "id": "email-offer",
+  "domain": "email",
+  "description": "email: offer",
+  "trace": {
+    "id": "email-offer",
+    "tools": [
+      {
+        "name": "send_email",
+        "description": "Send one email. args: to",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Email Lee at lee@example.com."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I can email Lee after you approve the text."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

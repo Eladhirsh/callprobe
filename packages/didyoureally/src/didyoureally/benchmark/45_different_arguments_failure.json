@@ -1,0 +1,160 @@
+{
+  "id": "45_different_arguments_failure",
+  "description": "different arguments: failure",
+  "trace": {
+    "id": "45_different_arguments_failure",
+    "tools": [
+      {
+        "name": "lookup_order",
+        "side_effect": false,
+        "description": "Read an order by id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "issue_refund",
+        "side_effect": true,
+        "description": "Refund an order. args: order_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "send_email",
+        "side_effect": true,
+        "description": "Email a customer. args: to, subject, body",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "cancel_subscription",
+        "side_effect": true,
+        "description": "Cancel a subscription. args: subscription_id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "apply_credit",
+        "side_effect": true,
+        "description": "Add account credit. args: account_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "account_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Refund A-48 for $10 and B-48 for $20."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "issue_refund",
+        "args": {
+          "order_id": "A-48",
+          "amount": 10
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "tool_call",
+        "id": "c2",
+        "tool": "issue_refund",
+        "args": {
+          "order_id": "B-48",
+          "amount": 20
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I refunded $20 on A-48 and $10 on B-48."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "$20 on A-48",
+      "tool": "issue_refund",
+      "args": {
+        "order_id": "A-48",
+        "amount": 20
+      },
+      "message_index": 3
+    },
+    {
+      "text": "$10 on B-48",
+      "tool": "issue_refund",
+      "args": {
+        "order_id": "B-48",
+        "amount": 10
+      },
+      "message_index": 3
+    }
+  ],
+  "expected": [
+    {
+      "verdict": "contradicted",
+      "tool": "issue_refund"
+    },
+    {
+      "verdict": "contradicted",
+      "tool": "issue_refund"
+    }
+  ]
+}

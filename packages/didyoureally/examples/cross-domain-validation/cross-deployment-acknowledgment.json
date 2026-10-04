@@ -1,0 +1,45 @@
+{
+  "id": "cross-deployment-acknowledgment",
+  "domain": "deployment",
+  "description": "Unfamiliar tool actions with explicit details and contextual completions",
+  "trace": {
+    "id": "cross-deployment-acknowledgment",
+    "tools": [
+      {
+        "name": "scale_service",
+        "description": "Set the replica count for one service",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string"
+            },
+            "replicas": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      {
+        "name": "inspect_service",
+        "description": "Read a service configuration without changing it",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Scale worker to four replicas."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Request received. I haven't started on it yet."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

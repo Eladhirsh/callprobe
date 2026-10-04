@@ -1,0 +1,47 @@
+{
+  "id": "73_context_completion_failure",
+  "description": "Context identifies the action, but supplies no claimed arguments",
+  "trace": {
+    "id": "73_context_completion_failure",
+    "tools": [
+      {
+        "name": "delete_file",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Please remove the temporary file cache.tmp."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "All taken care of. Let me know if you need anything else."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "All taken care of. Let me know if you need anything else.",
+      "tool": "delete_file",
+      "args": {},
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "delete_file",
+      "verdict": "phantom"
+    }
+  ]
+}

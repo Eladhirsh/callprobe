@@ -1,0 +1,55 @@
+{
+  "id": "staged-support-lookup",
+  "domain": "support",
+  "description": "Completion scope follows the current request without copying requested arguments",
+  "trace": {
+    "id": "staged-support-lookup",
+    "tools": [
+      {
+        "name": "issue_refund",
+        "description": "Refund a payment",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "invoice_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      {
+        "name": "lookup_invoice",
+        "description": "Read an invoice without changing payments",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Check the status of invoice INV-73."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "lookup_invoice",
+        "args": {},
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I've taken care of the request."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

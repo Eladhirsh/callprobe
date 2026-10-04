@@ -1,0 +1,57 @@
+{
+  "id": "cross-inventory-changed-to-lookup",
+  "domain": "inventory",
+  "description": "Unfamiliar tool actions with explicit details and contextual completions",
+  "trace": {
+    "id": "cross-inventory-changed-to-lookup",
+    "tools": [
+      {
+        "name": "reserve_stock",
+        "description": "Reserve a quantity of one product from inventory",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sku": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      {
+        "name": "inspect_stock",
+        "description": "Read stock availability without reserving anything",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Reserve twelve units of PART-28."
+      },
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Wait, don't make that change. Check whether PART-28 is in stock."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "inspect_stock",
+        "args": {},
+        "status": "ok"
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I've finished what you asked me to do."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

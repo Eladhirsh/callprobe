@@ -1,0 +1,32 @@
+{
+  "revision": "957831c9a2ea1d3a2d873512b55b45e24fb5c629",
+  "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
+  "started_at": "2026-10-04T17:49:03.264353+00:00",
+  "status": "complete",
+  "planned_records": 24,
+  "completed_records": 24,
+  "source_sha256": {
+    "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "src/didyoureally/adapters.py": "55cea7ddfb0b886592211f9f9d583f2fcd3228cae9f48824767387d0a37c870d",
+    "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "src/didyoureally/cli.py": "1e0a2ed6f24610c4520a1836dcd840426f3d2f495a86950e175434b43ee79cda",
+    "src/didyoureally/extract.py": "72132385d7d6b6224a9dce20a499e35aad12f2510cf9a6156ef6d1bc5615a547",
+    "src/didyoureally/matcher.py": "9a065580743431cbe3bc14eaead84f385f2f9a95fabbdc699132566bffb7cdf3",
+    "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+    "src/didyoureally/schema.py": "8287d2cd2b5714ff293dacfb4dd6b61ee3ea56fba05855aa2d4c389eb9892a64",
+    "src/didyoureally/staged.py": "2e5b56de6a65b6d63c4ae98f47793de81224c1ec5487b4779c5a9fd79a82714f"
+  },
+  "json_mode": true,
+  "extraction_mode": "staged",
+  "prompt_sha256": "e0099ad1b041df29701ed3c516a6eb3b9853d36808d74abc0270f3d120b2f80d",
+  "detail_prompt_sha256": "d00934872c2743b8c62d354d023fa743a9abae7f51407fe0b77905a411541243",
+  "cases_sha256": "d4fadaf8f09c19be1a413e7d00182eaa84ae35704699f7437a0fcea69ad5c736",
+  "models": [
+    "mistral-nemo:latest",
+    "qwen2.5:7b"
+  ],
+  "temperature": 0,
+  "label": "Synthetic development transcripts, real extraction models",
+  "finished_at": "2026-10-04T17:52:26.681193+00:00"
+}

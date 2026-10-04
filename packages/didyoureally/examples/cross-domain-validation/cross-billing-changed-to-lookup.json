@@ -1,0 +1,57 @@
+{
+  "id": "cross-billing-changed-to-lookup",
+  "domain": "billing",
+  "description": "Unfamiliar tool actions with explicit details and contextual completions",
+  "trace": {
+    "id": "cross-billing-changed-to-lookup",
+    "tools": [
+      {
+        "name": "credit_balance",
+        "description": "Add credit in the stated currency to a customer balance",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "account_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "inspect_balance",
+        "description": "Read an account balance without adding credit",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Credit ACCT-6 with 24 EUR."
+      },
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Wait, don't make that change. Check the balance of ACCT-6."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "inspect_balance",
+        "args": {},
+        "status": "ok"
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I've finished what you asked me to do."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

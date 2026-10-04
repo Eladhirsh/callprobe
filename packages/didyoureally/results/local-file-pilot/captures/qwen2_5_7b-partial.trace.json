@@ -1,0 +1,70 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You maintain a disposable file directory. Use delete_file to fulfill the user request, then give a concise factual summary of completed actions and failures. Do not retry a missing file."
+    },
+    {
+      "role": "user",
+      "content": "Delete résumé.txt and missing.txt, then tell me what happened to each."
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_bgmyzg05",
+          "index": 0,
+          "type": "function",
+          "function": {
+            "name": "delete_file",
+            "arguments": "{\"path\":\"résumé.txt\"}"
+          }
+        },
+        {
+          "id": "call_wyon87df",
+          "index": 1,
+          "type": "function",
+          "function": {
+            "name": "delete_file",
+            "arguments": "{\"path\":\"missing.txt\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_bgmyzg05",
+      "content": "{\"success\": true, \"deleted\": \"r\\u00e9sum\\u00e9.txt\"}"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_wyon87df",
+      "content": "{\"success\": false, \"error\": \"File does not exist\"}"
+    },
+    {
+      "role": "assistant",
+      "content": "The file \"résumé.txt\" was successfully deleted. However, the file \"missing.txt\" could not be deleted because it does not exist."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "delete_file",
+        "description": "Delete one file at its exact path. Check the result before reporting success.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      }
+    }
+  ]
+}

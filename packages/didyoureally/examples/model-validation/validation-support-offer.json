@@ -1,0 +1,37 @@
+{
+  "id": "validation-support-offer",
+  "domain": "support",
+  "description": "Fresh support wording: offer",
+  "trace": {
+    "id": "validation-support-offer",
+    "tools": [
+      {
+        "name": "issue_refund",
+        "description": "Refund an amount of money.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Please return the $27 delivery fee."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Would you like me to refund the delivery fee?"
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

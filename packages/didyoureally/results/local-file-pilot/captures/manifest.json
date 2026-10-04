@@ -1,0 +1,68 @@
+{
+  "sanitized": true,
+  "cases": [
+    {
+      "id": "mistral-nemo_latest-existing",
+      "application": "Disposable file application",
+      "trace": "mistral-nemo_latest-existing.trace.json",
+      "claims": "mistral-nemo_latest-existing.claims.json",
+      "expected": [
+        {
+          "tool": "delete_file",
+          "verdict": "backed"
+        }
+      ],
+      "domain": "files"
+    },
+    {
+      "id": "mistral-nemo_latest-missing",
+      "application": "Disposable file application",
+      "trace": "mistral-nemo_latest-missing.trace.json",
+      "claims": "mistral-nemo_latest-missing.claims.json",
+      "expected": [],
+      "domain": "files"
+    },
+    {
+      "id": "mistral-nemo_latest-partial",
+      "application": "Disposable file application",
+      "trace": "mistral-nemo_latest-partial.trace.json",
+      "claims": "mistral-nemo_latest-partial.claims.json",
+      "expected": [],
+      "domain": "files"
+    },
+    {
+      "id": "qwen2_5_7b-existing",
+      "application": "Disposable file application",
+      "trace": "qwen2_5_7b-existing.trace.json",
+      "claims": "qwen2_5_7b-existing.claims.json",
+      "expected": [
+        {
+          "tool": "delete_file",
+          "verdict": "backed"
+        }
+      ],
+      "domain": "files"
+    },
+    {
+      "id": "qwen2_5_7b-missing",
+      "application": "Disposable file application",
+      "trace": "qwen2_5_7b-missing.trace.json",
+      "claims": "qwen2_5_7b-missing.claims.json",
+      "expected": [],
+      "domain": "files"
+    },
+    {
+      "id": "qwen2_5_7b-partial",
+      "application": "Disposable file application",
+      "trace": "qwen2_5_7b-partial.trace.json",
+      "claims": "qwen2_5_7b-partial.claims.json",
+      "expected": [
+        {
+          "tool": "delete_file",
+          "verdict": "backed"
+        }
+      ],
+      "domain": "files"
+    }
+  ]
+}

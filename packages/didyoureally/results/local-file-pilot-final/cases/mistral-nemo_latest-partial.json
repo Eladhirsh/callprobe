@@ -1,0 +1,77 @@
+{
+  "id": "mistral-nemo_latest-partial",
+  "description": "Sanitized capture from Disposable file application",
+  "application": "Disposable file application",
+  "trace": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You maintain a disposable file directory. Use delete_file to fulfill the user request, then give a concise factual summary of completed actions and failures. Do not retry a missing file."
+      },
+      {
+        "role": "user",
+        "content": "Delete r\u00e9sum\u00e9.txt and missing.txt, then tell me what happened to each."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_710tr9y8",
+            "index": 0,
+            "type": "function",
+            "function": {
+              "name": "delete_file",
+              "arguments": "{\"path\":\"/home/user/resume.txt\"}"
+            }
+          },
+          {
+            "id": "call_pg1hoidi",
+            "index": 1,
+            "type": "function",
+            "function": {
+              "name": "delete_file",
+              "arguments": "{\"path\":\"/home/user/missing.txt\"}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_710tr9y8",
+        "content": "{\"success\": false, \"error\": \"Path is outside the allowed inventory\"}"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_pg1hoidi",
+        "content": "{\"success\": false, \"error\": \"Path is outside the allowed inventory\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry, but I don't have permission to delete files outside of the allowed inventory. Therefore, I couldn't delete r\u00e9sum\u00e9.txt and missing.txt."
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "delete_file",
+          "description": "Delete one file at its exact path. Check the result before reporting success.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

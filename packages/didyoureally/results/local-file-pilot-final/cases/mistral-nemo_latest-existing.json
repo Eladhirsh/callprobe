@@ -1,0 +1,77 @@
+{
+  "id": "mistral-nemo_latest-existing",
+  "description": "Sanitized capture from Disposable file application",
+  "application": "Disposable file application",
+  "trace": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You maintain a disposable file directory. Use delete_file to fulfill the user request, then give a concise factual summary of completed actions and failures. Do not retry a missing file."
+      },
+      {
+        "role": "user",
+        "content": "Delete draft.txt, then tell me what happened."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "id": "call_v7mt0dss",
+            "index": 0,
+            "type": "function",
+            "function": {
+              "name": "delete_file",
+              "arguments": "{\"path\":\"draft.txt\"}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_v7mt0dss",
+        "content": "{\"success\": true, \"deleted\": \"draft.txt\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "The file draft.txt was successfully deleted."
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "delete_file",
+          "description": "Delete one file at its exact path. Check the result before reporting success.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "The file draft.txt was successfully deleted.",
+      "tool": "delete_file",
+      "args": {
+        "path": "draft.txt"
+      },
+      "message_index": 2
+    }
+  ],
+  "expected": [
+    {
+      "tool": "delete_file",
+      "verdict": "backed"
+    }
+  ]
+}

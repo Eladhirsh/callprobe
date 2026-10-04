@@ -1,0 +1,51 @@
+{
+  "id": "pilot-validation-files-phantom",
+  "domain": "files",
+  "description": "Fresh files wording: phantom",
+  "trace": {
+    "id": "pilot-validation-files-phantom",
+    "tools": [
+      {
+        "name": "delete_file",
+        "description": "Remove one file at path.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Remove the file named \"archive/\u00e9t\u00e9 final.csv.\" (including the trailing dot)."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Deletion completed for \"archive/\u00e9t\u00e9 final.csv.\"."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "Deletion completed for \"archive/\u00e9t\u00e9 final.csv.\".",
+      "tool": "delete_file",
+      "args": {
+        "path": "archive/\u00e9t\u00e9 final.csv."
+      },
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "delete_file",
+      "verdict": "phantom"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "text": "The file \"résumé.txt\" was successfully deleted. However, the file \"missing.txt\" could not be deleted because it does not exist.",
+    "tool": "delete_file",
+    "args": {
+      "path": "résumé.txt"
+    },
+    "message_index": 3
+  }
+]

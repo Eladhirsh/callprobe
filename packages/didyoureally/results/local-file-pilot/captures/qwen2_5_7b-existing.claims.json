@@ -1,0 +1,10 @@
+[
+  {
+    "text": "The file draft.txt has been successfully deleted.",
+    "tool": "delete_file",
+    "args": {
+      "path": "draft.txt"
+    },
+    "message_index": 2
+  }
+]

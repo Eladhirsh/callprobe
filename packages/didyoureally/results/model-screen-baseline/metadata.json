@@ -1,0 +1,14 @@
+{
+  "revision": "3348e7718ffe916a91bb1c09c9e66311f5122b15",
+  "prompt_sha256": "7c524d65b37eda2d767c1e144ee8e436c8c44b2c1c137239f88448723d6e9b41",
+  "cases_sha256": "8381081dadadab94ec5b99632d951db1b11f10e2a41f59cdc8372ad0c826f69f",
+  "models": [
+    "hermes3:8b",
+    "granite3.3:8b",
+    "phi4-mini:latest",
+    "llama3.2:3b",
+    "mistral-nemo:latest"
+  ],
+  "temperature": 0,
+  "label": "Synthetic development transcripts, real extraction models"
+}

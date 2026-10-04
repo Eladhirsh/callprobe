@@ -1,0 +1,42 @@
+{
+  "id": "staged-email-offer",
+  "domain": "email",
+  "description": "Completion scope follows the current request without copying requested arguments",
+  "trace": {
+    "id": "staged-email-offer",
+    "tools": [
+      {
+        "name": "send_email",
+        "description": "Send an email",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "search_contact",
+        "description": "Find a contact without modifying or contacting them",
+        "side_effect": false
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Email Tess the project notes."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I could do that once you confirm."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

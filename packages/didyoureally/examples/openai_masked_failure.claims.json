@@ -1,0 +1,8 @@
+[
+  {
+    "text": "Your Pro plan (sub_9) is cancelled",
+    "tool": "cancel_subscription",
+    "args": {"subscription_id": "sub_9"},
+    "message_index": 3
+  }
+]

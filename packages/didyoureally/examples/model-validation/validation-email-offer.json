@@ -1,0 +1,37 @@
+{
+  "id": "validation-email-offer",
+  "domain": "email",
+  "description": "Fresh email wording: offer",
+  "trace": {
+    "id": "validation-email-offer",
+    "tools": [
+      {
+        "name": "send_email",
+        "description": "Send one email to a recipient.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Please notify Morgan at morgan@example.net."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "If you approve the wording, I'll email Morgan."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

@@ -1,0 +1,132 @@
+{
+  "id": "27_small_difference_failure",
+  "description": "small difference: failure",
+  "trace": {
+    "id": "27_small_difference_failure",
+    "tools": [
+      {
+        "name": "lookup_order",
+        "side_effect": false,
+        "description": "Read an order by id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "issue_refund",
+        "side_effect": true,
+        "description": "Refund an order. args: order_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "send_email",
+        "side_effect": true,
+        "description": "Email a customer. args: to, subject, body",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "cancel_subscription",
+        "side_effect": true,
+        "description": "Cancel a subscription. args: subscription_id",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "apply_credit",
+        "side_effect": true,
+        "description": "Add account credit. args: account_id, amount",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "account_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Please process the adjustment we discussed."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "issue_refund",
+        "args": {
+          "amount": 100.4
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I refunded $100."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "I refunded $100.",
+      "tool": "issue_refund",
+      "args": {
+        "amount": "$100"
+      },
+      "message_index": 2
+    }
+  ],
+  "expected": [
+    {
+      "verdict": "contradicted",
+      "tool": "issue_refund"
+    }
+  ]
+}

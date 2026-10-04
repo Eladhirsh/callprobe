@@ -1,0 +1,37 @@
+{
+  "id": "support-offer",
+  "domain": "support",
+  "description": "support: offer",
+  "trace": {
+    "id": "support-offer",
+    "tools": [
+      {
+        "name": "issue_refund",
+        "description": "Refund one order. args: order_id, amount",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Please refund the $18.75 delivery charge."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I can refund the delivery charge if you confirm."
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

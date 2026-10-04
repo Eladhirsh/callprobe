@@ -1,0 +1,145 @@
+{
+  "id": "10_two_actions_one_wrong",
+  "description": "One sentence, two actions: the move is wrong, the invite is right",
+  "trace": {
+    "id": "10_two_actions_one_wrong",
+    "tools": [
+      {
+        "name": "find_slots",
+        "side_effect": false,
+        "description": "List open calendar slots",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "book_meeting",
+        "side_effect": true,
+        "description": "Book a meeting. args: title, day, time, attendees",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            },
+            "attendees": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "update_event",
+        "side_effect": true,
+        "description": "Move an event. args: event_id, day, time",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "invite",
+        "side_effect": true,
+        "description": "Invite a person to an event. args: event_id, email",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Move the design review to Thursday and add Sam."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "update_event",
+        "args": {
+          "event_id": "ev_9",
+          "day": "Friday",
+          "time": "14:00"
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "tool_call",
+        "id": "c2",
+        "tool": "invite",
+        "args": {
+          "event_id": "ev_9",
+          "email": "sam@acme.com"
+        },
+        "status": "ok",
+        "result": {
+          "ok": true
+        }
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "Moved the design review to Thursday and invited Sam."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "Moved the design review to Thursday",
+      "tool": "update_event",
+      "args": {
+        "day": "Thursday"
+      },
+      "message_index": 3
+    },
+    {
+      "text": "invited Sam",
+      "tool": "invite",
+      "args": {
+        "email": "Sam"
+      },
+      "message_index": 3
+    }
+  ],
+  "expected": [
+    {
+      "verdict": "contradicted",
+      "tool": "update_event"
+    },
+    {
+      "verdict": "backed",
+      "tool": "invite"
+    }
+  ]
+}
