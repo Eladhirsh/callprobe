@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate the complete suite before `run` or `run --dry-run`, including unused
+  distractors and expected arguments. Invalid suites exit before endpoint access
+  or output changes; use `validate --suite DIR` for detailed diagnostics.
+
 - Reject `run --out` destinations that name or alias suite definition files,
   including config-relative paths and packaged-suite files, before endpoint
   access. Obvious output-directory conflicts also fail before generation.

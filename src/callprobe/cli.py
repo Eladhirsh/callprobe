@@ -301,6 +301,10 @@ def _run(args: argparse.Namespace) -> int:
             raise ValueError("--out must not overwrite or alias suite source files")
 
     suite, suite_label = _resolve_suite(settings["suite"])
+    if validate_suite(suite):
+        raise ValueError(
+            "suite validation failed; run callprobe validate with the same --suite for details"
+        )
     pads = settings["pads"]
 
     selected_task_ids: list[str] | None = None

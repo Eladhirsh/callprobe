@@ -677,6 +677,12 @@ It is not a MailOps integration.
 
 ### Preview a run before spending tokens (0.9.0rc1)
 
+In the unreleased development version, both `run` and `run --dry-run` validate
+the complete suite before endpoint access, including unused distractors and
+expected arguments. Invalid suites exit with code `2` without changing output
+files. Run `callprobe validate --suite YOUR_SUITE` for detailed diagnostics
+(or `callprobe validate` for the bundled suite).
+
 `--dry-run` merges `--config` and CLI flags, resolves `--suite`, and applies
 `--task`/`--failed-from` selection, then prints the resulting coverage and a
 planned request count and completion-token cap &mdash; it never probes the endpoint, never
