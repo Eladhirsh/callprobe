@@ -1122,3 +1122,89 @@ def test_historical_runconfig_without_request_timeout_still_loads(tmp_path):
     }
     config = RunConfig.model_validate(legacy)
     assert config.request_timeout is None
+
+
+@pytest.mark.parametrize('filename', ['suite.yaml', 'tools.yaml', 'tasks.yaml', 'distractors.yaml'])
+@pytest.mark.parametrize('alias_kind', ['direct', 'symlink', 'hardlink'])
+def test_run_cannot_replace_suite_source(monkeypatch, tmp_path, capsys, filename, alias_kind):
+    import os
+    import shutil
+    suite = tmp_path / 'suite'
+    shutil.copytree(SUITE, suite)
+    source = suite / filename
+    # suite.yaml and distractors.yaml are optional to the loader but must be
+    # protected even if absent; this fixture exercises existing-file aliases.
+    if not source.exists():
+        source.write_text('{}\n')
+    before = {p.name: p.read_bytes() for p in suite.iterdir() if p.is_file()}
+    output = source
+    if alias_kind != 'direct':
+        output = tmp_path / 'alias.json'
+        if alias_kind == 'symlink':
+            output.symlink_to(source)
+        else:
+            os.link(source, output)
+    def forbidden(*args, **kwargs):
+        raise AssertionError('unsafe destination must fail before endpoint access')
+    monkeypatch.setattr(cli, 'ChatClient', forbidden)
+    monkeypatch.setattr(cli, 'probe_server_version', forbidden)
+    assert cli.main(['run', '--model', 'stub', '--suite', str(suite), '--out', str(output)]) == 2
+    assert 'suite source files' in capsys.readouterr().err
+    assert {p.name: p.read_bytes() for p in suite.iterdir() if p.is_file()} == before
+
+
+def test_config_relative_output_cannot_replace_optional_suite_file(monkeypatch, tmp_path, capsys):
+    import shutil
+    suite = tmp_path / 'suite'
+    shutil.copytree(SUITE, suite)
+    (suite / 'suite.yaml').unlink(missing_ok=True)
+    config = tmp_path / 'run.yaml'
+    config.write_text('model: stub\nsuite: suite\nout: suite/suite.yaml\n')
+    def forbidden(*args, **kwargs):
+        raise AssertionError('unsafe destination must fail before endpoint access')
+    monkeypatch.setattr(cli, 'probe_server_version', forbidden)
+    assert cli.main(['run', '--config', str(config)]) == 2
+    assert 'suite source files' in capsys.readouterr().err
+    assert not (suite / 'suite.yaml').exists()
+
+
+def test_packaged_suite_output_protected_even_in_dry_run(monkeypatch, capsys):
+    import importlib.resources
+    target = importlib.resources.files('callprobe') / 'suites' / 'core' / 'tasks.yaml'
+    before = target.read_bytes()
+    assert cli.main(['run', '--model', 'stub', '--out', str(target), '--dry-run']) == 2
+    assert 'suite source files' in capsys.readouterr().err
+    assert target.read_bytes() == before
+
+
+@pytest.mark.parametrize('conflict', ['directory', 'parent_file'])
+def test_run_output_conflicts_fail_before_generation(monkeypatch, tmp_path, capsys, conflict):
+    output = tmp_path / 'out'
+    if conflict == 'directory':
+        output.mkdir()
+    else:
+        output.write_text('keep')
+        output = output / 'results.json'
+    def forbidden(*args, **kwargs):
+        raise AssertionError('invalid destination must fail before endpoint access')
+    monkeypatch.setattr(cli, 'probe_server_version', forbidden)
+    assert cli.main(['run', '--model', 'stub', '--out', str(output)]) == 2
+    assert 'error:' in capsys.readouterr().err
+
+
+def test_results_inside_suite_remain_writable_and_resumable(monkeypatch, tmp_path, capsys):
+    import shutil
+    suite = tmp_path / 'suite'
+    shutil.copytree(SUITE, suite)
+    before = {p.name: p.read_bytes() for p in suite.iterdir() if p.is_file()}
+    output = suite / 'results.json'
+    output.write_text('old result content')
+    monkeypatch.setattr(cli, 'ChatClient', _FakeClient)
+    monkeypatch.setattr(cli, 'probe_server_version', lambda *a: (None, None))
+    args = ['run', '--model', 'stub', '--suite', str(suite), '--out', str(output), '--quiet']
+    assert cli.main(args) == 0
+    first = json.loads(output.read_text())['results']
+    assert first
+    assert cli.main(args + ['--resume', str(output)]) == 0
+    assert json.loads(output.read_text())['results'] == first
+    assert all((suite / name).read_bytes() == data for name, data in before.items())

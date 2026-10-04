@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Reject `run --out` destinations that name or alias suite definition files,
+  including config-relative paths and packaged-suite files, before endpoint
+  access. Obvious output-directory conflicts also fail before generation.
+  Ordinary result replacement and resuming into the same result file still work.
+
 - Reject ambiguous duplicate keys and nonfinite numbers in string-form tool
   arguments, including nested values and overflowing float literals. Preserve
   the original argument string as parse-failure evidence instead of silently
