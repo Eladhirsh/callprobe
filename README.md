@@ -227,6 +227,9 @@ representative traces before choosing it for a workload.
 Both extractors reject unquoted pronouns used as explicit identifiers or recipients and request
 one repair. A quoted identifier such as the filename `"it"` remains valid. This is a narrow check;
 literal source validation still cannot prove that a model assigned a word the correct meaning.
+Repair feedback identifies invalid argument fields and preserves valid literal details. Default-mode
+repairs for null placeholders and unresolved references use only the target message and provisional
+tool identities, keeping earlier requested values out of the repair. Invalid details are not silently removed.
 
 ## Model comparison and extraction contracts
 

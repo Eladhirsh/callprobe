@@ -470,6 +470,56 @@ def _source_anchors(raw: str, trace: Trace, message_index: int) -> list[dict[str
     return anchors
 
 
+def _argument_issues(raw: str, trace: Trace, message_index: int) -> list[dict[str, Any]]:
+    """Identify invalid fields for repair without echoing rejected values or call evidence."""
+    target = next(m.content for m in trace.assistant_messages() if m.index == message_index)
+    spans = source_spans(target)
+    issues = []
+    for claim_index, item in enumerate(_claim_payload(raw)["claims"]):
+        if not isinstance(item, dict) or item.get("completed") is not True:
+            continue
+        actions = item.get("actions", [item.get("args", {})])
+        if not isinstance(actions, list):
+            continue
+        for action_index, args in enumerate(actions):
+            if not isinstance(args, dict):
+                continue
+            for key, value in args.items():
+                try:
+                    resolved = _source_value(value, spans)
+                    if resolved is None:
+                        raise ClaimFormatError("null_argument")
+                    _ground_arguments({key: resolved}, target, spans)
+                except ClaimFormatError as exc:
+                    issues.append(
+                        {
+                            "claim_index": claim_index,
+                            "action_index": action_index,
+                            "tool": item.get("tool")
+                            if isinstance(item.get("tool"), str) and item["tool"] in trace.tools
+                            else None,
+                            "argument": key,
+                            "reason": exc.reason,
+                        }
+                    )
+    return issues
+
+
+def _argument_feedback(raw: str, trace: Trace, message_index: int) -> str:
+    issues = _argument_issues(raw, trace, message_index)
+    if not issues:
+        return ""
+    return (
+        "\nArgument validation issues (indices identify your response entries): "
+        + json.dumps(issues)
+        + "\nFor null_argument or unresolved_reference, omit that argument key entirely. "
+        "Do not replace it with an empty string, null, a pronoun, or a context value. "
+        "For source_mismatch, copy the correct literal TARGET value if one is stated; "
+        "otherwise omit the key. Preserve valid arguments and distinct actions. "
+        "An argument object with no stated details is {}."
+    )
+
+
 def _source_detail_agrees(expected: Any, actual: Any) -> bool:
     if isinstance(expected, str):
         return isinstance(actual, str) and " ".join(expected.casefold().split()) == " ".join(
@@ -605,7 +655,7 @@ class LLMExtractor:
                     reason = exc.reason if isinstance(exc, ClaimFormatError) else "invalid_claims"
                     if attempt:
                         raise ExtractionError(message.index, reason) from None
-                    if reason == "source_mismatch":
+                    if reason in {"source_mismatch", "null_argument", "unresolved_reference"}:
                         source_anchors = _source_anchors(content, trace, message.index)
                         mapped_tools = {
                             item["tool"]
@@ -616,7 +666,12 @@ class LLMExtractor:
                             and item["tool"] in trace.tools
                             and trace.is_side_effect(item["tool"])
                         }
-                        body["messages"][1]["content"] = _source_repair_prompt(content, trace, message.index)
+                        body["messages"][1]["content"] = (
+                            _source_repair_prompt(content, trace, message.index)
+                            + "\nValidation feedback: "
+                            + EXTRACTION_HINTS[reason]
+                            + _argument_feedback(content, trace, message.index)
+                        )
                     else:
                         body["messages"].append(
                             {"role": "assistant", "content": content if isinstance(content, str) else ""}

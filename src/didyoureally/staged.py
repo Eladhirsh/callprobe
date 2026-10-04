@@ -10,6 +10,7 @@ from .extract import (
     ClaimFormatError,
     ExtractionError,
     LLMExtractor,
+    _argument_feedback,
     _claim_payload,
     _preserves_source_details,
     _source_anchors,
@@ -221,6 +222,8 @@ class StagedExtractor(LLMExtractor):
                     except ValueError:
                         anchors = []
                 prompt = base_prompt + "\nValidation feedback: " + EXTRACTION_HINTS[reason]
+                if not mapping and claim_raw is not None:
+                    prompt += _argument_feedback(claim_raw, trace, index)
                 if anchors:
                     prompt += "\nPreserve these literal TARGET details: " + json.dumps(anchors)
         raise AssertionError("Unreachable")
