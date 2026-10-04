@@ -1,0 +1,53 @@
+{
+  "started_at": "2026-10-04T17:48:01.752547+00:00",
+  "source_commit": "426d669c45449cee9fe27d0096b74c440ed7d957",
+  "suite_hash": "e8df4b7287151eba",
+  "server": "ollama 0.34.2",
+  "models": [
+    {
+      "model": "llama3.2:3b",
+      "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+      "observations": 12,
+      "successes": 5,
+      "request_errors": 0,
+      "truncated": 0,
+      "thinking_responses": 0,
+      "roundtrip_exact": true
+    },
+    {
+      "model": "granite3.3:8b",
+      "digest": "fd429f23b90980ed1bef53b990894e7b0199331f6ae90c5650240a7d5b70f1f7",
+      "observations": 12,
+      "successes": 9,
+      "request_errors": 0,
+      "truncated": 0,
+      "thinking_responses": 0,
+      "roundtrip_exact": true
+    },
+    {
+      "model": "qwen3:8b",
+      "digest": "500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41",
+      "observations": 12,
+      "successes": 7,
+      "request_errors": 0,
+      "truncated": 0,
+      "thinking_responses": 12,
+      "roundtrip_exact": true
+    }
+  ],
+  "settings": {
+    "pads": [
+      0
+    ],
+    "repeats": 2,
+    "temperature": 0,
+    "max_tokens": 4096,
+    "retries": 0,
+    "timeout": 90,
+    "stream": false,
+    "transport": "native /api/chat"
+  },
+  "digests_unchanged": true,
+  "finished_at": "2026-10-04T17:50:55.584553+00:00",
+  "python": "3.14.2"
+}

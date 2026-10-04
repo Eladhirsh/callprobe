@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add `parse_ollama_completion` for native, completed non-streaming `/api/chat`
+  recordings. Preserve calls, thinking, usage, and truncation through the existing
+  offline scoring/export APIs; reject malformed, partial, and lifecycle responses.
+
 - Validate the complete suite before `run` or `run --dry-run`, including unused
   distractors and expected arguments. Invalid suites exit before endpoint access
   or output changes; use `validate --suite DIR` for detailed diagnostics.
