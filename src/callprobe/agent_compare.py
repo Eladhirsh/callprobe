@@ -3,23 +3,275 @@
 from __future__ import annotations
 
 import json
+import math
+from dataclasses import fields
 from pathlib import Path
 
-from .agent_session import load_agent_suite, suite_hash
+from .agent_session import load_agent_suite, require_auditor, run_episode, suite_hash
+from .client import Completion
+from .doctor import validate_endpoint
+from .models import Call
 
 AXES = ("decision_passed", "account_passed", "passed")
 
 
+def _read_json(path: Path):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError("agent evidence contains duplicate JSON keys")
+            result[key] = value
+        return result
+
+    def finite(value):
+        number = float(value)
+        if not math.isfinite(number):
+            raise ValueError("agent evidence contains nonfinite JSON numbers")
+        return number
+
+    try:
+        return json.loads(
+            path.read_text(encoding="utf-8"),
+            object_pairs_hook=pairs,
+            parse_float=finite,
+            parse_constant=finite,
+        )
+    except (RecursionError, UnicodeError) as exc:
+        raise ValueError("invalid agent evidence JSON") from exc
+
+
+def _same(left, right):
+    # JSON booleans are not interchangeable with integers in saved evidence.
+    return json.dumps(left, sort_keys=True, allow_nan=False) == json.dumps(
+        right, sort_keys=True, allow_nan=False
+    )
+
+
+def _finite_number(value):
+    if type(value) not in (int, float):
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:
+        return False
+
+
+def _validate_provenance(report):
+    config = report.get("config")
+    if not isinstance(config, dict):
+        raise ValueError("agent report is missing comparison provenance")
+    for key in (
+        "agent_model",
+        "extractor_model",
+        "agent_endpoint",
+        "extractor_endpoint",
+    ):
+        if not isinstance(config.get(key), str) or not config[key].strip():
+            raise ValueError("agent report has invalid model or endpoint settings")
+    for key in ("max_turns", "max_tokens", "agent_retries"):
+        if type(config.get(key)) is not int or config[key] < (0 if key == "agent_retries" else 1):
+            raise ValueError("agent report has invalid request settings")
+    if config["max_turns"] > 100 or type(config.get("extractor_json_mode")) is not bool:
+        raise ValueError("agent report has invalid request settings")
+    for key in ("agent_timeout", "extractor_timeout", "temperature"):
+        value = config.get(key)
+        if not _finite_number(value) or value < 0:
+            raise ValueError("agent report has invalid request settings")
+        if key != "temperature" and value == 0:
+            raise ValueError("agent report has invalid request settings")
+    for prefix in ("agent", "extractor"):
+        validate_endpoint(config[prefix + "_endpoint"], config[prefix + "_timeout"])
+    sources = report.get("source_sha256")
+    if not isinstance(sources, dict):
+        raise ValueError("agent report is missing source hashes")
+    required = {
+        "callprobe": {
+            "__init__.py",
+            "agent_cli.py",
+            "agent_session.py",
+            "client.py",
+            "scoring.py",
+            "models.py",
+            "coerce.py",
+        },
+        "didyoureally": {
+            "__init__.py",
+            "schema.py",
+            "matcher.py",
+            "extract.py",
+            "adapters.py",
+        },
+    }
+    for engine, names in required.items():
+        hashes = sources.get(engine)
+        if (
+            not isinstance(hashes, dict)
+            or not names <= hashes.keys()
+            or any(
+                not isinstance(name, str)
+                or Path(name).name != name
+                or not name.endswith(".py")
+                or not isinstance(value, str)
+                or len(value) != 64
+                or any(c not in "0123456789abcdef" for c in value)
+                for name, value in hashes.items()
+            )
+        ):
+            raise ValueError("agent report is missing source hashes")
+
+
+def _completion(raw):
+    if not isinstance(raw, dict) or set(raw) != {f.name for f in fields(Completion)}:
+        raise ValueError("agent report has invalid completion evidence")
+    for key in ("content", "reasoning", "finish_reason"):
+        if not isinstance(raw[key], str):
+            raise ValueError("agent report has invalid completion evidence")
+    if raw["error"] is not None and raw["error"] != "request_error":
+        raise ValueError("agent report has invalid completion error")
+    if not isinstance(raw["raw"], dict) or not isinstance(raw["calls"], list):
+        raise ValueError("agent report has invalid completion evidence")
+    for key in ("prompt_tokens", "completion_tokens"):
+        if type(raw[key]) is not int or raw[key] < 0:
+            raise ValueError("agent report has invalid completion usage")
+    if not _finite_number(raw["latency_ms"]) or raw["latency_ms"] < 0:
+        raise ValueError("agent report has invalid completion latency")
+    calls = []
+    for call in raw["calls"]:
+        if not isinstance(call, dict) or set(call) != set(Call.model_fields):
+            raise ValueError("agent report has invalid tool call evidence")
+        try:
+            calls.append(Call.model_validate(call, strict=True))
+        except ValueError:
+            raise ValueError("agent report has invalid tool call evidence") from None
+    return Completion(**{**raw, "calls": calls})
+
+
+def _replay_episode(row, case, config):
+    dyr = require_auditor()
+    from didyoureally.extract import ExtractionError
+
+    raw = row.get("completions")
+    if not isinstance(raw, list) or not 1 <= len(raw) <= config["max_turns"]:
+        raise ValueError("agent report has invalid completion coverage")
+    completions = [_completion(c) for c in raw]
+    audit = row.get("audit")
+    if not isinstance(audit, dict) or audit.get("status") not in (
+        "complete",
+        "incomplete",
+    ):
+        raise ValueError("agent report has invalid audit evidence")
+    claims = audit.get("claims")
+    if not isinstance(claims, list):
+        raise ValueError("agent report has invalid claim evidence")
+    parsed = []
+    for claim in claims:
+        if (
+            not isinstance(claim, dict)
+            or set(claim) != {f.name for f in fields(dyr.Claim)}
+            or not isinstance(claim["text"], str)
+            or not isinstance(claim["args"], dict)
+            or (claim["tool"] is not None and not isinstance(claim["tool"], str))
+            or (claim["group_id"] is not None and not isinstance(claim["group_id"], str))
+            or type(claim["message_index"]) is not int
+            or claim["message_index"] < 0
+        ):
+            raise ValueError("agent report has invalid claim evidence")
+        parsed.append(dyr.Claim(**claim))
+    requests = row.get("extraction_requests")
+    if not isinstance(requests, list) or any(
+        not isinstance(item, dict)
+        or set(item) != {"request", "response"}
+        or not isinstance(item["request"], dict)
+        or not isinstance(item["response"], dict)
+        for item in requests
+    ):
+        raise ValueError("agent report has invalid extraction evidence")
+    error = audit.get("error")
+    if audit["status"] == "incomplete" and (
+        not isinstance(error, dict)
+        or set(error) != {"message_index", "reason"}
+        or not isinstance(error["reason"], str)
+        or not error["reason"]
+        or type(error["message_index"]) is not int
+        or error["message_index"] < 0
+    ):
+        raise ValueError("agent report has invalid extraction error")
+
+    class RecordedClient:
+        used = 0
+
+        def complete(self, *args, **kwargs):
+            if self.used >= len(completions):
+                raise ValueError("agent report is missing a completion")
+            item = completions[self.used]
+            self.used += 1
+            return item
+
+    class RecordedClaims:
+        def extract(self, trace):
+            messages = {m.index: m.content for m in trace.assistant_messages()}
+            if audit["status"] == "incomplete":
+                if error["message_index"] not in messages:
+                    raise ValueError("extraction error does not identify an assistant message")
+                raise ExtractionError(error["message_index"], error["reason"])
+            if any(messages.get(c.message_index) != c.text for c in parsed):
+                raise ValueError("saved claim does not identify its assistant message")
+            return parsed
+
+    client = RecordedClient()
+    replay = run_episode(
+        case,
+        client,
+        RecordedClaims(),
+        model=config["agent_model"],
+        max_turns=config["max_turns"],
+        max_tokens=config["max_tokens"],
+    )
+    if client.used != len(completions):
+        raise ValueError("agent report has completions after the episode ended")
+    for key in (
+        "status",
+        "agent_status",
+        "decision_passed",
+        "account_passed",
+        "passed",
+        "missing_decision_turns",
+        "decisions",
+        "audit",
+        "executions",
+        "trace",
+        "conversation",
+    ):
+        if key not in row or not _same(row[key], replay[key]):
+            raise ValueError(
+                f"agent report {key} does not reproduce from saved evidence; "
+                "the evidence is inconsistent or the installed evaluator behavior changed"
+            )
+    versions = row.get("versions")
+    if not isinstance(versions, dict) or not {"callprobe", "scoring", "didyoureally"} <= versions.keys():
+        raise ValueError("agent report is missing episode versions")
+    if type(versions["scoring"]) is not int or not all(
+        isinstance(versions[name], str) and versions[name] for name in ("callprobe", "didyoureally")
+    ):
+        raise ValueError("agent report has invalid episode versions")
+
+
 def load_agent_run(path: str) -> dict:
     file = Path(path)
-    report = json.loads(file.read_text(encoding="utf-8"))
-    suite = load_agent_suite(json.loads((file.parent / "suite.json").read_text(encoding="utf-8")))
-    if not isinstance(report, dict) or report.get("format_version") != 1:
+    report = _read_json(file)
+    suite = load_agent_suite(_read_json(file.parent / "suite.json"))
+    if (
+        not isinstance(report, dict)
+        or type(report.get("format_version")) is not int
+        or report["format_version"] != 1
+    ):
         raise ValueError("unsupported agent report format")
     if report.get("status") != "complete" or report.get("execution") != "declarative_mocks":
         raise ValueError("agent comparison requires completed mock runs")
     if report.get("suite_hash") != suite_hash(suite):
         raise ValueError("agent report does not match its frozen suite.json")
+    _validate_provenance(report)
     expected = {case.id: case for case in suite.cases}
     rows = report.get("episodes")
     if (
@@ -40,78 +292,12 @@ def load_agent_run(path: str) -> dict:
         if row["case_id"] in seen:
             raise ValueError("agent report has duplicate cases")
         seen.add(row["case_id"])
-        if row.get("status") not in ("complete", "incomplete"):
-            raise ValueError("agent report has an invalid episode status")
-        for axis in AXES:
-            value = row.get(axis)
-            if not (type(value) is bool or (axis == "account_passed" and value is None)):
-                raise ValueError("agent report has invalid result flags")
-        audit = row.get("audit", {})
-        if (
-            not isinstance(audit, dict)
-            or audit.get("status") not in ("complete", "incomplete")
-            or not isinstance(audit.get("findings"), list)
-        ):
-            raise ValueError("agent report has invalid audit evidence")
-        if audit["status"] == "incomplete":
-            account_passed = None
-        else:
-            if any(
-                not isinstance(f, dict)
-                or f.get("verdict")
-                not in ("backed", "contradicted", "phantom", "masked_failure", "unmentioned")
-                or not isinstance(f.get("unchecked"), list)
-                for f in audit["findings"]
-            ):
-                raise ValueError("agent report has invalid findings")
-            account_passed = not any(f["verdict"] != "backed" or f["unchecked"] for f in audit["findings"])
-        decisions = row.get("decisions")
-        if (
-            not isinstance(decisions, list)
-            or not decisions
-            or any(not isinstance(d, dict) or type(d.get("success")) is not bool for d in decisions)
-        ):
-            raise ValueError("agent report has invalid decision evidence")
-        planned = len(expected[row["case_id"]].expected)
-        missing = list(range(len(decisions), planned))
-        decision_passed = len(decisions) == planned and all(d["success"] for d in decisions)
-        complete = row.get("agent_status") == "complete" and audit["status"] == "complete"
-        if (
-            row.get("missing_decision_turns") != missing
-            or row["decision_passed"] != decision_passed
-            or row["account_passed"] != account_passed
-            or (row["status"] == "complete") != complete
-            or row["passed"] != (complete and decision_passed and account_passed is True)
-        ):
-            raise ValueError("agent report flags disagree with their evidence")
-    if not isinstance(report.get("config"), dict) or not isinstance(report.get("source_sha256"), dict):
-        raise ValueError("agent report is missing comparison provenance")
-    for engine in ("callprobe", "didyoureally"):
-        hashes = report["source_sha256"].get(engine)
-        if (
-            not isinstance(hashes, dict)
-            or not hashes
-            or any(
-                not isinstance(h, str) or len(h) != 64 or any(c not in "0123456789abcdef" for c in h)
-                for h in hashes.values()
-            )
-        ):
-            raise ValueError("agent report is missing source hashes")
-    for field in (
-        "agent_model",
-        "agent_endpoint",
-        "extractor_model",
-        "extractor_endpoint",
-        "max_turns",
-        "max_tokens",
-        "agent_timeout",
-        "extractor_timeout",
-        "extractor_json_mode",
-        "temperature",
-        "agent_retries",
-    ):
-        if field not in report["config"]:
-            raise ValueError("agent report is missing model or request settings")
+        if len(expected[row["case_id"]].expected) > report["config"]["max_turns"]:
+            raise ValueError("agent report has insufficient planned turns")
+        try:
+            _replay_episode(row, expected[row["case_id"]], report["config"])
+        except (KeyError, TypeError, AttributeError, IndexError, RecursionError) as exc:
+            raise ValueError("agent report has malformed episode evidence") from exc
     return report
 
 
@@ -158,7 +344,11 @@ def compare_agent_runs(baseline: dict, candidate: dict) -> dict:
 
 
 def render_agent_comparison(result: dict) -> str:
-    names = {"decision_passed": "Decisions", "account_passed": "Account", "passed": "Both"}
+    names = {
+        "decision_passed": "Decisions",
+        "account_passed": "Account",
+        "passed": "Both",
+    }
     total = result["paired_complete_cases"]
     lines = [
         "# Agent regression comparison",
@@ -179,13 +369,20 @@ def render_agent_comparison(result: dict) -> str:
         if axis["improved"]:
             lines.extend(["", f"{names[key]} improvements: " + ", ".join(axis["improved"]) + "."])
     if result["incomplete_cases"]:
-        lines.extend(["", "Incomplete on at least one side: " + ", ".join(result["incomplete_cases"]) + "."])
+        lines.extend(
+            [
+                "",
+                "Incomplete on at least one side: " + ", ".join(result["incomplete_cases"]) + ".",
+            ]
+        )
     lines.extend(
         [
             "",
             "Regression gate: " + ("pass" if result["gate_passed"] else "fail") + ".",
-            "This checks for regressions, not that either run passed every case. "
-            "Matching model tags do not verify served weights.",
+            (
+                "This checks for regressions, not that either run passed every case. "
+                "Matching model tags do not verify served weights."
+            ),
             "",
         ]
     )

@@ -79,8 +79,9 @@ def _source_hashes(package):
 
 def run_agent_suite(args):
     dyr = require_auditor()
-    import callprobe
     from didyoureally.extract import LLMExtractor
+
+    import callprobe
 
     endpoint = validate_endpoint(args.endpoint, args.timeout)
     extractor_endpoint = validate_endpoint(args.extractor_endpoint or endpoint, args.timeout)

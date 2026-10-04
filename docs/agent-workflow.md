@@ -120,7 +120,7 @@ Both reports must retain their adjacent `suite.json`. The command verifies full
 case coverage, suite hashes, source hashes, result consistency, and matching
 extractor and request settings. Agent model and agent endpoint may differ. It
 compares decisions, accounts, and combined passes separately, listing each
-improvement and regression. It uses saved results without rerunning extraction.
+improvement and regression. It requires Didyoureally and replays saved normalized completions against the frozen mock suite, then checks recorded claims with the deterministic matcher. It makes no model calls. Missing or inconsistent decisions, traces, outcomes, findings, or completion evidence are rejected. If installed evaluator behavior no longer reproduces the saved evidence, the comparison exits 2 instead of silently rescoring it.
 
 An improvement in one axis does not cancel a regression in another. With the gate
 flag, any regression exits 1; any incomplete case on either side blocks a clean
@@ -130,3 +130,21 @@ gate does not mean either run passed every case.
 
 See the [first real-model pilot](../results/2026-10-04-joint-agent-pilot/README.md)
 for concrete findings and the original request-capture limitation.
+
+## Authoring expectations
+
+The serial sequence specifies required turns and tool choices. Expected arguments
+assert equality for the listed keys; additional schema-valid optional arguments
+can still pass. Constrain dangerous options with schema constants or explicit
+expected safe values. Literal dotted top-level argument names and external schema
+references are rejected by this pilot format.
+
+The runner rejects unsupported legacy function-call envelopes and call-finish
+responses with no parsed calls. Reasoning-only output does not count as a final
+reply. Raw completions remain in the evidence while trace checks use visible text.
+Comparison validates evidence consistency, not cryptographic authenticity or claim
+extraction completeness.
+
+The broader frozen suite is in `examples/agent-validation/suite.json`. Regenerate
+it with `python scripts/build_agent_validation.py`. It adds files and scheduling
+to the original refund and email pilot, for 28 authored scenarios.

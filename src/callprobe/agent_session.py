@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from . import __version__
 from .client import Completion
 from .models import Bundle, Expectation, Task, Tool
-from .scoring import SCORING_VERSION, score
+from .scoring import SCORING_VERSION, score, visible_text
 
 
 class Contract(BaseModel):
@@ -73,6 +73,25 @@ def _reject_refs(value):
             _reject_refs(child)
 
 
+def _reject_dotted_properties(schema):
+    # The shared scorer uses dots as argument paths. Nested object values are
+    # compared directly, but literal dotted names at the argument root cannot
+    # be represented by this suite contract without changing scoring semantics.
+    if any("." in name for name in schema.get("properties", {})):
+        raise ValueError("agent suites do not support dotted top-level argument names")
+    for keyword in ("allOf", "anyOf", "oneOf"):
+        for child in schema.get(keyword, []):
+            if isinstance(child, dict):
+                _reject_dotted_properties(child)
+    for keyword in ("if", "then", "else", "not"):
+        child = schema.get(keyword)
+        if isinstance(child, dict):
+            _reject_dotted_properties(child)
+    for child in schema.get("dependentSchemas", {}).values():
+        if isinstance(child, dict):
+            _reject_dotted_properties(child)
+
+
 def load_agent_suite(raw: dict) -> AgentSuite:
     try:
         suite = AgentSuite.model_validate(raw)
@@ -91,9 +110,12 @@ def load_agent_suite(raw: dict) -> AgentSuite:
                 Draft202012Validator.check_schema(tool.parameters)
             except Exception:
                 raise ValueError("invalid mock tool parameter schema") from None
+            _reject_dotted_properties(tool.parameters)
         if case.expected[-1].type != "no_call" or any(e.type == "no_call" for e in case.expected[:-1]):
             raise ValueError("expected decisions must end with exactly one no_call reply")
         for expected in case.expected:
+            if any("." in name for name in expected.args):
+                raise ValueError("agent suites do not support dotted top-level argument names")
             if expected.type == "no_call":
                 if expected.tool is not None or expected.args:
                     raise ValueError("no_call decision cannot have a tool or arguments")
@@ -116,7 +138,7 @@ def require_auditor():
     except ImportError:
         raise ValueError(
             "Agent checks require didyoureally in this environment. "
-            "Install its source checkout with python -m pip install -e ../didyoureally."
+            "Install its source checkout with python -m pip install -e packages/didyoureally."
         ) from None
     return didyoureally
 
@@ -220,11 +242,31 @@ def run_episode(
         if completion.finish_reason not in ("stop", "tool_calls", "function_call"):
             terminal = "truncated" if completion.finish_reason == "length" else "incomplete_finish"
             break
-        if completion.content.strip():
-            events.append({"type": "message", "role": "assistant", "content": completion.content})
+        raw_choices = completion.raw.get("choices")
+        raw_message = (
+            raw_choices[0].get("message")
+            if isinstance(raw_choices, list) and raw_choices and isinstance(raw_choices[0], dict)
+            else None
+        )
+        legacy_call = isinstance(raw_message, dict) and raw_message.get("function_call") is not None
+        if legacy_call or (
+            completion.finish_reason in ("tool_calls", "function_call") and not completion.calls
+        ):
+            # Unsupported legacy calls and absent call envelopes cannot prove
+            # abstention. Reject mixed legacy and modern calls before executing.
+            terminal = "invalid_tool_calls"
+            result["success"] = False
+            result["failures"].append("unsupported or missing tool-call envelope")
+            break
+        visible = visible_text(completion.content)
+        # Keep ordinary reply whitespace stable in saved evidence. Only remove
+        # reasoning when visible_text actually found an in-band reasoning block.
+        content = completion.content if visible == completion.content.strip() else visible
+        if visible:
+            events.append({"type": "message", "role": "assistant", "content": content})
         if not completion.calls:
-            terminal = "complete" if completion.content.strip() else "empty_final_reply"
-            messages.append({"role": "assistant", "content": completion.content})
+            terminal = "complete" if visible else "empty_final_reply"
+            messages.append({"role": "assistant", "content": content})
             break
         # Reject malformed envelopes before executing any member of this batch.
         ids = [c.id for c in completion.calls if c.id]
@@ -232,15 +274,23 @@ def run_episode(
             terminal = "invalid_tool_calls"
             break
         wire_calls = []
+        reserved_ids = set(ids)
         for i, call in enumerate(completion.calls):
+            wire_id = call.id or f"turn-{turn}-call-{i}"
+            if not call.id:
+                suffix = 0
+                while wire_id in reserved_ids:
+                    suffix += 1
+                    wire_id = f"turn-{turn}-call-{i}-generated-{suffix}"
+                reserved_ids.add(wire_id)
             wire_calls.append(
                 {
-                    "id": call.id or f"turn-{turn}-call-{i}",
+                    "id": wire_id,
                     "type": "function",
                     "function": {"name": call.name, "arguments": json.dumps(call.arguments)},
                 }
             )
-        messages.append({"role": "assistant", "content": completion.content, "tool_calls": wire_calls})
+        messages.append({"role": "assistant", "content": content, "tool_calls": wire_calls})
         for i, call in enumerate(completion.calls):
             spec = specs.get(call.name)
             if spec is None:
