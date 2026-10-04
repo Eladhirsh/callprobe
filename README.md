@@ -100,7 +100,8 @@ sessions across deployment, inventory, billing, and publishing:
 | granite3.3:8b | 11/32 | 45.5% | 41.7% | 6/20 | 15 |
 
 The honest-alarm count includes unmentioned-action warnings. On the broader argument benchmark,
-staged Mistral scored only **61/82**, including grouped-action misses. Staged mode remains opt-in.
+staged Mistral scored only **61/82**, including grouped-action misses. A [subsequent label audit](results/partial-action-label-audit/README.md)
+rescored those saved predictions at 63/82 without running the model again. Staged mode remains opt-in.
 See the [full fixed-action evaluation](results/fixed-action-validation/README.md) for the default comparison,
 broader benchmark, raw evidence, and limitations. These small synthetic evaluations do not establish production accuracy.
 

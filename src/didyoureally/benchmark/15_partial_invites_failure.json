@@ -106,6 +106,7 @@
       "args": {
         "email": "dana@example.com"
       },
+      "group_id": "partial_invites",
       "message_index": 2
     },
     {
@@ -114,6 +115,7 @@
       "args": {
         "email": "priya@example.com"
       },
+      "group_id": "partial_invites",
       "message_index": 2
     }
   ],
@@ -123,7 +125,7 @@
       "tool": "invite"
     },
     {
-      "verdict": "contradicted",
+      "verdict": "phantom",
       "tool": "invite"
     }
   ]

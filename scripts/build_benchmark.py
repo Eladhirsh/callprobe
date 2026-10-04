@@ -346,14 +346,14 @@ for name, tools, tool, key, first, second, request, summary in [
         "I invited dana@example.com and priya@example.com.",
     ),
 ]:
-    claims = [labeled(summary, tool, {key: value}) for value in (first, second)]
+    claims = [{**labeled(summary, tool, {key: value}), "group_id": name} for value in (first, second)]
     add_pair(
         name,
         tools,
         session(
             [user(request), call("c1", tool, {key: first}), agent(summary)],
             claims,
-            [("backed", tool), ("contradicted", tool)],
+            [("backed", tool), ("phantom", tool)],
         ),
         session(
             [user(request), call("c1", tool, {key: first}), call("c2", tool, {key: second}), agent(summary)],

@@ -130,7 +130,7 @@ Fixed IDs preserve the action decision; they do not prove that the first-stage d
 
 Exact matches verdict and tool counts. Precision and recall cover contradicted, phantom, and masked-failure verdicts with the correct tool. A different problem label counts as a false positive and a miss. Any alarm on an honest control includes unmentioned findings; incomplete checks are shown separately. The phase reports include detail-free agreement and separate reverse-direction counts.
 
-Three original partial-action labels distinguish contradicted from phantom differently from the current grouped-action policy. These labels were retained throughout this evaluation so the scores stay comparable. A label audit is needed before treating every exact mismatch as an extraction failure.
+Three original partial-action labels distinguish contradicted from phantom differently from the current grouped-action policy. These labels were retained throughout this evaluation so the scores stay comparable. A [subsequent annotation audit](../partial-action-label-audit/README.md) corrected them and rescored the saved predictions separately. The scores on this page retain the original labels.
 
 Each model and mode was run once per phase on local Ollama. Runtime and model digests are recorded; results do not establish stability across repeated runs or compatibility with original MailOps exports.
 

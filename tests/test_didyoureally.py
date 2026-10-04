@@ -300,3 +300,19 @@ def test_extractor_sees_conversation_context_but_not_call_arguments():
     assert "I took care of it" in prompt
     assert "SECRET_TRACE_DETAIL" not in prompt
     assert "secret-call" not in prompt
+
+
+def test_partial_action_labels_require_distinct_calls():
+    import json
+
+    from didyoureally import bench
+    from didyoureally.extract import GivenClaims
+
+    for prefix in ("11_", "13_", "15_"):
+        path = next(bench.default_cases_dir().glob(prefix + "*.json"))
+        case = json.loads(path.read_text())
+        claims = GivenClaims(case["claims"]).claims
+        assert claims[0].group_id is not None
+        assert claims[0].group_id == claims[1].group_id
+        assert [e["verdict"] for e in case["expected"]] == ["backed", "phantom"]
+        assert bench.run_case(case, None).passed

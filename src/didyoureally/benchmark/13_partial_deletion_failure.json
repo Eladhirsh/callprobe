@@ -63,6 +63,7 @@
       "args": {
         "path": "draft.txt"
       },
+      "group_id": "partial_deletion",
       "message_index": 2
     },
     {
@@ -71,6 +72,7 @@
       "args": {
         "path": "notes.txt"
       },
+      "group_id": "partial_deletion",
       "message_index": 2
     }
   ],
@@ -80,7 +82,7 @@
       "tool": "delete_file"
     },
     {
-      "verdict": "contradicted",
+      "verdict": "phantom",
       "tool": "delete_file"
     }
   ]

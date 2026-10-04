@@ -120,6 +120,7 @@
       "args": {
         "order_id": "A-21"
       },
+      "group_id": "partial_refunds",
       "message_index": 2
     },
     {
@@ -128,6 +129,7 @@
       "args": {
         "order_id": "A-22"
       },
+      "group_id": "partial_refunds",
       "message_index": 2
     }
   ],
@@ -137,7 +139,7 @@
       "tool": "issue_refund"
     },
     {
-      "verdict": "contradicted",
+      "verdict": "phantom",
       "tool": "issue_refund"
     }
   ]
