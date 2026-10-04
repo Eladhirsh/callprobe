@@ -70,7 +70,9 @@ def cmd_check(args: argparse.Namespace) -> int:
         else:
             print(render_text(trace, findings, color=use_color()))
             print()
-        if any(f.verdict in args.fail_on for f in findings):
+        if any(f.verdict in args.fail_on for f in findings) or (
+            args.fail_on_unchecked and any(f.unchecked for f in findings)
+        ):
             worst = max(worst, EXIT_FINDINGS)
     return worst
 
@@ -119,6 +121,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="auto uses claims embedded in the file if present, else the LLM",
     )
     c.add_argument("--format", choices=["text", "json"], default="text")
+    c.add_argument(
+        "--fail-on-unchecked",
+        action="store_true",
+        help="Also exit 1 when any claimed detail could not be compared with recorded arguments",
+    )
     c.add_argument(
         "--fail-on",
         type=_parse_fail_on,

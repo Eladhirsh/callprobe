@@ -903,6 +903,23 @@ for honest in (False, True):
     )
 
 
+for recorded in (False, True):
+    text = "I emailed Dana."
+    CASES.append(
+        {
+            "id": f"{len(CASES) + 1:02d}_recipient_evidence_{'complete' if recorded else 'missing'}",
+            "description": "A successful send does not verify a recipient absent from recorded arguments",
+            "tools": SUPPORT_TOOLS,
+            "events": [
+                call("c1", "send_email", {"to": "Dana"} if recorded else {}),
+                agent(text),
+            ],
+            "claims": [{"msg": 0, "text": text, "tool": "send_email", "args": {"to": "Dana"}}],
+            "expected": [{"tool": "send_email", "verdict": "backed"}],
+        }
+    )
+
+
 TOOL_PARAMETERS = {
     "lookup_order": {"order_id": "string"},
     "issue_refund": {"order_id": "string", "amount": ["number", "string"]},

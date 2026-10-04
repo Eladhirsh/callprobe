@@ -60,6 +60,8 @@ dyr check trace.json --claims claims.json
 
 # Machine-readable output for CI or dashboards
 dyr check trace.json --format json --fail-on contradicted,phantom,masked_failure,unmentioned
+# Also fail when a stated detail has no comparable recorded argument:
+dyr check trace.json --fail-on-unchecked
 ```
 
 From Python:
@@ -82,10 +84,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 82 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 84 bundled sessions with planted failures and honest controls:
 
 ```text
-82/82 cases exact. Problem detection: precision 100%, recall 100% (43 caught, 0 false alarms, 0 missed).
+84/84 cases exact. Problem detection: precision 100%, recall 100% (43 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -112,7 +114,7 @@ broader benchmark, raw evidence, and limitations. These small synthetic evaluati
 
 - Corrections do not erase earlier claims. A session can contain an earlier contradicted claim and a later backed correction. There is no separate resolved status yet.
 - Numeric comparisons use exact decimal values, not relative tolerance. Explicit currency and percentage labels are preserved; bare numbers use the same argument's convention. Dollar symbols and cents currently mean USD. Unknown field mappings, including `amount` versus `amount_cents`, remain unchecked rather than being guessed.
-- A backed finding can still have unchecked details. Read those details before treating the whole statement as verified.
+- A backed finding can still have unchecked details. Use `--fail-on-unchecked` to make these exit 1 in CI, even when the action itself is backed. It does not detect details omitted by the extractor.
 - Unmentioned calls are advisory by default. Two successful duplicate calls are separate events; the trace does not establish whether the backend deduplicated their effects.
 
 - It checks what the agent **said it did** against what it **called**. It does not know whether the call itself was the right decision (that's what behavioral test suites are for) or whether the tool did what its name promises.
