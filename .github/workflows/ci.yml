@@ -91,6 +91,7 @@ jobs:
           from callprobe.loader import load_suite
           from callprobe.models import Call, RunConfig
           from callprobe.recordings import RecordedCompletion, score_recordings
+          from callprobe.recording_io import recordings_to_json
           from callprobe.report import summarize
           suite = load_suite(Path("/tmp/callprobe-support-example"))
           config = RunConfig(model="synthetic-recording", endpoint="recorded://local",
@@ -102,8 +103,12 @@ jobs:
           assert run.results[0].success
           assert summarize(run)["coverage"] == "1/1/6 INCOMPLETE (5 missing)"
           Path("/tmp/callprobe-recorded-results.json").write_text(run.model_dump_json())
+          Path("/tmp/callprobe-api-recordings.json").write_text(recordings_to_json(config, [record]), encoding="utf-8")
           PYTHON
           /tmp/callprobe-wheel-env/bin/callprobe report /tmp/callprobe-recorded-results.json --format text
+          /tmp/callprobe-wheel-env/bin/callprobe replay /tmp/callprobe-api-recordings.json \
+            --suite /tmp/callprobe-support-example --out /tmp/callprobe-api-replayed.json
+          /tmp/callprobe-wheel-env/bin/python -c 'import json; a=json.load(open("/tmp/callprobe-recorded-results.json")); b=json.load(open("/tmp/callprobe-api-replayed.json")); assert a["results"] == b["results"]'
       - name: exercise installed recordings replay CLI
         working-directory: /tmp
         run: |
