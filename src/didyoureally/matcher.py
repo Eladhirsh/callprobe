@@ -7,6 +7,7 @@ plain comparison, so each finding can be explained and reproduced.
 from __future__ import annotations
 
 import re
+from collections import deque
 from dataclasses import dataclass, field
 from decimal import Decimal, InvalidOperation
 from enum import Enum
@@ -203,12 +204,79 @@ def _candidates(trace: Trace, claim: Claim) -> list[ToolCall]:
     ]
 
 
+def _reserve_group_calls(
+    trace: Trace, members: list[tuple[int, Claim]], linked: set[str]
+) -> dict[int, ToolCall]:
+    """Jointly reserve compatible calls before diagnosing unmatched claims.
+
+    First find a maximum matching using successful calls. Then extend it with
+    compatible failed calls. An augmenting path keeps every already assigned
+    call in use, so this extension cannot reduce the number of successful calls.
+    Each claim and call appears at most once, including vague overlapping claims.
+    """
+    compatible: dict[int, list[ToolCall]] = {}
+    for index, claim in members:
+        scored = []
+        for call in _candidates(trace, claim):
+            mismatches, _, agree = compare_args(claim, call)
+            if not mismatches:
+                key = (call.status != "ok", -agree, call.id in linked, -call.index)
+                scored.append((key, call))
+        compatible[index] = [call for _, call in sorted(scored, key=lambda item: item[0])]
+
+    assigned: dict[int, ToolCall] = {}
+    owners: dict[str, int] = {}
+
+    def augment(start: int, candidates: dict[int, list[ToolCall]]) -> None:
+        # Breadth-first search favors available calls over needless reassignment
+        # and avoids a recursion limit for large labeled claim groups.
+        queue = deque([start])
+        parents: dict[int, tuple[int, ToolCall]] = {}
+        seen_claims = {start}
+        seen_calls: set[str] = set()
+        while queue:
+            index = queue.popleft()
+            for call in candidates[index]:
+                if call.id in seen_calls:
+                    continue
+                seen_calls.add(call.id)
+                owner = owners.get(call.id)
+                if owner is None:
+                    while True:
+                        assigned[index] = call
+                        owners[call.id] = index
+                        if index == start:
+                            return
+                        index, call = parents[index]
+                if owner not in seen_claims:
+                    seen_claims.add(owner)
+                    parents[owner] = (index, call)
+                    queue.append(owner)
+
+    successful = {
+        index: [call for call in calls if call.status == "ok"] for index, calls in compatible.items()
+    }
+    for candidates in (successful, compatible):
+        # Constrained claims get first choice; augmenting paths handle overlaps
+        # that cannot be solved by specificity or candidate counts alone.
+        order = sorted(members, key=lambda item: (len(candidates[item[0]]), -len(item[1].args), item[0]))
+        for index, _ in order:
+            if index not in assigned:
+                augment(index, candidates)
+    return assigned
+
+
 def check(trace: Trace, claims: list[Claim]) -> list[Finding]:
     findings: list[Finding] = []
     linked: set[str] = set()
     grouped_calls: dict[tuple[int | None, str], set[str]] = {}
+    group_members: dict[tuple[int | None, str], list[tuple[int, Claim]]] = {}
+    reservations: dict[tuple[int | None, str], dict[int, ToolCall]] = {}
+    for index, claim in enumerate(claims):
+        if claim.group_id is not None and claim.tool in trace.tools:
+            group_members.setdefault((claim.message_index, claim.group_id), []).append((index, claim))
 
-    for claim in claims:
+    for index, claim in enumerate(claims):
         if claim.tool is None or claim.tool not in trace.tools:
             findings.append(
                 Finding(
@@ -222,8 +290,15 @@ def check(trace: Trace, claims: list[Claim]) -> list[Finding]:
         cands = _candidates(trace, claim)
         group_key = (claim.message_index, claim.group_id) if claim.group_id is not None else None
         if group_key is not None:
+            if group_key not in reservations:
+                reservations[group_key] = _reserve_group_calls(trace, group_members[group_key], linked)
+            reserved = reservations[group_key]
             used = grouped_calls.setdefault(group_key, set())
-            cands = [call for call in cands if call.id not in used]
+            if index in reserved:
+                cands = [reserved[index]]
+            else:
+                reserved_ids = {call.id for call in reserved.values()}
+                cands = [call for call in cands if call.id not in used | reserved_ids]
         if not cands:
             findings.append(
                 Finding(
