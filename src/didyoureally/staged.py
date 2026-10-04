@@ -58,6 +58,17 @@ For a vague completion with no stated details, keep its action_id and use args {
 For distinct completed objects using one tool, repeat its action_id with one args object per object.
 An array parameter such as attendees stays inside one args object.
 
+Examples with hypothetical action ID 0 (use the actual supplied parameter names):
+Tool archive_file(path), TARGET "Archived report.csv and ledger.csv."
+-> {"details": [{"action_id": 0, "args": {"path": "report.csv"}},
+                {"action_id": 0, "args": {"path": "ledger.csv"}}]}
+Tool credit_account(account_id, amount), TARGET "Credited accounts Red and Blue."
+-> {"details": [{"action_id": 0, "args": {"account_id": "Red"}},
+                {"action_id": 0, "args": {"account_id": "Blue"}}]}
+Both account names belong to account_id in separate objects. Neither is an amount.
+Tool book_event(attendees: array), TARGET "Booked it with Sam and Lee."
+-> {"details": [{"action_id": 0, "args": {"attendees": ["Sam", "Lee"]}}]}
+
 Use the supplied parameter names. Copy argument values ONLY from TARGET source values or literal
 phrases in TARGET. Omit unspecified keys completely, even when the tool schema requires them.
 Do not invent recipients, titles, IDs or other details from tool descriptions or action names.
