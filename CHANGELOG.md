@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate Python recorded-completion inputs before scoring any item in a batch.
+  Invalid adapter types cannot become successful abstentions, and invalid token
+  or latency metadata cannot corrupt reports. Valid errors and malformed-tool
+  parse evidence retain their existing scores; the scoring rubric is unchanged.
+
 - Support `python -m callprobe` for all CLI commands, using the selected Python
   environment even when the console script is not on `PATH`. Command output and
   exit codes match the `callprobe` executable.

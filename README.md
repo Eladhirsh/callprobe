@@ -1160,7 +1160,12 @@ Inspect the output with `callprobe report recorded-results.json --format text`.
 Only one of six tasks was supplied, so coverage remains incomplete. Supply every
 planned `(task_id, pad, repeat)` for a complete run; targeted selections remain
 labeled as debug runs. Duplicate and out-of-plan records are rejected before any
-scoring. Missing observations are never invented.
+scoring. Missing observations are never invented. The Python adapter also rejects
+invalid completion field types before scoring the batch: calls must be a list of
+`Call` objects, text fields must be strings, token counts must be nonnegative
+integers (not booleans or strings), and latency must be finite and nonnegative.
+Use `parse_completion` for provider-specific normalization first. Invalid adapter
+data raises `ValueError`; it is not a model failure or a successful abstention.
 
 Replace the synthetic `Completion` with your application's captured final model
 decision, retaining **every** tool call, parse failure, finish reason, request

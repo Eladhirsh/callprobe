@@ -413,3 +413,64 @@ def test_every_call_is_preserved_even_when_only_one_matches(suite):
     assert result.calls == calls
     assert not result.call_count_ok and not result.success
     assert result.calls[0] is not calls[0]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("calls", {}), ("calls", None), ("calls", ()), ("calls", ["PRIVATE_PAYLOAD"]),
+    ("content", []), ("content", None), ("content", False),
+    ("reasoning", {}), ("reasoning", None),
+    ("finish_reason", []), ("finish_reason", None),
+    ("error", False), ("error", {"PRIVATE_PAYLOAD": 1}),
+    ("prompt_tokens", -1), ("prompt_tokens", True), ("prompt_tokens", "7"),
+    ("completion_tokens", -2), ("completion_tokens", 1.5),
+    ("completion_tokens", None), ("completion_tokens", 7.0),
+    ("latency_ms", -1), ("latency_ms", True), ("latency_ms", "7"),
+    ("latency_ms", None), ("latency_ms", float("nan")),
+    ("latency_ms", float("inf")), ("latency_ms", 10 ** 400),
+])
+def test_invalid_completion_aborts_batch_before_scoring(suite, monkeypatch, field, value):
+    import callprobe.recordings as module
+    _no_network(monkeypatch)
+    def unexpected(*args, **kwargs):
+        raise AssertionError("scoring started before completion validation finished")
+    monkeypatch.setattr(module, "score", unexpected)
+    abstain = next(t for t in suite.tasks if t.category == "abstain")
+    valid = RecordedCompletion(abstain.id, Completion())
+    invalid = RecordedCompletion(abstain.id, Completion(**{field: value}), repeat=1)
+    with pytest.raises(ValueError, match="recording 1 has invalid completion") as caught:
+        score_recordings(suite, _config(repeats=2), [valid, invalid])
+    assert "PRIVATE_PAYLOAD" not in str(caught.value)
+
+
+@pytest.mark.parametrize("field,value", [
+    ("name", None), ("name", []), ("arguments", []),
+    ("arguments", "PRIVATE_PAYLOAD"), ("id", 1),
+    ("raw_arguments", {}), ("parse_error", False),
+])
+def test_mutated_call_fields_are_rejected_as_adapter_errors(suite, field, value):
+    # Call is normally validated at construction, but reassignment/model_copy
+    # can bypass that boundary. Do not let a malformed object reach scoring.
+    call = Call(name="get_order_status").model_copy(update={field: value})
+    with pytest.raises(ValueError, match="invalid completion call") as caught:
+        score_recordings(suite, _config(), [
+            RecordedCompletion(suite.tasks[0].id, Completion(calls=[call])),
+        ])
+    assert "PRIVATE_PAYLOAD" not in str(caught.value)
+
+
+@pytest.mark.parametrize("latency", [0, 12, 12.5])
+def test_normalized_provider_completion_preserves_metadata(suite, latency):
+    from callprobe.client import parse_completion
+    abstain = next(t for t in suite.tasks if t.category == "abstain")
+    completion = parse_completion({
+        "choices": [{"message": {"content": None}, "finish_reason": "stop"}],
+        "usage": {"prompt_tokens": "7", "completion_tokens": 2.0},
+    }, latency)
+    # Unconsumed provider metadata is opaque, never echoed or normalized.
+    completion.raw["opaque"] = object()
+    result = score_recordings(suite, _config(), [
+        RecordedCompletion(abstain.id, completion),
+    ]).results[0]
+    assert result.success
+    assert result.prompt_tokens == 7 and result.completion_tokens == 2
+    assert result.latency_ms == latency

@@ -13,13 +13,14 @@ a million repeats stays bounded by whatever the caller actually hands in.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Iterable
 
 from . import __version__
 from .client import Completion
-from .models import Run, RunConfig, Suite
+from .models import Call, Run, RunConfig, Suite
 from .runner import build_toolset, prepare_config
 from .scoring import score
 
@@ -47,6 +48,42 @@ def _require_int(value, label: str) -> None:
         raise ValueError(f"recording {label} must be a plain integer")
 
 
+def _validate_completion(completion: Completion, index: int) -> None:
+    """Reject adapter shape errors without echoing recorded response values.
+
+    Completion is a mutable dataclass, and Call fields can be reassigned after
+    construction. Validate consumed fields before the scorer can coerce values
+    or mistake an empty container for a successful no-call response. Raw provider
+    metadata is not consumed by scoring and remains opaque.
+    """
+    def require(condition: bool, field: str) -> None:
+        if not condition:
+            raise ValueError(f"recording {index} has invalid completion {field}")
+
+    for field in ("content", "reasoning", "finish_reason"):
+        require(isinstance(getattr(completion, field), str), field)
+    require(completion.error is None or isinstance(completion.error, str), "error")
+    for field in ("prompt_tokens", "completion_tokens"):
+        value = getattr(completion, field)
+        require(type(value) is int and value >= 0, field)
+    latency = completion.latency_ms
+    finite_latency = False
+    if type(latency) in (int, float):
+        try:
+            finite_latency = math.isfinite(latency) and latency >= 0
+        except OverflowError:
+            pass
+    require(finite_latency, "latency_ms")
+    require(isinstance(completion.calls, list), "calls")
+    for call in completion.calls:
+        require(isinstance(call, Call), "calls entry")
+        require(isinstance(call.name, str), "call name")
+        require(isinstance(call.arguments, dict), "call arguments")
+        require(call.id is None or isinstance(call.id, str), "call id")
+        require(isinstance(call.raw_arguments, str), "call raw_arguments")
+        require(call.parse_error is None or isinstance(call.parse_error, str), "call parse_error")
+
+
 def score_recordings(
     suite: Suite,
     config: RunConfig,
@@ -54,8 +91,8 @@ def score_recordings(
 ) -> Run:
     """Score externally recorded completions. No network, no model call.
 
-    Every supplied identity is validated against the prepared config and
-    the suite before any scoring runs; a single bad record aborts the
+    Every completion shape and supplied identity is validated against the
+    prepared config and suite before any scoring runs; a single bad record aborts the
     batch rather than scoring half of it. Results are returned in the
     canonical pad-config / repeat / suite-task order, bounded by the
     input: a config.repeats of a million is harmless as long as only a
@@ -87,6 +124,7 @@ def score_recordings(
             raise ValueError(f"recording {index} is not a RecordedCompletion")
         if not isinstance(record.completion, Completion):
             raise ValueError(f"recording {index} payload is not a Completion")
+        _validate_completion(record.completion, index)
         _require_int(record.pad, f"{index} pad")
         _require_int(record.repeat, f"{index} repeat")
         if not isinstance(record.task_id, str):
