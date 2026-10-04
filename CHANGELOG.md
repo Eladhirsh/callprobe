@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Clarify completed-action scope in both Didyoureally extraction modes and repair:
+  attempts do not multiply successful actions, and JSON plans do not assert
+  execution. Preserve genuinely repeated successes and completed actions in mixed
+  replies. Add paired retry-count and prospective-JSON benchmark controls.
+
 - Preserve explicit date, time, and UTC-offset claims in Didyoureally extraction
   and repair. Compare supported prose timestamps with their ISO representations
   without guessing missing details. Add wrong-date and honest benchmark controls.
