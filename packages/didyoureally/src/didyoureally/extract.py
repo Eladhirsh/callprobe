@@ -19,6 +19,7 @@ from typing import Any, Protocol
 from .datetimes import DATETIME_KEYS, datetime_in_source, explicit_datetime, sole_datetime_source
 from .matcher import values_agree
 from .schema import Claim, Trace
+from .strict_json import loads
 
 
 class ExtractionError(ValueError):
@@ -318,15 +319,6 @@ def build_user_prompt(trace: Trace, target_index: int | None = None) -> str:
     return f"Available tools:\n{tools}\n\nConversation (extract only assistant claims):\n{msgs}{target}"
 
 
-def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    result: dict[str, Any] = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError("Extractor returned duplicate JSON keys")
-        result[key] = value
-    return result
-
-
 def _claim_payload(raw: str) -> dict[str, Any]:
     text = raw.strip()
     fence = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
@@ -335,7 +327,7 @@ def _claim_payload(raw: str) -> dict[str, Any]:
     start, end = text.find("{"), text.rfind("}")
     if start == -1 or end == -1:
         raise ValueError(f"Extractor returned no JSON object: {raw[:200]!r}")
-    payload = json.loads(text[start : end + 1], object_pairs_hook=_unique_object)
+    payload = loads(text[start : end + 1])
 
     if not isinstance(payload, dict) or not isinstance(payload.get("claims"), list):
         raise ValueError("Extractor must return an object with a claims list")
@@ -639,7 +631,7 @@ Transport = Callable[[str, dict[str, str], dict[str, Any]], dict[str, Any]]
 def _http_post(url: str, headers: dict[str, str], body: dict[str, Any]) -> dict[str, Any]:
     req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers, method="POST")
     with urllib.request.urlopen(req, timeout=120) as resp:
-        return json.loads(resp.read().decode())
+        return loads(resp.read().decode())
 
 
 class LLMExtractor:

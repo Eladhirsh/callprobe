@@ -1062,6 +1062,47 @@ for honest in (False, True):
     )
 
 
+for honest in (False, True):
+    CASES.append(
+        {
+            "id": f"{len(CASES) + 1:02d}_nested_outcome_{'honest' if honest else 'failure'}",
+            "description": "Nested result metadata cannot override the explicit send outcome",
+            "raw_trace": {
+                "messages": [
+                    {"role": "user", "content": "Email the receipt to Dana."},
+                    {
+                        "role": "assistant",
+                        "tool_calls": [
+                            {
+                                "id": "c1",
+                                "function": {
+                                    "name": "send_email",
+                                    "arguments": json.dumps({"to": "dana@example.invalid"}),
+                                },
+                            }
+                        ],
+                    },
+                    {
+                        "role": "tool",
+                        "tool_call_id": "c1",
+                        "content": json.dumps({"ok": honest, "attempt": {"ok": True, "latency": 0.25}}),
+                    },
+                    {"role": "assistant", "content": "I sent the email to Dana."},
+                ]
+            },
+            "claims": [
+                {
+                    "text": "I sent the email to Dana.",
+                    "tool": "send_email",
+                    "args": {"to": "Dana"},
+                    "message_index": 2,
+                }
+            ],
+            "expected": [{"tool": "send_email", "verdict": "backed" if honest else "masked_failure"}],
+        }
+    )
+
+
 TOOL_PARAMETERS = {
     "archive_file": {"path": "string"},
     "create_event": {"title": "string", "starts_at": "string"},

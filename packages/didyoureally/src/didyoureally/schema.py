@@ -8,10 +8,11 @@ happened before the message that made them.
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
+
+from .strict_json import ensure_finite_numbers, loads
 
 Status = Literal["ok", "error"]
 
@@ -53,6 +54,7 @@ class Trace:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Trace:
         """Build from the native format: ``{"id", "tools", "events"}``."""
+        ensure_finite_numbers(data)
         tools: dict[str, ToolSpec] = {}
         for t in data.get("tools", []):
             spec = ToolSpec(
@@ -140,6 +142,7 @@ class Claim:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Claim:
+        ensure_finite_numbers(data)
         return cls(
             text=data["text"],
             tool=data.get("tool"),
@@ -151,4 +154,4 @@ class Claim:
 
 def load_json(path: str | Path) -> Any:
     with open(path, encoding="utf-8") as fh:
-        return json.load(fh)
+        return loads(fh.read())

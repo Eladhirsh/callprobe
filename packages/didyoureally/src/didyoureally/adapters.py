@@ -13,6 +13,7 @@ import json
 from typing import Any
 
 from .schema import Trace
+from .strict_json import ensure_finite_numbers, loads
 
 READ_ONLY_PREFIXES = (
     "get_",
@@ -39,8 +40,8 @@ def _result_status(content: Any, side_effect: bool) -> str:
     if isinstance(content, str):
         text = content.strip()
         try:
-            content = json.loads(text)
-        except ValueError:
+            content = loads(text)
+        except json.JSONDecodeError:
             low = text.lower().rstrip(".! ")
             if low.startswith(("error", "exception", "failed", "traceback")):
                 return "error"
@@ -86,6 +87,7 @@ def _content_text(content: Any) -> str:
 
 
 def from_openai_messages(data: Any, trace_id: str = "trace") -> Trace:
+    ensure_finite_numbers(data)
     if isinstance(data, dict):
         messages = data.get("messages", [])
         tool_defs = data.get("tools", [])
@@ -131,11 +133,10 @@ def from_openai_messages(data: Any, trace_id: str = "trace") -> Trace:
             events.append({"type": "message", "role": role, "content": text})
         for tc in m.get("tool_calls") or []:
             fn = tc.get("function", {})
-            raw = fn.get("arguments") or "{}"
-            try:
-                args = json.loads(raw) if isinstance(raw, str) else dict(raw)
-            except ValueError:
-                args = {"_raw": raw}
+            raw = fn.get("arguments", {})
+            args = loads(raw) if isinstance(raw, str) else raw
+            if not isinstance(args, dict):
+                raise ValueError("Tool call arguments must be a JSON object")
             name = fn.get("name", "unknown")
             if name not in known:
                 tools.append({"name": name, "side_effect": guess_side_effect(name)})
