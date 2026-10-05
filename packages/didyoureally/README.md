@@ -224,7 +224,10 @@ there are no grounded argument details, one additional focused recovery attempt 
 mapping. There are at most three model calls for that message. Failure to retain the mapping
 returns an incomplete check with `lost_action_mapping`; the application never inserts a claim
 itself. An empty repair can correctly reclassify an acknowledgment and is accepted without recovery.
-Literal details already grounded in the message must survive repair.
+Literal details already grounded in the message must survive repair. The first
+argument repair uses instructions focused on the target and its grounded details,
+instead of the broader initial extraction instructions. Validation still rejects
+dropped details, altered action counts, and values copied from earlier context.
 
 A backed vague claim means a successful matching action was recorded. It does not establish that
 the requested amount, recipient, or other unstated details were correct. Offers such as "I can take

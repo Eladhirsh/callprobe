@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Use focused source-repair instructions when extracted arguments fail validation.
+  Keep literal details from the target message visible during repair while hiding
+  prior conversation values and execution evidence. Lost details still produce
+  incomplete extraction errors.
+
 - Add repeated extraction diagnostics to the development benchmark runner.
   Record repeat coverage, mixed exactness, changes in claims and outcomes, and
   incomplete attempts while keeping same-named endpoint targets separate.

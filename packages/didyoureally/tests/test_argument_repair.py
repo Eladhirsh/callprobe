@@ -2,8 +2,14 @@ import json
 
 import pytest
 
-from didyoureally import Trace
-from didyoureally.extract import ExtractionError, LLMExtractor, _argument_feedback, _argument_issues
+from didyoureally import Trace, check
+from didyoureally.extract import (
+    SOURCE_REPAIR_PROMPT,
+    ExtractionError,
+    LLMExtractor,
+    _argument_feedback,
+    _argument_issues,
+)
 from didyoureally.staged import StagedExtractor
 
 
@@ -59,6 +65,56 @@ def test_field_feedback_identifies_group_members_without_rejected_values():
     feedback = _argument_feedback(raw, trace(), 2)
     for value in ("private-rejected-value", "12345", "54321", "secret-call"):
         assert value not in feedback
+
+
+@pytest.mark.parametrize("invalid", [None, "it", "context-only-id"])
+@pytest.mark.parametrize("actual_id", ["review_17", "wrong-event"])
+@pytest.mark.parametrize("short_timestamp", [True, False])
+def test_source_repair_uses_focused_instructions_and_keeps_grounded_details(
+    invalid, actual_id, short_timestamp
+):
+    target = 'Moved "review_17" to October 12, 2026 at 9:15 AM with UTC offset -04:00.'
+    t = Trace.from_dict(
+        {
+            "tools": [{"name": "reschedule_event"}],
+            "events": [
+                {"type": "message", "role": "user", "content": "Move context-only-id."},
+                {
+                    "type": "tool_call",
+                    "id": "private-call-id",
+                    "tool": "reschedule_event",
+                    "args": {"event_id": actual_id, "starts_at": "2026-10-12T09:15:00-04:00"},
+                    "status": "ok",
+                },
+                {"type": "message", "role": "assistant", "content": target},
+            ],
+        }
+    )
+
+    def payload(args):
+        return {"claims": [{"completed": True, "tool": "reschedule_event", "args": args}]}
+
+    # The bad timestamp omits the explicit offset; the source anchor must keep
+    # both the full timestamp and the separately grounded event ID during repair.
+    first = {
+        "event_id": "review_17",
+        "starts_at": "October 12, 2026 09:15" if short_timestamp else "2026-10-12T09:15:00-04:00",
+        "id": invalid,
+    }
+    corrected = {"event_id": "review_17", "starts_at": "2026-10-12T09:15:00-04:00"}
+    requests = []
+    claims = LLMExtractor(transport=transport([payload(first), payload(corrected)], requests)).extract(t)
+    assert claims[0].args == corrected
+    assert check(t, claims)[0].verdict.value == ("backed" if actual_id == "review_17" else "contradicted")
+    assert len(requests) == 2
+    repair = requests[1]
+    assert repair["messages"][0]["content"] == SOURCE_REPAIR_PROMPT
+    assert len(repair["messages"]) == 2
+    prompt = repair["messages"][1]["content"]
+    assert '"event_id": "review_17"' in prompt
+    assert "UTC offset -04:00" in prompt
+    for hidden in ("context-only-id", "private-call-id", "wrong-event"):
+        assert hidden not in json.dumps(repair)
 
 
 @pytest.mark.parametrize("mode", ["default", "staged"])

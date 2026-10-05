@@ -705,6 +705,7 @@ class LLMExtractor:
                     if attempt:
                         raise ExtractionError(message.index, reason) from None
                     if reason in {"source_mismatch", "null_argument", "unresolved_reference"}:
+                        body["messages"][0]["content"] = SOURCE_REPAIR_PROMPT
                         source_anchors = _source_anchors(content, trace, message.index)
                         mapped_tools = {
                             item["tool"]
