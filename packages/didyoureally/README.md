@@ -356,6 +356,11 @@ copies" describes two, even with identical arguments. JSON examples inherit the
 surrounding statement's scope: "I will execute these calls" describes a plan,
 while "I executed these calls" asserts completion and requires recorded evidence.
 A mixed reply keeps its completed actions separate from its future plans.
+Each object and clause retains its own completion status, including when several
+objects use the same tool. Pending approval, queued work, and negated actions are
+not completions. Status words inside a quoted filename remain literal names:
+deleting `pending.txt` is a completed action, while a plan to delete `done.txt`
+is still a plan. These instructions also apply during argument repair.
 
 These are extraction instructions, not keyword-based verdict overrides. The
 matcher is unchanged and still checks every extracted claim against the trace.

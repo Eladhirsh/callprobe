@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Clarify completion scope per object and clause during extraction and repair.
+  Completed work does not turn nearby pending, negated, or proposed actions into
+  completions. Status words inside quoted identifiers remain literal names.
+  Add eight separate paired controls for mixed-action model validation.
+
 - Reject duplicate JSON keys, nonfinite numbers, invalid encoding, and excessively
   nested JSON in agent suite files before model requests or output creation.
   The runner and saved-run comparison share the same strict input reader.
