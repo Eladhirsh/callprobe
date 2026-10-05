@@ -2,6 +2,12 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate supplied claim collections, fields, and explicit assistant-message
+  references before matching. Malformed reviewed claims now return input errors
+  instead of silently dropping claims or letting future and non-assistant
+  positions back earlier statements. Legacy claims without positions retain
+  session-wide matching; valid indexed claims retain chronological matching.
+
 - Validate imported chat message shapes and tool-call ownership. Reject malformed
   containers, unknown roles, unsupported content parts, and calls attached to
   non-assistant messages before extraction. Preserve valid text and refusal
