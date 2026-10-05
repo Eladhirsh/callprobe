@@ -5,6 +5,7 @@ import pytest
 from didyoureally import Trace, check
 from didyoureally.extract import (
     SOURCE_REPAIR_PROMPT,
+    SYSTEM_PROMPT,
     ExtractionError,
     LLMExtractor,
     _argument_feedback,
@@ -103,11 +104,15 @@ def test_source_repair_uses_focused_instructions_and_keeps_grounded_details(
     }
     corrected = {"event_id": "review_17", "starts_at": "2026-10-12T09:15:00-04:00"}
     requests = []
-    claims = LLMExtractor(transport=transport([payload(first), payload(corrected)], requests)).extract(t)
+    missing_id = {"starts_at": corrected["starts_at"]}
+    claims = LLMExtractor(
+        transport=transport([payload(first), payload(missing_id), payload(corrected)], requests)
+    ).extract(t)
     assert claims[0].args == corrected
     assert check(t, claims)[0].verdict.value == ("backed" if actual_id == "review_17" else "contradicted")
-    assert len(requests) == 2
-    repair = requests[1]
+    assert len(requests) == 3
+    assert requests[1]["messages"][0]["content"] == SYSTEM_PROMPT
+    repair = requests[2]
     assert repair["messages"][0]["content"] == SOURCE_REPAIR_PROMPT
     assert len(repair["messages"]) == 2
     prompt = repair["messages"][1]["content"]
@@ -157,12 +162,45 @@ def test_repair_cannot_discard_one_valid_group_member():
     replies = [
         payload([{"order_id": "B-1", "amount": None}, {"order_id": "B-2", "amount": None}]),
         payload([{"order_id": "B-1"}]),
+        payload([{"order_id": "B-1"}]),
     ]
     requests = []
     with pytest.raises(ExtractionError) as caught:
         LLMExtractor(transport=transport(replies, requests)).extract(trace())
     assert caught.value.reason == "lost_source_detail"
-    assert len(requests) == 2
+    assert len(requests) == 3
+
+
+@pytest.mark.parametrize(
+    "final,reason",
+    [
+        ({}, "invalid_claims"),
+        ({"claims": []}, "lost_source_detail"),
+        (
+            {"claims": [{"completed": True, "tool": "issue_refund", "args": {"order_id": "B-2"}}]},
+            "lost_source_detail",
+        ),
+        (
+            {"claims": [{"completed": True, "tool": "issue_refund", "args": {"order_id": "invented"}}]},
+            "source_mismatch",
+        ),
+    ],
+)
+def test_final_detail_recovery_cannot_pass_incomplete_or_invalid_output(final, reason):
+    replies = [
+        {
+            "claims": [
+                {"completed": True, "tool": "issue_refund", "args": {"order_id": "B-1", "amount": None}}
+            ]
+        },
+        {"claims": [{"completed": True, "tool": "issue_refund", "args": {}}]},
+        final,
+    ]
+    requests = []
+    with pytest.raises(ExtractionError) as caught:
+        LLMExtractor(transport=transport(replies, requests)).extract(trace())
+    assert caught.value.reason == reason
+    assert len(requests) == 3
 
 
 def test_pronoun_repair_can_correct_a_misclassified_future_action():
@@ -197,7 +235,7 @@ def test_repair_preserves_identical_action_multiplicity(mode, copies):
         def payload(values):
             return {"claims": [{"completed": True, "tool": "send_email", "actions": values}]}
 
-        replies = [payload(bad), payload(repaired)]
+        replies = [payload(bad), payload(repaired), payload(repaired)]
         cls = LLMExtractor
     else:
 

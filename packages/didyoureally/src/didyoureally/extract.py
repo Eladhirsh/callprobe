@@ -697,6 +697,11 @@ class LLMExtractor:
                         content, trace, target_index=message.index, require_completed=True
                     )
                     if source_anchors and not _preserves_source_details(extracted, source_anchors):
+                        if attempt == 1:
+                            # Keep the original isolated target and anchors. Do not
+                            # copy fields from the incomplete repair into a claim.
+                            body["messages"][0]["content"] = SOURCE_REPAIR_PROMPT
+                            continue
                         raise ExtractionError(message.index, "lost_source_detail")
                 except ExtractionError:
                     raise
@@ -705,7 +710,6 @@ class LLMExtractor:
                     if attempt:
                         raise ExtractionError(message.index, reason) from None
                     if reason in {"source_mismatch", "null_argument", "unresolved_reference"}:
-                        body["messages"][0]["content"] = SOURCE_REPAIR_PROMPT
                         source_anchors = _source_anchors(content, trace, message.index)
                         mapped_tools = {
                             item["tool"]

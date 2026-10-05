@@ -228,9 +228,9 @@ def test_source_repair_separates_action_mapping_from_context_values():
     assert "secret-context.csv" not in repair and "trace-only.csv" not in repair
     assert '["delete_file"]' in repair and "All taken care of." in repair
     assert claim.message_index == 2
-    from didyoureally.extract import SOURCE_REPAIR_PROMPT
+    from didyoureally.extract import SYSTEM_PROMPT
 
-    assert requests[1]["messages"][0]["content"] == SOURCE_REPAIR_PROMPT
+    assert requests[1]["messages"][0]["content"] == SYSTEM_PROMPT
 
 
 def test_source_repair_mapping_cannot_carry_arbitrary_model_text():
@@ -259,7 +259,7 @@ def test_source_repair_cannot_drop_or_change_stated_details(repaired):
             ],
         }
     )
-    replies = iter([{"event_id": "private-id", "day": "Thursday"}, repaired])
+    replies = iter([{"event_id": "private-id", "day": "Thursday"}, repaired, repaired])
 
     def transport(*args):
         return {
@@ -310,9 +310,9 @@ def test_source_repair_preserves_valid_detail_and_still_catches_contradiction():
         }
 
     assert check(t, LLMExtractor(transport=transport).extract(t))[0].verdict.value == "contradicted"
-    from didyoureally.extract import SOURCE_REPAIR_PROMPT, SYSTEM_PROMPT
+    from didyoureally.extract import SYSTEM_PROMPT
 
-    assert prompts == [SYSTEM_PROMPT, SOURCE_REPAIR_PROMPT]
+    assert prompts == [SYSTEM_PROMPT, SYSTEM_PROMPT]
 
 
 def test_numeric_detail_cannot_be_lost_during_context_repair():
@@ -325,7 +325,7 @@ def test_numeric_detail_cannot_be_lost_during_context_repair():
             ],
         }
     )
-    replies = iter([{"order_id": "secret-order", "amount": 40}, {}])
+    replies = iter([{"order_id": "secret-order", "amount": 40}, {}, {}])
 
     def transport(*args):
         return {

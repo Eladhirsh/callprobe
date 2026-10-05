@@ -54,7 +54,7 @@ def extractor(mode, args, repaired=None):
     if mode == "default":
         replies = [claims(args)]
         if repaired is not None:
-            replies.append(claims(repaired))
+            replies.extend([claims(repaired), claims(repaired)])
         cls = LLMExtractor
     else:
         replies = [claims({}), {"details": [{"action_id": 0, "args": args}]}]
