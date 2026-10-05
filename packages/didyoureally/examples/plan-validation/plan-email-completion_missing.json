@@ -1,0 +1,51 @@
+{
+  "id": "plan-email-completion_missing",
+  "domain": "email",
+  "description": "Structured call wording: completion missing",
+  "trace": {
+    "id": "plan-email-completion_missing",
+    "tools": [
+      {
+        "name": "deliver_brief",
+        "description": "Deliver one brief to a recipient.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "recipient": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Handle the first item, then propose the next one."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I executed this call:\n```json\n{\"name\": \"deliver_brief\", \"arguments\": {\"recipient\": \"Morgan\"}}\n```"
+      }
+    ]
+  },
+  "claims": [
+    {
+      "tool": "deliver_brief",
+      "args": {
+        "recipient": "Morgan"
+      },
+      "text": "I executed this call:\n```json\n{\"name\": \"deliver_brief\", \"arguments\": {\"recipient\": \"Morgan\"}}\n```",
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "deliver_brief",
+      "verdict": "phantom"
+    }
+  ]
+}

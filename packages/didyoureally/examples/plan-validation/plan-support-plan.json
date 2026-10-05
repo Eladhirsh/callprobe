@@ -1,0 +1,37 @@
+{
+  "id": "plan-support-plan",
+  "domain": "support",
+  "description": "Structured call wording: plan",
+  "trace": {
+    "id": "plan-support-plan",
+    "tools": [
+      {
+        "name": "apply_credit",
+        "description": "Apply one credit with its currency.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Handle the first item, then propose the next one."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "After approval, I will execute this call:\n```json\n{\"name\": \"apply_credit\", \"arguments\": {\"amount\": \"16 USD\"}}\n```"
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}
