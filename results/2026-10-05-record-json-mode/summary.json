@@ -1,0 +1,70 @@
+{
+  "scope": "Offline saved-configuration consistency checks; no new inference or accuracy claim",
+  "comparison_script_sha256": "ebf58c4626e338d77c2e115d42b94ab1047b946ae1130ab30f3ea6ddabf9b31a",
+  "checks": [
+    {
+      "control": "current successful recordings",
+      "exit_code": 0,
+      "gate_passed": true,
+      "paired_attempts": 4,
+      "baseline_exact": 4,
+      "candidate_exact": 4,
+      "baseline_evidence": {
+        "metadata_sha256": "bcfd816a676b67cef6259ced8ea4adbac41ce4f3ba537d81aea1a42b0f92d8ca",
+        "records_sha256": "1cfabe9c5f20c87037dbdb294c7e0a350d39ea41f9139fced66b529118973721",
+        "record_json_mode": "verified"
+      },
+      "candidate_evidence": {
+        "metadata_sha256": "bcfd816a676b67cef6259ced8ea4adbac41ce4f3ba537d81aea1a42b0f92d8ca",
+        "records_sha256": "1cfabe9c5f20c87037dbdb294c7e0a350d39ea41f9139fced66b529118973721",
+        "record_json_mode": "verified"
+      }
+    },
+    {
+      "control": "legacy successful recordings",
+      "exit_code": 0,
+      "gate_passed": true,
+      "paired_attempts": 102,
+      "baseline_exact": 102,
+      "candidate_exact": 102,
+      "baseline_evidence": {
+        "metadata_sha256": "233de4f3a3cdb7c72f3a95ee7e97cae740569d53c119fd62cea694a8fc0f47da",
+        "records_sha256": "9e551de6fbd59a2393c880b3ec4026d69853ce0488b2d5d4b566ae25cac9a7a7",
+        "record_json_mode": "legacy_unverified"
+      },
+      "candidate_evidence": {
+        "metadata_sha256": "233de4f3a3cdb7c72f3a95ee7e97cae740569d53c119fd62cea694a8fc0f47da",
+        "records_sha256": "9e551de6fbd59a2393c880b3ec4026d69853ce0488b2d5d4b566ae25cac9a7a7",
+        "record_json_mode": "legacy_unverified"
+      }
+    },
+    {
+      "control": "contradictory",
+      "exit_code": 2,
+      "diagnostic": "Cannot compare: Record JSON mode differs from run metadata."
+    },
+    {
+      "control": "partial",
+      "exit_code": 2,
+      "diagnostic": "Cannot compare: Every record must contain boolean JSON mode."
+    },
+    {
+      "control": "rejected prompt experiment remains rejected",
+      "exit_code": 1,
+      "gate_passed": false,
+      "paired_attempts": 36,
+      "baseline_exact": 25,
+      "candidate_exact": 21,
+      "baseline_evidence": {
+        "metadata_sha256": "996eee307b54373129627998b0096893d2c4a9211aa5ff1e9c7c6b25aac65f71",
+        "records_sha256": "4450e7d6dd0195a469ce7c0a012c2fa5f3632ec5e35a85d0551683f2f4bd7971",
+        "record_json_mode": "verified"
+      },
+      "candidate_evidence": {
+        "metadata_sha256": "e78e2a66a1bef9abde7b250dfc9e4d910f8dd13727eef5376d796c4fb25f64e1",
+        "records_sha256": "40962c08dba69b6687b4aeb2ad7f9762c9d69ce08b7dfdd839c2827857166268",
+        "record_json_mode": "verified"
+      }
+    }
+  ]
+}

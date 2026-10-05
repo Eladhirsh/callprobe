@@ -75,6 +75,7 @@ def read_run(folder):
     require(type(meta.get("json_mode")) is bool, "Missing JSON mode")
     require(type(meta.get("temperature")) in (int, float), "Missing temperature")
     require(meta.get("extraction_mode") in ("default", "staged"), "Invalid extraction mode")
+    recorded_json_mode = any(isinstance(row, dict) and "json_mode" in row for row in rows)
     indexed = {}
     for row in rows:
         require(isinstance(row, dict), "Invalid record")
@@ -84,6 +85,9 @@ def read_run(folder):
         require(nonempty(case) and case in cases, "Unplanned record case")
         require(type(repeat) is int and 1 <= repeat <= repeats, "Unplanned repeat index")
         require(row.get("extraction_mode") == meta["extraction_mode"], "Record extraction mode differs")
+        if recorded_json_mode:
+            require(type(row.get("json_mode")) is bool, "Every record must contain boolean JSON mode")
+            require(row["json_mode"] == meta["json_mode"], "Record JSON mode differs from run metadata")
         key = (model, case, repeat)
         require(key not in indexed, "Duplicate record slot")
         expected = signature(row.get("expected"))
@@ -106,6 +110,7 @@ def read_run(folder):
         {
             "metadata_sha256": hashlib.sha256(metadata_bytes).hexdigest(),
             "records_sha256": hashlib.sha256(record_bytes).hexdigest(),
+            "record_json_mode": "verified" if recorded_json_mode else "legacy_unverified",
         },
     )
 

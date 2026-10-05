@@ -254,3 +254,72 @@ def test_cli_explains_incomplete_coverage_without_source_text(tmp_path, capsys):
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err == "Cannot compare: Missing or extra records.\n"
+
+
+@pytest.mark.parametrize("value", [False, None, 0, 1, "true", [], {}])
+def test_record_json_mode_cannot_contradict_run_metadata(tmp_path, value):
+    folder = tmp_path / "run"
+    meta, rows = write_run(folder)
+    for row in rows:
+        row["json_mode"] = value
+    save(folder, meta, rows)
+    with pytest.raises(ValueError, match="JSON mode"):
+        SCRIPT["read_run"](folder)
+
+
+def test_partial_record_json_mode_coverage_is_rejected(tmp_path):
+    folder = tmp_path / "run"
+    meta, rows = write_run(folder)
+    rows[0]["json_mode"] = True
+    save(folder, meta, rows)
+    with pytest.raises(ValueError, match="Every record"):
+        SCRIPT["read_run"](folder)
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_matching_record_json_mode_is_verified(tmp_path, enabled):
+    a, b = tmp_path / "a", tmp_path / "b"
+    for folder in (a, b):
+        meta, rows = write_run(folder)
+        meta["json_mode"] = enabled
+        for row in rows:
+            row["json_mode"] = enabled
+        save(folder, meta, rows)
+    report = SCRIPT["compare"](a, b)
+    assert report["gate_passed"]
+    for field in ("baseline_evidence", "candidate_evidence"):
+        assert report[field]["record_json_mode"] == "verified"
+
+
+def test_legacy_record_json_mode_is_explicitly_unverified(tmp_path):
+    a, b = tmp_path / "a", tmp_path / "b"
+    write_run(a)
+    write_run(b)
+    report = SCRIPT["compare"](a, b)
+    assert report["gate_passed"]
+    for field in ("baseline_evidence", "candidate_evidence"):
+        assert report[field]["record_json_mode"] == "legacy_unverified"
+
+
+def test_record_json_mode_mismatch_has_safe_cli_error(tmp_path, capsys):
+    a, b = tmp_path / "a", tmp_path / "b"
+    write_run(a)
+    meta, rows = write_run(b)
+    for row in rows:
+        row["json_mode"] = False
+    save(b, meta, rows)
+    assert SCRIPT["main"]([str(a), str(b)]) == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == "Cannot compare: Record JSON mode differs from run metadata.\n"
+    assert "private" not in captured.err
+
+
+def test_extraction_errors_do_not_bypass_record_json_mode_validation(tmp_path):
+    folder = tmp_path / "run"
+    meta, rows = write_run(folder, error=True)
+    rows[0]["json_mode"] = False
+    rows[1]["json_mode"] = True
+    save(folder, meta, rows)
+    with pytest.raises(ValueError, match="differs from run metadata"):
+        SCRIPT["read_run"](folder)
