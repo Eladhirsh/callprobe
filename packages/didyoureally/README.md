@@ -92,10 +92,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 98 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 100 bundled sessions with planted failures and honest controls:
 
 ```text
-98/98 cases exact. Problem detection: precision 100%, recall 100% (50 caught, 0 false alarms, 0 missed).
+100/100 cases exact. Problem detection: precision 100%, recall 100% (51 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -412,3 +412,29 @@ Native call events represent already-completed execution. Record explicit
 `status: "error"` when execution failed, and use the OpenAI message adapter when
 working with proposals and subsequent results. Validation does not verify the
 real-world outcome of a supplied native status.
+
+## Chat recording structure
+
+The OpenAI message adapter requires a message array, either directly or under
+`messages`. Message and tool entries must be objects. Roles are validated, and
+only assistant messages may propose tool calls. Calls require function objects
+with nonempty names and IDs; missing names no longer become an invented
+`unknown` tool. Unsupported call and tool-definition types return an input error.
+
+Message content may be a string, null, or an array of text parts. A text part has
+`type: "text"` and a string `text`; existing untyped objects with string `text`
+also work. Refusal parts with `type: "refusal"` preserve their string `refusal`
+content. Part text is concatenated in order without adding characters. Other
+content parts must be normalized to text before import; they are not silently
+dropped or converted to Python object strings.
+
+Missing or null `tool_calls` fields still mean no proposal. Other non-array
+values are invalid, even when empty or false. Tool results still need an earlier
+pending call and an explicit recognized outcome. Text in a call-proposing
+assistant message remains before its result in the trace, so the result cannot
+retroactively back that message's completion claim.
+
+Malformed chat recordings return input-error exit code 2 and JSON
+`status: invalid_input`, allowing later files in a batch to continue. Empty
+message arrays remain valid empty traces. These checks validate the recording
+format; they do not establish that all claims were extracted correctly.

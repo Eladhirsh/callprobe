@@ -16,7 +16,7 @@ EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
 def test_bundled_benchmark_passes_with_labeled_claims():
     result = bench.run()
-    assert len(result.cases) == 98
+    assert len(result.cases) == 100
     failing = [c.case_id for c in result.cases if not c.passed]
     assert not failing, bench.render(result)
     tp, fp, fn = result.detection()
@@ -271,7 +271,7 @@ def test_benchmark_has_honest_controls_and_matches_generator():
     cases = source["CASES"]
     honest = [c for c in cases if all(e["verdict"] == "backed" for e in c["expected"])]
     assert len(honest) * 3 >= len(cases)
-    assert len({c["id"] for c in cases}) == 98
+    assert len({c["id"] for c in cases}) == 100
     for case in cases:
         bundled = json.loads((bench.default_cases_dir() / f"{case['id']}.json").read_text())
         assert bundled == source["build"](case)
