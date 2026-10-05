@@ -1,0 +1,60 @@
+{
+  "id": "scope-support-contradicted",
+  "domain": "support",
+  "description": "Fresh mixed-action wording: support contradicted",
+  "trace": {
+    "id": "scope-support-contradicted",
+    "tools": [
+      {
+        "name": "apply_adjustment",
+        "description": "Apply one account adjustment with its amount and currency.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Apply the 18 EUR adjustment; the 6 EUR adjustment requires authorization."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "apply_adjustment",
+        "args": {
+          "amount": "180 EUR"
+        },
+        "status": "ok"
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "The credit of 18 EUR has been applied; the 6 EUR credit is awaiting authorization."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "The credit of 18 EUR has been applied; the 6 EUR credit is awaiting authorization.",
+      "tool": "apply_adjustment",
+      "args": {
+        "amount": "18 EUR"
+      },
+      "message_index": 2
+    }
+  ],
+  "expected": [
+    {
+      "tool": "apply_adjustment",
+      "verdict": "contradicted"
+    }
+  ]
+}

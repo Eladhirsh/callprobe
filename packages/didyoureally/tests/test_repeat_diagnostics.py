@@ -233,13 +233,15 @@ def test_default_is_one_attempt_and_one_repeat_slot(tmp_path, monkeypatch):
     assert metadata["repeats"] == metadata["completed_records"] == metadata["planned_records"] == 1
 
 
-def test_fresh_repeat_cases_are_paired_and_match_the_frozen_generator():
+@pytest.mark.parametrize("scope", [False, True])
+def test_fresh_repeat_cases_are_paired_and_match_the_frozen_generator(scope):
     from didyoureally import bench
 
     source = runpy.run_path(
         str(Path(__file__).resolve().parents[1] / "scripts" / "build_repeat_validation.py")
     )
-    cases = list(source["cases"]())
+    cases = list(source["cases"](source["SCOPE_SPECS"], "scope") if scope else source["cases"]())
+    out = source["OUT"].with_name("mixed-scope-validation") if scope else source["OUT"]
     assert len(cases) == 8
     for domain in ("email", "files", "support", "scheduling"):
         selected = [c for c in cases if c["domain"] == domain]
@@ -254,4 +256,4 @@ def test_fresh_repeat_cases_are_paired_and_match_the_frozen_generator():
     }
     for case in cases:
         assert bench.run_case(case, None).passed
-        assert json.loads((source["OUT"] / f"{case['id']}.json").read_text()) == case
+        assert json.loads((out / f"{case['id']}.json").read_text()) == case
