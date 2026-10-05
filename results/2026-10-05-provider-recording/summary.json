@@ -1,0 +1,21 @@
+{
+  "scope": "Scripted provider diagnostics and offline recorded-response replay; no fresh inference",
+  "runner_sha256": "da64175923a0fdecca0b6bcd194266be05378759ed6bc6159d2f730da9dee3de",
+  "scripted_regressions": 22,
+  "replays": [
+    {
+      "mode": "default",
+      "records": 4,
+      "unchanged": 4,
+      "request_identity": "verified",
+      "baseline_sha256": "1cfabe9c5f20c87037dbdb294c7e0a350d39ea41f9139fced66b529118973721"
+    },
+    {
+      "mode": "staged",
+      "records": 9,
+      "unchanged": 9,
+      "request_identity": "verified",
+      "baseline_sha256": "b258aadfd2e1429ff39ca507a67953181f66bff762c33b34ac064561eb55d505"
+    }
+  ]
+}

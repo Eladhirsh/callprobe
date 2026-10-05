@@ -116,13 +116,21 @@ def evaluate(case, base_url, model, *, json_mode=False, transport=None, extracti
     def capture(url, headers, body):
         request_hash = request_digest(body)
         response = (transport or _http_post)(url, headers, body)
-        raw.append(response["choices"][0]["message"]["content"])
+        # Observe the reply without validating it before the extractor does.
+        # Refusals and unfinished replies may omit content entirely.
+        envelope = response if isinstance(response, dict) else {}
+        choices = envelope.get("choices")
+        choice = choices[0] if isinstance(choices, list) and choices else None
+        choice = choice if isinstance(choice, dict) else {}
+        message = choice.get("message")
+        content = message.get("content") if isinstance(message, dict) else None
+        raw.append(content)
         responses.append(
             {
                 "request_sha256": request_hash,
-                "model": response.get("model"),
-                "usage": response.get("usage"),
-                "finish_reason": response["choices"][0].get("finish_reason"),
+                "model": envelope.get("model"),
+                "usage": envelope.get("usage"),
+                "finish_reason": choice.get("finish_reason"),
             }
         )
         return response
