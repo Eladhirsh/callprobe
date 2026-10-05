@@ -76,7 +76,7 @@ def run(module, cases, records, out):
         "duplicate_case",
         "duplicate_record",
         "unknown_case",
-        "staged",
+        "unknown_mode",
         "baseline_error",
         "short_metadata",
         "long_metadata",
@@ -111,7 +111,7 @@ def test_bad_replay_inputs_fail_before_output(replay_module, tmp_path, capsys, p
     else:
         field, value = {
             "unknown_case": ("case", "missing"),
-            "staged": ("extraction_mode", "staged"),
+            "unknown_mode": ("extraction_mode", "unknown"),
             "baseline_error": ("error", "private-provider-diagnostic"),
             "short_metadata": ("responses", []),
             "long_metadata": ("responses", [{}, {}]),
@@ -164,9 +164,9 @@ def test_replay_never_overwrites_existing_output(replay_module, tmp_path):
     assert sentinel.read_text() == "Keep this result"
 
 
-def test_direct_replay_rejects_staged_records(replay_module):
+def test_direct_replay_rejects_unhashed_staged_records(replay_module):
     saved = {"model": "model", "extraction_mode": "staged", "raw_responses": [], "responses": []}
-    with pytest.raises(ValueError, match="default extraction only"):
+    with pytest.raises(ValueError, match="Staged replay requires request hashes"):
         replay_module["replay"](case(), saved)
 
 
@@ -270,3 +270,100 @@ def test_invalid_saved_json_mode_is_rejected(replay_module, value):
     saved = {"model": "model", "json_mode": value, "raw_responses": [], "responses": []}
     with pytest.raises(ValueError, match="JSON mode"):
         replay_module["replay"](case(), saved)
+
+
+ACTION_REPLY = '{"claims": [{"completed": true, "tool": "send_email", "args": {}}]}'
+DETAIL_REPLY = '{"details": [{"action_id": 0, "args": {}}]}'
+
+
+def staged_record(module, *, json_mode=False, retry=None, empty=False):
+    replies = []
+    if retry == "mapping":
+        replies.append('{"claims": [{"completed": true, "tool": "send_email", "args": null}]}')
+    replies.append('{"claims": []}' if empty else ACTION_REPLY)
+    if not empty:
+        if retry == "detail":
+            replies.append('{"details": [{"action_id": 0, "args": null}]}')
+        replies.append(DETAIL_REPLY)
+    iterator = iter(replies)
+    saved = module["evaluate"](
+        case(),
+        "unused",
+        "model",
+        json_mode=json_mode,
+        extraction_mode="staged",
+        transport=lambda *args: {"choices": [{"message": {"content": next(iterator)}}]},
+    )
+    assert "error" not in saved
+    assert saved["raw_responses"] == replies
+    return saved
+
+
+@pytest.mark.parametrize("json_mode", [False, True])
+@pytest.mark.parametrize("flow", ["normal", "empty", "mapping", "detail"])
+def test_staged_replay_verifies_each_stage_and_retry(replay_module, json_mode, flow):
+    saved = staged_record(replay_module, json_mode=json_mode, retry=flow, empty=flow == "empty")
+    hashes = [r["request_sha256"] for r in saved["responses"]]
+    assert len(hashes) == len(set(hashes))
+    result = replay_module["replay"](case(), saved)
+    assert result["outcome"] == "unchanged"
+    assert result["request_identity"] == "verified"
+    assert result["extraction_mode"] == "staged"
+
+
+@pytest.mark.parametrize("change", ["swap", "detail_hash", "mode", "json_mode", "retry_feedback"])
+def test_staged_replay_rejects_wrong_request(replay_module, change):
+    saved = staged_record(replay_module, retry="detail" if change == "retry_feedback" else None)
+    if change == "swap":
+        saved["responses"].reverse()
+        saved["raw_responses"].reverse()
+    elif change == "detail_hash":
+        saved["responses"][1]["request_sha256"] = "0" * 64
+    elif change == "mode":
+        saved["extraction_mode"] = "default"
+    elif change == "json_mode":
+        saved["json_mode"] = True
+    else:
+        # A different invalid reply produces different retry feedback. The old
+        # retry response must not be consumed for the changed request.
+        saved["raw_responses"][1] = '{"details": []}'
+    result = replay_module["replay"](case(), saved)
+    assert result["outcome"] == "request_mismatch"
+    assert result["request_identity"] == "mismatch"
+
+
+def test_staged_missing_detail_cannot_pass(replay_module):
+    saved = staged_record(replay_module)
+    saved["responses"].pop()
+    saved["raw_responses"].pop()
+    result = replay_module["replay"](case(), saved)
+    assert result["outcome"] == "missing_saved_reply"
+    assert result["request_identity"] == "incomplete"
+
+
+def test_staged_extra_response_cannot_pass(replay_module):
+    saved = staged_record(replay_module)
+    saved["responses"].append(saved["responses"][-1])
+    saved["raw_responses"].append(saved["raw_responses"][-1])
+    result = replay_module["replay"](case(), saved)
+    assert result["outcome"] == "changed"
+    assert result["request_identity"] == "incomplete"
+
+
+def test_staged_legacy_rejected_before_output(replay_module, tmp_path):
+    cases, records, out, _ = inputs(tmp_path, replay_module)
+    saved = staged_record(replay_module)
+    for item in saved["responses"]:
+        item.pop("request_sha256")
+    records.write_text(json.dumps(saved))
+    with pytest.raises(SystemExit) as caught:
+        run(replay_module, cases, records, out)
+    assert caught.value.code == 2
+    assert not out.exists()
+
+
+def test_staged_cli_replays_with_mode_in_report(replay_module, tmp_path):
+    cases, records, out, _ = inputs(tmp_path, replay_module)
+    records.write_text(json.dumps(staged_record(replay_module)))
+    assert run(replay_module, cases, records, out) == 0
+    assert "| model | staged | 1 | 0 | 0 | 0 | 0 |" in (out / "report.md").read_text()

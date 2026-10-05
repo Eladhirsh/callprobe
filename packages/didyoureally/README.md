@@ -582,10 +582,10 @@ model stability, or complete claim extraction. Compare the full frozen suite as
 well as focused cases: the [mixed-action experiment](../../results/2026-10-04-mixed-action-scope/README.md)
 passed the focused comparison while regressing two broader cases.
 
-### Replay saved default-extractor replies
+### Replay saved extractor replies
 
 Use offline replay to check how current extraction and matching code handles
-saved default-mode replies. This makes no network calls:
+saved default or staged replies. This makes no network calls:
 
 ```bash
 .venv/bin/python packages/didyoureally/scripts/replay_extraction.py \
@@ -597,9 +597,10 @@ saved default-mode replies. This makes no network calls:
 Use a new output directory. Invalid inputs return exit code 2 before creating
 reports: empty files, duplicate case or attempt identities, changed labels,
 malformed JSON, mismatched reply and metadata arrays, and incomplete baseline
-extractions are rejected. Staged extraction is not supported by this replay
-script. Older records without an extraction-mode field are treated as default
-mode; missing endpoint and repeat fields use `legacy` and `1` in output.
+extractions are rejected. Staged replay requires request hashes on every saved
+response and checks each action mapping, detail extraction, and retry request.
+Older staged recordings without hashes are rejected. Older records without an
+extraction-mode field are treated as default mode; missing endpoint and repeat fields use `legacy` and `1` in output.
 
 New benchmark records save JSON mode and a canonical SHA-256 hash of each request
 body, including the model, messages, and generation options. Headers and endpoint

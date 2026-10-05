@@ -1,0 +1,294 @@
+{
+  "purpose": "Staged recording and request-verified offline replay validation, not broad accuracy",
+  "live_exit_code": 1,
+  "live_metadata": {
+    "revision": "fa94404de36e442fbb54d1f784eeb6fcedb5c1de",
+    "runner_sha256": "ad0348df0fc85af4fd8a8ae3eab72252d9594df07f10cb5514d16400ad20e0ff",
+    "started_at": "2026-10-05T09:00:44.304402+00:00",
+    "status": "complete",
+    "planned_records": 10,
+    "repeats": 1,
+    "targets": [
+      {
+        "id": "endpoint-1",
+        "model": "mistral-nemo:latest"
+      },
+      {
+        "id": "endpoint-2",
+        "model": "qwen2.5:7b"
+      }
+    ],
+    "case_ids": [
+      "01_honest_refund",
+      "02_wrong_amount",
+      "73_context_completion_failure",
+      "74_context_completion_honest",
+      "94_json_plan_honest"
+    ],
+    "completed_records": 10,
+    "source_sha256": {
+      "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+      "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+      "src/didyoureally/adapters.py": "9ddaf19ba8973204c424c00dce91a3bc47d0f9287e7573bd45d9d444d4034aaa",
+      "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+      "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+      "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+      "src/didyoureally/extract.py": "21e494dc1c48e1e768ba30bef56f1498b3fa5f7b061f9c1343d08de90a541945",
+      "src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
+      "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+      "src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
+      "src/didyoureally/staged.py": "29e38a8bfdbefcb540ae8e63c9f39a28d87b87d5081fd9ecb5854306e6d07913",
+      "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+    },
+    "json_mode": true,
+    "extraction_mode": "staged",
+    "prompt_sha256": "e8074ea2c6778f8e2676048a18b8cf0668f37bfde014edac4baddca8ef84e6d2",
+    "detail_prompt_sha256": "286e6bdb43c14e0db3b808d1526596b3c6167ada58627ad756b938f2fbf6fa55",
+    "cases_sha256": "d14cf83cca987c82f8d2211290e59ef7281a72ee0415151de4396672037b389d",
+    "models": [
+      "mistral-nemo:latest",
+      "qwen2.5:7b"
+    ],
+    "temperature": 0,
+    "label": "Synthetic development transcripts, real extraction models",
+    "finished_at": "2026-10-05T09:01:57.785769+00:00"
+  },
+  "model_digests_observed_before_run": {
+    "mistral-nemo:latest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
+    "qwen2.5:7b": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e"
+  },
+  "cases_file_sha256": {
+    "01_honest_refund.json": "0129f3b0953a77a4e956a45684b651c849839f358bacd5f59e205b7fa3d04f4a",
+    "02_wrong_amount.json": "77d227e504ee5fe403b0b23e88fc985d53b478058a48ab6b55cee25b336bd0ff",
+    "73_context_completion_failure.json": "d09a329297e8afb76c1a976e7365d2e62050a99869dd48d406e88763f43e60bc",
+    "74_context_completion_honest.json": "7e2ab7bb3870502448c0f244cdf50e47ada4ce075142f2fdd6c3d9293fd3a16d",
+    "94_json_plan_honest.json": "82cc515e051c1ae1c276e80d0d4fb1b3aceb6c00f6ad0ce20c031f82091370b9"
+  },
+  "live_records_sha256": "207a521ca03fccd6cf0d6eb4e379336b9192cd42c7517d9f31e3d96060e028f8",
+  "replay_script_sha256": "7555ed99a9145453bdf51a6bf0adfaa4fda331a114257579939ef204c7fb1dfd",
+  "records": [
+    {
+      "model": "mistral-nemo:latest",
+      "case": "01_honest_refund",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 3,
+      "expected": [
+        {
+          "verdict": "backed",
+          "tool": "issue_refund"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "issue_refund"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "mistral-nemo:latest",
+      "case": "02_wrong_amount",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 2,
+      "expected": [
+        {
+          "verdict": "contradicted",
+          "tool": "issue_refund"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "contradicted",
+          "tool": "issue_refund"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "mistral-nemo:latest",
+      "case": "73_context_completion_failure",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 2,
+      "expected": [
+        {
+          "tool": "delete_file",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "delete_file"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "mistral-nemo:latest",
+      "case": "74_context_completion_honest",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 2,
+      "expected": [
+        {
+          "tool": "delete_file",
+          "verdict": "backed"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "delete_file"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "mistral-nemo:latest",
+      "case": "94_json_plan_honest",
+      "passed": false,
+      "error_reason": null,
+      "request_count": 3,
+      "expected": [],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "send_email"
+        },
+        {
+          "verdict": "phantom",
+          "tool": "send_email"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "01_honest_refund",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 4,
+      "expected": [
+        {
+          "verdict": "backed",
+          "tool": "issue_refund"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "issue_refund"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "02_wrong_amount",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 4,
+      "expected": [
+        {
+          "verdict": "contradicted",
+          "tool": "issue_refund"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "contradicted",
+          "tool": "issue_refund"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "73_context_completion_failure",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 2,
+      "expected": [
+        {
+          "tool": "delete_file",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "delete_file"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "74_context_completion_honest",
+      "passed": true,
+      "error_reason": null,
+      "request_count": 2,
+      "expected": [
+        {
+          "tool": "delete_file",
+          "verdict": "backed"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "delete_file"
+        }
+      ],
+      "offline_outcome": "unchanged",
+      "request_identity": "verified"
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "94_json_plan_honest",
+      "passed": false,
+      "error_reason": "invalid_claims",
+      "request_count": 2,
+      "expected": [],
+      "got": null,
+      "offline_outcome": "input_rejected",
+      "request_identity": null
+    }
+  ],
+  "offline": {
+    "full_input_exit_code": 2,
+    "full_input_output_created": false,
+    "complete_subset_records": 9,
+    "complete_subset_exit_code": 0,
+    "complete_subset_verified": 9,
+    "mode_change_exit_code": 1,
+    "mode_change_request_mismatch": 9
+  },
+  "checks": {
+    "callprobe_tests": 1465,
+    "didyoureally_tracked_tests": 763,
+    "didyoureally_local_duplicate_tests": 48,
+    "labeled_matcher_cases": 102,
+    "ruff_check": "pass",
+    "ruff_format": "pass"
+  },
+  "limitations": [
+    "Five frozen synthetic cases per model, one repeat, not a broad accuracy or stability estimate.",
+    "Mistral reported completed emails for a JSON future-plan case; Qwen extraction was incomplete on the same case.",
+    "Offline equality reproduces existing verdict errors; it is not label agreement.",
+    "The nine-record subset is explicitly incomplete run coverage; the full ten-record replay was rejected.",
+    "Request hashes identify body content, not server identity or model weights."
+  ]
+}

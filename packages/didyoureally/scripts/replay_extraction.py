@@ -30,10 +30,9 @@ class ReplayInputError(ValueError):
 def validate_saved(saved):
     if not isinstance(saved, dict):
         raise ReplayInputError("Saved records must be objects")
-    if saved.get("extraction_mode", "default") != "default":
-        raise ReplayInputError(
-            "Replay supports default extraction only; staged records require live evaluation"
-        )
+    mode = saved.get("extraction_mode", "default")
+    if mode not in ("default", "staged"):
+        raise ReplayInputError("Unknown saved extraction mode")
     if "error" in saved:
         raise ReplayInputError("Incomplete baseline extraction cannot pass replay")
     replies, metadata = saved.get("raw_responses"), saved.get("responses")
@@ -50,6 +49,8 @@ def validate_saved(saved):
         isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) for value in hashes
     ):
         raise ReplayInputError("Request hashes must be valid and present on every saved response")
+    if mode == "staged" and (not hashes or any(value is None for value in hashes)):
+        raise ReplayInputError("Staged replay requires request hashes on every saved response")
     if not isinstance(saved.get("model"), str) or not saved["model"].strip():
         raise ReplayInputError("Saved model must be a nonempty string")
 
@@ -80,6 +81,7 @@ def replay(case, saved):
     result = {
         "case": case["id"],
         "model": saved["model"],
+        "extraction_mode": saved.get("extraction_mode", "default"),
         "endpoint_id": saved.get("endpoint_id", "legacy"),
         "repeat_index": saved.get("repeat_index", 1),
         "request_identity": "incomplete" if bound else "legacy_unverified",
@@ -91,6 +93,7 @@ def replay(case, saved):
             saved["model"],
             transport=transport,
             json_mode=saved.get("json_mode", False),
+            extraction_mode=saved.get("extraction_mode", "default"),
         )
     except NeedsRecovery:
         result["outcome"] = "recovery_required"
@@ -172,11 +175,11 @@ def main(argv=None):
         "These results reuse saved model replies. They are not fresh end-to-end accuracy.",
         f"Replayed {len(rows)} supplied records. This does not establish full planned-run coverage.",
         "",
-        "| Model | Unchanged | Changed | Needs live recovery | Missing saved reply | Request mismatch |",
-        "|---|---|---|---|---|---|",
+        "| Model | Extraction mode | Unchanged | Changed | Needs live recovery | Missing saved reply | Request mismatch |",
+        "|---|---|---|---|---|---|---|",
     ]
-    for model in dict.fromkeys(r["model"] for r in rows):
-        selected = [r for r in rows if r["model"] == model]
+    for model, mode in dict.fromkeys((r["model"], r["extraction_mode"]) for r in rows):
+        selected = [r for r in rows if (r["model"], r["extraction_mode"]) == (model, mode)]
         counts = [
             sum(r["outcome"] == status for r in selected)
             for status in (
@@ -187,7 +190,7 @@ def main(argv=None):
                 "request_mismatch",
             )
         ]
-        lines.append(f"| {model} | " + " | ".join(map(str, counts)) + " |")
+        lines.append(f"| {model} | {mode} | " + " | ".join(map(str, counts)) + " |")
     lines += [
         "",
         f"Baseline records: `{args.records}`. Cases: `{args.cases}`.",
