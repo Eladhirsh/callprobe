@@ -1,0 +1,82 @@
+{
+  "id": "99_text_parts_early_failure",
+  "description": "Text-part completion claims keep their position relative to tool results",
+  "trace": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Email the receipt to Dana."
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "I sent the receipt "
+          },
+          {
+            "text": "to Dana."
+          }
+        ],
+        "tool_calls": [
+          {
+            "id": "send",
+            "type": "function",
+            "function": {
+              "name": "send_email",
+              "arguments": "{\"to\": \"dana@example.invalid\"}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "send",
+        "content": "{\"ok\": true}"
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "send_email",
+          "description": "Send one email. args: to, subject, body",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "claims": [
+    {
+      "text": "I sent the receipt to Dana.",
+      "tool": "send_email",
+      "args": {
+        "to": "Dana"
+      },
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "send_email",
+      "verdict": "phantom"
+    },
+    {
+      "tool": "send_email",
+      "verdict": "unmentioned"
+    }
+  ]
+}

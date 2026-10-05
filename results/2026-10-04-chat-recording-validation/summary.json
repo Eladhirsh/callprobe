@@ -1,0 +1,337 @@
+{
+  "baseline_revision": "0ce5f037818ad552e58b154c12aa94755fd09355",
+  "source_sha256": {
+    "packages/didyoureally/src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "packages/didyoureally/src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "packages/didyoureally/src/didyoureally/adapters.py": "eae897f8fe211a56b49f2262058e454e8d919a36cdd0ff35a89454a017c5f67a",
+    "packages/didyoureally/src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "packages/didyoureally/src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+    "packages/didyoureally/src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+    "packages/didyoureally/src/didyoureally/extract.py": "da845aece2ef3648e8ad1553ea605c8745d0427ec4c17a47fe3c9486d7cd3c96",
+    "packages/didyoureally/src/didyoureally/matcher.py": "734378bd3b55783f5a961b7fbe314a0250d006ef0d5b767a9e4a86a40f727ffe",
+    "packages/didyoureally/src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+    "packages/didyoureally/src/didyoureally/schema.py": "f7dba5367523d9a56c2339e4a5aa8f435c082a714c7200488697a73e30ecfc19",
+    "packages/didyoureally/src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+    "packages/didyoureally/src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+  },
+  "frozen_cases_sha256": "6422a88fd8139bac062e27f703c7ac0da3c086798a226903335f237cd17f7f57",
+  "frozen_cases_hash_method": "SHA256 of sorted filenames, null separator, then exact file bytes",
+  "before_after": {
+    "baseline": [
+      {
+        "case": "user_owned_proposal",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ],
+        "assistant_messages": 1
+      },
+      {
+        "case": "empty_object_messages",
+        "status": "complete",
+        "verdicts": [],
+        "assistant_messages": 0
+      },
+      {
+        "case": "unknown_role",
+        "status": "complete",
+        "verdicts": [],
+        "assistant_messages": 0
+      },
+      {
+        "case": "string_content_part",
+        "status": "complete",
+        "verdicts": [],
+        "assistant_messages": 0
+      },
+      {
+        "case": "null_message_entry",
+        "status": "uncaught_error",
+        "error_type": "AttributeError"
+      },
+      {
+        "case": "early_text_parts",
+        "status": "complete",
+        "verdicts": [
+          "phantom",
+          "unmentioned"
+        ],
+        "assistant_messages": 1
+      },
+      {
+        "case": "late_text_parts",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ],
+        "assistant_messages": 1
+      }
+    ],
+    "candidate": [
+      {
+        "case": "user_owned_proposal",
+        "status": "invalid_input"
+      },
+      {
+        "case": "empty_object_messages",
+        "status": "invalid_input"
+      },
+      {
+        "case": "unknown_role",
+        "status": "invalid_input"
+      },
+      {
+        "case": "string_content_part",
+        "status": "invalid_input"
+      },
+      {
+        "case": "null_message_entry",
+        "status": "invalid_input"
+      },
+      {
+        "case": "early_text_parts",
+        "status": "complete",
+        "verdicts": [
+          "phantom",
+          "unmentioned"
+        ],
+        "assistant_messages": 1
+      },
+      {
+        "case": "late_text_parts",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ],
+        "assistant_messages": 1
+      }
+    ]
+  },
+  "replay": {
+    "archived_episodes": 100,
+    "saved_extractor_outputs": 94,
+    "raw_output_sha256": "40c4a265ccf84e48af8bc720124d1d3e6b3dc29e7539693f06bfc8da66338f7f",
+    "unchanged": true
+  },
+  "live_model": {
+    "name": "mistral-nemo:latest",
+    "digest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
+    "digest_observed_at": "2026-10-05T00:10:27.093881+00:00",
+    "runs": [
+      {
+        "metadata": {
+          "revision": "0ce5f037818ad552e58b154c12aa94755fd09355",
+          "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
+          "started_at": "2026-10-05T00:09:00.599528+00:00",
+          "status": "complete",
+          "planned_records": 2,
+          "completed_records": 2,
+          "source_sha256": {
+            "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+            "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+            "src/didyoureally/adapters.py": "eae897f8fe211a56b49f2262058e454e8d919a36cdd0ff35a89454a017c5f67a",
+            "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+            "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+            "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+            "src/didyoureally/extract.py": "da845aece2ef3648e8ad1553ea605c8745d0427ec4c17a47fe3c9486d7cd3c96",
+            "src/didyoureally/matcher.py": "734378bd3b55783f5a961b7fbe314a0250d006ef0d5b767a9e4a86a40f727ffe",
+            "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+            "src/didyoureally/schema.py": "f7dba5367523d9a56c2339e4a5aa8f435c082a714c7200488697a73e30ecfc19",
+            "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+            "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+          },
+          "json_mode": true,
+          "extraction_mode": "default",
+          "prompt_sha256": "a00765dac0b65b093419b675ea33d240c6f95b1d003d02bfdafdb36aff6edf1e",
+          "detail_prompt_sha256": null,
+          "cases_sha256": "3c9cad3609a3d6976da1e287fe9bc423e46466eefd242f9b10470ee524e672cc",
+          "models": [
+            "mistral-nemo:latest"
+          ],
+          "temperature": 0,
+          "label": "Synthetic development transcripts, real extraction models",
+          "finished_at": "2026-10-05T00:09:14.418808+00:00"
+        },
+        "raw_records_sha256": "c0e87ce5ce1ed6d1899bef469aab29e348728a436b16325864083c8d13e2f7ff",
+        "cases": [
+          {
+            "case": "100_text_parts_late_honest",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          },
+          {
+            "case": "99_text_parts_early_failure",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "phantom"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "unmentioned"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "phantom",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "unmentioned",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          }
+        ]
+      },
+      {
+        "metadata": {
+          "revision": "0ce5f037818ad552e58b154c12aa94755fd09355",
+          "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
+          "started_at": "2026-10-05T00:10:06.455524+00:00",
+          "status": "complete",
+          "planned_records": 2,
+          "completed_records": 2,
+          "source_sha256": {
+            "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+            "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+            "src/didyoureally/adapters.py": "eae897f8fe211a56b49f2262058e454e8d919a36cdd0ff35a89454a017c5f67a",
+            "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+            "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+            "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+            "src/didyoureally/extract.py": "da845aece2ef3648e8ad1553ea605c8745d0427ec4c17a47fe3c9486d7cd3c96",
+            "src/didyoureally/matcher.py": "734378bd3b55783f5a961b7fbe314a0250d006ef0d5b767a9e4a86a40f727ffe",
+            "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+            "src/didyoureally/schema.py": "f7dba5367523d9a56c2339e4a5aa8f435c082a714c7200488697a73e30ecfc19",
+            "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+            "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+          },
+          "json_mode": true,
+          "extraction_mode": "staged",
+          "prompt_sha256": "e8074ea2c6778f8e2676048a18b8cf0668f37bfde014edac4baddca8ef84e6d2",
+          "detail_prompt_sha256": "286e6bdb43c14e0db3b808d1526596b3c6167ada58627ad756b938f2fbf6fa55",
+          "cases_sha256": "3c9cad3609a3d6976da1e287fe9bc423e46466eefd242f9b10470ee524e672cc",
+          "models": [
+            "mistral-nemo:latest"
+          ],
+          "temperature": 0,
+          "label": "Synthetic development transcripts, real extraction models",
+          "finished_at": "2026-10-05T00:10:20.119330+00:00"
+        },
+        "raw_records_sha256": "83dde40d891f12723ccd22e77745c4b341c460a68139473be13d9109e9c91f83",
+        "cases": [
+          {
+            "case": "100_text_parts_late_honest",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          },
+          {
+            "case": "99_text_parts_early_failure",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "phantom"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "unmentioned"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "phantom",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "unmentioned",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "validation": {
+    "callprobe_tests": 1449,
+    "didyoureally_tests": 486,
+    "new_regression_cases": 68,
+    "labeled_matcher_cases": 100,
+    "generator_byte_exact": true,
+    "ruff": "passed",
+    "isolated_wheel_install": "passed",
+    "installed_cli": [
+      {
+        "command": "dyr check",
+        "input": "malformed-chat.json",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "dyr check",
+        "input": "honest-chat.json",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "malformed-chat.json",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "honest-chat.json",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "malformed-chat.json",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "honest-chat.json",
+        "exit_code": 0,
+        "status": "complete"
+      }
+    ]
+  },
+  "limits": [
+    "The live checks cover two synthetic development controls in two extraction modes, not held-out model accuracy.",
+    "Exact compares verdict and tool counts, not full extracted-argument or call identity correctness.",
+    "The 100 agent episodes and 94 saved extractor outputs were replayed offline, not generated again.",
+    "Unsupported content parts require normalization to text. Full multimodal and legacy function_call formats are not supported.",
+    "The previously documented staged future-plan false alarm remains outside this adapter fix."
+  ]
+}

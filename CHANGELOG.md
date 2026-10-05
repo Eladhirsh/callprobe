@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate imported chat message shapes and tool-call ownership. Reject malformed
+  containers, unknown roles, unsupported content parts, and calls attached to
+  non-assistant messages before extraction. Preserve valid text and refusal
+  parts, empty assistant call turns, and result ordering with clear input errors.
+
 - Validate native trace structures before extraction. Reject duplicate call IDs
   and tool definitions, nonboolean side-effect flags, and malformed argument or
   message shapes. Check call identity again in the matcher so an unreported
