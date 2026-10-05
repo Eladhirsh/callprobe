@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Reject legacy `function_call` fields and populated `functions` definitions in
+  chat recordings instead of silently discarding them. Diagnostics explain how
+  to normalize calls and results to the supported tool-message format.
+
 - Add an offline model-run comparison gate with complete-coverage checks.
   Individual verdict regressions and candidate extraction errors fail the gate,
   even when improvements elsewhere increase the aggregate score.

@@ -186,3 +186,88 @@ def test_malformed_chat_cli_input_is_an_input_error_and_batch_continues(tmp_path
     second = json.loads(output[end:])
     assert first["status"] == "invalid_input" and first["summary"] is None
     assert second["status"] == "complete" and second["summary"]["backed"] == 1
+
+
+@pytest.mark.parametrize(
+    "legacy", [{"name": "send_email", "arguments": "{}"}, {}, [], "private-argument", False]
+)
+@pytest.mark.parametrize("role", ["assistant", "user", "tool"])
+def test_legacy_function_calls_cannot_disappear_from_recordings(legacy, role):
+    with pytest.raises(ValueError, match="Legacy function_call is unsupported"):
+        load_trace({"messages": [{"role": role, "content": None, "function_call": legacy}]})
+
+
+def test_modern_call_does_not_hide_a_second_legacy_call():
+    data = recording()
+    data["messages"][0]["function_call"] = {"name": "delete_file", "arguments": "{}"}
+    with pytest.raises(ValueError, match="Legacy function_call"):
+        load_trace(data)
+
+
+@pytest.mark.parametrize("legacy", [[{"name": "send_email"}], {}, "private-definition", False])
+def test_legacy_definitions_cannot_be_silently_lost(legacy):
+    data = recording()
+    data["functions"] = legacy
+    with pytest.raises(ValueError, match="functions"):
+        load_trace(data)
+
+
+@pytest.mark.parametrize("legacy", [None, []])
+def test_absent_legacy_payload_preserves_modern_calls(legacy):
+    data = recording()
+    data["functions"] = legacy
+    data["messages"][0]["function_call"] = None
+    trace = load_trace(data)
+    assert len(trace.calls) == 1
+    assert trace.calls[0].tool == "send_email"
+
+
+def test_legacy_cli_input_fails_before_extraction_and_batch_continues(tmp_path, capsys, monkeypatch):
+    bad, good = tmp_path / "bad.json", tmp_path / "good.json"
+    bad.write_text(
+        json.dumps(
+            {
+                "messages": [
+                    {
+                        "role": "assistant",
+                        "content": None,
+                        "function_call": {"name": "send_email", "arguments": "private-payload"},
+                    }
+                ]
+            }
+        )
+    )
+    good.write_text(json.dumps({"messages": [], "claims": []}))
+
+    def no_model(*args, **kwargs):
+        raise AssertionError("Legacy input must fail before model extraction")
+
+    monkeypatch.setattr(LLMExtractor, "extract", no_model)
+    assert main(["check", str(bad), str(good), "--format", "json"]) == 2
+    output = capsys.readouterr().out
+    first, end = json.JSONDecoder().raw_decode(output)
+    second = json.loads(output[end:])
+    assert first["status"] == "invalid_input" and first["summary"] is None
+    assert "private-payload" not in output
+    assert second["status"] == "complete"
+
+
+def test_legacy_text_cli_explains_conversion_without_echoing_arguments(tmp_path, capsys):
+    path = tmp_path / "legacy.json"
+    path.write_text(
+        json.dumps(
+            {
+                "messages": [
+                    {
+                        "role": "assistant",
+                        "function_call": {"name": "send_email", "arguments": "private-payload"},
+                    }
+                ]
+            }
+        )
+    )
+    assert main(["check", str(path)]) == 2
+    captured = capsys.readouterr()
+    assert "normalize calls to tool_calls" in captured.err
+    assert "matching IDs" in captured.err
+    assert "private-payload" not in captured.err
