@@ -88,6 +88,14 @@ for f in problems(check(trace, claims)):
 - **OpenAI chat messages**: a list of messages, or `{"messages": [...], "tools": [...]}`. Tool errors include explicit `error`, `success: false`, `ok: false`, `isError: true`, failed status strings, and integer `status_code` values of 400 or higher. Missing results and unrecognized write outcomes produce an input error (exit 2), never an assumed success. Normalize unsupported result envelopes to native explicit statuses. A call becomes completed when its result arrives. Tools named `get_`, `list_`, `search_`, `read_` and similar are treated as read-only unless the tool entry sets `"side_effect"`.
 - **Native**: `{"id", "tools": [{"name", "side_effect"}], "events": [...]}` where events are `message` or `tool_call` with `status: "ok" | "error"`.
 
+Legacy `function_call` messages and populated top-level `functions` definitions
+are not supported. They fail as invalid input before model extraction, including
+when modern tool calls appear in the same recording. Normalize definitions to
+`tools`, calls to `tool_calls`, and results to `role: "tool"` messages with matching
+`tool_call_id` values. Preserve result order and explicit outcomes; do not invent
+a successful result for a proposed or unfinished call. A null `function_call`
+and empty or null `functions` metadata contain no legacy evidence and are allowed.
+
 Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Langfuse exports.
 
 ## Benchmark

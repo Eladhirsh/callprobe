@@ -97,6 +97,12 @@ def _content_text(content: Any) -> str:
 def from_openai_messages(data: Any, trace_id: str = "trace") -> Trace:
     ensure_finite_numbers(data)
     if isinstance(data, dict):
+        legacy_defs = data.get("functions")
+        if legacy_defs is not None and _array(legacy_defs, "functions"):
+            raise ValueError(
+                "Legacy function definitions are unsupported; normalize functions to tools "
+                "before checking this recording"
+            )
         messages = data.get("messages")
         tool_defs = data.get("tools", [])
         trace_id = data.get("id", trace_id)
@@ -133,6 +139,11 @@ def from_openai_messages(data: Any, trace_id: str = "trace") -> Trace:
     events: list[dict[str, Any]] = []
     for i, raw_message in enumerate(messages):
         m = _object(raw_message, f"message {i}")
+        if m.get("function_call") is not None:
+            raise ValueError(
+                "Legacy function_call is unsupported; normalize calls to tool_calls and "
+                "function results to tool messages with matching IDs before checking"
+            )
         role = m.get("role")
         if role not in ("user", "assistant", "system", "developer", "tool"):
             raise ValueError(f"message {i} role is not supported")
