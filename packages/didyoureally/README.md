@@ -529,7 +529,16 @@ From the repository root, use a new output directory:
 `report.md` keeps attempt-level error and detection metrics separate from unique
 case coverage. `repeat_summary.json` records complete cases, cases exact on every
 attempt, mixed exactness, changed outcomes, changed parsed claims, and missing
-attempts. An interrupted run retains every completed record and all planned
+attempts.
+
+A received refusal or truncated provider reply may omit content. The recorder
+saves `null` for missing content and retains its request hash and available
+response metadata while the extractor assigns the failure reason. Such records
+remain incomplete and cannot pass a gate or serve as successful replay baselines.
+Transport failures before a response arrives do not create a received-response
+entry. Raw refusal and provider-error messages are not copied into diagnostics.
+
+An interrupted run retains every completed record and all planned
 repeat slots. A case cannot be exact on every attempt when coverage is missing
 or an extraction errored. A complete case means all attempts were recorded; its
 extractions can still fail.
