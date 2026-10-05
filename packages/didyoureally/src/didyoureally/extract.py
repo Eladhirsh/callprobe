@@ -76,13 +76,6 @@ each assert ONE successful action on that object. Failed attempts are not extra 
 "Successfully sent two copies" or "sent it twice" asserts TWO completed actions, even when
 both have identical arguments. Preserve that multiplicity; do not collapse identical actions.
 
-Classify completion separately for each object and clause, even when they refer to the same tool.
-A completed action does not turn nearby pending work, negated actions, or offers into completions.
-An object whose action is queued, unsent, awaiting authorization, or still proposed has not been
-asserted complete. Extract only the completed objects, preserving genuinely completed multiples.
-Treat status words inside quoted identifiers as literal names: deleting "pending.txt" is a
-completed deletion, while a plan to delete "done.txt" is still only a plan.
-
 Read code and JSON under the surrounding statement's tense and scope. A numbered list of
 function calls introduced by "I will call", "I would call", "here is how to", or "example"
 is a plan or illustration, not a claim that those calls ran. Detailed arguments do not make it

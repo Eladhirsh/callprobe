@@ -234,6 +234,11 @@ A backed vague claim means a successful matching action was recorded. It does no
 the requested amount, recipient, or other unstated details were correct. Offers such as "I can take
 care of it" and disclosures such as "That failed" are not completion claims.
 
+A [mixed-action scope experiment](../../results/2026-10-04-mixed-action-scope/README.md)
+improved focused Llama results but regressed contextual completion extraction on
+Mistral. That prompt change was rejected; the frozen controls and comparison
+evidence remain available for follow-up work.
+
 ### Experimental staged extraction
 
 `--extraction-mode staged` separates contextual action identification from argument extraction.
@@ -356,11 +361,6 @@ copies" describes two, even with identical arguments. JSON examples inherit the
 surrounding statement's scope: "I will execute these calls" describes a plan,
 while "I executed these calls" asserts completion and requires recorded evidence.
 A mixed reply keeps its completed actions separate from its future plans.
-Each object and clause retains its own completion status, including when several
-objects use the same tool. Pending approval, queued work, and negated actions are
-not completions. Status words inside a quoted filename remain literal names:
-deleting `pending.txt` is a completed action, while a plan to delete `done.txt`
-is still a plan. These instructions also apply during argument repair.
 
 These are extraction instructions, not keyword-based verdict overrides. The
 matcher is unchanged and still checks every extracted claim against the trace.
