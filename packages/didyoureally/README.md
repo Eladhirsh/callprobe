@@ -508,3 +508,8 @@ masked-failure, wrong-detail, and unmentioned-action cases across four domains.
 Their generator is `scripts/build_repeat_validation.py`. Freeze cases before
 inference and keep the first results before tuning prompts. These are synthetic
 development checks, not real MailOps captures or held-out production accuracy.
+
+The [first repeated evaluation](../../results/2026-10-04-extraction-repeats/README.md)
+records 72 attempts across three local extractor families. It shows why stable
+outputs can still contain repeatable mistakes and why extraction errors need
+separate coverage reporting.
