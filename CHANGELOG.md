@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Treat explicit provider refusals as incomplete extraction in both default and
+  staged modes, even when response content contains valid empty claims. Share
+  response-envelope checks and keep provider refusal text out of diagnostics.
+
 - Validate offline replay inputs before writing reports. Empty inputs, duplicate
   identities, malformed JSON, mismatched response arrays, staged recordings, and
   incomplete baseline extractions can no longer appear to pass replay.
