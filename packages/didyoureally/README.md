@@ -551,6 +551,10 @@ not independent new cases and do not justify independent-sample confidence
 intervals. Any non-exact attempt makes a completed run exit with code 1;
 interruption returns 130.
 
+Before requesting a model or creating output, the runner rejects malformed case
+JSON, duplicate keys, nonfinite numbers, invalid UTF-8, and missing or invalid
+case IDs. This input preflight does not replace reviewing fixture labels.
+
 The eight cases in `examples/repeat-validation` pair honest controls with phantom,
 masked-failure, wrong-detail, and unmentioned-action cases across four domains.
 Their generator is `scripts/build_repeat_validation.py`. Freeze cases before
