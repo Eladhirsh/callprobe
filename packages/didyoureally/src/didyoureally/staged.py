@@ -14,6 +14,7 @@ from .extract import (
     _argument_feedback,
     _claim_payload,
     _preserves_source_details,
+    _response_content,
     _source_anchors,
     parse_claims,
     source_spans,
@@ -184,13 +185,7 @@ class StagedExtractor(LLMExtractor):
             body["response_format"] = {"type": "json_object"}
         try:
             response = self.transport(f"{self.base_url}/chat/completions", headers, body)
-            choice = response["choices"][0]
-            if choice.get("finish_reason") not in (None, "stop"):
-                raise ExtractionError(index, "unfinished_response")
-            content = choice["message"]["content"]
-            if not isinstance(content, str):
-                raise ValueError("Missing response text")
-            return content
+            return _response_content(response, index)
         except ExtractionError:
             raise
         except (OSError, ValueError, KeyError, TypeError, IndexError, AttributeError):

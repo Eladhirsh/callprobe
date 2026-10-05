@@ -35,6 +35,7 @@ class ExtractionError(ValueError):
 # provider output or rejected argument values into diagnostic text.
 EXTRACTION_HINTS = {
     "provider_error": "Check the endpoint, model availability, and credentials, then retry.",
+    "provider_refusal": "The provider declined extraction. No complete claim check is available; provide reviewed claims or use another configured extractor.",
     "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
     "invalid_action_map": "Return completed action types with exact tool names and empty args objects. Do not extract details in this stage.",
     "invalid_action_details": "Return a details list containing only action_id and args for each supplied action. Do not rename tools or classify completion in the detail stage.",
@@ -635,6 +636,33 @@ def _http_post(url: str, headers: dict[str, str], body: dict[str, Any]) -> dict[
         return loads(resp.read().decode())
 
 
+def _response_content(response: Any, index: int) -> str:
+    """Validate provider metadata before treating response text as extracted claims."""
+    if not isinstance(response, dict) or response.get("error") is not None:
+        raise ExtractionError(index, "provider_error")
+    choices = response.get("choices")
+    if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+        raise ExtractionError(index, "provider_error")
+    choice = choices[0]
+    finish = choice.get("finish_reason")
+    if finish is not None and not isinstance(finish, str):
+        raise ExtractionError(index, "provider_error")
+    if finish not in (None, "stop"):
+        raise ExtractionError(index, "unfinished_response")
+    message = choice.get("message")
+    if not isinstance(message, dict) or message.get("role") not in (None, "assistant"):
+        raise ExtractionError(index, "provider_error")
+    refusal = message.get("refusal")
+    if refusal is not None and not isinstance(refusal, str):
+        raise ExtractionError(index, "provider_error")
+    if refusal:
+        raise ExtractionError(index, "provider_refusal")
+    content = message.get("content")
+    if not isinstance(content, str):
+        raise ExtractionError(index, "provider_error")
+    return content
+
+
 class LLMExtractor:
     """Works with OpenAI, Anthropic's OpenAI-compatible endpoint, Ollama, vLLM, LM Studio."""
 
@@ -677,14 +705,7 @@ class LLMExtractor:
             for attempt in range(3):
                 try:
                     resp = self.transport(f"{self.base_url}/chat/completions", headers, body)
-                    if not isinstance(resp, dict) or not isinstance(resp.get("choices"), list):
-                        raise ValueError("Invalid provider response envelope")
-                    choice = resp["choices"][0]
-                    if not isinstance(choice, dict):
-                        raise ValueError("Invalid provider choice")
-                    if choice.get("finish_reason") not in (None, "stop"):
-                        raise ExtractionError(message.index, "unfinished_response")
-                    content = choice["message"]["content"]
+                    content = _response_content(resp, message.index)
                 except ExtractionError:
                     raise
                 except (OSError, ValueError, KeyError, TypeError, IndexError):

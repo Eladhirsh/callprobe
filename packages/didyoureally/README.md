@@ -319,6 +319,22 @@ A recorded call can back at most one action within that group. A later summary c
 same calls again. Explicit tool schemas distinguish a batch argument from separate scalar actions.
 Retries remain eligible evidence, and an extra successful duplicate can still be unmentioned.
 
+### Provider refusals and malformed responses
+
+Both extraction modes validate the provider response before parsing claims. An
+explicit nonempty `message.refusal` produces an incomplete check with reason
+`provider_refusal`, even if `content` contains valid empty claims. The CLI exits
+with code 3 regardless of finding gates. Reports use a fixed diagnostic and do
+not copy the provider refusal text. Supply reviewed claims or use another
+configured extractor to complete the check.
+
+Malformed response shapes, non-assistant roles, invalid refusal field types, and
+provider error envelopes produce `provider_error`. Truncated responses remain
+`unfinished_response`. Missing or null optional roles and finish reasons remain
+supported for compatible servers; absent, null, or empty refusal fields do not
+indicate refusal. These checks do not change prompts, claim parsing, or matcher
+verdict rules.
+
 ### CI completion status
 
 `dyr check` returns exit code 0 for a completed check without selected findings, 1 for selected
