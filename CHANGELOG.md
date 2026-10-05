@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Save canonical request-body hashes with benchmark responses. Offline replay
+  verifies each request, including recovery steps, and fails on mismatches.
+  Older recordings remain explicitly marked as having unverified request identity.
+
 - Treat explicit provider refusals as incomplete extraction in both default and
   staged modes, even when response content contains valid empty claims. Share
   response-envelope checks and keep provider refusal text out of diagnostics.

@@ -103,15 +103,23 @@ def summarize(rows):
     }
 
 
+def request_digest(body):
+    """Identify the exact request body without saving headers or duplicating prompts."""
+    encoded = json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
 def evaluate(case, base_url, model, *, json_mode=False, transport=None, extraction_mode="default"):
     raw = []
     responses = []
 
     def capture(url, headers, body):
+        request_hash = request_digest(body)
         response = (transport or _http_post)(url, headers, body)
         raw.append(response["choices"][0]["message"]["content"])
         responses.append(
             {
+                "request_sha256": request_hash,
                 "model": response.get("model"),
                 "usage": response.get("usage"),
                 "finish_reason": response["choices"][0].get("finish_reason"),
@@ -124,6 +132,7 @@ def evaluate(case, base_url, model, *, json_mode=False, transport=None, extracti
         "domain": domain(case),
         "model": model,
         "extraction_mode": extraction_mode,
+        "json_mode": json_mode,
         "expected": case["expected"],
         "labeled_claims": case["claims"],
         "passed": False,
