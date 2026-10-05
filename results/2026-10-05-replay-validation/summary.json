@@ -1,0 +1,18 @@
+{
+  "kind": "offline replay of saved default-mode Mistral replies",
+  "records": 102,
+  "outcomes": {
+    "unchanged": 100,
+    "recovery_required": 2
+  },
+  "expected_exit_code": 1,
+  "fresh_inference_calls": 0,
+  "records_sha256": "9e551de6fbd59a2393c880b3ec4026d69853ce0488b2d5d4b566ae25cac9a7a7",
+  "replay_records_sha256": "c9e1d6a3a6250f282581674a3d0ad3eb1cee2053320b691a0515fc8490a39c78",
+  "script_sha256": "aab59857499c0df3c6f0de3a22abe05aeeac40bf51d4ebcc87890a2ea3d12204",
+  "baseline_metadata_sha256": "233de4f3a3cdb7c72f3a95ee7e97cae740569d53c119fd62cea694a8fc0f47da",
+  "needs_recovery": [
+    "73_context_completion_failure",
+    "74_context_completion_honest"
+  ]
+}

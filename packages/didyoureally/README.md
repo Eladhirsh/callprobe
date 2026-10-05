@@ -565,3 +565,33 @@ The gate checks verdict and tool counts. It does not establish argument accuracy
 model stability, or complete claim extraction. Compare the full frozen suite as
 well as focused cases: the [mixed-action experiment](../../results/2026-10-04-mixed-action-scope/README.md)
 passed the focused comparison while regressing two broader cases.
+
+### Replay saved default-extractor replies
+
+Use offline replay to check how current extraction and matching code handles
+saved default-mode replies. This makes no network calls:
+
+```bash
+.venv/bin/python packages/didyoureally/scripts/replay_extraction.py \
+  --records /tmp/extraction-baseline/records.jsonl \
+  --cases packages/didyoureally/examples/repeat-validation \
+  --out /tmp/extraction-replay
+```
+
+Use a new output directory. Invalid inputs return exit code 2 before creating
+reports: empty files, duplicate case or attempt identities, changed labels,
+malformed JSON, mismatched reply and metadata arrays, and incomplete baseline
+extractions are rejected. Staged extraction is not supported by this replay
+script. Older records without an extraction-mode field are treated as default
+mode; missing endpoint and repeat fields use `legacy` and `1` in output.
+
+Exit code 0 means every supplied record replayed unchanged. Changed results,
+missing saved replies, and new recovery requests return 1. A new recovery request
+stops replay rather than consuming the next message's reply. This remains
+conservative even when saved records contain replies from a recovery step,
+because they do not record the request identity needed to match it safely.
+
+Replay checks only the supplied records. It does not establish full planned-run
+coverage, prompt quality, or fresh model accuracy. Use the saved-run comparison
+gate for complete-run coverage checks. Keep replay artifacts local when source
+traces are private; changed records retain the diagnostic output.

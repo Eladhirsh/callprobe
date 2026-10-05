@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Validate offline replay inputs before writing reports. Empty inputs, duplicate
+  identities, malformed JSON, mismatched response arrays, staged recordings, and
+  incomplete baseline extractions can no longer appear to pass replay.
+
 - Reject legacy `function_call` fields and populated `functions` definitions in
   chat recordings instead of silently discarding them. Diagnostics explain how
   to normalize calls and results to the supported tool-message format.
