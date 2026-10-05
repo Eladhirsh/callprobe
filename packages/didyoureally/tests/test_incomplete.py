@@ -259,7 +259,7 @@ def test_source_repair_cannot_drop_or_change_stated_details(repaired):
             ],
         }
     )
-    replies = iter([{"event_id": "private-id", "day": "Thursday"}, repaired])
+    replies = iter([{"event_id": "private-id", "day": "Thursday"}, repaired, repaired])
 
     def transport(*args):
         return {
@@ -293,11 +293,10 @@ def test_source_repair_preserves_valid_detail_and_still_catches_contradiction():
         }
     )
     replies = iter([{"event_id": "private-id", "day": "Thursday"}, {"day": "Thursday"}])
+    prompts = []
 
     def transport(url, headers, body):
-        from didyoureally.extract import SYSTEM_PROMPT
-
-        assert body["messages"][0]["content"] == SYSTEM_PROMPT
+        prompts.append(body["messages"][0]["content"])
         return {
             "choices": [
                 {
@@ -311,6 +310,9 @@ def test_source_repair_preserves_valid_detail_and_still_catches_contradiction():
         }
 
     assert check(t, LLMExtractor(transport=transport).extract(t))[0].verdict.value == "contradicted"
+    from didyoureally.extract import SYSTEM_PROMPT
+
+    assert prompts == [SYSTEM_PROMPT, SYSTEM_PROMPT]
 
 
 def test_numeric_detail_cannot_be_lost_during_context_repair():
@@ -323,7 +325,7 @@ def test_numeric_detail_cannot_be_lost_during_context_repair():
             ],
         }
     )
-    replies = iter([{"order_id": "secret-order", "amount": 40}, {}])
+    replies = iter([{"order_id": "secret-order", "amount": 40}, {}, {}])
 
     def transport(*args):
         return {

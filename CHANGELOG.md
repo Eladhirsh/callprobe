@@ -2,6 +2,12 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Allow one focused recovery when argument repair drops grounded target details.
+  Preserve ordinary repair behavior and the maximum of three model calls per
+  message. Recovery uses only the original target and grounded details; prior
+  conversation values and execution evidence stay hidden. Unrecovered details
+  still produce incomplete extraction errors.
+
 - Add repeated extraction diagnostics to the development benchmark runner.
   Record repeat coverage, mixed exactness, changes in claims and outcomes, and
   incomplete attempts while keeping same-named endpoint targets separate.

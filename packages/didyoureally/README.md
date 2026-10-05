@@ -224,7 +224,11 @@ there are no grounded argument details, one additional focused recovery attempt 
 mapping. There are at most three model calls for that message. Failure to retain the mapping
 returns an incomplete check with `lost_action_mapping`; the application never inserts a claim
 itself. An empty repair can correctly reclassify an acknowledgment and is accepted without recovery.
-Literal details already grounded in the message must survive repair.
+Literal details already grounded in the message must survive repair. If a parsed
+repair drops any, one focused recovery can re-extract from the original isolated
+target and grounded details. It does not copy fields into claims automatically.
+There are still at most three model calls for that message. Unrecovered details
+return `lost_source_detail`; malformed or unsupported values still fail validation.
 
 A backed vague claim means a successful matching action was recorded. It does not establish that
 the requested amount, recipient, or other unstated details were correct. Offers such as "I can take
@@ -317,7 +321,7 @@ Treat any nonzero exit code as a CI failure, while routing code 3 for retry or r
 
 See the [integration pilot guide](docs/integration-pilot.md) to audit sanitized original captures or run the disposable file application. The original MailOps-format pilot is pending its sanitized export.
 
-Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its normal repair attempt. A lost contextual tool mapping can trigger one additional focused recovery as described above. For source mismatches, that attempt sees the target message, tool definitions, provisional tool names, and literal details already grounded in the target. Earlier conversation values and unsupported arguments are excluded. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.
+Incomplete extraction reports include a safe `error.reason`, the target `message_index`, and a recovery `hint`. Reasons distinguish provider failures, unfinished responses, invalid claim format, source mismatches, malformed action groups, and null argument placeholders. The extractor uses the same specific feedback for its normal repair attempt. A lost contextual tool mapping or dropped grounded detail can trigger one additional focused recovery as described above. For source mismatches, that attempt sees the target message, tool definitions, provisional tool names, and literal details already grounded in the target. Earlier conversation values and unsupported arguments are excluded. Format errors retain the rejected reply for a targeted correction. It never repairs claims by copying values from tool results.
 
 
 ## Explicit calendar timestamps
