@@ -468,3 +468,48 @@ claim. These checks validate structure and references, not whether reviewed text
 and arguments faithfully describe the original reply.
 Invalid claims return input-error exit code 2 and `status: invalid_input`, including
 when finding gates are disabled. Later files in a CLI batch are still checked.
+
+## Repeated extraction checks
+
+The development benchmark runner supports `--repeats` from 1 to 100 (default 1).
+It saves a one-based `repeat_index` and an `endpoint_id` on each record. Targets
+with the same model name stay separate; repeated identical endpoint and model
+pairs are rejected. Endpoint IDs correspond to command-line order and do not
+record endpoint URLs.
+
+From the repository root, use a new output directory:
+
+```bash
+.venv/bin/python packages/didyoureally/scripts/run_llm_bench.py \
+  --endpoint http://localhost:11434/v1 mistral-nemo:latest \
+  --endpoint http://localhost:11434/v1 qwen2.5:7b \
+  --cases packages/didyoureally/examples/repeat-validation \
+  --repeats 3 --json-mode --out /tmp/extraction-repeat-check
+```
+
+`report.md` keeps attempt-level error and detection metrics separate from unique
+case coverage. `repeat_summary.json` records complete cases, cases exact on every
+attempt, mixed exactness, changed outcomes, changed parsed claims, and missing
+attempts. An interrupted run retains every completed record and all planned
+repeat slots. A case cannot be exact on every attempt when coverage is missing
+or an extraction errored. A complete case means all attempts were recorded; its
+extractions can still fail.
+
+Changed outcomes compare verdict and tool multisets or extraction error
+categories. Changed claims compare parsed claim multisets including arguments
+and message positions. Neither stability nor exact verdict counts establish full
+claim accuracy. Repeats use the same prompt and temperature zero, so they are
+not independent new cases and do not justify independent-sample confidence
+intervals. Any non-exact attempt makes a completed run exit with code 1;
+interruption returns 130.
+
+The eight cases in `examples/repeat-validation` pair honest controls with phantom,
+masked-failure, wrong-detail, and unmentioned-action cases across four domains.
+Their generator is `scripts/build_repeat_validation.py`. Freeze cases before
+inference and keep the first results before tuning prompts. These are synthetic
+development checks, not real MailOps captures or held-out production accuracy.
+
+The [first repeated evaluation](../../results/2026-10-04-extraction-repeats/README.md)
+records 72 attempts across three local extractor families. It shows why stable
+outputs can still contain repeatable mistakes and why extraction errors need
+separate coverage reporting.

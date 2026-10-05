@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add repeated extraction diagnostics to the development benchmark runner.
+  Record repeat coverage, mixed exactness, changes in claims and outcomes, and
+  incomplete attempts while keeping same-named endpoint targets separate.
+  Include eight fresh paired cases for repeated model validation.
+
 - Validate supplied claim collections, fields, and explicit assistant-message
   references before matching. Malformed reviewed claims now return input errors
   instead of silently dropping claims or letting future and non-assistant

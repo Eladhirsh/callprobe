@@ -154,20 +154,93 @@ def evaluate(case, base_url, model, *, json_mode=False, transport=None, extracti
     return row
 
 
-def markdown(rows):
+def repeat_summary(rows, case_ids, repeats):
+    """Count observed repeat slots without treating repeats as independent cases."""
+    if type(repeats) is not int or repeats < 1:
+        raise ValueError("repeats must be a positive integer")
+    groups = {case_id: {} for case_id in case_ids}
+    if len(groups) != len(case_ids):
+        raise ValueError("Duplicate planned case IDs")
+    for row in rows:
+        index = row.get("repeat_index", 1)
+        if row["case"] not in groups or type(index) is not int or not 1 <= index <= repeats:
+            raise ValueError("Record has an unexpected case or repeat index")
+        if index in groups[row["case"]]:
+            raise ValueError("Duplicate case and repeat record")
+        groups[row["case"]][index] = row
+
+    def canonical(items):
+        return tuple(sorted(json.dumps(item, sort_keys=True) for item in items))
+
+    details = []
+    for case_id, attempts in groups.items():
+        observed = list(attempts.values())
+        exact = [bool(r["passed"]) and "error" not in r for r in observed]
+        outcomes = {
+            ("error", r["error"], r.get("error_reason"))
+            if "error" in r
+            else ("complete", canonical(r.get("got", [])))
+            for r in observed
+        }
+        claims = {canonical(r["claims"]) for r in observed if "error" not in r and "claims" in r}
+        complete = len(observed) == repeats
+        details.append(
+            {
+                "case": case_id,
+                "observed_attempts": len(observed),
+                "missing_attempts": repeats - len(observed),
+                "exact_attempts": sum(exact),
+                "error_attempts": sum("error" in r for r in observed),
+                "complete": complete,
+                "all_exact": complete and all(exact),
+                "mixed_exactness": any(exact) and not all(exact),
+                "changed_outcomes": len(outcomes) > 1,
+                "changed_claims": len(claims) > 1,
+            }
+        )
+    return {
+        "unique_cases": len(groups),
+        "planned_attempts": len(groups) * repeats,
+        "observed_attempts": len(rows),
+        "missing_attempts": len(groups) * repeats - len(rows),
+        "complete_cases": sum(c["complete"] for c in details),
+        "all_exact_cases": sum(c["all_exact"] for c in details),
+        "mixed_exactness_cases": sum(c["mixed_exactness"] for c in details),
+        "changed_outcome_cases": sum(c["changed_outcomes"] for c in details),
+        "changed_claim_cases": sum(c["changed_claims"] for c in details),
+        "cases": details,
+    }
+
+
+def target_groups(rows, targets=None):
+    keys = (
+        [(t["id"], t["model"]) for t in targets]
+        if targets is not None
+        else list(dict.fromkeys((r.get("endpoint_id"), r["model"]) for r in rows))
+    )
+    return [
+        (
+            f"{model} [{endpoint_id}]" if endpoint_id else model,
+            [r for r in rows if (r.get("endpoint_id"), r["model"]) == (endpoint_id, model)],
+        )
+        for endpoint_id, model in keys
+    ]
+
+
+def markdown(rows, *, case_ids=None, repeats=1, targets=None):
     lines = [
         "# Real-model extraction on synthetic traces",
         "",
         "Development fixtures, not held-out accuracy. Verdicts remain deterministic.",
         "Extraction mode: " + ", ".join(sorted({r.get("extraction_mode", "default") for r in rows})) + ".",
         "",
-        "| Model | Domain | Exact | Precision | Recall | Errors | Honest false alarms | Unchecked | Detail-free claims |",
+        "| Target | Domain | Exact attempts | Precision | Recall | Errors | Honest false alarms | Unchecked | Detail-free claims |",
         "|---|---|---|---|---|---|---|---|---|",
     ]
-    for model in dict.fromkeys(r["model"] for r in rows):
-        domains = sorted({r["domain"] for r in rows if r["model"] == model})
+    for model, model_rows in target_groups(rows, targets):
+        domains = sorted({r["domain"] for r in model_rows})
         for group in ["all", *domains]:
-            selected = [r for r in rows if r["model"] == model and (group == "all" or r["domain"] == group)]
+            selected = [r for r in model_rows if group == "all" or r["domain"] == group]
             if not selected:
                 continue
             s = summarize(selected)
@@ -180,30 +253,53 @@ def markdown(rows):
             )
     lines += [
         "",
-        "| Model | Honest controls | Claim alarms | Unmentioned alarms | Any alarm | Incomplete honest checks |",
+        "| Target | Honest attempts | Claim alarms | Unmentioned alarms | Any alarm | Incomplete honest checks |",
         "|---|---|---|---|---|---|",
     ]
-    for model in dict.fromkeys(r["model"] for r in rows):
-        s = summarize([r for r in rows if r["model"] == model])
+    for model, model_rows in target_groups(rows, targets):
+        s = summarize(model_rows)
         lines.append(
             f"| {model} | {s['honest_cases']} | {s['honest_false_alarms']} | "
             f"{s['honest_unmentioned_alarms']} | {s['honest_any_alarms']} | {s['honest_errors']} |"
         )
     lines += [
         "",
-        "| Model | Unmentioned true positives | Unmentioned false positives | Unmentioned misses |",
+        "| Target | Unmentioned true positives | Unmentioned false positives | Unmentioned misses |",
         "|---|---|---|---|",
     ]
-    for model in dict.fromkeys(r["model"] for r in rows):
-        s = summarize([r for r in rows if r["model"] == model])
+    for model, model_rows in target_groups(rows, targets):
+        s = summarize(model_rows)
         lines.append(f"| {model} | {s['unmentioned_tp']} | {s['unmentioned_fp']} | {s['unmentioned_fn']} |")
+    if case_ids is not None:
+        lines += [
+            "",
+            "| Target | Complete cases | All attempts exact | Mixed exactness | Changed outcomes | Changed claims | Missing attempts |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for model, model_rows in target_groups(rows, targets):
+            r = repeat_summary(model_rows, case_ids, repeats)
+            lines.append(
+                f"| {model} | {r['complete_cases']}/{r['unique_cases']} | {r['all_exact_cases']} | "
+                f"{r['mixed_exactness_cases']} | {r['changed_outcome_cases']} | "
+                f"{r['changed_claim_cases']} | {r['missing_attempts']} |"
+            )
+        lines += [
+            "",
+            f"Each unique case has {repeats} planned attempt(s) per target. Earlier tables count attempts.",
+            "All attempts exact requires complete repeat coverage and no extraction errors.",
+            "Changed outcomes includes differences in verdict and tool multisets or extraction error categories.",
+            "Changed claims compares parsed claim multisets, including arguments and source positions; it is not an accuracy score.",
+            "Mixed exactness and changes describe observed attempts even when coverage is incomplete.",
+            "Repeats reuse the same prompt and temperature zero; they are not independent new cases.",
+            "Endpoint IDs separate configured targets with the same model name without recording endpoint URLs.",
+        ]
     lines += [
         "",
         "Exact compares verdict and tool counts, not claim wording or call identity.",
         "Precision and recall exclude unmentioned findings. Errors fail exact scoring; expected problems",
         "in errored cases count as missed. Honest false alarms count problem verdicts, not input errors.",
         "The separate honest-control table includes unmentioned alarms and incomplete checks.",
-        "Any alarm counts a case once even when it has both claim and unmentioned alarms.",
+        "Any alarm counts an attempt once even when it has both claim and unmentioned alarms.",
         "Detail-free claims checks exact tool and message counts plus empty arguments where labels state no details.",
         "Unchecked counts findings with details that could not be compared.",
         "Raw replies, parsed claims and findings are retained in records.jsonl for these synthetic cases.",
@@ -221,7 +317,12 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, required=True, help="New evidence directory")
     parser.add_argument("--cases", type=Path, default=default_cases_dir(), help="Synthetic case directory")
     parser.add_argument("--case", action="append", help="Only these case IDs (repeatable)")
+    parser.add_argument("--repeats", type=int, default=1, help="Attempts per case and target (1 to 100)")
     args = parser.parse_args(argv)
+    if not 1 <= args.repeats <= 100:
+        parser.error("--repeats must be between 1 and 100")
+    if len({tuple(endpoint) for endpoint in args.endpoint}) != len(args.endpoint):
+        parser.error("Duplicate endpoint and model pairs; use --repeats instead")
     cases = [json.loads(p.read_text()) for p in sorted(args.cases.glob("*.json"))]
     if not cases:
         parser.error("No benchmark cases found")
@@ -232,6 +333,8 @@ def main(argv=None):
         if set(args.case) - set(ids):
             parser.error("Unknown case IDs")
         cases = [c for c in cases if c["id"] in args.case]
+    case_ids = [c["id"] for c in cases]
+    targets = [{"id": f"endpoint-{i + 1}", "model": model} for i, (_, model) in enumerate(args.endpoint)]
     args.out.mkdir(parents=True, exist_ok=False)
     revision = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True
@@ -241,7 +344,10 @@ def main(argv=None):
         "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "started_at": datetime.now(timezone.utc).isoformat(),
         "status": "running",
-        "planned_records": len(cases) * len(args.endpoint),
+        "planned_records": len(cases) * len(args.endpoint) * args.repeats,
+        "repeats": args.repeats,
+        "targets": targets,
+        "case_ids": case_ids,
         "completed_records": 0,
         "source_sha256": {
             str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -266,21 +372,43 @@ def main(argv=None):
         metadata["completed_records"] = len(rows)
         (args.out / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
         status = f"Run status: {metadata['status']}. Completed {len(rows)}/{metadata['planned_records']} records.\n\n"
-        (args.out / "report.md").write_text(status + markdown(rows))
+        (args.out / "report.md").write_text(
+            status + markdown(rows, case_ids=case_ids, repeats=args.repeats, targets=targets)
+        )
+        diagnostics = [
+            {
+                "endpoint_id": target["id"],
+                "model": target["model"],
+                **repeat_summary(
+                    [r for r in rows if r["endpoint_id"] == target["id"]], case_ids, args.repeats
+                ),
+            }
+            for target in targets
+        ]
+        (args.out / "repeat_summary.json").write_text(json.dumps(diagnostics, indent=2) + "\n")
 
     save_progress()
     try:
         with (args.out / "records.jsonl").open("w") as stream:
-            for base_url, model in args.endpoint:
-                for case in cases:
-                    row = evaluate(
-                        case, base_url, model, json_mode=args.json_mode, extraction_mode=args.extraction_mode
-                    )
-                    rows.append(row)
-                    stream.write(json.dumps(row) + "\n")
-                    stream.flush()
-                    print(f"{model} {case['id']}: {'pass' if row['passed'] else 'FAIL'}", flush=True)
-                    save_progress()
+            for target, (base_url, model) in zip(targets, args.endpoint, strict=True):
+                for repeat_index in range(1, args.repeats + 1):
+                    for case in cases:
+                        row = evaluate(
+                            case,
+                            base_url,
+                            model,
+                            json_mode=args.json_mode,
+                            extraction_mode=args.extraction_mode,
+                        )
+                        row.update(endpoint_id=target["id"], repeat_index=repeat_index)
+                        rows.append(row)
+                        stream.write(json.dumps(row) + "\n")
+                        stream.flush()
+                        print(
+                            f"{target['id']} {model} {case['id']} repeat={repeat_index}: {'pass' if row['passed'] else 'FAIL'}",
+                            flush=True,
+                        )
+                        save_progress()
     except KeyboardInterrupt:
         metadata["status"] = "interrupted"
         return 130
@@ -292,7 +420,7 @@ def main(argv=None):
     finally:
         metadata["finished_at"] = datetime.now(timezone.utc).isoformat()
         save_progress()
-    return 0 if all(r["passed"] for r in rows) else 1
+    return 0 if all(r["passed"] and "error" not in r for r in rows) else 1
 
 
 if __name__ == "__main__":
