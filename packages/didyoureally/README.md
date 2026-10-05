@@ -601,11 +601,20 @@ extractions are rejected. Staged extraction is not supported by this replay
 script. Older records without an extraction-mode field are treated as default
 mode; missing endpoint and repeat fields use `legacy` and `1` in output.
 
+New benchmark records save JSON mode and a canonical SHA-256 hash of each request
+body, including the model, messages, and generation options. Headers and endpoint
+URLs are excluded. Replay checks each hash before using its saved reply, including
+recovery steps. Changed request bodies produce `request_mismatch` and exit 1;
+partial or malformed hash coverage is an input error. A fully consumed matching
+record reports `request_identity: verified`. Hashes identify saved request bodies;
+they do not prove model weights, endpoint identity, or fresh model behavior.
+
 Exit code 0 means every supplied record replayed unchanged. Changed results,
-missing saved replies, and new recovery requests return 1. A new recovery request
-stops replay rather than consuming the next message's reply. This remains
-conservative even when saved records contain replies from a recovery step,
-because they do not record the request identity needed to match it safely.
+missing saved replies, unmatched requests, and new recovery requests return 1.
+Older records without hashes report `request_identity: legacy_unverified`. Their
+normal replies retain the earlier replay behavior, but recovery requests stop
+rather than consuming a possibly unrelated reply. Missing responses in a hashed
+record cannot report verified request identity.
 
 Replay checks only the supplied records. It does not establish full planned-run
 coverage, prompt quality, or fresh model accuracy. Use the saved-run comparison

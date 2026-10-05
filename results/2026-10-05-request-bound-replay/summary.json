@@ -1,0 +1,101 @@
+{
+  "live_metadata": {
+    "revision": "3be25f1795686a9b58f001e863751c9bacf27bee",
+    "runner_sha256": "ad0348df0fc85af4fd8a8ae3eab72252d9594df07f10cb5514d16400ad20e0ff",
+    "started_at": "2026-10-05T07:58:25.029278+00:00",
+    "status": "complete",
+    "planned_records": 4,
+    "repeats": 1,
+    "targets": [
+      {
+        "id": "endpoint-1",
+        "model": "mistral-nemo:latest"
+      }
+    ],
+    "case_ids": [
+      "73_context_completion_failure",
+      "74_context_completion_honest",
+      "80_group_and_offer_honest",
+      "94_json_plan_honest"
+    ],
+    "completed_records": 4,
+    "source_sha256": {
+      "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+      "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+      "src/didyoureally/adapters.py": "9ddaf19ba8973204c424c00dce91a3bc47d0f9287e7573bd45d9d444d4034aaa",
+      "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+      "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+      "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+      "src/didyoureally/extract.py": "21e494dc1c48e1e768ba30bef56f1498b3fa5f7b061f9c1343d08de90a541945",
+      "src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
+      "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+      "src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
+      "src/didyoureally/staged.py": "29e38a8bfdbefcb540ae8e63c9f39a28d87b87d5081fd9ecb5854306e6d07913",
+      "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+    },
+    "json_mode": true,
+    "extraction_mode": "default",
+    "prompt_sha256": "a00765dac0b65b093419b675ea33d240c6f95b1d003d02bfdafdb36aff6edf1e",
+    "detail_prompt_sha256": null,
+    "cases_sha256": "b8f05c5bfe25f054f6c00422d30babecfd86a4c7dbd79ac98ca5539037385671",
+    "models": [
+      "mistral-nemo:latest"
+    ],
+    "temperature": 0,
+    "label": "Synthetic development transcripts, real extraction models",
+    "finished_at": "2026-10-05T07:59:19.660952+00:00"
+  },
+  "model_observed_after_run": {
+    "name": "mistral-nemo:latest",
+    "digest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89"
+  },
+  "live_metrics": {
+    "cases": 4,
+    "detail_free_cases": 3,
+    "detail_free_exact": 3,
+    "exact": 4,
+    "errors": 0,
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "honest_cases": 3,
+    "honest_false_alarms": 0,
+    "honest_unmentioned_alarms": 0,
+    "honest_any_alarms": 0,
+    "honest_errors": 0,
+    "unmentioned_tp": 0,
+    "unmentioned_fp": 0,
+    "unmentioned_fn": 0,
+    "unchecked_findings": 0
+  },
+  "responses_per_case": {
+    "73_context_completion_failure": 3,
+    "74_context_completion_honest": 3,
+    "80_group_and_offer_honest": 2,
+    "94_json_plan_honest": 1
+  },
+  "replay_outcomes": {
+    "unchanged": 4
+  },
+  "request_identity": {
+    "verified": 4
+  },
+  "changed_json_mode_control": {
+    "outcomes": {
+      "request_mismatch": 4
+    },
+    "exit_code": 1,
+    "fresh_inference_calls": 0
+  },
+  "raw_records_sha256": "1cfabe9c5f20c87037dbdb294c7e0a350d39ea41f9139fced66b529118973721",
+  "replay_records_sha256": "0cb43c504ae08d79bf8bdafbc8c7f0b6b6cb62fc414224fc5f2640a79dec985a",
+  "replay_script_sha256": "608eb4c40a7f20c9c6d7a7dc1e132a7c553a49dd4df647d5774a54253ad6a70c",
+  "case_files_sha256": {
+    "74_context_completion_honest.json": "7e2ab7bb3870502448c0f244cdf50e47ada4ce075142f2fdd6c3d9293fd3a16d",
+    "80_group_and_offer_honest.json": "0d27454e0ac87c11020eac0dc4f31e7d8a731ee1bafcfbcd0db6c27f95b4ebe9",
+    "94_json_plan_honest.json": "82cc515e051c1ae1c276e80d0d4fb1b3aceb6c00f6ad0ce20c031f82091370b9",
+    "73_context_completion_failure.json": "d09a329297e8afb76c1a976e7365d2e62050a99869dd48d406e88763f43e60bc"
+  }
+}

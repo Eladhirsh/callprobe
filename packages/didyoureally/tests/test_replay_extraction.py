@@ -168,3 +168,105 @@ def test_direct_replay_rejects_staged_records(replay_module):
     saved = {"model": "model", "extraction_mode": "staged", "raw_responses": [], "responses": []}
     with pytest.raises(ValueError, match="default extraction only"):
         replay_module["replay"](case(), saved)
+
+
+@pytest.mark.parametrize("json_mode", [False, True])
+def test_hashed_recovery_round_trip_matches_each_request(replay_module, json_mode):
+    c = case()
+    replies = iter(
+        [
+            '{"claims": [{"completed": true, "tool": "send_email", "args": {"to": "private@example.com"}}]}',
+            '{"claims": [{"completed": true, "tool": null, "args": {}}]}',
+            '{"claims": [{"completed": true, "tool": "send_email", "args": {}}]}',
+        ]
+    )
+    saved = replay_module["evaluate"](
+        c,
+        "unused",
+        "model",
+        json_mode=json_mode,
+        transport=lambda *args: {"choices": [{"message": {"content": next(replies)}}]},
+    )
+    assert "error" not in saved and len(saved["responses"]) == 3
+    assert all(len(item["request_sha256"]) == 64 for item in saved["responses"])
+    assert len({item["request_sha256"] for item in saved["responses"]}) == 3
+    result = replay_module["replay"](c, saved)
+    assert result["outcome"] == "unchanged"
+    assert result["request_identity"] == "verified"
+
+
+@pytest.mark.parametrize("change", ["model", "json_mode", "target", "hash"])
+def test_changed_request_stops_before_using_saved_reply(replay_module, change):
+    c = case()
+    saved = replay_module["evaluate"](
+        c,
+        "unused",
+        "model",
+        transport=lambda *args: {"choices": [{"message": {"content": '{"claims": []}'}}]},
+    )
+    if change == "model":
+        saved["model"] = "other-model"
+    elif change == "json_mode":
+        saved["json_mode"] = True
+    elif change == "target":
+        c["trace"]["events"][-1]["content"] = "Different target."
+    else:
+        saved["responses"][0]["request_sha256"] = "0" * 64
+    result = replay_module["replay"](c, saved)
+    assert result["outcome"] == "request_mismatch"
+    assert result["request_identity"] == "mismatch"
+    assert "current" not in result
+
+
+@pytest.mark.parametrize("value", [None, "", "bad", 12, [], "a" * 63])
+def test_invalid_request_hash_cannot_fall_back_to_legacy(replay_module, value):
+    saved = {"model": "model", "raw_responses": ['{"claims": []}'], "responses": [{"request_sha256": value}]}
+    with pytest.raises(ValueError, match="Request hashes"):
+        replay_module["replay"](case(), saved)
+
+
+def test_partial_hash_coverage_is_rejected(replay_module):
+    saved = {
+        "model": "model",
+        "raw_responses": ['{"claims": []}'] * 2,
+        "responses": [{"request_sha256": "a" * 64}, {}],
+    }
+    with pytest.raises(ValueError, match="every saved response"):
+        replay_module["replay"](case(), saved)
+
+
+def test_request_mismatch_is_a_failed_cli_gate(replay_module, tmp_path):
+    cases, records, out, saved = inputs(tmp_path, replay_module)
+    saved["responses"][0]["request_sha256"] = "0" * 64
+    records.write_text(json.dumps(saved))
+    assert run(replay_module, cases, records, out) == 1
+    result = json.loads((out / "records.jsonl").read_text())
+    assert result["outcome"] == "request_mismatch"
+    assert "Request mismatch" in (out / "report.md").read_text()
+
+
+def test_legacy_replay_is_explicitly_unverified(replay_module):
+    saved = replay_module["evaluate"](
+        case(),
+        "unused",
+        "model",
+        transport=lambda *args: {"choices": [{"message": {"content": '{"claims": []}'}}]},
+    )
+    saved["responses"][0].pop("request_sha256")
+    result = replay_module["replay"](case(), saved)
+    assert result["outcome"] == "unchanged" and result["request_identity"] == "legacy_unverified"
+
+
+def test_request_digest_is_canonical_and_tracks_options(replay_module):
+    digest = replay_module["request_digest"]
+    assert digest({"model": "local", "temperature": 0}) == digest({"temperature": 0, "model": "local"})
+    assert digest({"model": "local"}) != digest(
+        {"model": "local", "response_format": {"type": "json_object"}}
+    )
+
+
+@pytest.mark.parametrize("value", [None, 0, "true"])
+def test_invalid_saved_json_mode_is_rejected(replay_module, value):
+    saved = {"model": "model", "json_mode": value, "raw_responses": [], "responses": []}
+    with pytest.raises(ValueError, match="JSON mode"):
+        replay_module["replay"](case(), saved)
