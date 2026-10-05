@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Reject duplicate JSON keys, nonfinite numbers, invalid encoding, and excessively
+  nested JSON in agent suite files before model requests or output creation.
+  The runner and saved-run comparison share the same strict input reader.
+
 - Allow one focused recovery when argument repair drops grounded target details.
   Preserve ordinary repair behavior and the maximum of three model calls per
   message. Recovery uses only the original target and grounded details; prior

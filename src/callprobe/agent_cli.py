@@ -9,6 +9,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .agent_io import read_agent_json
 from .agent_session import (
     load_agent_suite,
     render_agent_report,
@@ -89,7 +90,7 @@ def run_agent_suite(args):
         raise ValueError("agent and extractor model IDs must not be blank")
     if not 1 <= args.max_turns <= 100 or args.max_tokens <= 0:
         raise ValueError("max-turns must be 1 to 100 and max-tokens must be positive")
-    suite = load_agent_suite(json.loads(Path(args.suite).read_text(encoding="utf-8")))
+    suite = load_agent_suite(read_agent_json(Path(args.suite)))
     if any(len(case.expected) > args.max_turns for case in suite.cases):
         raise ValueError("max-turns is smaller than a case's planned decision sequence")
     report = {

@@ -49,6 +49,13 @@ arguments are retained and can succeed in the mock. Invalid arguments, unknown
 tools, and exhausted outcome queues return explicit errors. No refund, email,
 network tool, shell command, or arbitrary user function is executed.
 
+Suite files must be unambiguous JSON. Duplicate keys at any depth (including
+mock outcomes and expected decisions), nonfinite numbers such as `NaN` and
+`1e999`, invalid UTF-8, and excessively nested JSON fail setup with exit code `2`
+before any model request or output directory is created. Correct the source
+file instead of relying on a parser to keep the last conflicting value. The
+same checks apply when comparing saved reports and their frozen suites.
+
 ## Evidence and gates
 
 Each new output directory contains:
