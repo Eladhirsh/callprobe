@@ -234,6 +234,11 @@ A backed vague claim means a successful matching action was recorded. It does no
 the requested amount, recipient, or other unstated details were correct. Offers such as "I can take
 care of it" and disclosures such as "That failed" are not completion claims.
 
+A [mixed-action scope experiment](../../results/2026-10-04-mixed-action-scope/README.md)
+improved focused Llama results but regressed contextual completion extraction on
+Mistral. That prompt change was rejected; the frozen controls and comparison
+evidence remain available for follow-up work.
+
 ### Experimental staged extraction
 
 `--extraction-mode staged` separates contextual action identification from argument extraction.

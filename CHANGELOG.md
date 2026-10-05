@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add eight frozen mixed-action controls and record a rejected extraction-prompt
+  experiment. Focused improvements did not outweigh broader completion omissions;
+  the runtime prompt remains unchanged.
+
 - Reject duplicate JSON keys, nonfinite numbers, invalid encoding, and excessively
   nested JSON in agent suite files before model requests or output creation.
   The runner and saved-run comparison share the same strict input reader.
