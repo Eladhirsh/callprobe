@@ -577,6 +577,13 @@ and changed labels are rejected. Different extraction modes can be compared;
 both modes appear in the report. Runtime source and prompt hashes may differ
 because changing them is the purpose of a candidate comparison.
 
+When any record saves `json_mode`, every record must save a boolean value matching
+the run metadata. Missing, malformed, or contradictory record settings return
+exit code 2. Each run's evidence reports `record_json_mode: verified` when all
+record settings agree, or `legacy_unverified` when older records omit the field
+entirely. This checks saved configuration consistency, not request-body hashes
+or server behavior. Legacy comparisons still require matching run-level settings.
+
 Pairing uses model name, case ID, and repeat index; endpoint order can differ.
 For multiple endpoints serving the same model name, save separate runs for each
 endpoint. Model names do not prove identical weights or server configuration;
