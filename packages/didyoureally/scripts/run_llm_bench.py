@@ -23,6 +23,7 @@ from didyoureally.bench import default_cases_dir  # noqa: E402
 from didyoureally.extract import SYSTEM_PROMPT, ExtractionError, LLMExtractor, _http_post  # noqa: E402
 from didyoureally.matcher import PROBLEM_VERDICTS, check  # noqa: E402
 from didyoureally.staged import ACTION_PROMPT, DETAIL_PROMPT, StagedExtractor  # noqa: E402
+from didyoureally.strict_json import loads  # noqa: E402
 
 PROBLEMS = {v.value for v in PROBLEM_VERDICTS}
 
@@ -340,7 +341,15 @@ def main(argv=None):
         parser.error("--repeats must be between 1 and 100")
     if len({tuple(endpoint) for endpoint in args.endpoint}) != len(args.endpoint):
         parser.error("Duplicate endpoint and model pairs; use --repeats instead")
-    cases = [json.loads(p.read_text()) for p in sorted(args.cases.glob("*.json"))]
+    try:
+        cases = [loads(p.read_text(encoding="utf-8")) for p in sorted(args.cases.glob("*.json"))]
+    except (OSError, ValueError, RecursionError):
+        parser.error("Invalid benchmark case JSON; check encoding, duplicate keys, and finite numbers")
+    if any(
+        not isinstance(case, dict) or not isinstance(case.get("id"), str) or not case["id"].strip()
+        for case in cases
+    ):
+        parser.error("Benchmark cases must be objects with nonempty string IDs")
     if not cases:
         parser.error("No benchmark cases found")
     ids = [c["id"] for c in cases]

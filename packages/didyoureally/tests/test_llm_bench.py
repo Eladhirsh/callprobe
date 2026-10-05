@@ -1,6 +1,8 @@
 import runpy
 from pathlib import Path
 
+import pytest
+
 RUNNER = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts" / "run_llm_bench.py"))
 
 
@@ -142,3 +144,44 @@ def test_interrupted_run_preserves_partial_evidence_and_planned_count(tmp_path, 
     assert metadata["completed_records"] == 1
     assert len((out / "records.jsonl").read_text().splitlines()) == 1
     assert "interrupted. Completed 1/2 records" in (out / "report.md").read_text()
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        b'{"id":"a","id":"b"}',
+        b'{"id":"a","nested":{"private":1,"private":2}}',
+        b'{"id":"a","amount":NaN}',
+        b'{"id":"a","amount":Infinity}',
+        b'{"id":"a","amount":1e999}',
+        b"{private syntax",
+        b"\xffprivate",
+        b"[]",
+        b"{}",
+        b'{"id":null}',
+        b'{"id":1}',
+        b'{"id":[]}',
+        b'{"id":" "}',
+        b"[" * 2000 + b"0" + b"]" * 2000,
+    ],
+)
+def test_invalid_case_json_fails_before_any_evaluation_or_output(tmp_path, monkeypatch, capsys, payload):
+    main = RUNNER["main"]
+
+    def unexpected(*args, **kwargs):
+        raise AssertionError("Invalid fixture must not reach model evaluation")
+
+    monkeypatch.setitem(main.__globals__, "evaluate", unexpected)
+    cases = tmp_path / "cases"
+    cases.mkdir()
+    # A valid first file must not be evaluated before the later file is checked.
+    (cases / "a.json").write_text('{"id":"valid"}')
+    (cases / "b.json").write_bytes(payload)
+    out = tmp_path / "out"
+    with pytest.raises(SystemExit) as caught:
+        main(["--endpoint", "http://unused", "local", "--cases", str(cases), "--out", str(out)])
+    assert caught.value.code == 2
+    assert not out.exists()
+    captured = capsys.readouterr()
+    assert not captured.out
+    assert "private" not in captured.err and "Traceback" not in captured.err
