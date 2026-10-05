@@ -1,0 +1,47 @@
+{
+  "gate_passed": true,
+  "paired_attempts": 48,
+  "baseline_exact": 43,
+  "candidate_exact": 48,
+  "candidate_mismatches": 0,
+  "improvements": [
+    {
+      "model": "llama3.1:8b",
+      "case": "repeat-email-honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "llama3.1:8b",
+      "case": "repeat-support-contradicted",
+      "repeat_index": 1
+    },
+    {
+      "model": "llama3.1:8b",
+      "case": "repeat-support-honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "llama3.1:8b",
+      "case": "scope-email-honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "llama3.1:8b",
+      "case": "scope-email-masked_failure",
+      "repeat_index": 1
+    }
+  ],
+  "regressions": [],
+  "candidate_errors": [],
+  "baseline_evidence": {
+    "metadata_sha256": "a98a8044541f4af487669becc81ad2e6a49cc4f55b446e79ca5b41a29aebea64",
+    "records_sha256": "21afaa35f4389498e0200bcd195aece78162d9e6a297fd324a1faca23f705264"
+  },
+  "candidate_evidence": {
+    "metadata_sha256": "8ef2bb80fcebfe4d0140e5ca3614445d3c9b062e459202aeb37efa65659e4d0a",
+    "records_sha256": "1c780090d06ae65a3eab6c1cc83556ed0420c4e7529ba9eb1c3ba553d9846c00"
+  },
+  "baseline_extraction_mode": "default",
+  "candidate_extraction_mode": "default",
+  "scope": "Verdict and tool counts only. Unchanged mismatches can pass a regression gate. This is not argument accuracy or proof of model identity."
+}

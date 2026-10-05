@@ -1,0 +1,32 @@
+{
+  "gate_passed": false,
+  "paired_attempts": 102,
+  "baseline_exact": 102,
+  "candidate_exact": 100,
+  "candidate_mismatches": 2,
+  "improvements": [],
+  "regressions": [
+    {
+      "model": "mistral-nemo:latest",
+      "case": "73_context_completion_failure",
+      "repeat_index": 1
+    },
+    {
+      "model": "mistral-nemo:latest",
+      "case": "74_context_completion_honest",
+      "repeat_index": 1
+    }
+  ],
+  "candidate_errors": [],
+  "baseline_evidence": {
+    "metadata_sha256": "233de4f3a3cdb7c72f3a95ee7e97cae740569d53c119fd62cea694a8fc0f47da",
+    "records_sha256": "9e551de6fbd59a2393c880b3ec4026d69853ce0488b2d5d4b566ae25cac9a7a7"
+  },
+  "candidate_evidence": {
+    "metadata_sha256": "8a134b52ab83016857283e1912f35884de6baff313df4b0ce760b32179cd101e",
+    "records_sha256": "05de35dabbe87adbd52aaa9bd8bbd41a5a9620861d332b3f27662640f4ee0d5b"
+  },
+  "baseline_extraction_mode": "default",
+  "candidate_extraction_mode": "default",
+  "scope": "Verdict and tool counts only. Unchanged mismatches can pass a regression gate. This is not argument accuracy or proof of model identity."
+}

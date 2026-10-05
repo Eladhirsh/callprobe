@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Add an offline model-run comparison gate with complete-coverage checks.
+  Individual verdict regressions and candidate extraction errors fail the gate,
+  even when improvements elsewhere increase the aggregate score.
+
 - Add eight frozen mixed-action controls and record a rejected extraction-prompt
   experiment. Focused improvements did not outweigh broader completion omissions;
   the runtime prompt remains unchanged.

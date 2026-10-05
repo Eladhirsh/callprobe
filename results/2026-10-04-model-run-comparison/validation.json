@@ -1,0 +1,9 @@
+{
+  "comparison_script_sha256": "2b3e40dadd50803ec814fe5068452b83ae2679e922944f5c4c0ac8b17adfcece",
+  "mode": "offline comparison of previously saved real-model runs",
+  "expected_exit_codes": {
+    "focused": 0,
+    "broad": 1
+  },
+  "fresh_inference_calls": 0
+}

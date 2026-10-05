@@ -522,3 +522,38 @@ The [first repeated evaluation](../../results/2026-10-04-extraction-repeats/READ
 records 72 attempts across three local extractor families. It shows why stable
 outputs can still contain repeatable mistakes and why extraction errors need
 separate coverage reporting.
+
+### Compare saved extraction runs
+
+Use the offline development comparison script on complete `run_llm_bench.py`
+output directories. It makes no model requests and writes a JSON report to stdout:
+
+```bash
+.venv/bin/python packages/didyoureally/scripts/compare_llm_runs.py \
+  /tmp/extraction-baseline /tmp/extraction-candidate > /tmp/extraction-comparison.json
+```
+
+Exit code 0 means no individual verdict regression and no candidate extraction
+errors. Exit code 1 means a regression or extraction error. Exit code 2 means
+invalid, incomplete, or incompatible evidence. Improvements cannot cancel a
+regression on another case. An extraction error fails the gate even when the
+baseline had the same error. Existing verdict mismatches are counted explicitly
+but do not by themselves constitute a regression.
+
+Runs must have matching suite and runner hashes, model names, case coverage,
+repeat counts, JSON mode, and temperature. Every planned record must be present
+exactly once. Duplicate JSON keys, nonfinite numbers, inconsistent pass flags,
+and changed labels are rejected. Different extraction modes can be compared;
+both modes appear in the report. Runtime source and prompt hashes may differ
+because changing them is the purpose of a candidate comparison.
+
+Pairing uses model name, case ID, and repeat index; endpoint order can differ.
+For multiple endpoints serving the same model name, save separate runs for each
+endpoint. Model names do not prove identical weights or server configuration;
+retain model digests separately. The report includes input file hashes, but
+excludes raw responses, claim arguments, and provider error text.
+
+The gate checks verdict and tool counts. It does not establish argument accuracy,
+model stability, or complete claim extraction. Compare the full frozen suite as
+well as focused cases: the [mixed-action experiment](../../results/2026-10-04-mixed-action-scope/README.md)
+passed the focused comparison while regressing two broader cases.
