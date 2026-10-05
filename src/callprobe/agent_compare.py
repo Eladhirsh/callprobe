@@ -7,38 +7,13 @@ import math
 from dataclasses import fields
 from pathlib import Path
 
+from .agent_io import read_agent_json
 from .agent_session import load_agent_suite, require_auditor, run_episode, suite_hash
 from .client import Completion
 from .doctor import validate_endpoint
 from .models import Call
 
 AXES = ("decision_passed", "account_passed", "passed")
-
-
-def _read_json(path: Path):
-    def pairs(items):
-        result = {}
-        for key, value in items:
-            if key in result:
-                raise ValueError("agent evidence contains duplicate JSON keys")
-            result[key] = value
-        return result
-
-    def finite(value):
-        number = float(value)
-        if not math.isfinite(number):
-            raise ValueError("agent evidence contains nonfinite JSON numbers")
-        return number
-
-    try:
-        return json.loads(
-            path.read_text(encoding="utf-8"),
-            object_pairs_hook=pairs,
-            parse_float=finite,
-            parse_constant=finite,
-        )
-    except (RecursionError, UnicodeError) as exc:
-        raise ValueError("invalid agent evidence JSON") from exc
 
 
 def _same(left, right):
@@ -259,8 +234,8 @@ def _replay_episode(row, case, config):
 
 def load_agent_run(path: str) -> dict:
     file = Path(path)
-    report = _read_json(file)
-    suite = load_agent_suite(_read_json(file.parent / "suite.json"))
+    report = read_agent_json(file)
+    suite = load_agent_suite(read_agent_json(file.parent / "suite.json"))
     if (
         not isinstance(report, dict)
         or type(report.get("format_version")) is not int
