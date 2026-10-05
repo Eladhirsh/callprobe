@@ -8,7 +8,7 @@ happened before the message that made them.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any, Literal
 
@@ -218,18 +218,25 @@ class Claim:
             _name(self.group_id, "claim group_id")
 
 
-def validate_claims(claims: list[Claim], trace: Trace | None = None) -> None:
-    valid_indices = {m.index for m in trace.assistant_messages()} if trace is not None else None
+def validated_claims(claims: list[Claim], trace: Trace | None = None) -> list[Claim]:
+    """Return validated claims, resolving only an unambiguous source message."""
+    valid_indices = [m.index for m in trace.assistant_messages()] if trace is not None else None
+    result = []
     for claim in _array(claims, "claims"):
         if not isinstance(claim, Claim):
             raise ValueError("claims must contain Claim objects")
         claim.validate()
-        if (
-            valid_indices is not None
-            and claim.message_index is not None
-            and claim.message_index not in valid_indices
-        ):
-            raise ValueError("claim message_index must identify a nonempty assistant message")
+        if valid_indices is not None:
+            if claim.message_index is None:
+                if len(valid_indices) != 1:
+                    raise ValueError(
+                        "claim message_index is required unless there is exactly one nonempty assistant message"
+                    )
+                claim = replace(claim, message_index=valid_indices[0])
+            elif valid_indices.count(claim.message_index) != 1:
+                raise ValueError("claim message_index must identify a nonempty assistant message")
+        result.append(claim)
+    return result
 
 
 def load_json(path: str | Path) -> Any:

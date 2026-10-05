@@ -5,8 +5,10 @@
 - Validate supplied claim collections, fields, and explicit assistant-message
   references before matching. Malformed reviewed claims now return input errors
   instead of silently dropping claims or letting future and non-assistant
-  positions back earlier statements. Legacy claims without positions retain
-  session-wide matching; valid indexed claims retain chronological matching.
+  positions back earlier statements. Claims without positions resolve only
+  when there is exactly one nonempty assistant message, and still require
+  earlier execution. Ambiguous manual claims require explicit message indices;
+  reviewed baselines relying on session-wide matching should be regenerated.
 
 - Validate imported chat message shapes and tool-call ownership. Reject malformed
   containers, unknown roles, unsupported content parts, and calls attached to

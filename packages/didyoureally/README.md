@@ -454,11 +454,17 @@ blank assistant turns, booleans, and nonexistent indices are rejected. The
 matcher validates these fields again for directly constructed or modified
 Python claims.
 
-For compatibility, omitted or null `message_index` retains session-wide manual
-matching. That form does not check whether the call preceded a particular
-message. Supply the assistant event index when checking chronology; do not use a
-raw chat-array position because adapters omit some turns. Inspect `Trace.messages`
-for the normalized indices. These checks validate claim structure and references,
-not whether reviewed text and arguments faithfully describe the original reply.
+Omitted or null `message_index` is resolved only when the normalized trace has
+exactly one nonempty assistant message. Matching still requires the supporting
+call to precede that message. Traces with multiple possible source messages, or
+none, require an explicit index. Previously these claims matched across the
+whole session and could use later calls; regenerate reviewed baselines that
+relied on that behavior.
+
+Supply the assistant event index when checking multi-message traces. Do not use
+a raw chat-array position because adapters omit some turns; inspect `Trace.messages`
+for normalized indices. Resolution returns a copy and does not alter the supplied
+claim. These checks validate structure and references, not whether reviewed text
+and arguments faithfully describe the original reply.
 Invalid claims return input-error exit code 2 and `status: invalid_input`, including
 when finding gates are disabled. Later files in a CLI batch are still checked.

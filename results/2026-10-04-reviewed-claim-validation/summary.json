@@ -7,10 +7,10 @@
     "packages/didyoureally/src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
     "packages/didyoureally/src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
     "packages/didyoureally/src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
-    "packages/didyoureally/src/didyoureally/extract.py": "ce3304a81d319a563deef35be73158efdb55dd3ad4e2787452933ad16ff9c1e4",
-    "packages/didyoureally/src/didyoureally/matcher.py": "0665fd88e8d83bf7a373461014648b157970a4083250592ff12c760aaaebecf1",
+    "packages/didyoureally/src/didyoureally/extract.py": "92f7115aa900458c940d2c2d521e1b432a396e1f5ae5dc79498d06464368ab6b",
+    "packages/didyoureally/src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
     "packages/didyoureally/src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
-    "packages/didyoureally/src/didyoureally/schema.py": "be132c8a69c52386154b9d1d0278356ee5555a3884e050a871e70b5d0cdaa7d8",
+    "packages/didyoureally/src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
     "packages/didyoureally/src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
     "packages/didyoureally/src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
   },
@@ -72,7 +72,14 @@
         ]
       },
       {
-        "case": "legacy_unpositioned_control",
+        "case": "unpositioned_early_claim",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "ambiguous_unpositioned_claim",
         "status": "complete",
         "verdicts": [
           "backed"
@@ -120,11 +127,16 @@
         ]
       },
       {
-        "case": "legacy_unpositioned_control",
+        "case": "unpositioned_early_claim",
         "status": "complete",
         "verdicts": [
-          "backed"
+          "phantom",
+          "unmentioned"
         ]
+      },
+      {
+        "case": "ambiguous_unpositioned_claim",
+        "status": "invalid_input"
       }
     ]
   },
@@ -137,13 +149,13 @@
   "live_model": {
     "name": "mistral-nemo:latest",
     "digest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
-    "digest_observed_at": "2026-10-05T00:47:35.968012+00:00",
+    "digest_observed_at": "2026-10-05T00:57:51.526361+00:00",
     "runs": [
       {
         "metadata": {
-          "revision": "02404f205621fc619987a664c332dc7a44cc3967",
+          "revision": "0e8c3a1308f9486b169afcb62a437b05c99b95f8",
           "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
-          "started_at": "2026-10-05T00:45:26.727334+00:00",
+          "started_at": "2026-10-05T00:56:52.742043+00:00",
           "status": "complete",
           "planned_records": 2,
           "completed_records": 2,
@@ -154,10 +166,10 @@
             "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
             "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
             "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
-            "src/didyoureally/extract.py": "ce3304a81d319a563deef35be73158efdb55dd3ad4e2787452933ad16ff9c1e4",
-            "src/didyoureally/matcher.py": "0665fd88e8d83bf7a373461014648b157970a4083250592ff12c760aaaebecf1",
+            "src/didyoureally/extract.py": "92f7115aa900458c940d2c2d521e1b432a396e1f5ae5dc79498d06464368ab6b",
+            "src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
             "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
-            "src/didyoureally/schema.py": "be132c8a69c52386154b9d1d0278356ee5555a3884e050a871e70b5d0cdaa7d8",
+            "src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
             "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
             "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
           },
@@ -171,9 +183,9 @@
           ],
           "temperature": 0,
           "label": "Synthetic development transcripts, real extraction models",
-          "finished_at": "2026-10-05T00:45:44.825517+00:00"
+          "finished_at": "2026-10-05T00:56:57.058575+00:00"
         },
-        "raw_records_sha256": "346b4d64289025b4afdce8b28da7ff13887467a0aae06d131fb5c0d74c79f2d5",
+        "raw_records_sha256": "369ffa450682d5154c90dddce4780bfebbcf7181ab83a33348566c656386d656",
         "cases": [
           {
             "case": "101_claim_position_failure",
@@ -221,9 +233,9 @@
       },
       {
         "metadata": {
-          "revision": "02404f205621fc619987a664c332dc7a44cc3967",
+          "revision": "0e8c3a1308f9486b169afcb62a437b05c99b95f8",
           "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
-          "started_at": "2026-10-05T00:47:08.810310+00:00",
+          "started_at": "2026-10-05T00:57:44.985609+00:00",
           "status": "complete",
           "planned_records": 2,
           "completed_records": 2,
@@ -234,10 +246,10 @@
             "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
             "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
             "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
-            "src/didyoureally/extract.py": "ce3304a81d319a563deef35be73158efdb55dd3ad4e2787452933ad16ff9c1e4",
-            "src/didyoureally/matcher.py": "0665fd88e8d83bf7a373461014648b157970a4083250592ff12c760aaaebecf1",
+            "src/didyoureally/extract.py": "92f7115aa900458c940d2c2d521e1b432a396e1f5ae5dc79498d06464368ab6b",
+            "src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
             "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
-            "src/didyoureally/schema.py": "be132c8a69c52386154b9d1d0278356ee5555a3884e050a871e70b5d0cdaa7d8",
+            "src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
             "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
             "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
           },
@@ -251,9 +263,9 @@
           ],
           "temperature": 0,
           "label": "Synthetic development transcripts, real extraction models",
-          "finished_at": "2026-10-05T00:47:23.261964+00:00"
+          "finished_at": "2026-10-05T00:57:50.376277+00:00"
         },
-        "raw_records_sha256": "874e1bc0c224b3bb23ecb3a69110e42754a4da0bdc7e31c5ed5a2a1f19ab4384",
+        "raw_records_sha256": "51df5093654479676fd944b0a92d6e80117d9a348d11e5560fbf97d2020811f6",
         "cases": [
           {
             "case": "101_claim_position_failure",
@@ -303,8 +315,8 @@
   },
   "validation": {
     "callprobe_tests": 1449,
-    "didyoureally_tests": 540,
-    "new_regression_cases": 54,
+    "didyoureally_tests": 548,
+    "new_regression_cases": 62,
     "labeled_matcher_cases": 102,
     "generator_byte_exact": true,
     "ruff": "passed",
@@ -336,9 +348,21 @@
       },
       {
         "command": "dyr check",
-        "input": "legacy-unpositioned",
+        "input": "unpositioned-early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "dyr check",
+        "input": "unpositioned-honest",
         "exit_code": 0,
         "status": "complete"
+      },
+      {
+        "command": "dyr check",
+        "input": "ambiguous-unpositioned",
+        "exit_code": 2,
+        "status": "invalid_input"
       },
       {
         "command": "didyoureally check",
@@ -366,9 +390,21 @@
       },
       {
         "command": "didyoureally check",
-        "input": "legacy-unpositioned",
+        "input": "unpositioned-early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "unpositioned-honest",
         "exit_code": 0,
         "status": "complete"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "ambiguous-unpositioned",
+        "exit_code": 2,
+        "status": "invalid_input"
       },
       {
         "command": "callprobe audit",
@@ -396,17 +432,29 @@
       },
       {
         "command": "callprobe audit",
-        "input": "legacy-unpositioned",
+        "input": "unpositioned-early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "unpositioned-honest",
         "exit_code": 0,
         "status": "complete"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "ambiguous-unpositioned",
+        "exit_code": 2,
+        "status": "invalid_input"
       }
     ]
   },
   "limits": [
-    "Six malformed-input checks and saved-response replay are scripted checks, not model accuracy measurements.",
+    "Seven malformed-input checks and saved-response replay are scripted checks, not model accuracy measurements.",
     "Four live checks cover two synthetic development cases in two extraction modes.",
     "Exact compares verdict and tool counts, not full extracted-argument or call identity correctness.",
-    "Omitted or null message_index retains legacy session-wide matching without chronology validation.",
+    "Missing message indices resolve only for a single nonempty assistant message, and chronology is enforced.",
     "Reviewed claim text and arguments are trusted annotations; structural validation does not verify their semantic fidelity.",
     "The previously documented staged future-plan false alarm remains outside this input-validation fix."
   ]

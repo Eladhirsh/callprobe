@@ -14,7 +14,7 @@ from enum import Enum
 from typing import Any
 
 from .datetimes import DATETIME_KEYS, explicit_datetime
-from .schema import Claim, ToolCall, Trace, validate_claims
+from .schema import Claim, ToolCall, Trace, validated_claims
 
 
 class Verdict(str, Enum):
@@ -273,7 +273,7 @@ def _reserve_group_calls(
 
 def check(trace: Trace, claims: list[Claim]) -> list[Finding]:
     trace.validate_call_ids()
-    validate_claims(claims, trace)
+    claims = validated_claims(claims, trace)
     findings: list[Finding] = []
     linked: set[str] = set()
     grouped_calls: dict[tuple[int | None, str], set[str]] = {}

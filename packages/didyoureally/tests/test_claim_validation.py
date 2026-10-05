@@ -84,10 +84,38 @@ def test_valid_claim_references_keep_tool_result_chronology(index, expected):
 
 
 @pytest.mark.parametrize("fields", [{}, {"message_index": None}])
-def test_legacy_unpositioned_claims_keep_documented_session_wide_matching(fields):
-    trace = session()
-    claims = GivenClaims([{"text": "Sent!", "tool": "send_email", **fields}])
-    assert [f.verdict.value for f in check(trace, claims.extract(trace))] == ["backed"]
+@pytest.mark.parametrize("early", [True, False])
+def test_unpositioned_claims_use_the_only_assistant_message_without_mutating_inputs(fields, early):
+    data = session().to_dict()
+    data["events"] = data["events"][:2] if early else data["events"][1:3]
+    if not early:
+        data["events"][-1] = {"type": "message", "role": "assistant", "content": "Sent!"}
+    trace = Trace.from_dict(data)
+    supplied = GivenClaims([{"text": "Sent!", "tool": "send_email", **fields}])
+    expected = ["phantom", "unmentioned"] if early else ["backed"]
+    assert [f.verdict.value for f in check(trace, supplied.claims)] == expected
+    extracted = supplied.extract(trace)
+    assert extracted[0].message_index == (0 if early else 1)
+    assert supplied.claims[0].message_index is None
+    assert [f.verdict.value for f in check(trace, extracted)] == expected
+
+
+@pytest.mark.parametrize(
+    "events", [[], [{"type": "message", "role": "user", "content": "Sent!"}], session().to_dict()["events"]]
+)
+def test_unpositioned_claims_require_an_unambiguous_assistant_source(events):
+    trace = Trace.from_dict({"events": events})
+    supplied = GivenClaims([Claim("Sent!", "send_email")])
+    with pytest.raises(ValueError, match="exactly one nonempty assistant message"):
+        supplied.extract(trace)
+    with pytest.raises(ValueError, match="exactly one nonempty assistant message"):
+        check(trace, supplied.claims)
+
+
+def test_unpositioned_empty_claim_list_does_not_require_a_source_message():
+    trace = Trace.from_dict({"events": []})
+    assert GivenClaims([]).extract(trace) == []
+    assert check(trace, []) == []
 
 
 @pytest.mark.parametrize("tool", [None, "unknown_action"])
@@ -155,3 +183,14 @@ def test_external_claim_file_is_validated_without_model_fallback(tmp_path, capsy
     claims.write_text("{}")
     assert main(["check", str(trace), "--claims", str(claims), "--format", "json"]) == 2
     assert json.loads(capsys.readouterr().out)["status"] == "invalid_input"
+
+
+@pytest.mark.parametrize("index", [None, 0])
+def test_duplicate_source_indices_in_direct_python_traces_are_ambiguous(index):
+    trace = session()
+    trace.messages[-1].index = trace.messages[0].index
+    supplied = GivenClaims([Claim("Sent!", "send_email", message_index=index)])
+    with pytest.raises(ValueError, match="assistant message"):
+        supplied.extract(trace)
+    with pytest.raises(ValueError, match="assistant message"):
+        check(trace, supplied.claims)
