@@ -1,0 +1,51 @@
+{
+  "id": "plan-files-completion_missing",
+  "domain": "files",
+  "description": "Structured call wording: completion missing",
+  "trace": {
+    "id": "plan-files-completion_missing",
+    "tools": [
+      {
+        "name": "archive_note",
+        "description": "Archive one note by its path.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Handle the first item, then propose the next one."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I executed this call:\n```json\n{\"name\": \"archive_note\", \"arguments\": {\"path\": \"alpha.md\"}}\n```"
+      }
+    ]
+  },
+  "claims": [
+    {
+      "tool": "archive_note",
+      "args": {
+        "path": "alpha.md"
+      },
+      "text": "I executed this call:\n```json\n{\"name\": \"archive_note\", \"arguments\": {\"path\": \"alpha.md\"}}\n```",
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "archive_note",
+      "verdict": "phantom"
+    }
+  ]
+}

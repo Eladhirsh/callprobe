@@ -1,0 +1,164 @@
+{
+  "gate_passed": false,
+  "paired_attempts": 36,
+  "baseline_exact": 25,
+  "candidate_exact": 21,
+  "candidate_mismatches": 15,
+  "improvements": [
+    {
+      "model": "mistral-nemo:latest",
+      "case": "94_json_plan_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-email-plan",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-files-plan",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-scheduling-plan",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-support-plan",
+      "repeat_index": 1
+    }
+  ],
+  "regressions": [
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-email-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-email-completion_missing",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-files-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-files-completion_missing",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-files-mixed_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-scheduling-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-scheduling-completion_missing",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-support-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-support-completion_missing",
+      "repeat_index": 1
+    }
+  ],
+  "candidate_errors": [
+    {
+      "model": "qwen2.5:7b",
+      "case": "93_json_plan_failure",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "94_json_plan_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-email-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-email-completion_missing",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-email-mixed_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-files-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-files-completion_missing",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-files-mixed_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-scheduling-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-scheduling-completion_missing",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-scheduling-mixed_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-support-completion_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-support-completion_missing",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-support-mixed_honest",
+      "repeat_index": 1
+    }
+  ],
+  "baseline_evidence": {
+    "metadata_sha256": "996eee307b54373129627998b0096893d2c4a9211aa5ff1e9c7c6b25aac65f71",
+    "records_sha256": "4450e7d6dd0195a469ce7c0a012c2fa5f3632ec5e35a85d0551683f2f4bd7971"
+  },
+  "candidate_evidence": {
+    "metadata_sha256": "e78e2a66a1bef9abde7b250dfc9e4d910f8dd13727eef5376d796c4fb25f64e1",
+    "records_sha256": "40962c08dba69b6687b4aeb2ad7f9762c9d69ce08b7dfdd839c2827857166268"
+  },
+  "baseline_extraction_mode": "staged",
+  "candidate_extraction_mode": "staged",
+  "scope": "Verdict and tool counts only. Unchanged mismatches can pass a regression gate. This is not argument accuracy or proof of model identity."
+}

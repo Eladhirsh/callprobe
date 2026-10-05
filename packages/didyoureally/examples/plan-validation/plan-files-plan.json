@@ -1,0 +1,37 @@
+{
+  "id": "plan-files-plan",
+  "domain": "files",
+  "description": "Structured call wording: plan",
+  "trace": {
+    "id": "plan-files-plan",
+    "tools": [
+      {
+        "name": "archive_note",
+        "description": "Archive one note by its path.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Handle the first item, then propose the next one."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "After approval, I will execute this call:\n```json\n{\"name\": \"archive_note\", \"arguments\": {\"path\": \"alpha.md\"}}\n```"
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

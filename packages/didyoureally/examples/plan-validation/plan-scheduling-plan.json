@@ -1,0 +1,37 @@
+{
+  "id": "plan-scheduling-plan",
+  "domain": "scheduling",
+  "description": "Structured call wording: plan",
+  "trace": {
+    "id": "plan-scheduling-plan",
+    "tools": [
+      {
+        "name": "cancel_slot",
+        "description": "Cancel one slot by its ID.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "slot_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Handle the first item, then propose the next one."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "After approval, I will execute this call:\n```json\n{\"name\": \"cancel_slot\", \"arguments\": {\"slot_id\": \"slot_31\"}}\n```"
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

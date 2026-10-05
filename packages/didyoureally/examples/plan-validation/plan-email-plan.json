@@ -1,0 +1,37 @@
+{
+  "id": "plan-email-plan",
+  "domain": "email",
+  "description": "Structured call wording: plan",
+  "trace": {
+    "id": "plan-email-plan",
+    "tools": [
+      {
+        "name": "deliver_brief",
+        "description": "Deliver one brief to a recipient.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "recipient": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Handle the first item, then propose the next one."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "After approval, I will execute this call:\n```json\n{\"name\": \"deliver_brief\", \"arguments\": {\"recipient\": \"Morgan\"}}\n```"
+      }
+    ]
+  },
+  "claims": [],
+  "expected": []
+}

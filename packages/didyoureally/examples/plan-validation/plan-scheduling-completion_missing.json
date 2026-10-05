@@ -1,0 +1,51 @@
+{
+  "id": "plan-scheduling-completion_missing",
+  "domain": "scheduling",
+  "description": "Structured call wording: completion missing",
+  "trace": {
+    "id": "plan-scheduling-completion_missing",
+    "tools": [
+      {
+        "name": "cancel_slot",
+        "description": "Cancel one slot by its ID.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "slot_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Handle the first item, then propose the next one."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I executed this call:\n```json\n{\"name\": \"cancel_slot\", \"arguments\": {\"slot_id\": \"slot_31\"}}\n```"
+      }
+    ]
+  },
+  "claims": [
+    {
+      "tool": "cancel_slot",
+      "args": {
+        "slot_id": "slot_31"
+      },
+      "text": "I executed this call:\n```json\n{\"name\": \"cancel_slot\", \"arguments\": {\"slot_id\": \"slot_31\"}}\n```",
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "cancel_slot",
+      "verdict": "phantom"
+    }
+  ]
+}
