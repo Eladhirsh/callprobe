@@ -1174,6 +1174,26 @@ for early in (True, False):
     )
 
 
+for honest in (False, True):
+    completion = agent("I sent the receipt to Dana.")
+    sent = call("send", "send_email", {"to": "dana@example.invalid"})
+    CASES.append(
+        {
+            "id": f"{len(CASES) + 1:02d}_claim_position_{'honest' if honest else 'failure'}",
+            "description": "A later user acknowledgement cannot move an assistant completion claim",
+            "tools": SUPPORT_TOOLS,
+            "events": [user("Email the receipt to Dana.")]
+            + ([sent, completion] if honest else [completion, sent])
+            + [user("Thanks.")],
+            "claims": [
+                {"text": completion["content"], "tool": "send_email", "args": {"to": "Dana"}, "msg": 0}
+            ],
+            "expected": [{"tool": "send_email", "verdict": "backed" if honest else "phantom"}]
+            + ([] if honest else [{"tool": "send_email", "verdict": "unmentioned"}]),
+        }
+    )
+
+
 TOOL_PARAMETERS = {
     "archive_file": {"path": "string"},
     "create_event": {"title": "string", "starts_at": "string"},

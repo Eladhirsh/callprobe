@@ -92,10 +92,10 @@ Planned: OpenTelemetry GenAI spans, OpenAI Agents SDK traces, LangSmith and Lang
 
 ## Benchmark
 
-`dyr bench` runs 100 bundled sessions with planted failures and honest controls:
+`dyr bench` runs 102 bundled sessions with planted failures and honest controls:
 
 ```text
-100/100 cases exact. Problem detection: precision 100%, recall 100% (51 caught, 0 false alarms, 0 missed).
+102/102 cases exact. Problem detection: precision 100%, recall 100% (52 caught, 0 false alarms, 0 missed).
 ```
 
 That score uses labeled claims and tests the deterministic matcher. The real LLM extraction
@@ -438,3 +438,33 @@ Malformed chat recordings return input-error exit code 2 and JSON
 `status: invalid_input`, allowing later files in a batch to continue. Empty
 message arrays remain valid empty traces. These checks validate the recording
 format; they do not establish that all claims were extracted correctly.
+
+## Supplied claim validation
+
+Reviewed claims supplied through `--claims`, embedded `claims`, or `GivenClaims`
+must be an array of claim objects. An explicit empty array is valid. Empty objects
+and strings are input errors instead of becoming an empty claim set.
+
+Each claim requires nonempty string `text`. Its `tool` is a nonempty string or
+null; an unknown tool remains a phantom finding. Arguments must be an object
+with finite numeric values. Optional `group_id` values must be nonempty strings.
+An explicit `message_index` must be a nonnegative integer identifying a nonempty
+assistant message in the normalized trace. User messages, tool-call events,
+blank assistant turns, booleans, and nonexistent indices are rejected. The
+matcher validates these fields again for directly constructed or modified
+Python claims.
+
+Omitted or null `message_index` is resolved only when the normalized trace has
+exactly one nonempty assistant message. Matching still requires the supporting
+call to precede that message. Traces with multiple possible source messages, or
+none, require an explicit index. Previously these claims matched across the
+whole session and could use later calls; regenerate reviewed baselines that
+relied on that behavior.
+
+Supply the assistant event index when checking multi-message traces. Do not use
+a raw chat-array position because adapters omit some turns; inspect `Trace.messages`
+for normalized indices. Resolution returns a copy and does not alter the supplied
+claim. These checks validate structure and references, not whether reviewed text
+and arguments faithfully describe the original reply.
+Invalid claims return input-error exit code 2 and `status: invalid_input`, including
+when finding gates are disabled. Later files in a CLI batch are still checked.

@@ -8,7 +8,7 @@ happened before the message that made them.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any, Literal
 
@@ -195,13 +195,48 @@ class Claim:
     def from_dict(cls, data: dict[str, Any]) -> Claim:
         data = _object(data, "claim")
         ensure_finite_numbers(data)
-        return cls(
-            text=data["text"],
+        claim = cls(
+            text=data.get("text"),
             tool=data.get("tool"),
             args=dict(_object(data.get("args", {}), "claim args")),
             message_index=data.get("message_index"),
             group_id=data.get("group_id"),
         )
+        claim.validate()
+        return claim
+
+    def validate(self) -> None:
+        """Validate reviewed and directly constructed claims without coercing evidence."""
+        _name(self.text, "claim text")
+        if self.tool is not None:
+            _name(self.tool, "claim tool")
+        _object(self.args, "claim args")
+        ensure_finite_numbers(self.args)
+        if self.message_index is not None and (type(self.message_index) is not int or self.message_index < 0):
+            raise ValueError("claim message_index must be a nonnegative integer or null")
+        if self.group_id is not None:
+            _name(self.group_id, "claim group_id")
+
+
+def validated_claims(claims: list[Claim], trace: Trace | None = None) -> list[Claim]:
+    """Return validated claims, resolving only an unambiguous source message."""
+    valid_indices = [m.index for m in trace.assistant_messages()] if trace is not None else None
+    result = []
+    for claim in _array(claims, "claims"):
+        if not isinstance(claim, Claim):
+            raise ValueError("claims must contain Claim objects")
+        claim.validate()
+        if valid_indices is not None:
+            if claim.message_index is None:
+                if len(valid_indices) != 1:
+                    raise ValueError(
+                        "claim message_index is required unless there is exactly one nonempty assistant message"
+                    )
+                claim = replace(claim, message_index=valid_indices[0])
+            elif valid_indices.count(claim.message_index) != 1:
+                raise ValueError("claim message_index must identify a nonempty assistant message")
+        result.append(claim)
+    return result
 
 
 def load_json(path: str | Path) -> Any:

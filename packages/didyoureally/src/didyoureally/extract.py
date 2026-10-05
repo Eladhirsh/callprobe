@@ -18,7 +18,7 @@ from typing import Any, Protocol
 
 from .datetimes import DATETIME_KEYS, datetime_in_source, explicit_datetime, sole_datetime_source
 from .matcher import values_agree
-from .schema import Claim, Trace
+from .schema import Claim, Trace, _array, validated_claims
 from .strict_json import loads
 
 
@@ -62,10 +62,11 @@ class Extractor(Protocol):
 
 class GivenClaims:
     def __init__(self, claims: list[dict[str, Any]] | list[Claim]):
-        self.claims = [c if isinstance(c, Claim) else Claim.from_dict(c) for c in claims]
+        self.claims = [c if isinstance(c, Claim) else Claim.from_dict(c) for c in _array(claims, "claims")]
+        self.claims = validated_claims(self.claims)
 
     def extract(self, trace: Trace) -> list[Claim]:
-        return list(self.claims)
+        return validated_claims(self.claims, trace)
 
 
 COMPLETION_SCOPE_GUIDANCE = """Completion scope and counts:

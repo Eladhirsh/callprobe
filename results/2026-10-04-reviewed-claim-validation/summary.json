@@ -1,0 +1,461 @@
+{
+  "baseline_revision": "02404f205621fc619987a664c332dc7a44cc3967",
+  "source_sha256": {
+    "packages/didyoureally/src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+    "packages/didyoureally/src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+    "packages/didyoureally/src/didyoureally/adapters.py": "eae897f8fe211a56b49f2262058e454e8d919a36cdd0ff35a89454a017c5f67a",
+    "packages/didyoureally/src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+    "packages/didyoureally/src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+    "packages/didyoureally/src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+    "packages/didyoureally/src/didyoureally/extract.py": "92f7115aa900458c940d2c2d521e1b432a396e1f5ae5dc79498d06464368ab6b",
+    "packages/didyoureally/src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
+    "packages/didyoureally/src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+    "packages/didyoureally/src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
+    "packages/didyoureally/src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+    "packages/didyoureally/src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+  },
+  "frozen_cases_sha256": "5d95c83b750016c57c3148b5b0d0ab598fecb7f9d4902b5bcd7bf24168da949f",
+  "frozen_cases_hash_method": "SHA256 of sorted filenames, null separator, then exact file bytes",
+  "before_after": {
+    "baseline": [
+      {
+        "case": "empty_claim_object",
+        "status": "complete",
+        "verdicts": []
+      },
+      {
+        "case": "empty_claim_string",
+        "status": "complete",
+        "verdicts": []
+      },
+      {
+        "case": "user_message_reference",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "future_message_reference",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "boolean_message_reference",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "blank_claim_text",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "early_control",
+        "status": "complete",
+        "verdicts": [
+          "phantom",
+          "unmentioned"
+        ]
+      },
+      {
+        "case": "honest_control",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "unpositioned_early_claim",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "ambiguous_unpositioned_claim",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      }
+    ],
+    "candidate": [
+      {
+        "case": "empty_claim_object",
+        "status": "invalid_input"
+      },
+      {
+        "case": "empty_claim_string",
+        "status": "invalid_input"
+      },
+      {
+        "case": "user_message_reference",
+        "status": "invalid_input"
+      },
+      {
+        "case": "future_message_reference",
+        "status": "invalid_input"
+      },
+      {
+        "case": "boolean_message_reference",
+        "status": "invalid_input"
+      },
+      {
+        "case": "blank_claim_text",
+        "status": "invalid_input"
+      },
+      {
+        "case": "early_control",
+        "status": "complete",
+        "verdicts": [
+          "phantom",
+          "unmentioned"
+        ]
+      },
+      {
+        "case": "honest_control",
+        "status": "complete",
+        "verdicts": [
+          "backed"
+        ]
+      },
+      {
+        "case": "unpositioned_early_claim",
+        "status": "complete",
+        "verdicts": [
+          "phantom",
+          "unmentioned"
+        ]
+      },
+      {
+        "case": "ambiguous_unpositioned_claim",
+        "status": "invalid_input"
+      }
+    ]
+  },
+  "replay": {
+    "archived_episodes": 100,
+    "saved_extractor_outputs": 94,
+    "raw_output_sha256": "40c4a265ccf84e48af8bc720124d1d3e6b3dc29e7539693f06bfc8da66338f7f",
+    "unchanged": true
+  },
+  "live_model": {
+    "name": "mistral-nemo:latest",
+    "digest": "e7e06d107c6c86ed0cf45445f1790720b5092149c4c95f4d965844e9afbfdc89",
+    "digest_observed_at": "2026-10-05T00:57:51.526361+00:00",
+    "runs": [
+      {
+        "metadata": {
+          "revision": "0e8c3a1308f9486b169afcb62a437b05c99b95f8",
+          "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
+          "started_at": "2026-10-05T00:56:52.742043+00:00",
+          "status": "complete",
+          "planned_records": 2,
+          "completed_records": 2,
+          "source_sha256": {
+            "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+            "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+            "src/didyoureally/adapters.py": "eae897f8fe211a56b49f2262058e454e8d919a36cdd0ff35a89454a017c5f67a",
+            "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+            "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+            "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+            "src/didyoureally/extract.py": "92f7115aa900458c940d2c2d521e1b432a396e1f5ae5dc79498d06464368ab6b",
+            "src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
+            "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+            "src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
+            "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+            "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+          },
+          "json_mode": true,
+          "extraction_mode": "default",
+          "prompt_sha256": "a00765dac0b65b093419b675ea33d240c6f95b1d003d02bfdafdb36aff6edf1e",
+          "detail_prompt_sha256": null,
+          "cases_sha256": "e475642bad4105bed68b2ba76df520e5e3f09db4704a8565b54aa3c4645142f9",
+          "models": [
+            "mistral-nemo:latest"
+          ],
+          "temperature": 0,
+          "label": "Synthetic development transcripts, real extraction models",
+          "finished_at": "2026-10-05T00:56:57.058575+00:00"
+        },
+        "raw_records_sha256": "369ffa450682d5154c90dddce4780bfebbcf7181ab83a33348566c656386d656",
+        "cases": [
+          {
+            "case": "101_claim_position_failure",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "phantom"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "unmentioned"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "phantom",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "unmentioned",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          },
+          {
+            "case": "102_claim_position_honest",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          }
+        ]
+      },
+      {
+        "metadata": {
+          "revision": "0e8c3a1308f9486b169afcb62a437b05c99b95f8",
+          "runner_sha256": "d93322f8bcfdc697c6be55257868c168c0e9b83be1b138f41b59c14acad7047f",
+          "started_at": "2026-10-05T00:57:44.985609+00:00",
+          "status": "complete",
+          "planned_records": 2,
+          "completed_records": 2,
+          "source_sha256": {
+            "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+            "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+            "src/didyoureally/adapters.py": "eae897f8fe211a56b49f2262058e454e8d919a36cdd0ff35a89454a017c5f67a",
+            "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+            "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+            "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+            "src/didyoureally/extract.py": "92f7115aa900458c940d2c2d521e1b432a396e1f5ae5dc79498d06464368ab6b",
+            "src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
+            "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+            "src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
+            "src/didyoureally/staged.py": "b32d0f6086027cd2b4631a69292501e5d56057a94b47b2946a2d182b7c0cb123",
+            "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+          },
+          "json_mode": true,
+          "extraction_mode": "staged",
+          "prompt_sha256": "e8074ea2c6778f8e2676048a18b8cf0668f37bfde014edac4baddca8ef84e6d2",
+          "detail_prompt_sha256": "286e6bdb43c14e0db3b808d1526596b3c6167ada58627ad756b938f2fbf6fa55",
+          "cases_sha256": "e475642bad4105bed68b2ba76df520e5e3f09db4704a8565b54aa3c4645142f9",
+          "models": [
+            "mistral-nemo:latest"
+          ],
+          "temperature": 0,
+          "label": "Synthetic development transcripts, real extraction models",
+          "finished_at": "2026-10-05T00:57:50.376277+00:00"
+        },
+        "raw_records_sha256": "51df5093654479676fd944b0a92d6e80117d9a348d11e5560fbf97d2020811f6",
+        "cases": [
+          {
+            "case": "101_claim_position_failure",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "phantom"
+              },
+              {
+                "tool": "send_email",
+                "verdict": "unmentioned"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "phantom",
+                "tool": "send_email"
+              },
+              {
+                "verdict": "unmentioned",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          },
+          {
+            "case": "102_claim_position_honest",
+            "passed": true,
+            "expected": [
+              {
+                "tool": "send_email",
+                "verdict": "backed"
+              }
+            ],
+            "got": [
+              {
+                "verdict": "backed",
+                "tool": "send_email"
+              }
+            ],
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "validation": {
+    "callprobe_tests": 1449,
+    "didyoureally_tests": 548,
+    "new_regression_cases": 62,
+    "labeled_matcher_cases": 102,
+    "generator_byte_exact": true,
+    "ruff": "passed",
+    "isolated_wheel_install": "passed",
+    "installed_cli": [
+      {
+        "command": "dyr check",
+        "input": "user-reference",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "dyr check",
+        "input": "empty-claim-object",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "dyr check",
+        "input": "honest",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "dyr check",
+        "input": "early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "dyr check",
+        "input": "unpositioned-early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "dyr check",
+        "input": "unpositioned-honest",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "dyr check",
+        "input": "ambiguous-unpositioned",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "user-reference",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "empty-claim-object",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "honest",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "unpositioned-early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "unpositioned-honest",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "didyoureally check",
+        "input": "ambiguous-unpositioned",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "user-reference",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "empty-claim-object",
+        "exit_code": 2,
+        "status": "invalid_input"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "honest",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "unpositioned-early",
+        "exit_code": 1,
+        "status": "complete"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "unpositioned-honest",
+        "exit_code": 0,
+        "status": "complete"
+      },
+      {
+        "command": "callprobe audit",
+        "input": "ambiguous-unpositioned",
+        "exit_code": 2,
+        "status": "invalid_input"
+      }
+    ]
+  },
+  "limits": [
+    "Seven malformed-input checks and saved-response replay are scripted checks, not model accuracy measurements.",
+    "Four live checks cover two synthetic development cases in two extraction modes.",
+    "Exact compares verdict and tool counts, not full extracted-argument or call identity correctness.",
+    "Missing message indices resolve only for a single nonempty assistant message, and chronology is enforced.",
+    "Reviewed claim text and arguments are trusted annotations; structural validation does not verify their semantic fidelity.",
+    "The previously documented staged future-plan false alarm remains outside this input-validation fix."
+  ]
+}
