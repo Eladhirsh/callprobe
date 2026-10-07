@@ -229,6 +229,17 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
     reasoning = message.get("reasoning") or message.get("reasoning_content") or ""
     if message.get("tool_calls") is not None and not isinstance(message["tool_calls"], list):
         raise ValueError("tool_calls must be an array")
+    refusal = message.get("refusal")
+    if refusal is not None and not isinstance(refusal, str):
+        raise ValueError("message refusal must be a string or null")
+    # Legacy calls are not normalized by this adapter. Preserve the failure
+    # outside raw metadata so recording export cannot erase a proposed call
+    # and turn it into a successful abstention, including mixed envelopes.
+    error = None
+    if message.get("function_call") is not None or finish_reason == "function_call":
+        error = "unsupported legacy function-call response"
+    elif refusal:
+        error = "provider refused the completion"
 
     calls: list[Call] = []
     for entry in message.get("tool_calls") or []:
@@ -278,6 +289,7 @@ def parse_completion(body: dict[str, Any], latency_ms: float) -> Completion:
         prompt_tokens=_token_count(usage.get("prompt_tokens")),
         completion_tokens=_token_count(usage.get("completion_tokens")),
         latency_ms=latency_ms,
+        error=error,
         finish_reason=finish_reason,
         reasoning=reasoning,
         raw=body,

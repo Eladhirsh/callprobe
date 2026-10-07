@@ -152,9 +152,11 @@ can still pass. Constrain dangerous options with schema constants or explicit
 expected safe values. Literal dotted top-level argument names and external schema
 references are rejected by this pilot format.
 
-The runner rejects unsupported legacy function-call envelopes and call-finish
-responses with no parsed calls. Reasoning-only output does not count as a final
-reply. Raw completions remain in the evidence while trace checks use visible text.
+The runner rejects unsupported legacy function-call envelopes, explicit provider
+refusals, and call-finish responses with no parsed calls. Legacy calls and refusals
+produce sanitized request errors. Reasoning-only output does not count as a final
+reply. Successful provider responses retain raw completions in the evidence while
+trace checks use visible text; request-error records omit raw provider content.
 Comparison validates evidence consistency, not cryptographic authenticity or claim
 extraction completeness.
 

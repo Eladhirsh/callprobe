@@ -457,8 +457,8 @@ def test_extraction_requests_are_snapshots_before_repair_mutates_body(tmp_path, 
     ],
 )
 def test_unparsed_tool_call_finish_cannot_pass_as_abstention(finish_reason, extra):
-    # Exercise the actual HTTP parser: legacy function_call data is retained
-    # only in raw evidence, so the runner must not treat it as a final reply.
+    # Exercise the actual HTTP parser: unsupported legacy calls are request
+    # errors, and absent modern calls must not become successful abstentions.
     def transport(request):
         return httpx.Response(
             200,
@@ -478,13 +478,18 @@ def test_unparsed_tool_call_finish_cannot_pass_as_abstention(finish_reason, extr
     finally:
         client.close()
     assert result["status"] == "incomplete"
-    assert result["agent_status"] == "invalid_tool_calls"
+    legacy = extra.get("function_call") is not None or finish_reason == "function_call"
+    assert result["agent_status"] == ("request_error" if legacy else "invalid_tool_calls")
     assert not result["passed"] and not result["decision_passed"]
     assert not result["executions"]
-    assert result["completions"][0]["raw"]["choices"][0]["message"] == {
-        "content": "I can help later.",
-        **extra,
-    }
+    if legacy:
+        assert result["completions"][0]["raw"] == {}
+        assert result["decisions"][0]["error"] == "request_error"
+    else:
+        assert result["completions"][0]["raw"]["choices"][0]["message"] == {
+            "content": "I can help later.",
+            **extra,
+        }
 
 
 def test_reasoning_without_visible_reply_is_incomplete_and_not_a_claim():

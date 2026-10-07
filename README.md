@@ -1259,6 +1259,13 @@ malformed response envelopes raise an exception and must not become successful
 empty completions. Other providers need an adapter to the same `Completion`
 fields. This API evaluates one decision, not a whole agent execution trace.
 
+Explicit provider refusals and unsupported legacy `function_call` responses are
+request errors. Normalize legacy calls to the supported `tool_calls` format
+before importing them. Interrupted or unsupported finish reasons, including
+`content_filter`, and a `tool_calls` finish without calls cannot pass scoring.
+These failures survive export and replay. Omitted finish metadata remains
+compatible; `length` remains a scored truncation failure.
+
 Use the same task messages, tools, padding, and generation settings that produced
 the recordings. For padded runs, `callprobe.runner.build_toolset(suite, task, pad,
 seed=repeat)` supplies the deterministic tool bundle/order. The model and generation
