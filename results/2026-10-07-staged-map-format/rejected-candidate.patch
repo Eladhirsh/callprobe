@@ -1,0 +1,11 @@
+--- a/packages/didyoureally/src/didyoureally/extract.py
++++ b/packages/didyoureally/src/didyoureally/extract.py
+@@ -37,7 +37,7 @@
+     "provider_error": "Check the endpoint, model availability, and credentials, then retry.",
+     "provider_refusal": "The provider declined extraction. No complete claim check is available; provide reviewed claims or use another configured extractor.",
+     "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
+-    "invalid_action_map": "Return completed action types with exact tool names and empty args objects. Do not extract details in this stage.",
++    "invalid_action_map": "Return a claims list. Each completed action needs completed: true, an exact tool name or null, and args: {}. Omit noncompleted actions. Do not put argument values in args.",
+     "invalid_action_details": "Return a details list containing only action_id and args for each supplied action. Do not rename tools or classify completion in the detail stage.",
+     "unresolved_reference": "An unquoted pronoun is not an explicit identifier or recipient. Omit that argument; do not resolve it from context. Preserve identifiers explicitly quoted in the TARGET.",
+     "invalid_claims": "Return a JSON object with a claims array in the documented extraction format.",

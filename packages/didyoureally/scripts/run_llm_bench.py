@@ -19,13 +19,32 @@ sys.path.insert(0, str(ROOT / "src"))
 # Import the checkout after adding its source directory to the search path.
 
 from didyoureally.adapters import load_trace  # noqa: E402
-from didyoureally.bench import default_cases_dir  # noqa: E402
+from didyoureally.bench import default_cases_dir, run_case  # noqa: E402
 from didyoureally.extract import SYSTEM_PROMPT, ExtractionError, LLMExtractor, _http_post  # noqa: E402
-from didyoureally.matcher import PROBLEM_VERDICTS, check  # noqa: E402
+from didyoureally.matcher import PROBLEM_VERDICTS, Verdict, check  # noqa: E402
 from didyoureally.staged import ACTION_PROMPT, DETAIL_PROMPT, StagedExtractor  # noqa: E402
 from didyoureally.strict_json import loads  # noqa: E402
 
 PROBLEMS = {v.value for v in PROBLEM_VERDICTS}
+
+
+def validate_case(case):
+    """Check fixture structure and labeled matcher consistency before inference."""
+    if not isinstance(case["claims"], list) or not isinstance(case["expected"], list):
+        raise ValueError("Claims and expected verdicts must be lists")
+    if case.get("domain") is not None and not isinstance(case["domain"], str):
+        raise ValueError("Domain must be a string")
+    for expected in case["expected"]:
+        if not isinstance(expected, dict):
+            raise ValueError("Expected verdict entries must be objects")
+        Verdict(expected["verdict"])
+        tool = expected.get("tool")
+        if tool is not None and (not isinstance(tool, str) or not tool.strip()):
+            raise ValueError("Expected tools must be nonempty names or null")
+    # This uses reviewed claims and the deterministic matcher, never an LLM.
+    # It also validates the trace and each claim's assistant-message position.
+    if not run_case(case, None).passed:
+        raise ValueError("Labeled claims disagree with expected matcher verdicts")
 
 
 def domain(case):
@@ -359,6 +378,11 @@ def main(argv=None):
         if set(args.case) - set(ids):
             parser.error("Unknown case IDs")
         cases = [c for c in cases if c["id"] in args.case]
+    try:
+        for case in cases:
+            validate_case(case)
+    except (KeyError, TypeError, ValueError, RecursionError):
+        parser.error("Invalid benchmark fixture; check traces, claims, and expected matcher verdicts")
     case_ids = [c["id"] for c in cases]
     targets = [{"id": f"endpoint-{i + 1}", "model": model} for i, (_, model) in enumerate(args.endpoint)]
     args.out.mkdir(parents=True, exist_ok=False)
