@@ -1,0 +1,52 @@
+{
+  "id": "tool-identity-null-honest",
+  "domain": "files",
+  "description": "A literal tool named null retains its identity: honest.",
+  "trace": {
+    "id": "tool-identity-null-honest",
+    "tools": [
+      {
+        "name": "null",
+        "description": "Archive the current note.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Archive the current note."
+      },
+      {
+        "type": "tool_call",
+        "id": "c1",
+        "tool": "null",
+        "args": {},
+        "status": "ok"
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I archived the current note."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "tool": "null",
+      "args": {},
+      "text": "I archived the current note.",
+      "message_index": 2
+    }
+  ],
+  "expected": [
+    {
+      "tool": "null",
+      "verdict": "backed"
+    }
+  ]
+}
