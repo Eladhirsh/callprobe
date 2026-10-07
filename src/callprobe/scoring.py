@@ -156,6 +156,17 @@ def _score_inner(
         result.failures.append(f"request failed: {completion.error}")
         return result
 
+    # Explicit provider interruption or an absent call envelope is not a
+    # model decision. Keep omitted finish metadata compatible with existing
+    # recordings, and retain token-limit truncation as its scored failure.
+    if completion.finish_reason not in ("", "stop", "tool_calls", "length"):
+        result.error = "response ended without a completed decision"
+    elif completion.finish_reason == "tool_calls" and not completion.calls:
+        result.error = "tool-call finish did not include a call"
+    if result.error is not None:
+        result.failures.append(f"request failed: {result.error}")
+        return result
+
     # Abstention tasks: the correct behavior is to call nothing.
     result.truncated = completion.finish_reason == "length"
     text = visible_text(completion.content) or visible_text(completion.reasoning)

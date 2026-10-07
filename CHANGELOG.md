@@ -2,6 +2,11 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Preserve request errors for legacy function-call envelopes and provider refusals
+  through Callprobe recording export and replay. Interrupted finish reasons and
+  tool-call finishes without calls can no longer count as successful abstention.
+  Valid modern calls and omitted finish metadata remain compatible.
+
 - Save canonical request-body hashes with benchmark responses. Offline replay
   verifies each request, including recovery steps, and fails on mismatches.
   Older recordings remain explicitly marked as having unverified request identity.
