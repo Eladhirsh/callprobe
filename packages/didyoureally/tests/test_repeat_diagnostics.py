@@ -123,7 +123,9 @@ def cases_folder(tmp_path, count=1):
     folder = tmp_path / "cases"
     folder.mkdir()
     for index in range(count):
-        (folder / f"{index}.json").write_text(json.dumps({"id": str(index)}))
+        (folder / f"{index}.json").write_text(
+            json.dumps({"id": str(index), "trace": {"events": []}, "claims": [], "expected": []})
+        )
     return folder
 
 

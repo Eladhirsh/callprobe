@@ -135,7 +135,9 @@ def test_interrupted_run_preserves_partial_evidence_and_planned_count(tmp_path, 
     cases = tmp_path / "cases"
     cases.mkdir()
     for index in range(2):
-        (cases / f"{index}.json").write_text(json.dumps({"id": str(index)}))
+        (cases / f"{index}.json").write_text(
+            json.dumps({"id": str(index), "trace": {"events": []}, "claims": [], "expected": []})
+        )
     out = tmp_path / "evidence"
     assert main(["--endpoint", "http://unused", "fake", "--cases", str(cases), "--out", str(out)]) == 130
     metadata = json.loads((out / "metadata.json").read_text())
