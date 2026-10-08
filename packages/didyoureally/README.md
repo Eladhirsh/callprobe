@@ -257,6 +257,12 @@ but regressed completion controls and was rejected. The 16 frozen controls in
 A [shorter format-only retry](../../results/2026-10-07-staged-map-format/README.md)
 also regressed Qwen and was discarded. Neither experiment changed the runtime.
 
+A [simpler completed-tool list](../../results/2026-10-07-completed-tool-mapping/README.md)
+passed the focused gate but introduced 11 regressions across 142 broader cases
+on two models. It reduced Qwen's extraction errors while increasing honest
+false alarms, so the mapping-format change was rejected. Its separate fix for
+literal available tool names `null` and `none` is retained.
+
 `--extraction-mode staged` separates contextual action identification from argument extraction.
 The first stage includes completed read-only actions, which code excludes from side-effect checks.
 The second stage sees only the target message and fixed action IDs with tool parameter definitions.

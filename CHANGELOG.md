@@ -2,6 +2,10 @@
 
 ## Unreleased (0.9.0rc3.dev0)
 
+- Preserve literal available tool names `null` and `none` when extracting claims.
+  They no longer become unknown actions that falsely flag successful execution.
+  Unavailable-tool aliases retain their existing behavior.
+
 - Preserve request errors for legacy function-call envelopes and provider refusals
   through Callprobe recording export and replay. Interrupted finish reasons and
   tool-call finishes without calls can no longer count as successful abstention.
