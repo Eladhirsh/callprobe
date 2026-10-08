@@ -591,6 +591,29 @@ regression on another case. An extraction error fails the gate even when the
 baseline had the same error. Existing verdict mismatches are counted explicitly
 but do not by themselves constitute a regression.
 
+To also reject newly observed alarms on honest controls, add:
+
+```bash
+.venv/bin/python packages/didyoureally/scripts/compare_llm_runs.py \
+  results/baseline results/candidate --fail-on-new-honest-alarms
+```
+
+The report always lists `new_honest_alarms`. An honest control expects only
+`backed` findings or no findings. Each model, case, and repeat is listed once
+when its completed candidate produces any non-backed finding, including
+`unmentioned`, and the baseline did not complete with an alarm. The optional
+flag makes these entries fail the gate with exit code 1. Existing alarms remain
+visible as mismatches but do not trigger this additional check by themselves.
+
+An entry with `baseline_extraction_error: true` means an alarm appeared after an
+incomplete baseline extraction. That baseline was inconclusive, not a verified
+clean result. A completed baseline mismatch with no alarm is distinguished by
+`false`. Candidate extraction errors always fail the gate regardless of the
+flag; they are not counted as completed alarm observations. Controls that expect
+problem findings are outside this additional check.
+The [recorded comparison example](../../results/2026-10-07-honest-alarm-gate/README.md)
+shows a focused run that passes the default gate but fails this stricter check.
+
 Runs must have matching suite and runner hashes, model names, case coverage,
 repeat counts, JSON mode, and temperature. Every planned record must be present
 exactly once. Duplicate JSON keys, nonfinite numbers, inconsistent pass flags,

@@ -27,6 +27,11 @@
   Individual verdict regressions and candidate extraction errors fail the gate,
   even when improvements elsewhere increase the aggregate score.
 
+- Report newly observed alarms on honest controls in saved model comparisons.
+  The optional `--fail-on-new-honest-alarms` gate rejects them even when neither
+  run matched its labels. Reports distinguish alarms after baseline extraction
+  errors from completed baseline observations. Default gate behavior is unchanged.
+
 - Add eight frozen mixed-action controls and record a rejected extraction-prompt
   experiment. Focused improvements did not outweigh broader completion omissions;
   the runtime prompt remains unchanged.

@@ -101,6 +101,7 @@ def read_run(folder):
         indexed[key] = {
             "passed": passed,
             "error": error,
+            "has_alarm": not error and any(verdict != "backed" for _, verdict in got),
             "expected": expected,
             "labels": row["labeled_claims"],
         }
@@ -115,13 +116,13 @@ def read_run(folder):
     )
 
 
-def compare(baseline, candidate):
+def compare(baseline, candidate, *, fail_on_new_honest_alarms=False):
     before_meta, before, before_hashes = read_run(baseline)
     after_meta, after, after_hashes = read_run(candidate)
     for name in ("cases_sha256", "runner_sha256", "repeats", "json_mode", "temperature"):
         require(before_meta[name] == after_meta[name], "Run configuration or suite differs")
     require(before.keys() == after.keys(), "Compared model and case coverage differs")
-    improvements, regressions, errors = [], [], []
+    improvements, regressions, errors, new_honest_alarms = [], [], [], []
     for key, old in before.items():
         new = after[key]
         require(old["expected"] == new["expected"] and old["labels"] == new["labels"], "Case labels differ")
@@ -132,8 +133,20 @@ def compare(baseline, candidate):
             improvements.append(identity)
         if new["error"]:
             errors.append(identity)
+        if (
+            not new["error"]
+            and new["has_alarm"]
+            and all(verdict == "backed" for _, verdict in new["expected"])
+            and (old["error"] or not old["has_alarm"])
+        ):
+            # A baseline extraction error is unknown, not a clean observation.
+            # Keep that distinction explicit when an honest control now alarms.
+            new_honest_alarms.append({**identity, "baseline_extraction_error": old["error"]})
     return {
-        "gate_passed": not regressions and not errors,
+        "gate_passed": not regressions
+        and not errors
+        and not (fail_on_new_honest_alarms and new_honest_alarms),
+        "fail_on_new_honest_alarms": fail_on_new_honest_alarms,
         "paired_attempts": len(before),
         "baseline_exact": sum(row["passed"] for row in before.values()),
         "candidate_exact": sum(row["passed"] for row in after.values()),
@@ -141,11 +154,12 @@ def compare(baseline, candidate):
         "improvements": improvements,
         "regressions": regressions,
         "candidate_errors": errors,
+        "new_honest_alarms": new_honest_alarms,
         "baseline_evidence": before_hashes,
         "candidate_evidence": after_hashes,
         "baseline_extraction_mode": before_meta["extraction_mode"],
         "candidate_extraction_mode": after_meta["extraction_mode"],
-        "scope": "Verdict and tool counts only. Unchanged mismatches can pass a regression gate. This is not argument accuracy or proof of model identity.",
+        "scope": "Verdict and tool counts only. Existing mismatches can pass the default regression gate. New honest-control alarms are reported separately and gated only when requested; baseline extraction errors are not clean observations. This is not argument accuracy or proof of model identity.",
     }
 
 
@@ -153,9 +167,16 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", type=Path, help="Complete run_llm_bench.py output directory")
     parser.add_argument("candidate", type=Path, help="Complete run with matching cases and models")
+    parser.add_argument(
+        "--fail-on-new-honest-alarms",
+        action="store_true",
+        help="Also fail on newly observed alarms in honest controls, including after baseline extraction errors",
+    )
     args = parser.parse_args(argv)
     try:
-        report = compare(args.baseline, args.candidate)
+        report = compare(
+            args.baseline, args.candidate, fail_on_new_honest_alarms=args.fail_on_new_honest_alarms
+        )
     except InvalidRun as exc:
         print(f"Cannot compare: {exc}.", file=sys.stderr)
         return 2
