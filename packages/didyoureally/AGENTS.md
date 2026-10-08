@@ -40,7 +40,7 @@ Always call tools through `.venv/bin/` so commands work whether or not the venv 
 .venv/bin/python packages/didyoureally/scripts/build_benchmark.py
 ```
 
-If the commands are missing, install the development environment first. Missing executables are setup failures, not evidence of failing project tests. After setup, stop and report any failing baseline check before changing implementation. The package currently has 839 tests and 102 labeled benchmark cases; update those expectations as coverage grows.
+If the commands are missing, install the development environment first. Missing executables are setup failures, not evidence of failing project tests. After setup, stop and report any failing baseline check before changing implementation. The package currently has 878 tests and 102 labeled benchmark cases; update those expectations as coverage grows.
 
 The same commands can be run through `.venv/bin/` without activating the environment. Never commit the environment, credentials, or local assistant metadata.
 
