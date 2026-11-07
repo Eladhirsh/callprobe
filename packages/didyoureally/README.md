@@ -262,6 +262,12 @@ passed the focused gate but introduced 11 regressions across 142 broader cases
 on two models. It reduced Qwen's extraction errors while increasing honest
 false alarms, so the mapping-format change was rejected. Its separate fix for
 literal available tool names `null` and `none` is retained.
+[Fresh local model checks](../../results/2026-11-07-tool-identity-model-validation/README.md)
+matched all eight Phi-4 Mini attempts but found six extraction errors among
+eight Llama 3.2 attempts on these four controls.
+[Matched ordinary-name controls](../../results/2026-11-07-matched-tool-names/README.md)
+also failed on Llama: its ordinary-name attempts returned source-grounding errors.
+Phi matched all 12 attempts in that six-case comparison.
 
 `--extraction-mode staged` separates contextual action identification from argument extraction.
 The first stage includes completed read-only actions, which code excludes from side-effect checks.

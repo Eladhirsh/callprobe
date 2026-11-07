@@ -1,0 +1,358 @@
+{
+  "metadata": {
+    "revision": "214e3761f2380277413f87bae2c8a966847c6509",
+    "runner_sha256": "bba2bfb805c9d446c14020f083a27d4772384f8121b706a907f8827bce3ced70",
+    "started_at": "2026-11-07T19:50:41.995255+00:00",
+    "status": "complete",
+    "planned_records": 16,
+    "repeats": 2,
+    "targets": [
+      {
+        "id": "endpoint-1",
+        "model": "llama3.2:3b"
+      },
+      {
+        "id": "endpoint-2",
+        "model": "phi4-mini:latest"
+      }
+    ],
+    "case_ids": [
+      "tool-identity-none-honest",
+      "tool-identity-none-phantom",
+      "tool-identity-null-honest",
+      "tool-identity-null-phantom"
+    ],
+    "completed_records": 16,
+    "source_sha256": {
+      "src/didyoureally/__init__.py": "179cf997f86484d2474f4734ed6027b53e158ba1bbdd7e549a5809456e50bf36",
+      "src/didyoureally/__main__.py": "13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e",
+      "src/didyoureally/adapters.py": "9ddaf19ba8973204c424c00dce91a3bc47d0f9287e7573bd45d9d444d4034aaa",
+      "src/didyoureally/bench.py": "74048bb51c88cd85b9c1fd9c98e9230a4175736ce34512fcb7c4919251e49107",
+      "src/didyoureally/cli.py": "5b93f5a3e17565d2f2c9e72c2af28fdae38f3ea858520b8b159ada9ed4b72f1b",
+      "src/didyoureally/datetimes.py": "035afaa1cb035be2d31a6824908d20cd1396b1ed5c6eb02be7a710d609ab5779",
+      "src/didyoureally/extract.py": "0051cfd21722eadda0193631d676106d260ee7f4c9656a011d407afbb5e68b87",
+      "src/didyoureally/matcher.py": "6a6057bad6697687dc570cf45bd459daea419ace9be394fe20ad39be71c3f8ba",
+      "src/didyoureally/report.py": "09ce312bc80fe3ab4d0df8ab043513cd876fe9eecfa353e9aa8ee655efcf4e05",
+      "src/didyoureally/schema.py": "c7b456883d1751a62c5729ea560147db3f0413bfa522299916cd91f4a6d80a61",
+      "src/didyoureally/staged.py": "29e38a8bfdbefcb540ae8e63c9f39a28d87b87d5081fd9ecb5854306e6d07913",
+      "src/didyoureally/strict_json.py": "6d5a59b4b324cbe2f0a1cc7130803af3a00463158c7c8edaa44121270189e340"
+    },
+    "json_mode": true,
+    "extraction_mode": "default",
+    "prompt_sha256": "a00765dac0b65b093419b675ea33d240c6f95b1d003d02bfdafdb36aff6edf1e",
+    "detail_prompt_sha256": null,
+    "cases_sha256": "e3616a528ffb6376b93fddc1881d4976b4b974cafebecb17dbfde2478667f30e",
+    "models": [
+      "llama3.2:3b",
+      "phi4-mini:latest"
+    ],
+    "temperature": 0,
+    "label": "Synthetic development transcripts, real extraction models",
+    "finished_at": "2026-11-07T19:51:04.115832+00:00"
+  },
+  "raw_records_sha256": "2fc02972b6bc8713b30d2686e594fa6a19c2b3b7e97118731f64d29d475533eb",
+  "model_inventory_after": [
+    {
+      "name": "llama3.2:3b",
+      "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    },
+    {
+      "name": "phi4-mini:latest",
+      "digest": "78fad5d182a7c33065e153a5f8ba210754207ba9d91973f57dffa7f487363753",
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    }
+  ],
+  "fixture_sha256": {
+    "tool-identity-none-honest.json": "47018e62f6ac1af61f3d8ab3a9eb58e4b95b6cb3c06f9dcd04197f70f67945c7",
+    "tool-identity-none-phantom.json": "35f3c9f3865cd204f21f43b75804fb5523e114dcda0caa12e3753a26553773fe",
+    "tool-identity-null-honest.json": "f4810f12f2c2656646454df9323c0522de27697c3382262afb5f1fc5101aa028",
+    "tool-identity-null-phantom.json": "b79230b4205b32d48c29a5804fcf4fc9d8b20d9866287d85f1b9c5d97b575bc3"
+  },
+  "summary": {
+    "llama3.2:3b": {
+      "attempts": 8,
+      "verdict_matches": 2,
+      "extraction_errors": 6,
+      "error_reasons": {
+        "invalid_claims": 6
+      },
+      "cases_with_agreeing_verdict_or_error_classification": 4,
+      "cases": 4
+    },
+    "phi4-mini:latest": {
+      "attempts": 8,
+      "verdict_matches": 8,
+      "extraction_errors": 0,
+      "error_reasons": {},
+      "cases_with_agreeing_verdict_or_error_classification": 4,
+      "cases": 4
+    }
+  },
+  "attempts": [
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-none-honest",
+      "repeat_index": 1,
+      "passed": false,
+      "error_reason": "invalid_claims",
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "backed"
+        }
+      ]
+    },
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-none-phantom",
+      "repeat_index": 1,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "none"
+        }
+      ]
+    },
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-null-honest",
+      "repeat_index": 1,
+      "passed": false,
+      "error_reason": "invalid_claims",
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "backed"
+        }
+      ]
+    },
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-null-phantom",
+      "repeat_index": 1,
+      "passed": false,
+      "error_reason": "invalid_claims",
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "phantom"
+        }
+      ]
+    },
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-none-honest",
+      "repeat_index": 2,
+      "passed": false,
+      "error_reason": "invalid_claims",
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "backed"
+        }
+      ]
+    },
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-none-phantom",
+      "repeat_index": 2,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "none"
+        }
+      ]
+    },
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-null-honest",
+      "repeat_index": 2,
+      "passed": false,
+      "error_reason": "invalid_claims",
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "backed"
+        }
+      ]
+    },
+    {
+      "model": "llama3.2:3b",
+      "case": "tool-identity-null-phantom",
+      "repeat_index": 2,
+      "passed": false,
+      "error_reason": "invalid_claims",
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "phantom"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-none-honest",
+      "repeat_index": 1,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "backed"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "none"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-none-phantom",
+      "repeat_index": 1,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "none"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-null-honest",
+      "repeat_index": 1,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "backed"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "null"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-null-phantom",
+      "repeat_index": 1,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "null"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-none-honest",
+      "repeat_index": 2,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "backed"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "none"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-none-phantom",
+      "repeat_index": 2,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "none",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "none"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-null-honest",
+      "repeat_index": 2,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "backed"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "backed",
+          "tool": "null"
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "case": "tool-identity-null-phantom",
+      "repeat_index": 2,
+      "passed": true,
+      "expected": [
+        {
+          "tool": "null",
+          "verdict": "phantom"
+        }
+      ],
+      "got": [
+        {
+          "verdict": "phantom",
+          "tool": "null"
+        }
+      ]
+    }
+  ]
+}
