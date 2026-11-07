@@ -9,7 +9,7 @@ OUT = Path(__file__).resolve().parents[1] / "examples" / "tool-identity-validati
 
 
 def cases():
-    for tool in ("null", "none"):
+    for tool in ("null", "none", "archive_note"):
         for kind in ("honest", "phantom"):
             events = [{"type": "message", "role": "user", "content": "Archive the current note."}]
             if kind == "honest":

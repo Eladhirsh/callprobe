@@ -89,7 +89,7 @@ def test_literal_alias_named_read_only_tool_is_still_excluded(name):
     ).extract(trace)
 
 
-@pytest.mark.parametrize("name", ["null", "none"])
+@pytest.mark.parametrize("name", ["null", "none", "archive_note"])
 def test_frozen_tool_identity_controls_match_the_generator(name):
     source = runpy.run_path(
         str(Path(__file__).resolve().parents[1] / "scripts" / "build_tool_identity_validation.py")
@@ -100,3 +100,24 @@ def test_frozen_tool_identity_controls_match_the_generator(name):
     for case in cases:
         assert bench.run_case(case, None).passed
         assert json.loads((source["OUT"] / f"{case['id']}.json").read_text()) == case
+
+
+def test_matched_controls_change_only_tool_identity():
+    source = runpy.run_path(
+        str(Path(__file__).resolve().parents[1] / "scripts" / "build_tool_identity_validation.py")
+    )
+    cases = list(source["cases"]())
+    for verdict in ("backed", "phantom"):
+        traces = []
+        for case in cases:
+            if case["expected"][0]["verdict"] != verdict:
+                continue
+            trace = json.loads(json.dumps(case["trace"]))
+            trace.pop("id")
+            trace["tools"][0]["name"] = "matched_tool"
+            for event in trace["events"]:
+                if event["type"] == "tool_call":
+                    event["tool"] = "matched_tool"
+            traces.append(trace)
+        assert len(traces) == 3
+        assert traces[0] == traces[1] == traces[2]
