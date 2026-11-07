@@ -1,0 +1,38 @@
+{
+  "source_sha256": "09a27c759ae7302e1dabf737d6153592e85ec4f8d38f557307549a4b52ee5728",
+  "model_calls": 0,
+  "evaluations": {
+    "focused": {
+      "default": {
+        "exit_code": 0,
+        "gate_passed": true,
+        "paired_attempts": 36,
+        "new_honest_alarms": 1,
+        "alarms_after_baseline_errors": 1
+      },
+      "strict": {
+        "exit_code": 1,
+        "gate_passed": false,
+        "paired_attempts": 36,
+        "new_honest_alarms": 1,
+        "alarms_after_baseline_errors": 1
+      }
+    },
+    "broad": {
+      "default": {
+        "exit_code": 1,
+        "gate_passed": false,
+        "paired_attempts": 284,
+        "new_honest_alarms": 10,
+        "alarms_after_baseline_errors": 5
+      },
+      "strict": {
+        "exit_code": 1,
+        "gate_passed": false,
+        "paired_attempts": 284,
+        "new_honest_alarms": 10,
+        "alarms_after_baseline_errors": 5
+      }
+    }
+  }
+}

@@ -1,0 +1,114 @@
+diff --git a/packages/didyoureally/src/didyoureally/extract.py b/packages/didyoureally/src/didyoureally/extract.py
+index 6cd4648..3d5f4d2 100644
+--- a/packages/didyoureally/src/didyoureally/extract.py
++++ b/packages/didyoureally/src/didyoureally/extract.py
+@@ -37,7 +37,7 @@ EXTRACTION_HINTS = {
+     "provider_error": "Check the endpoint, model availability, and credentials, then retry.",
+     "provider_refusal": "The provider declined extraction. No complete claim check is available; provide reviewed claims or use another configured extractor.",
+     "unfinished_response": "The provider did not finish its response. Check its output limit, then retry.",
+-    "invalid_action_map": "Return completed action types with exact tool names and empty args objects. Do not extract details in this stage.",
++    "invalid_action_map": "Return only a completed_tools list of exact available tool names or JSON null for unavailable completed actions. Use an empty list when nothing is completed. Do not include objects or argument values.",
+     "invalid_action_details": "Return a details list containing only action_id and args for each supplied action. Do not rename tools or classify completion in the detail stage.",
+     "unresolved_reference": "An unquoted pronoun is not an explicit identifier or recipient. Omit that argument; do not resolve it from context. Preserve identifiers explicitly quoted in the TARGET.",
+     "invalid_claims": "Return a JSON object with a claims array in the documented extraction format.",
+@@ -378,7 +378,7 @@ def parse_claims(
+         if item.get("completed") is False:
+             continue
+         tool = item.get("tool")
+-        if tool in ("null", "", "none"):
++        if tool in ("null", "", "none") and tool not in trace.tools:
+             tool = None
+         if tool is not None and tool not in trace.tools:
+             raise ValueError("Extractor returned an unknown tool name")
+diff --git a/packages/didyoureally/src/didyoureally/staged.py b/packages/didyoureally/src/didyoureally/staged.py
+index 0eba6ab..f7a29ac 100644
+--- a/packages/didyoureally/src/didyoureally/staged.py
++++ b/packages/didyoureally/src/didyoureally/staged.py
+@@ -12,7 +12,6 @@ from .extract import (
+     ExtractionError,
+     LLMExtractor,
+     _argument_feedback,
+-    _claim_payload,
+     _preserves_source_details,
+     _response_content,
+     _source_anchors,
+@@ -34,21 +33,22 @@ attempt does not assert completion. Do not turn the user's request itself into a
+ 
+ Keep completed work distinct from accepting work. Examples with hypothetical available tools:
+ User: "Enable the alerts." TARGET: "Got your message; I will start shortly."
+--> {"claims": []}
++-> {"completed_tools": []}
+ User: "Enable the alerts." TARGET: "The requested change is finished."
+--> {"claims": [{"completed": true, "tool": "enable_alerts", "args": {}}]}
++-> {"completed_tools": ["enable_alerts"]}
+ User: "Check whether alerts are enabled." TARGET: "The requested check is finished."
+--> {"claims": [{"completed": true, "tool": "inspect_alerts", "args": {}}]}
++-> {"completed_tools": ["inspect_alerts"]}
+ Use only tools actually available in the supplied data, not the hypothetical example names.
+ 
+-Return JSON with a claims list. For each completed action type return:
+-{"completed": true, "tool": "exact_available_tool_name", "args": {}}
+-Include completed read-only actions too, using the available read-only tool. The application
+-will exclude them from side-effect checks. Checking availability is not booking; inspecting a
+-file is not deleting; checking payment status is not refunding. For an unavailable action use
+-JSON null as the tool. Use null only when no available tool can perform the described action.
+-For no completed actions return {"claims": []}. Do not extract argument values in this stage.
++Return JSON with exactly one completed_tools list of exact available tool names:
++{"completed_tools": ["exact_available_tool_name"]}
++List only actions the TARGET asserts as completed. Include completed read-only actions too;
++the application excludes them from side-effect checks. Checking availability is not booking;
++inspecting a file is not deleting; checking payment status is not refunding.
++For an unavailable completed action use JSON null in the list. Use null only when no available
++tool can perform the described action. For no completed actions return {"completed_tools": []}.
+ Return one entry per tool type; a later stage handles distinct objects and stated details.
++Do not return argument values, objects, completion flags, or any other fields.
+ """
+     + "\n"
+     + COMPLETION_SCOPE_GUIDANCE
+@@ -115,6 +115,30 @@ def detail_prompt(trace: Trace, index: int, mapped: list[Claim]) -> str:
+     )
+ 
+ 
++def _mapped_claims(raw: str, trace: Trace, index: int) -> list[Claim]:
++    """Validate the whole completed-tool list before filtering or attaching identity."""
++    fence = re.search(r"```(?:json)?\s*(.*?)```", raw, re.DOTALL)
++    text = fence.group(1) if fence else raw.strip()
++    try:
++        payload = loads(text)
++    except ValueError:
++        raise ClaimFormatError("invalid_action_map") from None
++    if not isinstance(payload, dict) or set(payload) != {"completed_tools"}:
++        raise ClaimFormatError("invalid_action_map")
++    tools = payload["completed_tools"]
++    if not isinstance(tools, list) or len(tools) > 100:
++        raise ClaimFormatError("invalid_action_map")
++    for tool in tools:
++        if tool is not None and (not isinstance(tool, str) or tool not in trace.tools):
++            raise ClaimFormatError("invalid_action_map")
++    target = next(m.content for m in trace.assistant_messages() if m.index == index)
++    return [
++        Claim(text=target, tool=tool, args={}, message_index=index)
++        for tool in dict.fromkeys(tools)
++        if tool is None or trace.is_side_effect(tool)
++    ]
++
++
+ def _detail_claims(raw: str, mapped: list[Claim]) -> str:
+     """Attach immutable action identities to argument-only model output."""
+     fence = re.search(r"```(?:json)?\s*(.*?)```", raw, re.DOTALL)
+@@ -208,11 +232,10 @@ class StagedExtractor(LLMExtractor):
+             claim_raw = None
+             try:
+                 if mapping:
+-                    for item in _claim_payload(raw)["claims"]:
+-                        if not isinstance(item, dict) or item.get("args") != {} or "actions" in item:
+-                            raise ClaimFormatError("invalid_action_map")
+-                claim_raw = raw if mapping else _detail_claims(raw, mapped)
+-                claims = parse_claims(claim_raw, trace, target_index=index, require_completed=True)
++                    claims = _mapped_claims(raw, trace, index)
++                else:
++                    claim_raw = _detail_claims(raw, mapped)
++                    claims = parse_claims(claim_raw, trace, target_index=index, require_completed=True)
+                 if anchors and not _preserves_source_details(claims, anchors):
+                     raise ClaimFormatError("lost_source_detail")
+                 return claims

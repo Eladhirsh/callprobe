@@ -1,0 +1,45 @@
+{
+  "id": "tool-identity-null-phantom",
+  "domain": "files",
+  "description": "A literal tool named null retains its identity: phantom.",
+  "trace": {
+    "id": "tool-identity-null-phantom",
+    "tools": [
+      {
+        "name": "null",
+        "description": "Archive the current note.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Archive the current note."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I archived the current note."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "tool": "null",
+      "args": {},
+      "text": "I archived the current note.",
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "null",
+      "verdict": "phantom"
+    }
+  ]
+}

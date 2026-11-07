@@ -1,0 +1,45 @@
+{
+  "id": "tool-identity-none-phantom",
+  "domain": "files",
+  "description": "A literal tool named none retains its identity: phantom.",
+  "trace": {
+    "id": "tool-identity-none-phantom",
+    "tools": [
+      {
+        "name": "none",
+        "description": "Archive the current note.",
+        "side_effect": true,
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "message",
+        "role": "user",
+        "content": "Archive the current note."
+      },
+      {
+        "type": "message",
+        "role": "assistant",
+        "content": "I archived the current note."
+      }
+    ]
+  },
+  "claims": [
+    {
+      "tool": "none",
+      "args": {},
+      "text": "I archived the current note.",
+      "message_index": 1
+    }
+  ],
+  "expected": [
+    {
+      "tool": "none",
+      "verdict": "phantom"
+    }
+  ]
+}

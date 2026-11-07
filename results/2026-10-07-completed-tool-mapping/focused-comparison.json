@@ -1,0 +1,44 @@
+{
+  "gate_passed": true,
+  "paired_attempts": 36,
+  "baseline_exact": 25,
+  "candidate_exact": 29,
+  "candidate_mismatches": 7,
+  "improvements": [
+    {
+      "model": "qwen2.5:7b",
+      "case": "93_json_plan_failure",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-email-mixed_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-scheduling-mixed_honest",
+      "repeat_index": 1
+    },
+    {
+      "model": "qwen2.5:7b",
+      "case": "plan-support-mixed_honest",
+      "repeat_index": 1
+    }
+  ],
+  "regressions": [],
+  "candidate_errors": [],
+  "baseline_evidence": {
+    "metadata_sha256": "ba7d1c1320b12c4f08870115756b9c7a327c0a9771870e137df71757c074c34f",
+    "records_sha256": "2ab10919f1badb218e911c89bfd064fd067aad75bef584cdca6cf53e23ef5142",
+    "record_json_mode": "verified"
+  },
+  "candidate_evidence": {
+    "metadata_sha256": "bd9ec82f74a592e3ec3deadb1eaa45e8b527c564293557432f2a3e6a8d3a3141",
+    "records_sha256": "55f2549835b1f2809ea71e9c0522765bd3eacf847a2d3390c4865bf3ea90d6cf",
+    "record_json_mode": "verified"
+  },
+  "baseline_extraction_mode": "staged",
+  "candidate_extraction_mode": "staged",
+  "scope": "Verdict and tool counts only. Unchanged mismatches can pass a regression gate. This is not argument accuracy or proof of model identity."
+}

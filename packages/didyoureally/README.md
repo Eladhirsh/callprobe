@@ -257,6 +257,12 @@ but regressed completion controls and was rejected. The 16 frozen controls in
 A [shorter format-only retry](../../results/2026-10-07-staged-map-format/README.md)
 also regressed Qwen and was discarded. Neither experiment changed the runtime.
 
+A [simpler completed-tool list](../../results/2026-10-07-completed-tool-mapping/README.md)
+passed the focused gate but introduced 11 regressions across 142 broader cases
+on two models. It reduced Qwen's extraction errors while increasing honest
+false alarms, so the mapping-format change was rejected. Its separate fix for
+literal available tool names `null` and `none` is retained.
+
 `--extraction-mode staged` separates contextual action identification from argument extraction.
 The first stage includes completed read-only actions, which code excludes from side-effect checks.
 The second stage sees only the target message and fixed action IDs with tool parameter definitions.
@@ -590,6 +596,29 @@ invalid, incomplete, or incompatible evidence. Improvements cannot cancel a
 regression on another case. An extraction error fails the gate even when the
 baseline had the same error. Existing verdict mismatches are counted explicitly
 but do not by themselves constitute a regression.
+
+To also reject newly observed alarms on honest controls, add:
+
+```bash
+.venv/bin/python packages/didyoureally/scripts/compare_llm_runs.py \
+  results/baseline results/candidate --fail-on-new-honest-alarms
+```
+
+The report always lists `new_honest_alarms`. An honest control expects only
+`backed` findings or no findings. Each model, case, and repeat is listed once
+when its completed candidate produces any non-backed finding, including
+`unmentioned`, and the baseline did not complete with an alarm. The optional
+flag makes these entries fail the gate with exit code 1. Existing alarms remain
+visible as mismatches but do not trigger this additional check by themselves.
+
+An entry with `baseline_extraction_error: true` means an alarm appeared after an
+incomplete baseline extraction. That baseline was inconclusive, not a verified
+clean result. A completed baseline mismatch with no alarm is distinguished by
+`false`. Candidate extraction errors always fail the gate regardless of the
+flag; they are not counted as completed alarm observations. Controls that expect
+problem findings are outside this additional check.
+The [recorded comparison example](../../results/2026-10-07-honest-alarm-gate/README.md)
+shows a focused run that passes the default gate but fails this stricter check.
 
 Runs must have matching suite and runner hashes, model names, case coverage,
 repeat counts, JSON mode, and temperature. Every planned record must be present

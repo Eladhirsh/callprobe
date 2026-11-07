@@ -378,7 +378,7 @@ def parse_claims(
         if item.get("completed") is False:
             continue
         tool = item.get("tool")
-        if tool in ("null", "", "none"):
+        if tool in ("null", "", "none") and tool not in trace.tools:
             tool = None
         if tool is not None and tool not in trace.tools:
             raise ValueError("Extractor returned an unknown tool name")

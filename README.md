@@ -1266,6 +1266,14 @@ before importing them. Interrupted or unsupported finish reasons, including
 These failures survive export and replay. Omitted finish metadata remains
 compatible; `length` remains a scored truncation failure.
 
+Rebuild affected baselines and candidates before CI comparisons. Scoring version
+3 is unchanged; `report`, `compare`, and `--resume` do not revalidate saved provider
+responses. Replay can correct normalized recordings that retained an unsupported
+finish reason. Older exports may have discarded refusal or legacy call fields,
+which replay cannot recover. Reimport the original provider responses with the
+current parser, or collect fresh responses when the originals are unavailable.
+Write new result files and do not resume affected saved runs.
+
 Use the same task messages, tools, padding, and generation settings that produced
 the recordings. For padded runs, `callprobe.runner.build_toolset(suite, task, pad,
 seed=repeat)` supplies the deterministic tool bundle/order. The model and generation
