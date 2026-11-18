@@ -163,3 +163,32 @@ extraction completeness.
 The broader frozen suite is in `examples/agent-validation/suite.json`. Regenerate
 it with `python scripts/build_agent_validation.py`. It adds files and scheduling
 to the original refund and email pilot, for 28 authored scenarios.
+
+## Real-model results
+
+`callprobe audit TRACE` also exposes Didyoureally's existing trace-checking CLI.
+`callprobe agent compare` adds an offline regression gate for the two axes.
+The [first real-model pilot](../results/2026-10-04-joint-agent-pilot/README.md)
+caught false success reports after failed refunds in both tested agents.
+The [unified reliability checks](../results/2026-10-04-joint-reliability/README.md)
+cover both engines, adversarial reports, and isolated wheel installs.
+
+The [cross-domain model run](../results/2026-10-04-agent-validation-matrix/README.md)
+uses 28 scenarios across refunds, email, files, and scheduling, with
+`mistral-nemo:latest` fixed as the claim extractor:
+
+| Agent model | Complete cases | Decision passes | Account passes | Both pass |
+|---|---|---|---|---|
+| qwen2.5:7b | 28/28 | 17/28 | 27/28 | 17/28 |
+| llama3.1:8b | 28/28 | 13/28 | 20/28 | 12/28 |
+| hermes3:8b | 24/28 | 11/28 | 18/28 | 11/28 |
+| qwen3:8b | 13/28 | 8/28 | 12/28 | 8/28 |
+
+Only complete episodes count as passes; every denominator includes all 28 planned
+cases. Hermes had four incomplete episodes. Qwen3 had three incomplete episodes
+and 12 unrun when its local run reached an operational wall-clock cap.
+These are gate outputs, not detector accuracy or a model ranking. The decision
+policy requires one call per turn. Independent review found two extractor false
+alarms, omitted scheduling times, and a Markdown-related extraction failure.
+A passing account gate checks the extracted claims; it does not establish that
+every stated detail was extracted. Raw evidence and review notes are in the linked reports.

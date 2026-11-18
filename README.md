@@ -1,476 +1,82 @@
 # callprobe
 
-Test your agent’s tool decisions and whether its account matches the recorded actions.
+**Does this model reliably call _your_ tools?**
 
-`callprobe` tests tool selection, argument schemas, values, and abstention
-against an OpenAI-compatible model endpoint. Bring your own tools or start
-with a bundled example. It evaluates model responses; it does not execute
-the API operations described by your tools.
+Callprobe sends your tool schemas and test prompts to any OpenAI-compatible
+model endpoint (Ollama, LM Studio, llama.cpp, vLLM, or a hosted API) and scores
+every response:
 
-## Agent decisions and accounts
+- **Selection:** did it pick the right tool, or correctly call nothing?
+- **Schema:** do the arguments validate against the tool's JSON Schema?
+- **Arguments:** are the values actually right?
+- **Abstention:** when no tool applies, does it hold back instead of acting?
 
-The experimental `callprobe agent` workflow combines Callprobe decision scoring
-with [Didyoureally](packages/didyoureally/README.md) trace checks. Both engines now live in this repository. Run a
-real model against declarative mock tools, then inspect whether it chose the
-expected calls and accurately described their recorded outcomes. Agent and
-extractor models are configured separately. No real business actions execute.
+It only evaluates what the model proposes. It never executes your tools or
+calls your API, so you can test a refund or delete operation safely.
 
-Start with the 12-case refund and receipt pilot:
+## Quickstart
 
-```sh
-# From this single checkout:
-python3 -m venv .venv
-.venv/bin/python -m pip install -e ".[dev]" -e "packages/didyoureally[dev]"
-.venv/bin/callprobe agent init --out refund-pilot.json
-.venv/bin/callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
-  --extractor-model mistral-nemo:latest --json-mode --out results/agent-pilot
-```
-
-`callprobe audit TRACE` also exposes Didyoureally's existing trace-checking CLI.
-See [installation, evidence, gates, and limitations](docs/agent-workflow.md).
-`callprobe agent compare` adds an offline regression gate for the two axes.
-The [first real-model pilot](results/2026-10-04-joint-agent-pilot/README.md)
-caught false success reports after failed refunds in both tested agents.
-The [unified reliability checks](results/2026-10-04-joint-reliability/README.md)
-cover both engines, adversarial reports, and isolated wheel installs.
-
-The [cross-domain model run](results/2026-10-04-agent-validation-matrix/README.md)
-uses 28 scenarios across refunds, email, files, and scheduling, with
-`mistral-nemo:latest` fixed as the claim extractor:
-
-| Agent model | Complete cases | Decision passes | Account passes | Both pass |
-|---|---|---|---|---|
-| qwen2.5:7b | 28/28 | 17/28 | 27/28 | 17/28 |
-| llama3.1:8b | 28/28 | 13/28 | 20/28 | 12/28 |
-| hermes3:8b | 24/28 | 11/28 | 18/28 | 11/28 |
-| qwen3:8b | 13/28 | 8/28 | 12/28 | 8/28 |
-
-Only complete episodes count as passes; every denominator includes all 28 planned
-cases. Hermes had four incomplete episodes. Qwen3 had three incomplete episodes
-and 12 unrun when its local run reached an operational wall-clock cap.
-These are gate outputs, not detector accuracy or a model ranking. The decision
-policy requires one call per turn. Independent review found two extractor false
-alarms, omitted scheduling times, and a Markdown-related extraction failure.
-A passing account gate checks the extracted claims; it does not establish that
-every stated detail was extracted. Raw evidence and review notes are linked above.
-
-## One repository, two engines
-
-- `src/callprobe`: tool-decision scoring, the mock agent runner, reports, and CI gates.
-- `packages/didyoureally`: standalone claim extraction and deterministic trace matching, including its tests and benchmarks.
-- `examples/agent-validation/suite.json`: 28 frozen scenarios across refunds, email, files, and scheduling.
-
-The import preserves Didyoureally's Git history and Apache-2.0 license. Callprobe's
-code remains MIT licensed. See [contributing and verification](CONTRIBUTING.md).
-Development and issues for both engines belong in this repository. Existing
-package names, CLI aliases, and versions are unchanged. The combined workflow is
-available from source; the older published prerelease below does not include it.
-
-## Release candidate: 0.9.0rc2
-
-**0.9.0rc2 is published.** Install the tester prerelease explicitly:
+You need Python 3.10 or newer. Setup and validation work offline:
 
 ```bash
-uv tool install callprobe==0.9.0rc2 --force
-callprobe --version
-```
-
-Alternatively, use `python -m pip install --upgrade callprobe==0.9.0rc2`.
-`@latest` selects the stable release. See the [release notes](https://github.com/Eladhirsh/callprobe/releases/tag/v0.9.0rc2),
-[rc2 upgrade notes](CHANGELOG.md#090rc2), and
-[scoring/baseline migration](CHANGELOG.md#upgrade-and-baseline-migration)
-before reusing baselines.
-
-This checkout is the unpublished `0.9.0rc3.dev0`; use `uv tool install . --force`
-to test development features. This checkout also supports `python -m callprobe`
-wherever the instructions use `callprobe`. For a virtual environment installation,
-use the same interpreter for installation and execution:
-
-```bash
-python -m pip install .
-python -m callprobe --version
-python -m callprobe examples
-```
-
-This avoids relying on the environment's scripts directory being on `PATH`.
-The module entry point is new in this checkout and is not available in rc2.
-
-## Try it
-
-Python 3.10+ is required. Install or replace an older pinned installation:
-
-```bash
-uv tool install callprobe@latest
-callprobe --version
-callprobe examples
+pip install callprobe
 callprobe init --example support --out callprobe-demo
 callprobe validate --suite callprobe-demo
 ```
 
-Validation should report **6 tasks, no problems found**. Setup and validation
-need no model endpoint. If you use pipx instead of uv, install with
-`pipx install callprobe`.
+`validate` should report 6 tasks and `no problems found`. The suite is a small
+fictional order and refund API that ships inside the package. You can also
+install with `uv tool install callprobe` or `pipx install callprobe`.
 
-With Ollama running and `qwen2.5:7b` already downloaded, run the six cases:
+To score a model, start [Ollama](https://ollama.com) and pull a model that
+supports tool calling:
 
 ```bash
+ollama pull qwen2.5:7b
 callprobe run --suite callprobe-demo --model qwen2.5:7b \
   --pad 0 --repeats 1 --max-tokens 4096 --out callprobe-demo/baseline.json
 callprobe explain callprobe-demo/baseline.json --suite callprobe-demo
 ```
 
-Use `--endpoint` for another OpenAI-compatible server and `--model` for a
-model it serves. In 0.9.0rc1, add `--dry-run` to
-any `callprobe run` invocation to preview coverage, the planned request count,
-and the completion-token cap with no endpoint access; see
-[Preview a run before spending tokens](#preview-a-run-before-spending-tokens-090rc1).
-Failed cases are useful findings, not installation errors. To retry only
-tasks that failed:
+`explain` shows each failure, what was expected, and what the model actually
+sent. An excerpt from a real run:
+
+```
+[status-by-id pad=0 repeat=0] category=select  diagnostics=schema, argument_value
+  prompt: Check the status of order ORD-448120.
+  expected: call get_order
+    args {'path': {'order_id': 'ORD-448120'}}
+  called: get_order
+  reason: schema: (root): 'path' is a required property
+  call: get_order arguments={'order_id': 'ORD-448120'}
+  shape hint [nested_move] advisory only: not executed or re-scored
+    moved: {'order_id': 'path'}
+```
+
+The model chose the right tool and the right order ID, but flattened the
+arguments, so a real API call would have failed. Failed cases are findings,
+not installation errors. On this suite, `qwen2.5:7b` passed 2 of 6.
+
+For another server, add `--endpoint` and `--api-key`:
 
 ```bash
-callprobe run --suite callprobe-demo --model qwen2.5:7b \
-  --failed-from callprobe-demo/baseline.json --pad 0 --repeats 1 \
-  --max-tokens 4096 --out callprobe-demo/retry.json
+callprobe run --suite callprobe-demo --model gpt-4.1-mini \
+  --endpoint https://api.openai.com/v1 --api-key "$OPENAI_API_KEY"
 ```
 
-Want to help test? [Report your first-run experience](https://github.com/Eladhirsh/callprobe/issues/new?template=first-run-feedback.yml):
-which endpoint/model you used, whether the walkthrough worked, and one thing
-that confused you. You can also import your own [OpenAPI file](#bring-your-own-tools).
+`--api-key` falls back to `API_KEY`, then `OPENAI_API_KEY`.
 
-### Check endpoint setup (unreleased 0.9.0rc3.dev0)
+## Help test it
 
-With this development checkout installed, check your suite and endpoint before
-starting a benchmark:
+Callprobe is looking for first users. If you try it, please
+[report your first-run experience](https://github.com/Eladhirsh/callprobe/issues/new?template=first-run-feedback.yml):
+which endpoint and model you used, whether the quickstart worked, and one
+thing that confused you. Short answers are useful.
 
-```bash
-callprobe doctor --model qwen2.5:7b --suite callprobe-demo
-callprobe doctor --model your-model --endpoint http://localhost:8080/v1 --format json
-callprobe doctor --config callprobe.yaml --format json
-```
+## Test your own tools
 
-`doctor` validates the suite locally, then uses `GET /models` to check endpoint
-access and look for the exact model ID. It may also read public server metadata.
-It never generates tokens, downloads models, executes tools, follows redirects,
-or writes files. Authentication uses `--api-key`, `API_KEY`, or `OPENAI_API_KEY`,
-in that order; response bodies, endpoint URLs, and credentials are omitted from
-endpoint diagnostics. `--timeout` sets a positive HTTP operation timeout
-(default 5 seconds), not a total command deadline.
-
-A missing model or unsupported model-listing route is a warning: some providers
-accept aliases or restrict their catalogs. A catalog match verifies discovery,
-not tool-calling support or model quality. Run a small suite to test those.
-Exit codes are `0` for completed checks (possibly with warnings), `1` for endpoint
-failures, and `2` for invalid local input or suites. JSON includes `status`,
-individual `checks`, `model_listed`, and `generation_tested: false`.
-
-`doctor --config FILE` reads the same explicit YAML file as `run`. It uses the
-file's model, endpoint, and suite defaults; explicit CLI flags take precedence.
-A suite path from the file resolves relative to that file, while a CLI suite
-path resolves relative to the current directory. The whole file must be valid,
-including settings that doctor does not use. Credentials remain outside the file.
-
-Run-only settings such as `out`, retries, padding, and `request_timeout` do not
-change doctor's behavior or cause writes. Its discovery timeout remains 5 seconds
-unless `--timeout` is supplied. Use `run --config FILE --dry-run` to validate the
-planned experiment and preview coverage without endpoint access.
-
-### Try the workflow offline (0.9.0rc1)
-
-With 0.9.0rc1 or later installed, try recorded results
-without a model or endpoint:
-
-```bash
-callprobe demo --out callprobe-offline-demo
-```
-
-The command writes two historical runs, their matching 18-case suite, and a
-walkthrough with commands to compare and explain failures. The candidate
-passed 11/18 cases versus the baseline's 5/18, but regressed two previously
-passing cases. The regression gate therefore exits `1`, as intended.
-
-These are [recorded observations](results/github-issues/README.md), not a
-fresh execution or a current model ranking. `demo` needs no network after
-installation. This command is not yet available in the published 0.8.0 package.
-
-### Compare tool contracts (0.9.0rc2)
-
-Use `compare-contracts` when testing a schema or tool-description change against
-**the same model and prompts**. This is an informational experiment report;
-`compare --fail-on-regression` still requires the same suite hash.
-
-Try a complete, offline example with historical Hermes3 results:
-
-```bash
-callprobe demo --contracts --out contract-demo
-callprobe compare-contracts contract-demo/baseline.json contract-demo/candidate.json \
-  --suite-a contract-demo/nested --suite-b contract-demo/flat --format markdown
-```
-
-The flat contract improved 27 observations and regressed two, despite its
-higher aggregate success rate (38/54 versus 13/54). These are frozen synthetic
-mail cases, not a MailOps integration test or a general ranking.
-
-For your own contracts, preserve both suite directories and run each with the
-same model, endpoint, padding, repeats, temperature, and token budget:
-
-```bash
-callprobe run --suite nested-suite --model qwen2.5:7b --pad 0 --repeats 3 --out nested.json
-callprobe run --suite flat-suite --model qwen2.5:7b --pad 0 --repeats 3 --out flat.json
-callprobe compare-contracts nested.json flat.json --suite-a nested-suite --suite-b flat-suite --format json
-```
-
-The command verifies each run's suite hash, scoring version, planned coverage,
-case IDs, prompts, expected tool choices, tool order, distractors and recorded
-model settings. It rejects incomplete or targeted runs. It reports errors and
-truncations, excludes request errors on either side from paired scores, and
-lists changed tools/assertions plus every improvement and regression.
-Request-timeout differences are disclosed because they can affect errors.
-Unknown provenance stays unknown; matching a model tag does not verify weights.
-
-**Review changed assertions for equivalent meaning.** The command does not
-prove semantic equivalence or rescore responses. It exits zero for a valid
-report even when regressions exist; there is no gate option. After choosing a
-contract, record a new baseline and use the ordinary same-suite CI gate.
-This command requires `0.9.0rc2` or later.
-
-## A concrete regression example
-
-On our saved 18-case GitHub API suite, Qwen3 8B passed 11 cases versus
-Qwen2.5 7B's 5, but regressed on two previously passing cases. The regression
-gate correctly failed despite the higher overall score. These are individual
-local runs, not a general model ranking. [Read the comparison report](results/github-issues/comparison.md)
-or the [conditions and raw results](results/github-issues/README.md).
-
-## September 2026 core smoke test
-
-[Nine local models, 450 observations](results/2026-09-30-smoke/README.md) on the
-current 50-case core suite: Qwen 3 passed 42/50 versus Qwen 2.5's 38/50, but
-regressed two previously passing cases. The [matched CI gate fails](results/2026-09-30-smoke/qwen-comparison.md)
-despite the higher total. Raw results, coverage, model digests, and source
-provenance are included. These single-repeat runs are integration findings,
-not a general model ranking.
-
-## October 2026 repeated validation
-
-[Nine models, 1,386 recorded observations](results/2026-10-01-rc3-model-validation/README.md)
-cover two core repeats and mail tools at three padding settings. Qwen3 scored
-85/100 versus Qwen2.5’s 79/100 on core, but five matched observations regressed,
-so the CI gate fails. The runs contain zero request errors and seven token-limit
-truncations, all counted as failures. The archive includes raw results, frozen
-suites, model identities, JUnit exports, and offline report/resume checks.
-These local Ollama configurations are integration evidence, not a general ranking.
-
-## Historical core benchmark
-
-The output below is an archived suite-v1 run, not the expected output of the
-six-case quickstart or a current model leaderboard.
-
-```
-model            qwen3:8b
-endpoint         http://localhost:11434/v1
-tasks scored     408
-
-                 selection   schema     args      success
-  overall         93.1%   93.6%   89.0%   88.7%
-  type-lenient    93.1%   93.6%   89.0%   88.7%
-
-  tool count sweep
-    +0   distractors   success  89.2%   selection  95.1%   sd  1.4
-    +8   distractors   success  90.2%   selection  94.1%   sd  1.4
-    +16  distractors   success  87.3%   selection  90.2%   sd  5.5
-    +24  distractors   success  88.2%   selection  93.1%   sd  2.4
-
-  by category
-    abstain     88.6%  (n=132)
-    args        87.5%  (n=144)
-    depth       97.2%  (n=36)
-    select      86.1%  (n=72)
-    sequence    91.7%  (n=24)
-
-  cost per success   1568 tokens   14.57 s
-```
-
-That is a real run: 34 tasks, 4 tool-count levels, 3 repeats, 408 requests
-against qwen3:8b. Full results for every model tested are in
-[`LEADERBOARD.md`](LEADERBOARD.md) and the raw per-task JSON in `results/`.
-
-<!-- TODO: terminal recording of a run here -->
-
-## Results so far
-
-The table below preserves the original suite-v1 runs. For the v0.5.0
-scoring rules and a matched real-model baseline/repeat, see the
-[release validation report](results/v0.5.0/README.md).
-
-| model | success | type-lenient | abstain | tokens/success |
-| --- | --- | --- | --- | --- |
-| qwen3:8b | 88.7% | 88.7% | 88.6% | 1568 |
-| llama3.1:8b | 32.1% | 51.2% | 9.8% | 3441 |
-
-<!-- TODO: chart image here, e.g. the tool-count curve across models -->
-
-Two findings worth reading past the ranking:
-
-**Abstention is the gap that costs money.** Asked eleven questions with no
-correct tool to call, qwen3:8b declined correctly 88.6% of the time.
-llama3.1:8b declined correctly 9.8% of the time. Asked about a return
-policy, it called `issue_refund`; asked to change an email address, it
-called `update_shipping_address`. Nine times in ten it acted when it should
-have asked a question. These cases illustrate why abstention needs explicit tests.
-
-**Type coercion masks a real capability.** 19.1% of llama3.1:8b's calls
-were computed correctly and serialized wrong: `"1299"` instead of `1299`,
-an array delivered as a JSON-encoded string. Score those leniently (cast
-strings to the type the schema declares, never touch the value) and success
-jumps from 32.1% to 51.2%. Lenient scoring identifies recoverable type
-mismatches; it does not establish whether the model or serving layer caused
-them. `callprobe` reports both numbers (see `type-lenient` in the output above and
-the full row in the table).
-
-## Why three scores instead of one
-
-`selection`, `schema`, and `args` fail for different reasons, and the gap
-between them is the whole point.
-
-- **selection** picked the right tool, or correctly called nothing
-- **schema** the arguments validate against the tool's JSON Schema
-- **args** the values are actually right
-
-A model with high selection and schema but low args is the dangerous case.
-It emits well-formed calls with wrong values, which pass every check most
-people currently run. That is the failure that reaches production.
-
-Alongside strict scoring, every result also gets a **lenient** pass: string
-values are cast to the type the schema declares (`"10"` → `10`), then
-rescored. Lenient can only rescue a strict failure, never create one. The
-gap between the two numbers tells you how much of a model's failure is
-serialization rather than reasoning.
-
-A `call` expectation requires **exactly one call**. Returning a correct call
-alongside extra calls fails both strict and lenient scoring. Truncated
-responses also fail, including responses with no calls: reaching the token
-limit is not evidence of deliberate abstention. Selection, schema, and
-argument scores still diagnose the selected call independently.
-
-**Starting with 0.9.0rc1:** new run files record `scoring_version: 3`.
-Published Callprobe 0.8.0 uses scoring version 2. Version 3 fixes lenient
-integer coercion: `"4225.9"` and `"4225.00000000000001"` stay incorrect
-instead of being truncated or rounded to `4225`. Exact integral strings
-such as `"4225.0"` and `"4.225e3"` still coerce, and large integers retain
-their exact value. Nonfinite numeric strings and integer values requiring
-more than 4300 decimal digits remain strings. Stringified arrays and objects
-use the same numeric safety limits. Strict scoring is unchanged.
-
-Historical files retain their recorded verdicts and remain readable; the
-offline demo still uses its original version-2 evidence. Complete, compatible
-version-2 runs can still be gated against each other. Gates, resume, and
-`--failed-from` refuse mixed scoring versions. Leaderboards also reject mixed
-versions unless `--allow-mixed` is supplied.
-
-When upgrading to version 3, rerun both baseline and candidate using the same
-suite and comparison settings, writing new files rather than replacing the
-old evidence. Corrected precision can raise or lower lenient scores; changing
-a saved file's version label is not a migration.
-
-## What it measures that other harnesses do not
-
-**Abstention.** Roughly a third of the suite is tasks where the correct
-behavior is to call nothing and ask a question. Models vary enormously here
-(see Results above), and almost nobody tests it.
-
-**Tool count.** Accuracy with 5 tools tells you little about accuracy with
-25. `--pad` adds plausible but irrelevant tools from a distractor pool and
-reports the curve. Tool order is shuffled per run, because position bias is
-real and should not be allowed to hide. Tasks can declare
-`exclude_distractors` for tools that would make the expected answer wrong.
-
-**Conversation depth.** Turn one accuracy is not turn nine accuracy.
-
-**Variance.** Tool calling is not deterministic even at temperature 0.
-`--repeats` runs each task more than once and reports a standard deviation,
-so you get a number with an error bar instead of a number. At temperature 0
-the repeats mostly aren't re-rolling the model's reasoning, they're
-re-rolling the shuffled order tools appear in, so the standard deviation you
-see per tool-count level is mostly a position-sensitivity measurement, not
-noise.
-
-Every success rate also gets a 95% bootstrap confidence interval, shown in
-the text report and as a column in the leaderboard table. The resampling
-unit is the task id, not the individual result: repeats of the same task
-are correlated with each other rather than independent trials, so
-resampling individual results would understate the real uncertainty. A
-category with only a couple of task templates will show a wide interval,
-sometimes a degenerate one, and that is the interval telling you honestly
-that there isn't enough data yet, which is also why growing the thin
-categories matters more than chasing a tighter number on the current ones.
-
-**Cost per success.** Tokens and seconds divided by *correct* calls. Raw
-latency flatters models that fail quickly, and rewards models that fail
-cheaply over models that succeed expensively. In the table above,
-llama3.1:8b is faster per request but costs more than twice as much per
-usable call.
-
-## callprobe vs. the Berkeley Function Calling Leaderboard
-
-[BFCL](https://gorilla.cs.berkeley.edu/leaderboard.html) is the standard
-reference for tool-calling benchmarks, and it does two things `callprobe`
-does not try to: scale (thousands of examples across many languages and
-call styles) and model coverage (a maintained public leaderboard with
-broad submissions, updated as new models ship). If you want to know how a
-model ranks against the field on a shared, independent benchmark, BFCL is
-the better source.
-
-`callprobe` is a different tool for a different question: not "how does
-this model rank," but "does this model reliably call *my* tools." That
-shows up in what it measures that BFCL does not: your own tool schemas
-instead of a fixed public set, abstention as a first-class category, a
-tool-count curve that shows where a model's accuracy actually falls apart
-as you add tools, cost per success instead of raw latency, and lenient
-type scoring that separates a serialization bug from a reasoning failure.
-Run both. They answer different questions.
-
-## Why your tool-calling numbers are probably wrong
-
-Four ways a tool-calling evaluation lies to you. All four were caught by
-running this harness against real models and noticing a number that made
-no sense, not by reasoning about it in advance.
-
-**Truncation scored as incapability.** Reasoning models spend tokens
-thinking before they emit a call. If the budget runs out mid-thought, the
-response contains no tool call, and a harness that does not check
-`finish_reason` records that as a model that cannot call tools. Measured on
-qwen3:8b over the same twelve tasks: 66.7% success at a 512 token budget,
-91.7% at 4096. Nothing about the model changed. Worse, the bias is
-strongest on the hardest tasks, because hard tasks think longer, so the
-measurement degrades exactly where it matters. `callprobe` reports a
-`truncated` count and names truncation as its own failure.
-
-**Type coercion masks correct reasoning.** Covered above: 19.1% of one
-model's failures were formatting, not reasoning. Reported separately as a
-`type-lenient` score rather than silently folded into either number.
-
-**Padding that invalidates the task.** Adding irrelevant tools is how you
-measure degradation with tool count. But if one of those tools genuinely
-answers the question, an abstention task quietly stops being an abstention
-task. An early sweep marked a model wrong for calling
-`search_knowledge_base` on a policy question. The model was right and the
-padding was the bug.
-
-**Underspecified argument semantics.** "Next week" has no fixed start day.
-An `end_date` with no stated inclusivity has two correct answers. Every
-ambiguity left in a prompt or a tool description becomes a scoring error
-you will misattribute to the model.
-
-The general lesson: at small suite sizes, a tool-calling benchmark measures
-its author as much as the model. That is why the failure digest prints what
-actually happened, not just a rate. The failures worth reading first are
-usually your own.
-
-## Bring your own tools
-
-### Start from an OpenAPI document (since 0.6.0)
-
-Import a local OpenAPI 3.0/3.1 YAML or JSON file:
+Import an OpenAPI 3.0 or 3.1 document, write the expected behavior for each
+drafted task, then validate and run:
 
 ```bash
 callprobe init --from-openapi openapi.yaml --out my-suite
@@ -479,430 +85,21 @@ callprobe validate --suite my-suite
 callprobe run --suite my-suite --model qwen2.5:7b --pad 0 --out baseline.json
 ```
 
-The importer keeps `path`, `query`, `headers`, `cookies`, and `body` arguments
-separate, resolves local references, and writes an operation map and diagnostics
-to `import-report.json`. Unsupported operations fail the import by default;
-`--skip-unsupported` explicitly omits them. Use `--tag TAG` to select operations.
-Existing suite files are protected unless you pass `--force`.
+You can also start from an OpenAI-format `tools.json` with
+`callprobe init --from tools.json`, or write the YAML by hand. See
+[Testing your own tools](docs/own-tools.md).
 
-Generated tasks are commented drafts; they do not invent correct answers from
-the schema. A suite with no active tasks cannot be validated as ready to run.
+## Catch regressions in CI
 
-In 0.9.0rc1, validation checks every tool and
-distractor's JSON Schema, including unused tools. Duplicate names within a
-bundle or the distractor pool are rejected. Expected-argument checks resolve
-local references offline; external or unresolvable references produce a
-diagnostic when encountered, without fetching them. Validation checks the
-authored expectations, not every possible argument or reference path.
-
-Try the [six-test support API walkthrough](examples/openapi/README.md) for a
-complete example with human-authored expectations. The imported API is never
-executed, and no API credentials are needed.
-
-For a real API contract, try the [GitHub issue and comment evaluation](examples/github-issues/README.md):
-18 authored cases against three operations from a pinned copy of GitHub's
-official OpenAPI specification. It covers identifiers, pagination, comment
-text, conversation corrections, and abstention without executing GitHub calls.
-
-`--from-openapi` is available since 0.6.0. Install it with
-`uv tool install callprobe@latest`. Earlier versions only support `--from tools.json`.
-
-### Try a bundled example (since 0.8.0)
-
-`callprobe examples` and `callprobe init --example NAME` ship the OpenAPI
-documents and human-authored tasks above *inside the installed package*, so
-setup and validation need no checkout of this repository or network access.
-Running the suite requires a model endpoint; the command below assumes
-`qwen2.5:7b` is available in Ollama at `http://localhost:11434/v1`:
+Save a baseline, then fail the build when a change makes a previously passing
+case fail:
 
 ```bash
-callprobe examples
-callprobe init --example support --out my-support-suite
-callprobe validate --suite my-support-suite
-callprobe run --suite my-support-suite --model qwen2.5:7b --pad 0 --repeats 1 --out my-support-suite/baseline.json
-```
-
-Unlike `--from-openapi`, `--example` writes a suite with its tasks already
-active; there is nothing to uncomment first. Available since 0.8.0; install
-with `uv tool install callprobe@latest`.
-
-Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
-covering search, retrieval, draft/send, missing identifiers, and literal text.
-Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
-cases and four distractors without downloading or copying repository files.
-It is not a MailOps integration.
-
-### Write a suite directly
-
-A suite is three YAML files. Drop your real tool schemas into `tools.yaml`,
-write tasks against them, and run.
-
-```yaml
-# tasks.yaml
-tasks:
-  - id: args-partial-refund
-    category: args          # select | abstain | args | depth | sequence
-    bundle: support
-    messages:
-      - role: user
-        content: >
-          Order ORD-991003 came to $84.50 and one of the two mugs was
-          cracked. Refund me for just the broken one.
-    expect:
-      type: call
-      tool: issue_refund
-      args: {order_id: ORD-991003, reason: damaged}
-      arg_checks:
-        - {path: amount_cents, op: eq, value: 4225}
-```
-
-`args` is exact match on the keys you list. `arg_checks` is for everything
-else: `eq`, `neq`, `in`, `contains`, `gte`, `lte`, `matches`, `exists`,
-`absent`, over dotted paths like `address.postal_code`. Anything you do not
-assert is judged by the schema alone.
-
-For a task where calling nothing is correct:
-
-```yaml
-    expect:
-      type: no_call
-```
-
-Add `exclude_distractors: [tool_name]` to a task if padding could hand the
-model a tool that would make the expected answer wrong.
-
-Already have your tools as an OpenAI-format `tools.json`? Scaffold a suite
-from it instead of writing `tools.yaml` by hand:
-
-```bash
-callprobe init --from tools.json --out my-suite
-```
-
-This writes `tools.yaml`, an empty `distractors.yaml`, `suite.yaml`, and a
-`tasks.yaml` with one commented example call task per tool and a `no_call`
-stub, ready to uncomment and fill in.
-
-Once you have tasks, check them before spending a single token on a model:
-
-```bash
-callprobe validate --suite my-suite
-```
-
-It checks that every key and value you asserted in `args` or `arg_checks`
-actually exists and is legal for the tool's schema, prints each problem,
-and exits nonzero if there are any.
-
-## Usage
-
-```bash
-# a single model
-callprobe run --model llama3.1:8b --pad 0,8 --repeats 3 \
-  --max-tokens 4096 --out results/llama31-8b.json
-
-# any OpenAI-compatible endpoint
-callprobe run --model gpt-4.1-mini --endpoint https://api.openai.com/v1 \
-  --api-key $OPENAI_API_KEY
-
-# build the comparison table, name the files explicitly.
-# a glob like results/*.json will pick up old or archived runs
-# and silently corrupt the table.
-callprobe leaderboard results/llama31-8b.json results/qwen3-8b.json \
-  > LEADERBOARD.md
-```
-
-`--api-key` falls back to the `API_KEY` environment variable, then
-`OPENAI_API_KEY`, if it's not passed directly. `--retries` (default 3)
-controls how many times a 429, a 5xx, or a connection or timeout error is
-retried with exponential backoff before it's recorded as an error rather
-than a model failure; those retries honor a `Retry-After` header when the
-server sends one.
-
-In 0.9.0rc2, use `--request-timeout 300` to allow
-longer waits for slow local models, or set `request_timeout: 300` in a YAML
-run config. The default is 120 seconds. Values must be positive and finite.
-This configures HTTPX connect/read/write/pool operation timeouts; it is not
-a total wall-clock deadline for a request or a run. Retries can add more time.
-The effective value is included in dry-run plans and saved run metadata;
-historical files leave it unknown. Changing a transport timeout does not
-change scoring or make otherwise compatible baselines incompatible.
-
-`sweep --request-timeout 300` forwards the same setting to each model run.
-The GitHub Action in this checkout exposes the same `request-timeout` input.
-`sweep --timeout` controls the entire subprocess step (default 1800
-seconds); increase that separately when a whole suite needs more time.
-
-`--max-tokens` defaults to 2048. Reasoning models can need more (see the
-truncation section above).
-
-Starting with 0.9.0rc1, `run` and the GitHub Action default to `--pad 0`:
-a baseline without distractors. Additional counts are explicit, for example
-`--pad 0,8` on the core suite or `--pad 0,2,4` on the mail example. The requested
-count must fit every selected task after exclusions and tool-name collisions;
-impossible counts fail before endpoint access instead of silently sending fewer
-tools. The core suite supports up to 15 distractors for every task.
-
-Earlier versions defaulted to `0,8,16` and could silently cap padding at the
-available pool size. Collect a new baseline with valid, explicit counts when
-migrating such experiments; do not relabel old observations.
-
-For a controlled multi-model sweep, use already-served models (0.9.0rc1):
-
-```bash
-callprobe sweep --models qwen2.5:7b llama3.1:8b \
-  --out /tmp/callprobe-model-plan --dry-run
-callprobe sweep --models qwen2.5:7b llama3.1:8b \
-  --out /tmp/callprobe-model-results
-```
-
-The runner plans requests first, uses a fresh output directory, and saves a
-manifest, per-model evidence, and a leaderboard from that sweep alone.
-Use `--suite` for your own tools; see the [mail sweep guide](examples/mail-sandbox/README.md#sweep-several-local-models).
-This command is available starting with 0.9.0rc1; it is
-not included in PyPI 0.8.0. It does not download models. The older `scripts/overnight.sh` is a legacy
-convenience script that pulls models and combines files in `results/`.
-
-Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted
-providers. `--quant` is a free-text label so quantizations of the same
-model stay distinguishable in the leaderboard.
-
-`--concurrency N` runs requests through a thread pool instead of one at a
-time. The output file's result order stays the same either way. With
-`--out`, results are written to disk after every completed request, and
-`--resume PATH` skips any (task, pad, repeat) combination already in that
-file, so a run that died partway (or was stopped with Ctrl-C, which still
-produces a report from whatever finished) can pick back up without paying
-for work already done:
-
-```bash
-callprobe run --model llama3.1:8b --concurrency 4 --out results/run.json
-# if it dies partway through, or you stop it:
-callprobe run --model llama3.1:8b --concurrency 4 \
-  --resume results/run.json --out results/run.json
-```
-
-Resume requires matching model, endpoint, temperature, token budget,
-quantization, detected server version, suite content, and scoring version.
-You can add padding levels or repeats. Request errors are retried; completed
-observations are reused. Missing files or incompatible checkpoints fail
-before any model requests. Checkpoints are replaced atomically so a failed
-write leaves the previous checkpoint intact.
-
-### Save run settings (since 0.8.0)
-
-Use an explicit YAML configuration to repeat an experiment without copying
-all its flags. For example, save this as `callprobe.yaml` beside your
-`my-support-suite` directory:
-
-```yaml
-model: qwen2.5:7b
-endpoint: http://localhost:11434/v1
-suite: my-support-suite
-pads: [0]
-repeats: 1
-max_tokens: 4096
-```
-
-```bash
-callprobe run --config callprobe.yaml --out baseline.json
-callprobe run --config callprobe.yaml --model qwen3:8b --out candidate.json
+callprobe run --suite my-suite --model qwen2.5:7b --out candidate.json
 callprobe compare baseline.json candidate.json --fail-on-regression
 ```
 
-The endpoint must be running with the requested model available. Explicit
-CLI flags override file settings, and omitted settings keep the normal CLI
-defaults. There is no automatic configuration discovery. `model` must be
-provided in the file or with `--model`.
-
-Accepted keys are `model`, `endpoint`, `suite`, `pads` (an integer list),
-`repeats`, `temperature`, `max_tokens`, `quant`, `notes`, `retries`,
-`concurrency`, and `out`; 0.9.0rc2 also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
-types, and invalid numeric values are rejected even when a CLI flag would
-override them. `suite` and `out` in YAML resolve relative to the config
-file; paths supplied on the CLI remain relative to your working directory.
-The output cannot overwrite the configuration file.
-
-Keep credentials in `API_KEY`/`OPENAI_API_KEY` or use `--api-key`; credential
-fields are not accepted in YAML. Targeting, resume, and CI gate options
-remain explicit CLI flags. Saved results record the effective experiment
-settings, and the existing resume and suite-matching checks still apply.
-
-Available since 0.8.0. Install with `uv tool install callprobe@latest`.
-
-Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
-covering search, retrieval, draft/send, missing identifiers, and literal text.
-Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
-cases and four distractors without downloading or copying repository files.
-It is not a MailOps integration.
-
-### Preview a run before spending tokens (0.9.0rc1)
-
-In the unreleased development version, both `run` and `run --dry-run` validate
-the complete suite before endpoint access, including unused distractors and
-expected arguments. Invalid suites exit with code `2` without changing output
-files. Run `callprobe validate --suite YOUR_SUITE` for detailed diagnostics
-(or `callprobe validate` for the bundled suite).
-
-`--dry-run` merges `--config` and CLI flags, resolves `--suite`, and applies
-`--task`/`--failed-from` selection, then prints the resulting coverage and a
-planned request count and completion-token cap &mdash; it never probes the endpoint, never
-calls the model, and never writes `--out`:
-
-```bash
-callprobe run --config callprobe.yaml --model qwen3:8b --dry-run
-```
-
-The plan reports the model, suite label and hash, full vs. targeted scope
-(selected task ids or the full task count), the requested distractor counts,
-repeats, total planned requests (`tasks * pads * repeats`), temperature,
-`max_tokens`, concurrency, and `max_completion_tokens`, the request count
-times `max_tokens` &mdash; an upper bound a model could reach if every
-response used its full budget. This excludes prompt tokens and retries; it
-is not a billing estimate. Requested distractor counts must fit every selected task; impossible counts
-are rejected before endpoint access. `--format json` emits
-the same plan as JSON with `"dry_run": true`. It never prints API keys,
-endpoint credentials, the endpoint URL, prompts, or tool arguments, and it
-reports no benchmark percentages, since no model was called. `--failed-from`
-with no failures still prints its existing no-op message and exits `0`
-without producing a plan. `--dry-run` cannot be combined with `--resume` or
-`--fail-under`, because a dry run neither resumes nor produces scored results; this is
-rejected before any file is read. This flag is not yet available in the
-published 0.8.0 package.
-
-### Targeted debug reruns (since 0.8.0)
-
-`--task ID` (repeatable) runs only those exact task ids instead of the whole
-suite, using the current `--pad`/`--repeats`/model settings:
-
-```bash
-callprobe run --model llama3.1:8b --task args-partial-refund --task abstain-chitchat
-```
-
-`--failed-from RESULTS.json` reruns every task id that had a strict failure,
-truncation, or request error anywhere in that saved run (it can be a partial
-or interrupted run), deduplicated, in the suite's own task order. It does
-not reuse or merge the saved observations, only the task ids; only the
-current CLI settings decide how those tasks are re-probed. If nothing in the
-source failed, it prints a no-op message and exits `0` without making any
-endpoint request or touching `--out`. `--task` and `--failed-from` are
-mutually exclusive, and neither can be combined with `--fail-under`:
-targeted runs are for debugging, not CI gating. `--out` is rejected if it
-would alias the `--failed-from` file, including via a symlink or hardlink,
-so the evidence a rerun is diagnosing can never be overwritten. Unknown task
-ids and a `--failed-from` file with an incompatible or missing suite/scoring
-provenance are rejected before any endpoint probing, client creation, or
-output write.
-
-A targeted run's result file records which task ids were selected
-(`selected_task_ids`) alongside the full suite's ids (`task_ids`), and
-`--resume` only reuses a checkpoint from the same selection (or the same
-full-suite run) &mdash; a full run and a `--task`-scoped run of the same
-suite cannot resume each other. `callprobe run --format json`,
-`callprobe run` (text), and `callprobe compare` all label targeted runs
-plainly so a debug rerun is never mistaken for full benchmark coverage;
-`callprobe compare` without a gate flag proceeds with a warning, but
-`--fail-on-regression`/`--policy` and `callprobe leaderboard` (even with
-`--allow-mixed`) both refuse a targeted run outright. `callprobe explain`
-works the same way against a targeted run's results, since it only needs
-the recorded suite hash to match.
-
-Results include every structured tool call (`calls`), its ID, parsed and raw
-arguments, parse errors, and `finish_reason`. This evidence is retained for
-both passing and failing responses. Review result files before sharing:
-tool arguments can contain application data.
-
-`callprobe leaderboard` refuses to build a table across runs from
-different suite versions or content, since the numbers would not be
-comparable. Pass `--allow-mixed` to build it anyway.
-
-`callprobe compare A.json B.json` diffs two runs: per-category success and
-type-lenient deltas, then which task ids went from passing every time they
-ran to failing at least once, and vice versa. Useful for "did this change
-help" between two runs of the same model, or between two models on the
-same suite:
-
-```bash
-callprobe compare results/before.json results/after.json
-```
-
-It warns if the two runs' suite hashes differ, since part of the delta
-could then be the suite changing rather than the model.
-
-To save a readable report for review (0.9.0rc1):
-
-```bash
-callprobe compare results/before.json results/after.json --format markdown > comparison.md
-```
-
-Markdown includes scored observation counts, request errors, category deltas,
-and task changes. Categories without scored observations show `n/a`.
-Targeted-run and provenance warnings remain in the saved report. Add
-`--fail-on-regression` or `--policy` to include a CI verdict; without one,
-the report says **not requested**. A failing gate still writes its report
-and exits `1`, so shell scripts should preserve that status.
-
-To enforce a baseline in CI:
-
-```bash
-callprobe compare results/baseline.json results/candidate.json --fail-on-regression
-callprobe compare results/baseline.json results/candidate.json \
-  --policy callprobe-policy.yaml --format json
-```
-
-The default gate rejects any previously passing `(task, pad, repeat)` case
-that now fails and allows no request errors in either run. Both files must
-have matching suite hashes and scoring versions, identical task/pad/repeat
-coverage, and every planned result present. Different models and generation
-settings are allowed: evaluating those changes is the purpose of comparison.
-Incomplete, duplicate, legacy, or incompatible inputs cannot pass the gate.
-
-A policy can set application-specific requirements (all rates are 0–1):
-
-```yaml
-fail_on_regression: false
-critical_tasks: [args-partial-refund, abstain-missing-identifier]
-min_success: 0.80
-min_category_success:
-  abstain: 0.95
-max_success_drop: 0.02
-max_error_rate: 0.01
-```
-
-Critical tasks must pass every candidate case, even if they failed in the
-baseline. Success-drop comparisons use only cases with non-error results in
-both files; candidate minimums use all its non-error results. Error limits
-apply to each run separately. With no matched scored cases the gate fails.
-Policies reject unknown fields, unknown task/category targets, and invalid
-rates. Development builds also reject duplicate keys (including nested category
-thresholds) and YAML merge keys, so a later entry cannot silently weaken a
-threshold. Use explicit unique string keys. `--fail-on-regression` overrides a
-policy's `false` setting.
-
-Exit codes are `0` for a passing gate, `1` for policy violations, and `2` for
-invalid inputs. Without a gate flag, `compare` remains an informational
-comparison and supports older files. These gates apply deterministic
-thresholds; they do not claim statistical significance for a change.
-
-## CI mode
-
-Development summaries distinguish **observations scored** (each task/pad/repeat
-result without a request error) from **unique tasks scored** (distinct task IDs
-with at least one scored result). JSON keeps the existing `n` observation count
-and adds `unique_tasks_scored`. A task with only request errors is excluded from
-both; a truncated response remains a scored failure. Repeats are not independent
-new tasks. Historical text output above predates these labels.
-
-`--format json` prints the summary (the same numbers as the text report)
-as machine-readable JSON instead, and `--fail-under FLOAT` exits 1 when
-overall success falls below that fraction:
-
-```bash
-callprobe run --model llama3.1:8b --format json --fail-under 0.7
-```
-
-When `--fail-under` is set, incomplete runs and request errors also fail CI,
-even if the success rate of the remaining results exceeds the threshold.
-
-`action.yml` at the repo root wraps this as a composite GitHub Action:
+A GitHub Action is included:
 
 ```yaml
 - uses: Eladhirsh/callprobe@v0.8.0
@@ -912,486 +109,96 @@ even if the success rate of the remaining results exceeds the threshold.
     fail-under: '0.7'
 ```
 
-It installs callprobe, runs it, and writes the JSON summary to the job's
-step summary. `suite` and `api-key` inputs are optional; leave `suite`
-unset to use the packaged core suite.
+See [Comparing runs and CI gates](docs/comparing-and-ci.md) for policies,
+critical tasks, and JUnit export.
 
-The action installs Callprobe from the selected action revision. Its
-`baseline` input enables regression gating; `policy` optionally supplies a
-YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
-For example, after checking out your repository and starting your endpoint:
+## What it has found
 
-```yaml
-- uses: Eladhirsh/callprobe@v0.8.0
-  with:
-    model: your-model
-    endpoint: http://localhost:11434/v1
-    baseline: results/baseline.json
-    policy: callprobe-policy.yaml
-    pad: '0,8'
-    repeats: '3'
-    max-tokens: '4096'
-```
+Results from local runs, with raw data in [`results/`](results/):
 
-Baseline inputs require v0.5.0 or newer. Keep the baseline separate from the action's
-`callprobe-results.json` output. The action also writes
-`callprobe-comparison.json` and includes it in the job summary.
+- **Acting when it should ask.** On questions where no tool applied,
+  `llama3.1:8b` declined correctly 9.8% of the time. Asked about a return
+  policy, it called `issue_refund`.
+- **Right values, wrong types.** 19.1% of `llama3.1:8b` calls had correct
+  values serialized wrong, such as `"1299"` instead of `1299`. Callprobe
+  reports a strict score and a type-lenient score so you can see the difference.
+- **Truncation that looks like incapability.** `qwen3:8b` scored 66.7% with a
+  512-token budget and 91.7% with 4096 on the same tasks. Callprobe counts
+  truncated responses separately.
+- **Higher score, new failures.** `qwen3:8b` beat `qwen2.5:7b` overall but
+  broke cases that `qwen2.5:7b` passed, so the regression gate failed.
 
-In 0.9.0rc1, the Action additionally writes
-`callprobe-comparison.md` and shows that readable report in the job summary,
-with raw run output collapsed below its heading. Both comparison formats
-come from the same saved results and policy; rendering does not call the
-model again. A `fail-under` violation still produces the baseline comparison
-before the Action exits with failure. Missing baseline/policy files and
-paths that alias generated outputs are rejected before model requests.
-Only reports produced by the current invocation appear in its summary.
+More in [Findings and methodology](docs/findings.md) and
+[`LEADERBOARD.md`](LEADERBOARD.md). These are integration findings from
+specific local setups, not a general model ranking.
 
-## The failure digest
+## Agent workflow (experimental)
 
-Every run ends with the specific failures, not just the rates. These are
-worth reading, and they are frequently upstream bugs rather than model
-weaknesses. If a server drops `additionalProperties`, mangles nested
-objects, or returns arguments as a string where the schema says integer,
-you will see it here first, including what the model actually said, with
-any reasoning trace stripped, when it produced no call at all.
+`callprobe agent` runs a model against mock tools across multi-step scenarios
+and checks two things separately: whether it made the expected calls, and
+whether its final message accurately describes what those calls returned. In
+the first pilot, both tested models reported success after refunds that had
+failed. Account checks use [Didyoureally](packages/didyoureally/README.md),
+which lives in this repository.
 
-## Explaining a saved run (since 0.7.0)
-
-Install or upgrade with `uv tool install callprobe@latest`.
-
-Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
-covering search, retrieval, draft/send, missing identifiers, and literal text.
-Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
-cases and four distractors without downloading or copying repository files.
-It is not a MailOps integration. This also
-replaces an older version-pinned installation.
-
-`callprobe explain RESULTS.json --suite DIR` turns a results file back into
-a debugging session, offline: no model calls, and it never modifies the
-results file or the suite. It requires the same suite the run was scored
-against; a missing or mismatched suite hash is a clear, non-zero-exit error
-rather than a diagnosis built on a suite that has since changed.
-
-Using the committed GitHub issues example and its recorded Qwen3 8B run:
-
-If `github-issues-suite` already exists from the walkthrough, reuse it and
-skip the first two commands.
+This workflow is only available from source:
 
 ```bash
-callprobe init --from-openapi examples/github-issues/openapi.json --out github-issues-suite
-cp examples/github-issues/tasks.yaml github-issues-suite/tasks.yaml
-callprobe explain results/github-issues/qwen3-8b.json --suite github-issues-suite
+git clone https://github.com/Eladhirsh/callprobe.git && cd callprobe
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]" -e "packages/didyoureally[dev]"
+.venv/bin/callprobe agent init --out refund-pilot.json
+.venv/bin/callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
+  --extractor-model mistral-nemo:latest --json-mode --out results/agent-pilot
 ```
 
-Only failing `(task, pad, repeat)` cases are shown; a run with no failures
-prints a short pass report instead. Failures are grouped into recurring
-diagnostic categories, counted per case rather than per failure message
-(`request_error`, `truncated`, `no_call`, `unexpected_call`,
-`multiple_calls`, `wrong_tool`, `malformed_arguments`, `schema`,
-`argument_value`), and then shown one case at a time: the task's user
-prompt(s), what was expected, every call the model actually produced
-(parsed arguments, or the raw text and parse error for one that didn't
-parse), and the failure reasons already recorded at run time. Records from
-before structured call evidence existed say so plainly instead of guessing
-at what was called.
+See [the agent workflow guide](docs/agent-workflow.md) for gates, limitations,
+and results across four models.
 
-`--task TASK_ID` scopes this to one task across every pad and repeat it
-ran with, and says so plainly if that task passed with no failures.
-`--format json` prints the same report as deterministic, structured JSON
-instead, for scripting:
+## Versions
 
-```bash
-callprobe explain results/github-issues/qwen3-8b.json --suite github-issues-suite \
-  --task get-issue-details --format json
-```
+| Install | Version | Adds |
+|---|---|---|
+| `pip install callprobe` | 0.8.0, stable | Suites, runs, `explain`, `compare` gates, GitHub Action |
+| `pip install callprobe==0.9.0rc2` | Prerelease | `demo`, `sweep`, `--dry-run`, Markdown reports, `compare-contracts`, `--request-timeout` |
+| From source (`main`) | 0.9.0rc3.dev0 | `doctor`, `report`, JUnit export, `replay`, the recordings API, the agent workflow |
 
-### Inspect a specific recorded observation
+Each guide notes which version a feature needs. 0.9.0 changes lenient scoring;
+read the [upgrade notes](CHANGELOG.md#upgrade-and-baseline-migration) before
+comparing new runs with 0.8.0 baselines.
 
-The development checkout supports `--pad` and `--repeat` on `explain`:
+## Documentation
 
-```bash
-callprobe explain results.json --suite my-suite --task my-task --pad 0 --repeat 1
-```
+- [Running Callprobe](docs/running.md): endpoint checks, run options, saved
+  settings, dry runs, resuming, and targeted reruns
+- [Reading results](docs/reading-results.md): the failure digest, `explain`,
+  and `report`
+- [Testing your own tools](docs/own-tools.md): OpenAPI import, bundled
+  examples, writing suites, and scoring recorded application decisions
+- [Comparing runs and CI gates](docs/comparing-and-ci.md): `compare`,
+  policies, the GitHub Action, JUnit, and tool contract comparisons
+- [Agent workflow](docs/agent-workflow.md): decision and account checks
+- [Findings and methodology](docs/findings.md): scoring rules, what the
+  numbers mean, and results so far
+- [Changelog](CHANGELOG.md)
 
-`--pad` selects the recorded distractor count; `--repeat` selects the zero-based
-repeat index (`1` is the second repeat). Either filter works independently or
-with `--task`. Text output labels the selection and JSON adds `observation_filter`.
-Counts, task verdicts, shape hints, and repeat-variation summaries cover only
-matching observations. A single selected repeat cannot establish variation.
-If nothing matches, the report says there are no recorded results in that
-selection; it does not infer a pass. These filters never rescore, rerun, or modify
-saved results.
+## Repository layout
 
-For one common, fixable shape of bug, a correctly chosen tool whose
-arguments were flattened or under-wrapped relative to an OpenAPI-imported
-`path`/`query`/`body` schema, `explain` proposes a corrected argument
-shape, e.g. moving top-level `owner`/`repo`/`issue_number` under `path`, or
-wrapping a flat `body` string as `{"body": {"body": "..."}}`. This is
-always labeled advisory: nothing is executed or re-scored, and expectation
-and value correctness are never guaranteed. The hint only appears when the
-mapping from stray arguments to the tool's missing nested groups is
-unambiguous and the resulting candidate fully validates against the tool's
-complete schema; anything involving `$ref`, `oneOf`/`anyOf`/`allOf`,
-`patternProperties`, or a schema-valued `additionalProperties` is refused
-rather than guessed at. Relocation hints also require the root schema to
-forbid extra properties. Supported schemas get error paths, messages, and
-expected types; unsupported schemas retain the recorded failure reasons
-with an explanation of the diagnostic limitation.
+- `src/callprobe`: tool-decision scoring, the CLI, the mock agent runner,
+  reports, and CI gates
+- `packages/didyoureally`: claim extraction and deterministic trace matching,
+  with its own tests and benchmarks
+- `examples/`: bundled and walkthrough suites
+- `results/`: raw evidence behind every published number
 
-When an expected call is missing, `explain` can also flag bounded, parseable
-JSON in ordinary assistant text that names a tool from the suite. This is an
-advisory to check the model/provider's response format or tool-call parser;
-it does not establish the cause. Text that resembles a call is never executed,
-converted into a call, or re-scored. Malformed or ambiguous text is left as
-recorded evidence rather than guessed at.
+## Contributing
 
-The JSON report also carries `argument_shape_summary`:
-`affected_observations` (failing task/pad/repeat records that already have
-a `shape_hint`), `unique_tasks`, and `by_kind` counts. Only existing hints
-are counted; nothing is inferred from other schema failures, and `--task`
-limits it to that task. The text report adds a short note when any hints
-exist: inspect the proposed arguments, make sure your application adapter
-and the tool contract agree, and rerun with the same suite. Nothing is
-repaired or re-scored automatically.
-
-Multi-repeat runs also gain a `repeat_variation` block grouped by
-`(task_id, pad)`: `groups_examined` counts groups with at least two
-distinct scored repeats, and `mixed_groups` lists each group where the
-scored verdict changed, with `passing_repeat_ids`, `failing_repeat_ids`,
-and `excluded_error_repeat_ids` for request errors that are kept out of
-the counts. Pads are never mixed, `--task` scopes the summary, duplicate
-`(task_id, pad, repeat)` rows raise a clear error rather than averaging
-silently. Repeats vary deterministic tool order, so differences do not
-isolate model randomness; a partial run does not establish stability. For example, the archived October 2026
-granite3.3:8b core run scored 24/50 and 27/50 but moved 11 task verdicts
-across its two repeats; phi4-mini stayed at 11/50 with two mixed groups.
-
-Server provenance is detected when public metadata is available: Ollama via
-`/api/version` and llama.cpp via its build and generation metadata at `/props`.
-Unknown or protected metadata stays unset. Older llama.cpp results without
-server identity may require a fresh run for `--resume`; their recorded scores
-remain readable and are never changed.
-
-## Status
-
-The suite (version 2) is 50 hand-written tasks: 6 select, 11 abstain, 12
-args, 11 depth, 10 sequence, spread across three tool bundles (a support
-desk, a calendar, and a file manager). The two full sweeps in the Results
-table above predate this growth and were run against suite version 1
-(34 tasks, no file bundle). `LEADERBOARD.md` contains seven suite-v2 sweeps
-and lists the two suite-v1 runs separately. Those historical sweeps predate
-scoring version 2 and need reruns to establish baselines under the stricter
-call-count and truncation rules. Fresh v0.5.0 baseline and repeat results
-are stored separately in [`results/v0.5.0`](results/v0.5.0/README.md).
-`callprobe leaderboard` will refuse to mix results from the two suite
-versions in one table unless you pass `--allow-mixed`.
-
-Every task in the suite passes `callprobe validate` (see Bring your own
-tools above), and CI runs it on every push, so a typo in an expectation
-can't silently fail every model.
-
-Contributions most wanted, in order:
-
-1. Tasks, especially `depth` and `sequence`, and anything drawn from real
-   tool schemas you use
-2. Runs against models not yet in the leaderboard
-3. Adapters for endpoints that deviate from the OpenAI shape
-
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to write a task and
-submit a run.
-
-## Development
-
-With uv installed, use `uv sync --extra dev`, then prefix development commands
-with `uv run` (for example, `uv run callprobe init --help` or `uv run pytest`).
-Alternatively, use a standard Python virtual environment:
-
-```bash
-git clone https://github.com/Eladhirsh/callprobe.git
-cd callprobe
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-
-pytest
-```
-
-Exercise the public CLI end to end with a synthetic mail workflow:
-
-```bash
-python scripts/selftest_agent.py --out /tmp/callprobe-selftest
-```
-
-This checks imports, validation, 162 scripted observations per run, regression
-reports, and targeted reruns without a model or credentials. It writes commands,
-outputs, and assertions to `report.md` and `report.json`. See the
-[mail sandbox guide](examples/mail-sandbox/README.md) for testing an installed
-wheel or adding a separate live-model run. Scripted scores verify the test
-pipeline; they are not model benchmark results.
+Most wanted: tasks drawn from real tool schemas, runs against models not yet in
+the leaderboard, and adapters for endpoints that differ from the OpenAI shape.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, checks, and how to submit a
+task or a run.
 
 ## License
 
-MIT
-
-## Read saved summaries (development checkout)
-
-Inspect a recorded run without contacting its model endpoint or rebuilding its
-suite:
-
-```bash
-callprobe report results.json --format text
-callprobe report results.json --format json --out summary.json
-```
-
-These formats use recorded score fields and omit endpoint URLs, raw responses,
-arguments, notes, and server error messages. They report scored observations,
-distinct scored tasks, request errors, truncations, and
-`scored/recorded/planned` coverage. Missing/duplicate/unexpected records are
-marked; old runs without a recorded plan say coverage is unknown. Malformed
-plans, including duplicate tasks/pads or invalid targeted selections, say
-`invalid planned coverage` instead of appearing complete. Targeted runs remain
-labeled as debug runs. JSON uses `null` for undefined cost per
-success instead of nonstandard `Infinity`.
-
-This is informational reporting, not a CI gate or a fresh evaluation. Export
-returns `0` on success even when the recorded model failed. Use
-`compare --fail-on-regression` for a matched gate. Existing output files require
-`--force`, and the source results can never be overwritten, including through
-symlinks or hard links. With no `--format`, `report` still exports JUnit XML.
-
-## Export JUnit reports (development checkout)
-
-Put saved CallProbe observations into your CI test-report viewer without making
-another model request:
-
-```bash
-callprobe report results.json --format junit --out callprobe-junit.xml
-```
-
-Omit `--out` to write XML to stdout. Existing reports are protected unless you
-pass `--force`; the source results file is always protected, including aliases.
-Export exits zero when it successfully writes a report, regardless of test
-outcomes. Your CI test reporter can interpret the XML; keep using `compare
---fail-on-regression` for matched baseline gates.
-
-Each `(task, pad, repeat)` becomes a test case. Model failures and truncations
-are failures; endpoint errors are errors. Missing observations add a coverage
-error case, and old results without a recorded plan add an unknown-coverage
-error case. Targeted debug runs are labeled and include a skipped coverage
-notice, so they do not appear to be full benchmark runs.
-
-Reports include model/task names and provenance but omit raw prompts, responses,
-argument values, endpoint URLs, and server error messages. Use `explain` with
-the original results and suite when you need detailed diagnostics. Reports can
-still reveal names you put in task IDs or model labels; review those before
-sharing. Recorded scores are never recomputed.
-
-The Action in this checkout also writes `callprobe-junit.xml` when results are
-available, even when a threshold or regression gate fails. Its `junit-report`
-output contains the path only after export succeeds. Upload it with an
-`if: always()` artifact or test-report step to retain failure evidence.
-
-For a multi-model run, add `--junit` to export a report per model:
-
-```bash
-callprobe sweep --models qwen2.5:7b llama3.2:3b --suite my-suite \
-  --out model-results --junit
-```
-
-The manifest links each successful export as `junit_file`. Partial result files
-from failed or timed-out runs are exported too, with coverage errors in their
-XML; they remain excluded from the successful-run leaderboard. An export
-failure makes the sweep fail without discarding its original results.
-`--dry-run --junit` only plans requests and writes no XML.
-
-This feature requires the development checkout; it is not in `0.9.0rc2`.
-
-
-## Score application recordings (development checkout)
-
-Applications can score their captured tool decisions directly in Python without
-an OpenAI-compatible HTTP proxy. Install this checkout into the application's
-Python environment, then create a suite with `callprobe init --example support
---out support-suite`. For example, this **synthetic recorded decision** exercises
-the adapter without calling a model or executing an order lookup:
-
-```python
-from pathlib import Path
-
-from callprobe.client import Completion
-from callprobe.loader import load_suite
-from callprobe.models import Call, RunConfig
-from callprobe.recordings import RecordedCompletion, score_recordings
-
-suite = load_suite(Path("support-suite"))
-config = RunConfig(
-    model="application-model", endpoint="recorded://local", suite="support-suite",
-    pads=[0], repeats=1, temperature=0.0, max_tokens=4096,
-)
-record = RecordedCompletion(
-    task_id="status-by-id",
-    completion=Completion(calls=[Call(
-        name="get_order", arguments={"path": {"order_id": "ORD-448120"}},
-    )]),
-)
-run = score_recordings(suite, config, [record])
-with Path("recorded-results.json").open("x", encoding="utf-8") as output:
-    output.write(run.model_dump_json(indent=2) + "\n")
-```
-
-Inspect the output with `callprobe report recorded-results.json --format text`.
-Only one of six tasks was supplied, so coverage remains incomplete. Supply every
-planned `(task_id, pad, repeat)` for a complete run; targeted selections remain
-labeled as debug runs. Duplicate and out-of-plan records are rejected before any
-scoring. Missing observations are never invented. The Python adapter also rejects
-invalid completion field types before scoring the batch: calls must be a list of
-`Call` objects, text fields must be strings, token counts must be nonnegative
-integers (not booleans or strings), and latency must be finite and nonnegative.
-Use `parse_completion` for provider-specific normalization first. Invalid adapter
-data raises `ValueError`; it is not a model failure or a successful abstention.
-
-Replace the synthetic `Completion` with your application's captured final model
-decision, retaining **every** tool call, parse failure, finish reason, request
-error, token count, and latency. `Completion(error="...")` represents a failed
-request; an empty error string is also a request error. An empty successful
-`Completion` means the model made no tool call. OpenAI-compatible response bodies
-can be decoded with `callprobe.client.parse_completion(body, latency_ms=...)`;
-malformed response envelopes raise an exception and must not become successful
-empty completions. Other providers need an adapter to the same `Completion`
-fields. This API evaluates one decision, not a whole agent execution trace.
-
-Explicit provider refusals and unsupported legacy `function_call` responses are
-request errors. Normalize legacy calls to the supported `tool_calls` format
-before importing them. Interrupted or unsupported finish reasons, including
-`content_filter`, and a `tool_calls` finish without calls cannot pass scoring.
-These failures survive export and replay. Omitted finish metadata remains
-compatible; `length` remains a scored truncation failure.
-
-Rebuild affected baselines and candidates before CI comparisons. Scoring version
-3 is unchanged; `report`, `compare`, and `--resume` do not revalidate saved provider
-responses. Replay can correct normalized recordings that retained an unsupported
-finish reason. Older exports may have discarded refusal or legacy call fields,
-which replay cannot recover. Reimport the original provider responses with the
-current parser, or collect fresh responses when the originals are unavailable.
-Write new result files and do not resume affected saved runs.
-
-Use the same task messages, tools, padding, and generation settings that produced
-the recordings. For padded runs, `callprobe.runner.build_toolset(suite, task, pad,
-seed=repeat)` supplies the deterministic tool bundle/order. The model and generation
-metadata are caller assertions: CallProbe cannot verify how external recordings
-were produced. Evaluation timestamps describe this scoring pass. Scores use the
-current rubric and suite provenance; this differs from `report`, which only reads
-saved scores. No model request or application tool is executed by this API.
-
-
-### Native Ollama recordings
-
-For applications using Ollama's native `/api/chat` endpoint, normalize the full
-response captured with `stream: false` before passing it to the recording API:
-
-```python
-from callprobe.adapters import parse_ollama_completion
-
-# body is your already-captured native response, not an OpenAI-compatible one.
-completion = parse_ollama_completion(body, latency_ms=measured_request_ms)
-record = RecordedCompletion(task_id="status-by-id", completion=completion)
-run = score_recordings(suite, config, [record])
-```
-
-This offline adapter preserves every native tool call, `thinking` text, prompt
-and generated token counts, and the finish reason (including `length` for
-truncation). It expects the [native chat response format](https://docs.ollama.com/api/chat);
-SDK callers can pass `response.model_dump()`. It rejects error envelopes,
-incomplete responses, and load/unload acknowledgements. Do not pass individual
-stream chunks, including the terminal chunk: collect the complete non-streaming
-response instead. Server duration is not used as client latency; supply your
-measured milliseconds, or leave latency unknown/zero. The adapter makes no HTTP
-requests and changes neither the CLI's OpenAI-compatible endpoint nor scoring.
-The response's `raw` field retains the input body locally; recordings export
-continues to exclude raw provider bodies while preserving decision evidence.
-
-### Export application recordings
-
-Use `recordings_to_json` to export the same normalized records for offline replay,
-without constructing the JSON document by hand:
-
-```python
-from callprobe.recording_io import recordings_to_json
-
-payload = recordings_to_json(config, [record])
-with Path("recordings.json").open("x", encoding="utf-8") as output:
-    output.write(payload)
-```
-
-Serialization validates the v1 format before any file is opened. It preserves all
-calls, errors, text, token counts, latency, and supplied coordinates. Raw provider
-bodies, endpoint settings, local suite paths, and run notes are excluded. Response
-text and tool arguments can still contain private data; this is not a redaction
-function. Non-JSON argument values (including tuples and non-string object keys)
-are rejected rather than converted. Suite membership, duplicate coordinates, and
-coverage remain checks for scoring/replay. No model or file is accessed by the
-serializer; the example uses exclusive creation to avoid overwriting an export.
-
-### Replay a recordings file
-
-The development checkout also accepts normalized JSON recordings directly:
-
-```bash
-callprobe init --example support --out replay-suite
-callprobe replay examples/recordings/support.json --suite replay-suite --out replay-results.json
-callprobe report replay-results.json --format json
-```
-
-The bundled file is a **synthetic single-decision example**, not model accuracy
-evidence. It scores one of six support tasks and reports five missing observations.
-Your application can emit this version 1 format:
-
-```json
-{
-  "schema_version": 1,
-  "config": {
-    "model": "application-model",
-    "pads": [0],
-    "repeats": 1,
-    "temperature": 0.0,
-    "max_tokens": 4096
-  },
-  "records": [
-    {
-      "task_id": "status-by-id",
-      "pad": 0,
-      "repeat": 0,
-      "completion": {
-        "calls": [{"name": "get_order", "arguments": {"path": {"order_id": "ORD-448120"}}}],
-        "finish_reason": "tool_calls"
-      }
-    }
-  ]
-}
-```
-
-All five shown config fields are required; generation settings must describe the
-original request. Optional config fields are `quantization` and
-`selected_task_ids`. Each record requires `task_id` and `completion`; `pad` and
-`repeat` default to zero. Completion fields are `calls` (default `[]`), `content`,
-`reasoning`, `finish_reason` (default empty strings), `error` (default `null`),
-`prompt_tokens`, `completion_tokens`, and `latency_ms` (default zero). Preserve
-actual measurements when available; omitted measurements are unknown zeros, not
-fresh measurements. Calls require `name`; optional fields are `arguments`
-(default `{}`), `id`, `raw_arguments`, and `parse_error`. Keep malformed arguments
-in `raw_arguments` with `parse_error` set, and retain every call.
-
-An explicit `"completion": {}` means a successful response with no tool calls;
-an omitted completion is invalid. Use `"completion": {"error": "timeout"}` for
-a request failure, never an empty completion. Unknown fields, duplicate JSON
-keys, non-finite numbers, coerced types, and unsupported versions are rejected.
-This format accepts normalized decisions, not raw provider response envelopes or
-already-scored CallProbe results.
-
-`replay` reads the suite and recordings locally, scores with the current rubric,
-and writes ordinary results with endpoint `recorded://local`. It does not contact
-a model, execute tools, or infer missing observations. The same provenance and
-single-decision limitations as the Python API apply. Existing output requires
-`--force`; source recordings and suite files are protected even through file
-aliases. Invalid input or failed writes leave existing results intact. A successful
-export exits `0` even for model failures or partial recordings; invalid input exits
-`2`. Use `compare --fail-on-regression` on complete matched results for CI gating.
+Callprobe is [MIT licensed](LICENSE). Didyoureally, in
+`packages/didyoureally`, keeps its [Apache-2.0 license](packages/didyoureally/LICENSE).

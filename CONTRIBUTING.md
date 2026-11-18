@@ -40,6 +40,24 @@ CI checks Python 3.10 through 3.13 and exercises installed wheels.
 Keep changes focused, describe user-visible behavior and validation, and never include
 private prompts or credentials in submitted evidence.
 
+With uv installed, you can instead run `uv sync --extra dev` and prefix commands
+with `uv run` (for example, `uv run pytest`).
+
+## Self-test the CLI
+
+Exercise the public CLI end to end with a synthetic mail workflow:
+
+```bash
+.venv/bin/python scripts/selftest_agent.py --out /tmp/callprobe-selftest
+```
+
+This checks imports, validation, 162 scripted observations per run, regression
+reports, and targeted reruns without a model or credentials. It writes commands,
+outputs, and assertions to `report.md` and `report.json`. See the
+[mail sandbox guide](examples/mail-sandbox/README.md) for testing an installed
+wheel or adding a separate live-model run. Scripted scores verify the test
+pipeline; they are not model benchmark results.
+
 ## History and releases
 
 Didyoureally was imported with an unsquashed Git subtree merge under
