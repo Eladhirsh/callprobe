@@ -1,0 +1,52 @@
+name: Release didyoureally
+
+on:
+  push:
+    tags:
+      - "didyoureally-v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify tag matches package version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_PROJECT: packages/didyoureally
+          RELEASE_TAG_PREFIX: didyoureally-v
+        run: python scripts/check_release_tag.py
+      - run: pip install build twine
+      - run: pip install -e "packages/didyoureally[dev]"
+      - run: pytest -q packages/didyoureally/tests
+      - run: ruff check packages/didyoureally
+      - run: ruff format --check packages/didyoureally
+      - run: dyr bench
+      - run: python -m build --outdir dist packages/didyoureally
+      - run: python -m twine check --strict dist/*
+      - name: Install the built wheel outside the checkout
+        working-directory: /tmp
+        run: |
+          python -m venv /tmp/dyr-wheel-env
+          /tmp/dyr-wheel-env/bin/pip install "$GITHUB_WORKSPACE"/dist/*.whl
+          /tmp/dyr-wheel-env/bin/dyr bench
+      - uses: actions/upload-artifact@v4
+        with:
+          name: didyoureally-dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: didyoureally-dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
