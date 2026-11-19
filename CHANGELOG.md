@@ -1,6 +1,46 @@
 # Changelog
 
-## Unreleased (0.9.0rc3.dev0)
+## 0.9.0
+
+First stable release since 0.8.0. It includes everything from 0.9.0rc1 and
+0.9.0rc2 plus the changes listed below.
+
+### Highlights
+
+- `pip install "callprobe[agent]"` installs Callprobe with Didyoureally 0.1.0,
+  its first PyPI release. This enables the experimental `callprobe agent` runner,
+  which checks tool decisions and the agent's account of them separately, and
+  `callprobe audit` for checking recorded traces. The core package still has no
+  Didyoureally dependency.
+- `callprobe doctor` checks a suite and endpoint before a run without generating
+  tokens.
+- `callprobe report` exports saved runs as text, JSON, or JUnit XML, and
+  `sweep --junit` exports one report per model.
+- `callprobe replay` and a Python API score decisions your application already
+  recorded, including native Ollama responses.
+- `python -m callprobe` runs every command without relying on `PATH`.
+- From the release candidates: offline `demo`, multi-model `sweep`,
+  `run --dry-run`, Markdown comparisons, `compare-contracts`, and configurable
+  request timeouts.
+
+### Upgrading from 0.8.0
+
+- New runs use **scoring version 3**, which fixes lenient integer coercion.
+  Rerun both baseline and candidate before gating; gates refuse mixed versions.
+  See the [rc1 migration notes](#upgrade-and-baseline-migration).
+- `run` and the GitHub Action default to **`--pad 0`** instead of `0,8,16`.
+  Padding that cannot fit every task is rejected instead of silently capped.
+- The regenerated `mail-sandbox` example has two clarified prompts, so its suite
+  hash changed. Generate a fresh suite and baseline for it.
+- Suites, CI policies, and saved inputs are validated more strictly. Duplicate
+  keys, nonfinite numbers, and malformed provider responses now fail with input
+  or request errors instead of passing silently. Re-run affected baselines; saved
+  scores are never rewritten.
+
+### Changes since 0.9.0rc2
+
+- Add the `agent` optional extra, pinned to `didyoureally>=0.1,<0.2`, and a
+  release workflow that publishes Didyoureally from `didyoureally-v*` tags.
 
 - Preserve literal available tool names `null` and `none` when extracting claims.
   They no longer become unknown actions that falsely flag successful execution.
