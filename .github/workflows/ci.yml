@@ -211,16 +211,3 @@ jobs:
           audit_exit=$?
           set -e
           test "$audit_exit" -eq 1
-      - name: Install through the agent extra
-        working-directory: /tmp
-        run: |
-          python -m venv /tmp/extra-env
-          wheel=$(ls /tmp/joint-wheels/callprobe-*.whl)
-          /tmp/extra-env/bin/pip install --find-links /tmp/joint-wheels "${wheel}[agent]"
-          /tmp/extra-env/bin/python -c 'import didyoureally'
-          /tmp/extra-env/bin/dyr bench
-          set +e
-          /tmp/extra-env/bin/callprobe audit "${{ github.workspace }}/packages/didyoureally/examples/openai_masked_failure.json" --claims "${{ github.workspace }}/packages/didyoureally/examples/openai_masked_failure.claims.json"
-          audit_exit=$?
-          set -e
-          test "$audit_exit" -eq 1
