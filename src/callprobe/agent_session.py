@@ -133,19 +133,14 @@ def suite_hash(suite: AgentSuite) -> str:
 
 
 def require_auditor():
-    try:
-        import didyoureally
-    except ImportError:
-        raise ValueError(
-            "Agent checks require didyoureally in this environment. "
-            "Install its source checkout with python -m pip install -e packages/didyoureally."
-        ) from None
+    from . import didyoureally
+
     return didyoureally
 
 
 def audit_trace(trace_data: dict, extractor) -> dict:
     dyr = require_auditor()
-    from didyoureally.extract import ExtractionError
+    from .didyoureally.extract import ExtractionError
 
     trace = dyr.load_trace(trace_data)
     try:

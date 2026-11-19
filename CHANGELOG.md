@@ -7,11 +7,15 @@ First stable release since 0.8.0. It includes everything from 0.9.0rc1 and
 
 ### Highlights
 
-- `pip install "callprobe[agent]"` installs Callprobe with Didyoureally 0.1.0,
-  its first PyPI release. This enables the experimental `callprobe agent` runner,
-  which checks tool decisions and the agent's account of them separately, and
-  `callprobe audit` for checking recorded traces. The core package still has no
-  Didyoureally dependency.
+- Account checks are now part of Callprobe. `callprobe audit` checks whether an
+  agent's description of completed actions matches its recorded tool calls, and
+  flags contradicted, phantom, masked-failure, and unmentioned actions.
+  `callprobe audit bench` runs the bundled 102-case benchmark. This is the former
+  Didyoureally project, merged into the `callprobe` package as
+  `callprobe.didyoureally` and relicensed from Apache-2.0 to MIT by its sole author.
+  It adds no dependencies.
+- The experimental `callprobe agent` runner applies the decision and account
+  checks separately to mock agent sessions.
 - `callprobe doctor` checks a suite and endpoint before a run without generating
   tokens.
 - `callprobe report` exports saved runs as text, JSON, or JUnit XML, and
@@ -32,6 +36,10 @@ First stable release since 0.8.0. It includes everything from 0.9.0rc1 and
   Padding that cannot fit every task is rejected instead of silently capped.
 - The regenerated `mail-sandbox` example has two clarified prompts, so its suite
   hash changed. Generate a fresh suite and baseline for it.
+- If you used Didyoureally from a source checkout, import `callprobe.didyoureally`
+  instead of `didyoureally`, and use `callprobe audit` and `callprobe audit bench`
+  instead of `dyr check` and `dyr bench`. The `DYR_BASE_URL`, `DYR_MODEL`, and
+  `DYR_API_KEY` environment variables are unchanged.
 - Suites, CI policies, and saved inputs are validated more strictly. Duplicate
   keys, nonfinite numbers, and malformed provider responses now fail with input
   or request errors instead of passing silently. Re-run affected baselines; saved
@@ -39,8 +47,12 @@ First stable release since 0.8.0. It includes everything from 0.9.0rc1 and
 
 ### Changes since 0.9.0rc2
 
-- Add the `agent` optional extra, pinned to `didyoureally>=0.1,<0.2`, and a
-  release workflow that publishes Didyoureally from `didyoureally-v*` tags.
+- Merge Didyoureally into the `callprobe` package. Its code moves from
+  `packages/didyoureally` to `src/callprobe/didyoureally`, with tests, scripts,
+  examples, and results under matching `didyoureally` folders. The standalone
+  package, its `dyr` and `didyoureally` commands, and its separate CI job are
+  removed; one wheel and one test run now cover both checks. Regenerated
+  benchmark and example suites are byte-identical after the move.
 
 - Preserve literal available tool names `null` and `none` when extracting claims.
   They no longer become unknown actions that falsely flag successful execution.

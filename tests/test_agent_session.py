@@ -5,14 +5,12 @@ from argparse import Namespace
 import httpx
 import pytest
 
-pytest.importorskip("didyoureally")
-from didyoureally import Claim
-from didyoureally.extract import ExtractionError, LLMExtractor
-
 from callprobe.agent_cli import run_agent_suite
 from callprobe.agent_pilot import pilot_suite
 from callprobe.agent_session import load_agent_suite, render_agent_report, run_episode
 from callprobe.client import ChatClient, Completion
+from callprobe.didyoureally import Claim
+from callprobe.didyoureally.extract import ExtractionError, LLMExtractor
 from callprobe.models import Call
 
 

@@ -72,8 +72,7 @@ INVALID_SUITES = [
 def test_agent_run_rejects_ambiguous_json_before_requests_or_output(
     tmp_path, monkeypatch, capsys, data, reason
 ):
-    pytest.importorskip("didyoureally")
-    from didyoureally import extract
+    from callprobe.didyoureally import extract
 
     from callprobe import agent_cli
     from callprobe.cli import main

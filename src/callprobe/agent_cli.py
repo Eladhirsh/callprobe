@@ -22,9 +22,10 @@ from .doctor import validate_endpoint
 
 
 def audit_main(argv):
-    require_auditor()
-    from didyoureally.cli import main
+    from .didyoureally.cli import main
 
+    if argv and argv[0] == "bench":
+        return main(["bench", *argv[1:]])
     return main(["check", *argv])
 
 
@@ -80,7 +81,7 @@ def _source_hashes(package):
 
 def run_agent_suite(args):
     dyr = require_auditor()
-    from didyoureally.extract import LLMExtractor
+    from .didyoureally.extract import LLMExtractor
 
     import callprobe
 

@@ -40,7 +40,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [project.urls]
 Homepage = "https://github.com/Eladhirsh/callprobe"
@@ -56,3 +56,14 @@ packages = ["src/callprobe"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+
+# Ruff currently covers the Didyoureally checks, their tests and scripts, and the
+# shared agent workflow modules listed in AGENTS.md. Do not reformat other legacy
+# Callprobe modules wholesale.
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "FURB", "RUF100"]
+ignore = ["E501"]  # the formatter owns line length; prompts may run long

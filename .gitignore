@@ -6,3 +6,5 @@ dist/
 build/
 overnight.log
 logs/
+.pytest_cache/
+.ruff_cache/

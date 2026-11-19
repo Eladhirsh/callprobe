@@ -3,7 +3,7 @@
 Callprobe's experimental agent runner combines two independent checks:
 
 - Callprobe compares proposed tool decisions with an authored serial sequence.
-- Didyoureally extracts completed-action claims and compares them with recorded mock outcomes.
+- The [account checks](didyoureally.md) extract completed-action claims and compare them with recorded mock outcomes.
 
 A wrong refund described accurately fails the decision check and can pass the account check.
 A correct email call that fails, followed by "Sent!", can pass the decision check and fail the account check.
@@ -11,23 +11,21 @@ There is no combined accuracy score. Each axis remains visible.
 
 ## Install
 
-Install Callprobe with the `agent` extra, which adds Didyoureally:
+The agent workflow ships with Callprobe:
 
 ```sh
-pip install "callprobe[agent]"
+pip install callprobe
 ```
 
-To develop both packages, install them from one checkout instead:
+To develop it, install from a checkout:
 
 ```sh
 # From the Callprobe repository root:
 python3 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]' -e 'packages/didyoureally[dev]'
+.venv/bin/python -m pip install -e '.[dev]'
 ```
 
-Existing Callprobe commands do not require Didyoureally. The `agent run`, `agent compare`, and `audit`
-commands explain how to install it when missing. The examples below use the checkout's `.venv/bin/`
-paths; with a `pip install`, drop that prefix.
+The examples below use the checkout's `.venv/bin/` paths; with a `pip install`, drop that prefix.
 
 ## Run the refund and receipt pilot
 

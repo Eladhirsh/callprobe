@@ -4,12 +4,8 @@ from argparse import Namespace
 
 import pytest
 
-pytest.importorskip("didyoureally")
-import didyoureally
-from didyoureally import Claim
-from didyoureally.extract import ExtractionError
-
 import callprobe
+from callprobe import didyoureally
 from callprobe.agent_cli import _source_hashes
 from callprobe.agent_compare import (
     agent_compare_main,
@@ -19,6 +15,8 @@ from callprobe.agent_compare import (
 from callprobe.agent_pilot import pilot_suite
 from callprobe.agent_session import load_agent_suite, run_episode, suite_hash
 from callprobe.client import Completion
+from callprobe.didyoureally import Claim
+from callprobe.didyoureally.extract import ExtractionError
 from callprobe.models import Call
 
 
@@ -342,9 +340,8 @@ def test_duplicate_json_keys_rejected_with_setup_exit(tmp_path, capsys, target):
 def test_archived_live_reports_still_replay_without_model_requests(model, monkeypatch):
     from pathlib import Path
 
-    from didyoureally.extract import LLMExtractor
-
     from callprobe.client import ChatClient
+    from callprobe.didyoureally.extract import LLMExtractor
 
     def forbidden(*args, **kwargs):
         raise AssertionError("offline comparison must not contact a model")

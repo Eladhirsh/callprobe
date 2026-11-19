@@ -31,11 +31,11 @@ file hashes are recorded in `summary.json`.
 
 | Frozen source | Focused cases | Broad cases | Generator |
 |---|---|---|---|
-| [Bundled benchmark](../../packages/didyoureally/src/didyoureally/benchmark) | Cases 93 and 94 | 102 | [build_benchmark.py](../../packages/didyoureally/scripts/build_benchmark.py) |
-| [Structured-plan controls](../../packages/didyoureally/examples/plan-validation) | 16 | 0 | [build_plan_validation.py](../../packages/didyoureally/scripts/build_plan_validation.py) |
-| [Context and correction controls](../../packages/didyoureally/examples/context-validation) | 0 | 16 | [build_context_validation.py](../../packages/didyoureally/scripts/build_context_validation.py) |
-| [Vague-completion controls](../../packages/didyoureally/examples/vague-validation) | 0 | 16 | [build_vague_validation.py](../../packages/didyoureally/scripts/build_vague_validation.py) |
-| [Mixed-scope controls](../../packages/didyoureally/examples/mixed-scope-validation) | 0 | 8 | [build_repeat_validation.py --scope](../../packages/didyoureally/scripts/build_repeat_validation.py) |
+| [Bundled benchmark](../../src/callprobe/didyoureally/benchmark) | Cases 93 and 94 | 102 | [build_benchmark.py](../../scripts/didyoureally/build_benchmark.py) |
+| [Structured-plan controls](../../examples/didyoureally/plan-validation) | 16 | 0 | [build_plan_validation.py](../../scripts/didyoureally/build_plan_validation.py) |
+| [Context and correction controls](../../examples/didyoureally/context-validation) | 0 | 16 | [build_context_validation.py](../../scripts/didyoureally/build_context_validation.py) |
+| [Vague-completion controls](../../examples/didyoureally/vague-validation) | 0 | 16 | [build_vague_validation.py](../../scripts/didyoureally/build_vague_validation.py) |
+| [Mixed-scope controls](../../examples/didyoureally/mixed-scope-validation) | 0 | 8 | [build_repeat_validation.py --scope](../../scripts/didyoureally/build_repeat_validation.py) |
 
 Baseline and candidate each evaluated both installed local models, Mistral Nemo
 and Qwen 2.5, using staged extraction, JSON mode, temperature zero, and one

@@ -4,11 +4,9 @@ import copy
 
 import pytest
 
-pytest.importorskip("didyoureally")
-from didyoureally import Claim
-
 from callprobe.agent_session import load_agent_suite, run_episode
 from callprobe.client import Completion
+from callprobe.didyoureally import Claim
 from callprobe.models import Call
 
 DOMAINS = [

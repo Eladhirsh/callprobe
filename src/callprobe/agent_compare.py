@@ -124,7 +124,7 @@ def _completion(raw):
 
 def _replay_episode(row, case, config):
     dyr = require_auditor()
-    from didyoureally.extract import ExtractionError
+    from .didyoureally.extract import ExtractionError
 
     raw = row.get("completions")
     if not isinstance(raw, list) or not 1 <= len(raw) <= config["max_turns"]:

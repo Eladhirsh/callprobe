@@ -963,7 +963,7 @@ def main(argv: list[str] | None = None) -> int:
     add_sweep_arguments(sweep_cmd)
     sweep_cmd.set_defaults(func=run_sweep)
 
-    sub.add_parser("audit", help="check a recorded trace with Didyoureally", add_help=False)
+    sub.add_parser("audit", help="check whether an agent's report matches its recorded calls; 'audit bench' runs the benchmark", add_help=False)
     from .agent_cli import add_agent_arguments
     add_agent_arguments(sub.add_parser("agent", help="test decisions and accounts in mock agent sessions"))
 

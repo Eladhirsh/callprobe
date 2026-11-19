@@ -14,6 +14,10 @@ every response:
 It only evaluates what the model proposes. It never executes your tools or
 calls your API, so you can test a refund or delete operation safely.
 
+It also checks the other half of an agent's job: whether what it **tells the
+user** it did matches what its tools actually did. See
+[Check what your agent claims](#check-what-your-agent-claims).
+
 ## Quickstart
 
 You need Python 3.10 or newer. Setup and validation work offline:
@@ -132,25 +136,64 @@ More in [Findings and methodology](https://github.com/Eladhirsh/callprobe/blob/m
 [`LEADERBOARD.md`](https://github.com/Eladhirsh/callprobe/blob/main/LEADERBOARD.md). These are integration findings from
 specific local setups, not a general model ranking.
 
+## Check what your agent claims
+
+Your agent says *"I refunded $40 and emailed you the receipt."* The trace says
+it refunded $400 and never called the email tool. `callprobe audit` reads an
+agent's messages and its tool-call trace, extracts every claim about a
+completed action, and checks each one against the recorded calls:
+
+| Verdict | Meaning |
+|---|---|
+| **Contradicted** | The call happened with different details than the agent stated |
+| **Phantom** | The agent claimed an action that no earlier call performed |
+| **Masked failure** | The call returned an error, but the agent reported success |
+| **Unmentioned** | A side-effecting call the agent never told the user about |
+| **Backed** | The claim matches a successful call |
+
+This runs offline with claims that are already labeled:
+
+```bash
+git clone https://github.com/Eladhirsh/callprobe.git && cd callprobe
+callprobe audit examples/didyoureally/openai_masked_failure.json \
+  --claims examples/didyoureally/openai_masked_failure.claims.json
+```
+
+```
+[Masked failure] "Your Pro plan (sub_9) is cancelled"
+    cancel_subscription returned an error, but the agent reported success.
+    Call call_2: cancel_subscription({"subscription_id": "sub_9"}) -> error
+```
+
+For your own traces (OpenAI chat messages or a native JSON format), a model
+extracts the claims and plain code decides every verdict, so the model never
+grades its own work. A local model works:
+
+```bash
+export DYR_BASE_URL=http://localhost:11434/v1 DYR_MODEL=mistral-nemo:latest
+callprobe audit my-trace.json
+```
+
+Contradicted, phantom, and masked failure findings exit with code 1 for CI.
+`callprobe audit bench` runs the bundled benchmark. See the
+[account checks guide](https://github.com/Eladhirsh/callprobe/blob/main/docs/didyoureally.md)
+for trace formats, options, and limits. These checks were developed as
+Didyoureally and are now part of Callprobe.
+
 ## Agent workflow (experimental)
 
 `callprobe agent` runs a model against mock tools across multi-step scenarios
-and checks two things separately: whether it made the expected calls, and
+and applies both checks separately: whether it made the expected calls, and
 whether its final message accurately describes what those calls returned. In
 the first pilot, both tested models reported success after refunds that had
-failed. Account checks use [Didyoureally](https://github.com/Eladhirsh/callprobe/blob/main/packages/didyoureally/README.md),
-which lives in this repository and installs through the `agent` extra:
+failed.
 
 ```bash
-pip install "callprobe[agent]"
 callprobe agent init --out refund-pilot.json
 callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
   --extractor-model mistral-nemo:latest --json-mode --out agent-pilot
 ```
 
-To check a trace you already recorded, use `callprobe audit TRACE`. It flags
-claims that contradict the recorded calls, actions that never happened,
-failures reported as successes, and side effects the agent never mentioned.
 See [the agent workflow guide](https://github.com/Eladhirsh/callprobe/blob/main/docs/agent-workflow.md) for gates, limitations,
 and results across four models.
 
@@ -171,7 +214,10 @@ Each guide notes which version a feature needs.
   examples, writing suites, and scoring recorded application decisions
 - [Comparing runs and CI gates](https://github.com/Eladhirsh/callprobe/blob/main/docs/comparing-and-ci.md): `compare`,
   policies, the GitHub Action, JUnit, and tool contract comparisons
+- [Account checks](https://github.com/Eladhirsh/callprobe/blob/main/docs/didyoureally.md): `callprobe audit`, trace
+  formats, verdicts, benchmarks, and limits
 - [Agent workflow](https://github.com/Eladhirsh/callprobe/blob/main/docs/agent-workflow.md): decision and account checks
+  in mock agent sessions
 - [Findings and methodology](https://github.com/Eladhirsh/callprobe/blob/main/docs/findings.md): scoring rules, what the
   numbers mean, and results so far
 - [Changelog](https://github.com/Eladhirsh/callprobe/blob/main/CHANGELOG.md)
@@ -180,9 +226,10 @@ Each guide notes which version a feature needs.
 
 - `src/callprobe`: tool-decision scoring, the CLI, the mock agent runner,
   reports, and CI gates
-- `packages/didyoureally`: claim extraction and deterministic trace matching,
-  with its own tests and benchmarks
-- `examples/`: bundled and walkthrough suites
+- `src/callprobe/didyoureally`: claim extraction and deterministic trace
+  matching behind `callprobe audit`
+- `examples/`: bundled and walkthrough suites; `examples/didyoureally` holds
+  account-check traces and frozen suites
 - `results/`: raw evidence behind every published number
 
 ## Contributing
@@ -194,5 +241,4 @@ task or a run.
 
 ## License
 
-Callprobe is [MIT licensed](https://github.com/Eladhirsh/callprobe/blob/main/LICENSE). Didyoureally, in
-`packages/didyoureally`, keeps its [Apache-2.0 license](https://github.com/Eladhirsh/callprobe/blob/main/packages/didyoureally/LICENSE).
+[MIT](https://github.com/Eladhirsh/callprobe/blob/main/LICENSE), including the account checks.

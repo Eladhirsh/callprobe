@@ -1,40 +1,39 @@
 # Contributing
 
-Both engines are developed in this repository. The historical Didyoureally repository
-is retained as a reference; open issues and pull requests here.
+Callprobe's decision checks and account checks (formerly the separate Didyoureally
+project) are developed in this repository and ship as one `callprobe` package. The
+historical Didyoureally repository is retained as a reference; open issues and pull
+requests here.
 
-## Install one checkout
+## Install a checkout
 
 ```sh
 git clone https://github.com/Eladhirsh/callprobe.git
 cd callprobe
 python3 -m venv .venv
-.venv/bin/python -m pip install -e ".[dev]" -e "packages/didyoureally[dev]"
+.venv/bin/python -m pip install -e ".[dev]"
 ```
-
-Callprobe and Didyoureally keep separate package metadata and licenses. This installs
-both development packages into one environment. It does not publish either package.
 
 ## Verify changes
 
 ```sh
 .venv/bin/pytest -q tests
-.venv/bin/pytest -q packages/didyoureally/tests
-.venv/bin/ruff check packages/didyoureally
-.venv/bin/ruff format --check packages/didyoureally
-.venv/bin/dyr bench
+.venv/bin/ruff check src/callprobe/didyoureally tests/didyoureally scripts/didyoureally
+.venv/bin/ruff format --check src/callprobe/didyoureally tests/didyoureally scripts/didyoureally
+.venv/bin/callprobe audit bench
 ```
 
-Run the two test directories separately to keep their independent configurations.
-The test suites use fake transports and local loopback servers, not live model APIs.
-The benchmark command uses labeled claims to test the matcher. Real model runs must
-be reported separately and require an explicitly configured endpoint.
+`tests/` includes the account-check tests in `tests/didyoureally`. Ruff covers the account
+checks and the shared agent modules listed in the `agent-lint` CI job; do not reformat other
+legacy modules wholesale. The test suites use fake transports and local loopback servers, not
+live model APIs. The benchmark command uses labeled claims to test the matcher. Real model runs
+must be reported separately and require an explicitly configured endpoint.
 
 For the shared agent workflow, see [the workflow guide](docs/agent-workflow.md).
 The 28-case validation suite is regenerated with
 `.venv/bin/python scripts/build_agent_validation.py`.
 
-For packaging changes, build both wheels and install them in a separate environment.
+For packaging changes, build the wheel and install it in a separate environment.
 Run the CLIs from outside the checkout so source imports cannot hide missing resources.
 CI checks Python 3.10 through 3.13 and exercises installed wheels.
 Keep changes focused, describe user-visible behavior and validation, and never include
@@ -60,16 +59,15 @@ pipeline; they are not model benchmark results.
 
 ## History and releases
 
-Didyoureally was imported with an unsquashed Git subtree merge under
-`packages/didyoureally`, preserving its commit history. New development happens
-here; no further synchronization with the old repository is required.
+Didyoureally was imported with an unsquashed Git subtree merge, preserving its commit
+history, and merged into the `callprobe` package in 0.9.0. Its code moved from
+`packages/didyoureally` to `src/callprobe/didyoureally`, with tests, scripts, examples, and
+results under matching `didyoureally` folders. It was relicensed from Apache-2.0 to MIT by its
+sole author.
 
-Each package is released separately and only with explicit approval. A `vX.Y.Z` tag
-releases Callprobe through `.github/workflows/release.yml`. A `didyoureally-vX.Y.Z` tag
-releases Didyoureally through `.github/workflows/release-didyoureally.yml`. Each workflow
-checks that the tag matches its package version before publishing. Release Didyoureally
-first when Callprobe's `agent` extra needs a new Didyoureally version. The nested
-historical workflow files do not run as root GitHub Actions.
+Releases need explicit approval. A `vX.Y.Z` tag releases Callprobe through
+`.github/workflows/release.yml`, which checks that the tag matches the package version
+before publishing.
 
 ## Writing a task
 
