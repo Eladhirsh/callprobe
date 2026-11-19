@@ -9,7 +9,7 @@ description = "Catch AI agents that tell users they did something they didn't."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
-authors = [{ name = "Elad Hirsh", email = "eh3123@columbia.edu" }]
+authors = [{ name = "Elad Hirsh" }]
 keywords = ["ai-agents", "llm", "evaluation", "tool-calling", "observability", "testing"]
 classifiers = [
   "Development Status :: 3 - Alpha",
