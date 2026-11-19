@@ -87,7 +87,7 @@ callprobe run --suite my-suite --model qwen2.5:7b --pad 0 --out baseline.json
 
 You can also start from an OpenAI-format `tools.json` with
 `callprobe init --from tools.json`, or write the YAML by hand. See
-[Testing your own tools](docs/own-tools.md).
+[Testing your own tools](https://github.com/Eladhirsh/callprobe/blob/main/docs/own-tools.md).
 
 ## Catch regressions in CI
 
@@ -109,12 +109,12 @@ A GitHub Action is included:
     fail-under: '0.7'
 ```
 
-See [Comparing runs and CI gates](docs/comparing-and-ci.md) for policies,
+See [Comparing runs and CI gates](https://github.com/Eladhirsh/callprobe/blob/main/docs/comparing-and-ci.md) for policies,
 critical tasks, and JUnit export.
 
 ## What it has found
 
-Results from local runs, with raw data in [`results/`](results/):
+Results from local runs, with raw data in [`results/`](https://github.com/Eladhirsh/callprobe/tree/main/results):
 
 - **Acting when it should ask.** On questions where no tool applied,
   `llama3.1:8b` declined correctly 9.8% of the time. Asked about a return
@@ -128,8 +128,8 @@ Results from local runs, with raw data in [`results/`](results/):
 - **Higher score, new failures.** `qwen3:8b` beat `qwen2.5:7b` overall but
   broke cases that `qwen2.5:7b` passed, so the regression gate failed.
 
-More in [Findings and methodology](docs/findings.md) and
-[`LEADERBOARD.md`](LEADERBOARD.md). These are integration findings from
+More in [Findings and methodology](https://github.com/Eladhirsh/callprobe/blob/main/docs/findings.md) and
+[`LEADERBOARD.md`](https://github.com/Eladhirsh/callprobe/blob/main/LEADERBOARD.md). These are integration findings from
 specific local setups, not a general model ranking.
 
 ## Agent workflow (experimental)
@@ -138,7 +138,7 @@ specific local setups, not a general model ranking.
 and checks two things separately: whether it made the expected calls, and
 whether its final message accurately describes what those calls returned. In
 the first pilot, both tested models reported success after refunds that had
-failed. Account checks use [Didyoureally](packages/didyoureally/README.md),
+failed. Account checks use [Didyoureally](https://github.com/Eladhirsh/callprobe/blob/main/packages/didyoureally/README.md),
 which lives in this repository.
 
 This workflow is only available from source:
@@ -152,7 +152,7 @@ python3 -m venv .venv
   --extractor-model mistral-nemo:latest --json-mode --out results/agent-pilot
 ```
 
-See [the agent workflow guide](docs/agent-workflow.md) for gates, limitations,
+See [the agent workflow guide](https://github.com/Eladhirsh/callprobe/blob/main/docs/agent-workflow.md) for gates, limitations,
 and results across four models.
 
 ## Versions
@@ -164,23 +164,23 @@ and results across four models.
 | From source (`main`) | 0.9.0rc3.dev0 | `doctor`, `report`, JUnit export, `replay`, the recordings API, the agent workflow |
 
 Each guide notes which version a feature needs. 0.9.0 changes lenient scoring;
-read the [upgrade notes](CHANGELOG.md#upgrade-and-baseline-migration) before
+read the [upgrade notes](https://github.com/Eladhirsh/callprobe/blob/main/CHANGELOG.md#upgrade-and-baseline-migration) before
 comparing new runs with 0.8.0 baselines.
 
 ## Documentation
 
-- [Running Callprobe](docs/running.md): endpoint checks, run options, saved
+- [Running Callprobe](https://github.com/Eladhirsh/callprobe/blob/main/docs/running.md): endpoint checks, run options, saved
   settings, dry runs, resuming, and targeted reruns
-- [Reading results](docs/reading-results.md): the failure digest, `explain`,
+- [Reading results](https://github.com/Eladhirsh/callprobe/blob/main/docs/reading-results.md): the failure digest, `explain`,
   and `report`
-- [Testing your own tools](docs/own-tools.md): OpenAPI import, bundled
+- [Testing your own tools](https://github.com/Eladhirsh/callprobe/blob/main/docs/own-tools.md): OpenAPI import, bundled
   examples, writing suites, and scoring recorded application decisions
-- [Comparing runs and CI gates](docs/comparing-and-ci.md): `compare`,
+- [Comparing runs and CI gates](https://github.com/Eladhirsh/callprobe/blob/main/docs/comparing-and-ci.md): `compare`,
   policies, the GitHub Action, JUnit, and tool contract comparisons
-- [Agent workflow](docs/agent-workflow.md): decision and account checks
-- [Findings and methodology](docs/findings.md): scoring rules, what the
+- [Agent workflow](https://github.com/Eladhirsh/callprobe/blob/main/docs/agent-workflow.md): decision and account checks
+- [Findings and methodology](https://github.com/Eladhirsh/callprobe/blob/main/docs/findings.md): scoring rules, what the
   numbers mean, and results so far
-- [Changelog](CHANGELOG.md)
+- [Changelog](https://github.com/Eladhirsh/callprobe/blob/main/CHANGELOG.md)
 
 ## Repository layout
 
@@ -195,10 +195,10 @@ comparing new runs with 0.8.0 baselines.
 
 Most wanted: tasks drawn from real tool schemas, runs against models not yet in
 the leaderboard, and adapters for endpoints that differ from the OpenAI shape.
-See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, checks, and how to submit a
+See [CONTRIBUTING.md](https://github.com/Eladhirsh/callprobe/blob/main/CONTRIBUTING.md) for setup, checks, and how to submit a
 task or a run.
 
 ## License
 
-Callprobe is [MIT licensed](LICENSE). Didyoureally, in
-`packages/didyoureally`, keeps its [Apache-2.0 license](packages/didyoureally/LICENSE).
+Callprobe is [MIT licensed](https://github.com/Eladhirsh/callprobe/blob/main/LICENSE). Didyoureally, in
+`packages/didyoureally`, keeps its [Apache-2.0 license](https://github.com/Eladhirsh/callprobe/blob/main/packages/didyoureally/LICENSE).
