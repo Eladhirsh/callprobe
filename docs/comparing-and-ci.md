@@ -15,7 +15,7 @@ callprobe compare results/before.json results/after.json
 It warns if the two runs' suite hashes differ, since part of the delta
 could then be the suite changing rather than the model.
 
-To save a readable report for review (0.9.0rc1):
+To save a readable report for review (since 0.9.0):
 
 ```bash
 callprobe compare results/before.json results/after.json --format markdown > comparison.md
@@ -93,7 +93,7 @@ even if the success rate of the remaining results exceeds the threshold.
 `action.yml` at the repo root wraps this as a composite GitHub Action:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.8.0
+- uses: Eladhirsh/callprobe@v0.9.0
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -110,7 +110,7 @@ YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
 For example, after checking out your repository and starting your endpoint:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.8.0
+- uses: Eladhirsh/callprobe@v0.9.0
   with:
     model: your-model
     endpoint: http://localhost:11434/v1
@@ -125,7 +125,7 @@ Baseline inputs require v0.5.0 or newer. Keep the baseline separate from the act
 `callprobe-results.json` output. The action also writes
 `callprobe-comparison.json` and includes it in the job summary.
 
-In 0.9.0rc1, the Action additionally writes
+Since 0.9.0, the Action additionally writes
 `callprobe-comparison.md` and shows that readable report in the job summary,
 with raw run output collapsed below its heading. Both comparison formats
 come from the same saved results and policy; rendering does not call the
@@ -134,9 +134,9 @@ before the Action exits with failure. Missing baseline/policy files and
 paths that alias generated outputs are rejected before model requests.
 Only reports produced by the current invocation appear in its summary.
 
-## Try the workflow offline (0.9.0rc1)
+## Try the workflow offline (since 0.9.0)
 
-With 0.9.0rc1 or later installed, try recorded results
+With 0.9.0 or later installed, try recorded results
 without a model or endpoint:
 
 ```bash
@@ -150,9 +150,9 @@ passing cases. The regression gate therefore exits `1`, as intended.
 
 These are [recorded observations](../results/github-issues/README.md), not a
 fresh execution or a current model ranking. `demo` needs no network after
-installation. This command is not yet available in the published 0.8.0 package.
+installation. This command is not available in 0.8.0.
 
-## Compare tool contracts (0.9.0rc2)
+## Compare tool contracts (since 0.9.0)
 
 Use `compare-contracts` when testing a schema or tool-description change against
 **the same model and prompts**. This is an informational experiment report;
@@ -191,9 +191,9 @@ Unknown provenance stays unknown; matching a model tag does not verify weights.
 prove semantic equivalence or rescore responses. It exits zero for a valid
 report even when regressions exist; there is no gate option. After choosing a
 contract, record a new baseline and use the ordinary same-suite CI gate.
-This command requires `0.9.0rc2` or later.
+This command requires 0.9.0 or later.
 
-## Export JUnit reports (development checkout)
+## Export JUnit reports (since 0.9.0)
 
 Put saved CallProbe observations into your CI test-report viewer without making
 another model request:
@@ -220,7 +220,7 @@ the original results and suite when you need detailed diagnostics. Reports can
 still reveal names you put in task IDs or model labels; review those before
 sharing. Recorded scores are never recomputed.
 
-The Action in this checkout also writes `callprobe-junit.xml` when results are
+Since 0.9.0, the Action also writes `callprobe-junit.xml` when results are
 available, even when a threshold or regression gate fails. Its `junit-report`
 output contains the path only after export succeeds. Upload it with an
 `if: always()` artifact or test-report step to retain failure evidence.
@@ -238,4 +238,4 @@ XML; they remain excluded from the successful-run leaderboard. An export
 failure makes the sweep fail without discarding its original results.
 `--dry-run --junit` only plans requests and writes no XML.
 
-This feature requires the development checkout; it is not in `0.9.0rc2`.
+This feature requires 0.9.0 or later.

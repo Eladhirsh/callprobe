@@ -64,9 +64,12 @@ Didyoureally was imported with an unsquashed Git subtree merge under
 `packages/didyoureally`, preserving its commit history. New development happens
 here; no further synchronization with the old repository is required.
 
-The current package versions remain unchanged. Root release automation still applies
-to Callprobe. Didyoureally is not published and requires a separately authorized
-release. The nested historical workflow files do not run as root GitHub Actions.
+Each package is released separately and only with explicit approval. A `vX.Y.Z` tag
+releases Callprobe through `.github/workflows/release.yml`. A `didyoureally-vX.Y.Z` tag
+releases Didyoureally through `.github/workflows/release-didyoureally.yml`. Each workflow
+checks that the tag matches its package version before publishing. Release Didyoureally
+first when Callprobe's `agent` extra needs a new Didyoureally version. The nested
+historical workflow files do not run as root GitHub Actions.
 
 ## Writing a task
 

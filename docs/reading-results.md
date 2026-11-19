@@ -54,7 +54,7 @@ callprobe explain results/github-issues/qwen3-8b.json --suite github-issues-suit
 
 ### Inspect a specific recorded observation
 
-The development checkout supports `--pad` and `--repeat` on `explain`:
+Since 0.9.0, `explain` supports `--pad` and `--repeat`:
 
 ```bash
 callprobe explain results.json --suite my-suite --task my-task --pad 0 --repeat 1
@@ -119,7 +119,7 @@ Unknown or protected metadata stays unset. Older llama.cpp results without
 server identity may require a fresh run for `--resume`; their recorded scores
 remain readable and are never changed.
 
-## Read saved summaries (development checkout)
+## Read saved summaries (since 0.9.0)
 
 Inspect a recorded run without contacting its model endpoint or rebuilding its
 suite:

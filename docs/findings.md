@@ -117,7 +117,7 @@ responses also fail, including responses with no calls: reaching the token
 limit is not evidence of deliberate abstention. Selection, schema, and
 argument scores still diagnose the selected call independently.
 
-**Starting with 0.9.0rc1:** new run files record `scoring_version: 3`.
+**Starting with 0.9.0:** new run files record `scoring_version: 3`.
 Published Callprobe 0.8.0 uses scoring version 2. Version 3 fixes lenient
 integer coercion: `"4225.9"` and `"4225.00000000000001"` stay incorrect
 instead of being truncated or rounded to `4225`. Exact integral strings

@@ -4,7 +4,7 @@ How to check an endpoint, run a suite, save settings, preview a run, and rerun f
 
 ## Install the development version
 
-The `main` branch is the unpublished `0.9.0rc3.dev0`. From a checkout, run
+The `main` branch can contain unreleased changes. From a checkout, run
 `uv tool install . --force`, or install into a virtual environment and use the
 same interpreter to run it:
 
@@ -16,11 +16,11 @@ python -m callprobe examples
 
 `python -m callprobe` works wherever these guides use `callprobe` and avoids
 relying on the environment's scripts directory being on `PATH`. The module
-entry point is not available in 0.9.0rc2 or earlier.
+entry point requires 0.9.0 or later.
 
-## Check endpoint setup (unreleased 0.9.0rc3.dev0)
+## Check endpoint setup (since 0.9.0)
 
-With this development checkout installed, check your suite and endpoint before
+With 0.9.0 or later installed, check your suite and endpoint before
 starting a benchmark:
 
 ```bash
@@ -80,7 +80,7 @@ retried with exponential backoff before it's recorded as an error rather
 than a model failure; those retries honor a `Retry-After` header when the
 server sends one.
 
-In 0.9.0rc2, use `--request-timeout 300` to allow
+Since 0.9.0, use `--request-timeout 300` to allow
 longer waits for slow local models, or set `request_timeout: 300` in a YAML
 run config. The default is 120 seconds. Values must be positive and finite.
 This configures HTTPX connect/read/write/pool operation timeouts; it is not
@@ -90,14 +90,14 @@ historical files leave it unknown. Changing a transport timeout does not
 change scoring or make otherwise compatible baselines incompatible.
 
 `sweep --request-timeout 300` forwards the same setting to each model run.
-The GitHub Action in this checkout exposes the same `request-timeout` input.
+The GitHub Action exposes the same `request-timeout` input.
 `sweep --timeout` controls the entire subprocess step (default 1800
 seconds); increase that separately when a whole suite needs more time.
 
 `--max-tokens` defaults to 2048. Reasoning models can need more (see
 [truncation](findings.md#why-your-tool-calling-numbers-are-probably-wrong)).
 
-Starting with 0.9.0rc1, `run` and the GitHub Action default to `--pad 0`:
+Starting with 0.9.0, `run` and the GitHub Action default to `--pad 0`:
 a baseline without distractors. Additional counts are explicit, for example
 `--pad 0,8` on the core suite or `--pad 0,2,4` on the mail example. The requested
 count must fit every selected task after exclusions and tool-name collisions;
@@ -108,7 +108,7 @@ Earlier versions defaulted to `0,8,16` and could silently cap padding at the
 available pool size. Collect a new baseline with valid, explicit counts when
 migrating such experiments; do not relabel old observations.
 
-For a controlled multi-model sweep, use already-served models (0.9.0rc1):
+For a controlled multi-model sweep, use already-served models (since 0.9.0):
 
 ```bash
 callprobe sweep --models qwen2.5:7b llama3.1:8b \
@@ -120,8 +120,8 @@ callprobe sweep --models qwen2.5:7b llama3.1:8b \
 The runner plans requests first, uses a fresh output directory, and saves a
 manifest, per-model evidence, and a leaderboard from that sweep alone.
 Use `--suite` for your own tools; see the [mail sweep guide](../examples/mail-sandbox/README.md#sweep-several-local-models).
-This command is available starting with 0.9.0rc1; it is
-not included in PyPI 0.8.0. It does not download models. The older `scripts/overnight.sh` is a legacy
+This command is available starting with 0.9.0; it is
+not included in 0.8.0. It does not download models. The older `scripts/overnight.sh` is a legacy
 convenience script that pulls models and combines files in `results/`.
 
 Works against Ollama, LM Studio, llama.cpp server, vLLM, and hosted
@@ -178,7 +178,7 @@ provided in the file or with `--model`.
 
 Accepted keys are `model`, `endpoint`, `suite`, `pads` (an integer list),
 `repeats`, `temperature`, `max_tokens`, `quant`, `notes`, `retries`,
-`concurrency`, and `out`; 0.9.0rc2 also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
+`concurrency`, and `out`; 0.9.0 also accepts `request_timeout`. Unknown fields, duplicate keys, nulls, wrong
 types, and invalid numeric values are rejected even when a CLI flag would
 override them. `suite` and `out` in YAML resolve relative to the config
 file; paths supplied on the CLI remain relative to your working directory.
@@ -191,9 +191,9 @@ settings, and the existing resume and suite-matching checks still apply.
 
 Available since 0.8.0. Install with `uv tool install callprobe@latest`.
 
-### Preview a run before spending tokens (0.9.0rc1)
+### Preview a run before spending tokens (since 0.9.0)
 
-In the unreleased development version, both `run` and `run --dry-run` validate
+Since 0.9.0, both `run` and `run --dry-run` validate
 the complete suite before endpoint access, including unused distractors and
 expected arguments. Invalid suites exit with code `2` without changing output
 files. Run `callprobe validate --suite YOUR_SUITE` for detailed diagnostics
@@ -222,8 +222,8 @@ reports no benchmark percentages, since no model was called. `--failed-from`
 with no failures still prints its existing no-op message and exits `0`
 without producing a plan. `--dry-run` cannot be combined with `--resume` or
 `--fail-under`, because a dry run neither resumes nor produces scored results; this is
-rejected before any file is read. This flag is not yet available in the
-published 0.8.0 package.
+rejected before any file is read. This flag is not available in
+0.8.0.
 
 ### Targeted debug reruns (since 0.8.0)
 

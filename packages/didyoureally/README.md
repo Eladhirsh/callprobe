@@ -43,6 +43,15 @@ Details the tool couldn't compare (the agent said "$40" but the call used `amoun
 ## Install
 
 ```bash
+pip install didyoureally
+# or, to use it through Callprobe's agent and audit commands:
+pip install "callprobe[agent]"
+```
+
+It has no runtime dependencies beyond the standard library. To run the examples
+and scripts below, work from a source checkout instead:
+
+```bash
 # From the Callprobe repository root, using the shared environment:
 python3 -m venv .venv
 .venv/bin/python -m pip install -e packages/didyoureally
@@ -50,7 +59,6 @@ source .venv/bin/activate
 cd packages/didyoureally
 ```
 
-Didyoureally is not yet published. It has no runtime dependencies beyond the standard library.
 The relative example and script paths below are resolved from this package directory.
 See the [root setup guide](https://github.com/Eladhirsh/callprobe/blob/main/CONTRIBUTING.md) to install both development packages.
 

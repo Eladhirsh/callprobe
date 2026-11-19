@@ -9,9 +9,15 @@ A wrong refund described accurately fails the decision check and can pass the ac
 A correct email call that fails, followed by "Sent!", can pass the decision check and fail the account check.
 There is no combined accuracy score. Each axis remains visible.
 
-## Install from source
+## Install
 
-Didyoureally is not published yet. Both packages are in this repository. Install them from one checkout:
+Install Callprobe with the `agent` extra, which adds Didyoureally:
+
+```sh
+pip install "callprobe[agent]"
+```
+
+To develop both packages, install them from one checkout instead:
 
 ```sh
 # From the Callprobe repository root:
@@ -20,7 +26,8 @@ python3 -m venv .venv
 ```
 
 Existing Callprobe commands do not require Didyoureally. The `agent run`, `agent compare`, and `audit`
-commands explain how to install it when missing. Neither package version changes for this pilot.
+commands explain how to install it when missing. The examples below use the checkout's `.venv/bin/`
+paths; with a `pip install`, drop that prefix.
 
 ## Run the refund and receipt pilot
 

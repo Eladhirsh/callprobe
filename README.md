@@ -102,7 +102,7 @@ callprobe compare baseline.json candidate.json --fail-on-regression
 A GitHub Action is included:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.8.0
+- uses: Eladhirsh/callprobe@v0.9.0
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -139,33 +139,27 @@ and checks two things separately: whether it made the expected calls, and
 whether its final message accurately describes what those calls returned. In
 the first pilot, both tested models reported success after refunds that had
 failed. Account checks use [Didyoureally](https://github.com/Eladhirsh/callprobe/blob/main/packages/didyoureally/README.md),
-which lives in this repository.
-
-This workflow is only available from source:
+which lives in this repository and installs through the `agent` extra:
 
 ```bash
-git clone https://github.com/Eladhirsh/callprobe.git && cd callprobe
-python3 -m venv .venv
-.venv/bin/python -m pip install -e ".[dev]" -e "packages/didyoureally[dev]"
-.venv/bin/callprobe agent init --out refund-pilot.json
-.venv/bin/callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
-  --extractor-model mistral-nemo:latest --json-mode --out results/agent-pilot
+pip install "callprobe[agent]"
+callprobe agent init --out refund-pilot.json
+callprobe agent run --suite refund-pilot.json --model qwen2.5:7b \
+  --extractor-model mistral-nemo:latest --json-mode --out agent-pilot
 ```
 
+To check a trace you already recorded, use `callprobe audit TRACE`. It flags
+claims that contradict the recorded calls, actions that never happened,
+failures reported as successes, and side effects the agent never mentioned.
 See [the agent workflow guide](https://github.com/Eladhirsh/callprobe/blob/main/docs/agent-workflow.md) for gates, limitations,
 and results across four models.
 
-## Versions
+## Upgrading from 0.8.0
 
-| Install | Version | Adds |
-|---|---|---|
-| `pip install callprobe` | 0.8.0, stable | Suites, runs, `explain`, `compare` gates, GitHub Action |
-| `pip install callprobe==0.9.0rc2` | Prerelease | `demo`, `sweep`, `--dry-run`, Markdown reports, `compare-contracts`, `--request-timeout` |
-| From source (`main`) | 0.9.0rc3.dev0 | `doctor`, `report`, JUnit export, `replay`, the recordings API, the agent workflow |
-
-Each guide notes which version a feature needs. 0.9.0 changes lenient scoring;
-read the [upgrade notes](https://github.com/Eladhirsh/callprobe/blob/main/CHANGELOG.md#upgrade-and-baseline-migration) before
-comparing new runs with 0.8.0 baselines.
+0.9.0 changes lenient scoring and makes `--pad 0` the default. Rerun your
+baseline before comparing it with 0.9.0 results; see the
+[upgrade notes](https://github.com/Eladhirsh/callprobe/blob/main/CHANGELOG.md#upgrading-from-080).
+Each guide notes which version a feature needs.
 
 ## Documentation
 

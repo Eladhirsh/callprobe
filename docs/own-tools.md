@@ -24,7 +24,7 @@ Existing suite files are protected unless you pass `--force`.
 Generated tasks are commented drafts; they do not invent correct answers from
 the schema. A suite with no active tasks cannot be validated as ready to run.
 
-In 0.9.0rc1, validation checks every tool and
+Since 0.9.0, validation checks every tool and
 distractor's JSON Schema, including unused tools. Duplicate names within a
 bundle or the distractor pool are rejected. Expected-argument checks resolve
 local references offline; external or unresolvable references produce a
@@ -62,7 +62,7 @@ Unlike `--from-openapi`, `--example` writes a suite with its tasks already
 active; there is nothing to uncomment first. Available since 0.8.0; install
 with `uv tool install callprobe@latest`.
 
-Starting with 0.9.0rc1, `mail-sandbox` includes 18 fictional mail cases
+Starting with 0.9.0, `mail-sandbox` includes 18 fictional mail cases
 covering search, retrieval, draft/send, missing identifiers, and literal text.
 Run `callprobe init --example mail-sandbox --out my-mail-suite` to get active
 cases and four distractors without downloading or copying repository files.
@@ -128,10 +128,10 @@ It checks that every key and value you asserted in `args` or `arg_checks`
 actually exists and is legal for the tool's schema, prints each problem,
 and exits nonzero if there are any.
 
-## Score application recordings (development checkout)
+## Score application recordings (since 0.9.0)
 
 Applications can score their captured tool decisions directly in Python without
-an OpenAI-compatible HTTP proxy. Install this checkout into the application's
+an OpenAI-compatible HTTP proxy. Install Callprobe 0.9.0 or later into the application's
 Python environment, then create a suite with `callprobe init --example support
 --out support-suite`. For example, this **synthetic recorded decision** exercises
 the adapter without calling a model or executing an order lookup:
@@ -254,7 +254,7 @@ serializer; the example uses exclusive creation to avoid overwriting an export.
 
 ### Replay a recordings file
 
-The development checkout also accepts normalized JSON recordings directly:
+Since 0.9.0, `replay` accepts normalized JSON recordings directly. The example file below is in this repository:
 
 ```bash
 callprobe init --example support --out replay-suite
