@@ -210,6 +210,8 @@ Each guide notes which version a feature needs.
   settings, dry runs, resuming, and targeted reruns
 - [Reading results](https://github.com/Eladhirsh/callprobe/blob/main/docs/reading-results.md): the failure digest, `explain`,
   and `report`
+- [Scenario formats](https://github.com/Eladhirsh/callprobe/blob/main/docs/scenario-formats.md): every field of the
+  tool-decision, agent, and account-check formats, with validated examples
 - [Testing your own tools](https://github.com/Eladhirsh/callprobe/blob/main/docs/own-tools.md): OpenAPI import, bundled
   examples, writing suites, and scoring recorded application decisions
 - [Comparing runs and CI gates](https://github.com/Eladhirsh/callprobe/blob/main/docs/comparing-and-ci.md): `compare`,

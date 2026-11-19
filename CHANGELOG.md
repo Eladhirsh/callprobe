@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Add a [scenario format guide](docs/scenario-formats.md) covering every field of the
+  tool-decision, agent, and account-check formats, how strictly each is validated, and
+  which script generates each frozen suite. Its examples are tested. Prompted by a
+  request on the r/LocalLLM launch post to see the synthetic scenarios and their template.
+- Correct the suite description in `docs/own-tools.md`: a tool-decision suite has four
+  YAML files, including `suite.yaml`.
+
 ## 0.9.0
 
 First stable release since 0.8.0. It includes everything from 0.9.0rc1 and

@@ -151,6 +151,9 @@ for concrete findings and the original request-capture limitation.
 
 ## Authoring expectations
 
+The [scenario format guide](scenario-formats.md#agent-scenario-suites) documents every
+field of an agent suite, how scripted outcomes are consumed, and what validation rejects.
+
 The serial sequence specifies required turns and tool choices. Expected arguments
 assert equality for the listed keys; additional schema-valid optional arguments
 can still pass. Constrain dangerous options with schema constants or explicit

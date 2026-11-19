@@ -90,6 +90,9 @@ for f in problems(check(trace, claims)):
 
 ### Trace formats
 
+The [scenario format guide](scenario-formats.md#account-check-traces-and-cases) has complete
+trace, claims, and benchmark case examples.
+
 - **OpenAI chat messages**: a list of messages, or `{"messages": [...], "tools": [...]}`. Tool errors include explicit `error`, `success: false`, `ok: false`, `isError: true`, failed status strings, and integer `status_code` values of 400 or higher. Missing results and unrecognized write outcomes produce an input error (exit 2), never an assumed success. Normalize unsupported result envelopes to native explicit statuses. A call becomes completed when its result arrives. Tools named `get_`, `list_`, `search_`, `read_` and similar are treated as read-only unless the tool entry sets `"side_effect"`.
 - **Native**: `{"id", "tools": [{"name", "side_effect"}], "events": [...]}` where events are `message` or `tool_call` with `status: "ok" | "error"`.
 

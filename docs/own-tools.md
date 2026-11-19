@@ -70,8 +70,10 @@ It is not a MailOps integration.
 
 ### Write a suite directly
 
-A suite is three YAML files. Drop your real tool schemas into `tools.yaml`,
-write tasks against them, and run.
+A suite is a directory of four YAML files: `suite.yaml`, `tools.yaml`,
+`distractors.yaml`, and `tasks.yaml`. Drop your real tool schemas into `tools.yaml`,
+write tasks against them, and run. The [scenario format guide](scenario-formats.md#tool-decision-suites)
+documents every field.
 
 ```yaml
 # tasks.yaml
