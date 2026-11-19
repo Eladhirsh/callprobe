@@ -34,7 +34,7 @@ generator and regenerate instead of editing generated JSON; see
 | Agent scenario suite (JSON) | Rejected | Rejected | Types; unique IDs and tool names; schemas; expected sequence shape; expected arguments satisfy the schema |
 | Account-check trace (JSON) | Ignored | Rejected | Event types, roles, statuses, unique call IDs and tool names, finite numbers |
 
-After 0.9.0, a misspelled field such as `exclude_distractor` stops the load with
+Since 0.9.1, a misspelled field such as `exclude_distractor` stops the load with
 `unknown field 'exclude_distractor' (did you mean 'exclude_distractors'?)`, and a
 repeated key is reported with its line number. YAML merge keys (`<<`) and non-string
 keys are also rejected, so quote keys like `on` or `yes` that YAML would read as

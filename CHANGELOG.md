@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.9.1
+
+Upgrading from 0.9.0: tool-decision suites are now loaded strictly. A suite that
+loaded before can fail with `unknown field` or `duplicate key`; fix the field the
+message names, then run `callprobe validate`. Suites in this repository and the
+bundled examples load unchanged. The GitHub Action examples now pin `@v0.9.1`.
 
 - Tool-decision suites now reject unknown fields and duplicate keys instead of
   ignoring them. A typo such as `exclude_distractor` used to load silently and change

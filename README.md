@@ -106,7 +106,7 @@ callprobe compare baseline.json candidate.json --fail-on-regression
 A GitHub Action is included:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.9.0
+- uses: Eladhirsh/callprobe@v0.9.1
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1

@@ -93,7 +93,7 @@ even if the success rate of the remaining results exceeds the threshold.
 `action.yml` at the repo root wraps this as a composite GitHub Action:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.9.0
+- uses: Eladhirsh/callprobe@v0.9.1
   with:
     model: llama3.1:8b
     endpoint: http://localhost:11434/v1
@@ -110,7 +110,7 @@ YAML policy. Use `pad`, `repeats`, and `max-tokens` to configure the run.
 For example, after checking out your repository and starting your endpoint:
 
 ```yaml
-- uses: Eladhirsh/callprobe@v0.9.0
+- uses: Eladhirsh/callprobe@v0.9.1
   with:
     model: your-model
     endpoint: http://localhost:11434/v1
