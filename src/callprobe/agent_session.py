@@ -138,7 +138,8 @@ def require_auditor():
     except ImportError:
         raise ValueError(
             "Agent checks require didyoureally in this environment. "
-            "Install its source checkout with python -m pip install -e packages/didyoureally."
+            'Install it with python -m pip install "callprobe[agent]", or from a source '
+            "checkout with python -m pip install -e packages/didyoureally."
         ) from None
     return didyoureally
 
