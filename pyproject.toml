@@ -41,7 +41,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
-agent = ["didyoureally>=0.1,<0.2"]
 
 [project.urls]
 Homepage = "https://github.com/Eladhirsh/callprobe"
