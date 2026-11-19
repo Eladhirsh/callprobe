@@ -1,5 +1,9 @@
 name: 'callprobe'
-description: 'Score a model on your own tool-calling suite and fail CI below a threshold.'
+author: 'Elad Hirsh'
+description: 'Test whether an LLM makes the right tool calls on your suite, and fail CI on low scores or regressions.'
+branding:
+  icon: 'crosshair'
+  color: 'blue'
 inputs:
   model:
     description: 'Model name or tag to test'

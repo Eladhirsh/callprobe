@@ -414,3 +414,16 @@ def test_action_protects_inputs_named_like_junit_report(tmp_path, source_name):
     result = subprocess.run(['bash', '-c', script], cwd=tmp_path, env=env, capture_output=True)
     assert result.returncode == 2
     assert protected.read_text() == 'user evidence'
+
+
+def test_action_metadata_is_ready_for_marketplace():
+    meta = yaml.safe_load(ACTION.read_text())
+    assert meta["name"] == "callprobe"
+    # Marketplace truncates long descriptions; keep it to one short line.
+    assert 0 < len(meta["description"]) <= 125
+    # Allowed values from the action metadata syntax reference.
+    assert meta["branding"]["color"] in {
+        "white", "black", "yellow", "blue", "green", "orange", "red", "purple", "gray-dark",
+    }
+    assert meta["branding"]["icon"] == "crosshair"
+    assert all(spec.get("description") for spec in meta["inputs"].values())
