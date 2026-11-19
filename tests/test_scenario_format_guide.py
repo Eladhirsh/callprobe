@@ -48,18 +48,14 @@ def test_decision_suite_example_validates(tmp_path):
     assert main(["validate", "--suite", str(tmp_path / "suite")]) == 0
 
 
-def test_documented_yaml_strictness_gap_is_still_accurate(tmp_path):
-    """The guide says unknown fields are ignored and the last duplicate key wins.
-
-    If this fails, the loader became stricter: update the strictness table in the guide.
-    """
+def test_decision_suite_rejects_unknown_fields_and_duplicate_keys_as_documented(tmp_path):
     tasks = examples()["decision-tasks.yaml"]
     unknown = tasks.replace("    category: args\n", "    category: args\n    exclude_distractor: [x]\n", 1)
-    suite = load_suite(write_decision_suite(tmp_path / "unknown", unknown))
-    assert validate_suite(suite) == []
+    with pytest.raises(ValueError, match="did you mean 'exclude_distractors'"):
+        load_suite(write_decision_suite(tmp_path / "unknown", unknown))
     duplicate = tasks.replace("    category: args\n", "    category: select\n    category: args\n", 1)
-    suite = load_suite(write_decision_suite(tmp_path / "duplicate", duplicate))
-    assert suite.tasks[0].category == "args"
+    with pytest.raises(ValueError, match="duplicate key: 'category' at line"):
+        load_suite(write_decision_suite(tmp_path / "duplicate", duplicate))
 
 
 def test_agent_suite_example_loads():

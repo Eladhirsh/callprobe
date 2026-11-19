@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Tool-decision suites now reject unknown fields and duplicate keys instead of
+  ignoring them. A typo such as `exclude_distractor` used to load silently and change
+  what the task tested; it now fails with the file, task ID, and a suggested field
+  name. Duplicate keys report their line, and merge keys and non-string keys are
+  rejected. Fields inside `messages` and tool `parameters` are not checked. Suites
+  that relied on extra fields must remove them. Found while writing the scenario
+  format guide.
 - Add a [scenario format guide](docs/scenario-formats.md) covering every field of the
   tool-decision, agent, and account-check formats, how strictly each is validated, and
   which script generates each frozen suite. Its examples are tested. Prompted by a

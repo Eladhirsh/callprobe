@@ -30,13 +30,17 @@ generator and regenerate instead of editing generated JSON; see
 
 | | Unknown fields | Duplicate keys | Other checks before any model call |
 |---|---|---|---|
-| Tool-decision suite (YAML) | **Ignored** | **Not reported; the last value wins** | Every tool and distractor schema; expected tools exist; expected arguments and checks are legal for the schema (`callprobe validate`) |
+| Tool-decision suite (YAML) | Rejected, except inside `messages` and tool `parameters` | Rejected | Every tool and distractor schema; expected tools exist; expected arguments and checks are legal for the schema (`callprobe validate`) |
 | Agent scenario suite (JSON) | Rejected | Rejected | Types; unique IDs and tool names; schemas; expected sequence shape; expected arguments satisfy the schema |
 | Account-check trace (JSON) | Ignored | Rejected | Event types, roles, statuses, unique call IDs and tool names, finite numbers |
 
-The tool-decision gap is real: a misspelled field such as `exclude_distractor` is
-silently ignored. Run `callprobe validate` and review the suite diff when you edit
-YAML by hand.
+After 0.9.0, a misspelled field such as `exclude_distractor` stops the load with
+`unknown field 'exclude_distractor' (did you mean 'exclude_distractors'?)`, and a
+repeated key is reported with its line number. YAML merge keys (`<<`) and non-string
+keys are also rejected, so quote keys like `on` or `yes` that YAML would read as
+booleans. Message objects and JSON Schemas are passed through as written, so
+`callprobe validate` checks the schemas but not extra fields inside messages.
+Version 0.9.0 and earlier ignore unknown fields and keep the last duplicate value.
 
 ## Tool-decision suites
 

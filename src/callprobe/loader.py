@@ -12,12 +12,12 @@ A suite directory looks like:
 from __future__ import annotations
 
 import hashlib
+from difflib import get_close_matches
 from pathlib import Path
 from typing import Any
 
-import yaml
-
-from .models import Bundle, Suite, Task, Tool
+from .models import ArgCheck, Bundle, Expectation, Suite, Task, Tool
+from .yaml_config import load_config_mapping
 
 # A suite root can be a real Path (a git checkout or --suite argument) or an
 # importlib.resources Traversable (the suite packaged inside the wheel).
@@ -28,17 +28,64 @@ SuiteRoot = Any
 # Files whose contents determine whether two suites can be compared.
 SUITE_FILES = ("tools.yaml", "distractors.yaml", "tasks.yaml")
 
+# Every field a suite file may contain. Anything else is rejected, so a typo
+# such as `exclude_distractor` fails loudly instead of being ignored.
+FILE_FIELDS = {
+    "suite.yaml": {"name", "version"},
+    "tools.yaml": {"bundles"},
+    "distractors.yaml": {"tools"},
+    "tasks.yaml": {"name", "tasks"},
+}
+TOOL_FIELDS = set(Tool.model_fields)
+# `depth` is computed by the loader, never read from the file.
+TASK_FIELDS = set(Task.model_fields) - {"depth"}
+EXPECT_FIELDS = set(Expectation.model_fields)
+ARG_CHECK_FIELDS = set(ArgCheck.model_fields)
+
+
+def _check_fields(entry: dict, allowed: set[str], label: str) -> None:
+    unknown = sorted(set(entry) - allowed)
+    if not unknown:
+        return
+    parts = []
+    for name in unknown:
+        close = get_close_matches(name, sorted(allowed), n=1)
+        parts.append(f"{name!r} (did you mean {close[0]!r}?)" if close else repr(name))
+    noun = "field" if len(unknown) == 1 else "fields"
+    raise ValueError(f"{label}: unknown {noun} {', '.join(parts)}")
+
 
 def _read(path: SuiteRoot) -> dict:
+    """Read one suite file, rejecting duplicate keys at any depth and unknown top-level fields."""
     if not path.is_file():
         return {}
-    with path.open("r", encoding="utf-8") as handle:
-        data = yaml.safe_load(handle)
-    if data is None:
-        return {}
-    if not isinstance(data, dict):
-        raise ValueError(f"{path.name}: expected a YAML mapping")
+    text = path.read_bytes().decode("utf-8-sig")
+    data = load_config_mapping(text, label=path.name, allow_empty=True)
+    _check_fields(data, FILE_FIELDS[path.name], path.name)
     return data
+
+
+def _tools(entries: list[dict], label: str) -> list[Tool]:
+    tools = []
+    for index, entry in enumerate(entries, start=1):
+        _check_fields(entry, TOOL_FIELDS, f"{label} item {index}")
+        tools.append(Tool(**entry))
+    return tools
+
+
+def _check_task_fields(entry: dict, index: int) -> None:
+    task_id = entry.get("id")
+    label = f"tasks.yaml task {task_id}" if isinstance(task_id, str) else f"tasks.yaml tasks item {index}"
+    _check_fields(entry, TASK_FIELDS, label)
+    expect = entry.get("expect")
+    if not isinstance(expect, dict):
+        return
+    _check_fields(expect, EXPECT_FIELDS, f"{label} expect")
+    checks = expect.get("arg_checks")
+    if isinstance(checks, list):
+        for number, check in enumerate(checks, start=1):
+            if isinstance(check, dict):
+                _check_fields(check, ARG_CHECK_FIELDS, f"{label} expect.arg_checks item {number}")
 
 
 def _entries(value, label: str) -> list[dict]:
@@ -90,12 +137,12 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
     if not isinstance(raw_bundles, dict):
         raise ValueError("tools.yaml: bundles must be a mapping")
     for name, tools in raw_bundles.items():
-        bundles[name] = Bundle(
-            name=name, tools=[Tool(**tool) for tool in _entries(tools, f"tools.yaml bundle {name}")]
-        )
+        label = f"tools.yaml bundle {name}"
+        bundles[name] = Bundle(name=name, tools=_tools(_entries(tools, label), label))
 
     raw_distractors = _read(root / "distractors.yaml")
-    distractors = [Tool(**tool) for tool in _entries(raw_distractors.get("tools"), "distractors.yaml tools")]
+    label = "distractors.yaml tools"
+    distractors = _tools(_entries(raw_distractors.get("tools"), label), label)
 
     for name, bundle in bundles.items():
         _check_unique_tool_names(bundle.tools, f"bundle {name}")
@@ -104,7 +151,8 @@ def load_suite(directory: str | SuiteRoot) -> Suite:
     raw_tasks = _read(root / "tasks.yaml")
     tasks: list[Task] = []
     seen: set[str] = set()
-    for entry in _entries(raw_tasks.get("tasks"), "tasks.yaml tasks"):
+    for index, entry in enumerate(_entries(raw_tasks.get("tasks"), "tasks.yaml tasks"), start=1):
+        _check_task_fields(entry, index)
         task = Task(**entry)
         if task.id in seen:
             raise ValueError(f"duplicate task id: {task.id}")
